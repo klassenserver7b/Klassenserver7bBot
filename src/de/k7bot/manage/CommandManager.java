@@ -29,6 +29,7 @@ import de.k7bot.music.commands.Lyricsoldcommand;
 import de.k7bot.music.commands.NoncoreCommand;
 import de.k7bot.music.commands.PauseCommand;
 import de.k7bot.music.commands.PlayCommand;
+import de.k7bot.music.commands.QueuelistCommand;
 import de.k7bot.music.commands.ResumeCommand;
 import de.k7bot.music.commands.ShuffleCommand;
 import de.k7bot.music.commands.SkipCommand;
@@ -94,6 +95,7 @@ public class CommandManager {
 		this.commands.put("restart", new RestartCommand());
 		this.commands.put("lyrics", new LyricsCommand());
 		this.commands.put("lyricsold", new Lyricsoldcommand());
+		this.commands.put("queuelist", new QueuelistCommand());
 
 		this.help.put("help", "Zeigt diese Hilfe.");
 		this.help.put("clear", "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50");
@@ -141,7 +143,8 @@ public class CommandManager {
 		this.help.put("hypixel", "Siehe [prefix]hypixel help");
 		this.help.put("everyone", "Sendet die aktuelle Nachricht als @everyone.\n - z.B. [prefix]everyone [Nachricht]");
 		this.help.put("lyrics", "Sendet die lyrics des aktuell gespielten songs in den aktuellen channel.");
-		this.help.put("lyricsold", "unterstützt nur Genius als Lyrics-Provider (findet weniger als der main-command), besitzt aber ein Embed-icon und bessere Textgliederung");
+		this.help.put("lyricsold", "Siehe lyrics! - Unterstützt nur Genius als Lyrics-Provider (findet weniger als der main-command), besitzt aber ein Embed-icon und bessere Lyrics-Gliederung (in z.B. Chorus, pre-Chorus, Strophe, etc.)");
+		this.help.put("queuelist", "Zeigt die aktuelle Queuelist an.");
 
 		this.category.put("help", "Allgemein");
 		this.category.put("clear", "Tools");
@@ -176,17 +179,19 @@ public class CommandManager {
 		this.category.put("everyone", "Allgemein");
 		this.category.put("lyrics", "Musik");
 		this.category.put("lyricsold", "Musik");
+		this.category.put("queuelist", "Musik");
 	}
 
 	public boolean perform(String command, Member m, TextChannel channel, Message message) {
 		ServerCommand cmd;
 		if ((cmd = this.commands.get(command.toLowerCase())) != null) {
 
-			cmd.performCommand(m, channel, message);
-
 			commandlog.info(
 					"see next lines:\n\nMember: " + m.getEffectiveName() + " | \nGuild: " + channel.getGuild().getName()
 							+ " | \nChannel: " + channel.getName() + " | \nMessage: " + message.getContentRaw() + "\n");
+			
+			cmd.performCommand(m, channel, message);
+
 			return true;
 		}
 		return false;

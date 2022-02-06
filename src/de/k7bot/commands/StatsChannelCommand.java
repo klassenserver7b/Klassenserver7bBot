@@ -17,10 +17,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Category;
 
 public class StatsChannelCommand implements ServerCommand {
-	static LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
+		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		message.delete().queue();
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
@@ -61,18 +61,19 @@ public class StatsChannelCommand implements ServerCommand {
 
 	public static void fillCategory(Category cat, boolean devmode) {
 		if (!devmode) {
-			cat.createVoiceChannel("🟢 Bot Online").queue();
+			cat.createVoiceChannel("🟢 Bot Online").complete();
 		} else {
-			cat.createVoiceChannel("🟠 Canary online").queue();
+			cat.createVoiceChannel("🟠 Canary online").complete();
 		}
 
 		cat.getManager()
 				.putPermissionOverride(cat.getGuild().getPublicRole(), null, EnumSet.of(Permission.VOICE_CONNECT))
-				.queue();
+				.complete();
 
 	}
 
 	public static void onStartup(boolean devmode) {
+		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		Klassenserver7bbot.INSTANCE.imShutdown = true;
 		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(guild -> {
 			ResultSet set = lsql.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
@@ -90,7 +91,7 @@ public class StatsChannelCommand implements ServerCommand {
 					} else {
 						cat.getChannels().forEach(chan -> {
 							if (chan.getName().equalsIgnoreCase("🟠 Canary online")) {
-								chan.delete().queue();
+								chan.delete().complete();
 							}
 						});
 					}
@@ -106,6 +107,7 @@ public class StatsChannelCommand implements ServerCommand {
 	}
 
 	public static void onShutdown(boolean devmode) {
+		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(guild -> {
 			ResultSet set = lsql.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
 			try {
@@ -117,11 +119,11 @@ public class StatsChannelCommand implements ServerCommand {
 						cat.getChannels().forEach(chan -> {
 							chan.delete().complete();
 						});
-						cat.createVoiceChannel("🔴 Bot offline").queue();
+						cat.createVoiceChannel("🔴 Bot offline").complete();
 					} else {
 						cat.getChannels().forEach(chan -> {
 							if (chan.getName().equalsIgnoreCase("🟠 Canary online")) {
-								chan.delete().queue();
+								chan.delete().complete();
 							}
 						});
 					}

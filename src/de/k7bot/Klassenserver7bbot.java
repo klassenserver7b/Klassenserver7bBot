@@ -73,8 +73,8 @@ public class Klassenserver7bbot {
 	private HypixelCommandManager hypMan;
 	private SlashCommandManager slashMan;
 	private VPlan_main vmain;
-	private Thread loop;
-	private Thread shutdownT;
+	public Thread loop;
+	public Thread shutdownT;
 	public AudioPlayerManager audioPlayerManager;
 	public PlayerManager playerManager;
 	public GitHub github;
@@ -272,6 +272,7 @@ public class Klassenserver7bbot {
 	}
 
 	public void onShutdown() {
+		logger.info("Bot is shutting down!");
 		this.imShutdown = true;
 		if (this.loop != null) {
 			this.loop.interrupt();
@@ -283,6 +284,9 @@ public class Klassenserver7bbot {
 			logger.info("Bot offline");
 			this.shardMan.shutdown();
 			sqlite.disconnect();
+			this.shutdownT.interrupt();
+		}else {
+			logger.info("ShardMan was null!");
 		}
 	}
 

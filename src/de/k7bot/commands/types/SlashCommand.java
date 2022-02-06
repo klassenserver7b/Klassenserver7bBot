@@ -1,13 +1,7 @@
 package de.k7bot.commands.types;
 
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public interface SlashCommand {
-  void performSlashCommand(SlashCommandEvent event);
+  void performSlashCommand(SlashCommandInteraction event);
 }
-
-
-/* Location:              D:\Felix\Desktop\Bot\Bot.jar!\de\k7bot\commands\types\SlashCommand.class
- * Java compiler version: 15 (59.0)
- * JD-Core Version:       1.1.3
- */

@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.entities.AudioChannel;
 /* 25 */           .getController(vc.getGuild().getIdLong());
 /* 26 */         controller.getQueue().shuffle();
 /* 27 */         EmbedBuilder builder = new EmbedBuilder();
-/* 28 */         builder.setDescription("playlist shuffeld");
+/* 28 */         builder.setDescription("playlist shuffled");
 /* 29 */         builder.setColor(10827773);
 /* 30 */         ((Message)channel.sendMessageEmbeds(builder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).complete()).addReaction("U+1F500").queue();
 /*    */       } else {
