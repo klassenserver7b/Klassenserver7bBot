@@ -1,1 +1,1 @@
-# DiscordBot
+# Klassenserver7bBot
