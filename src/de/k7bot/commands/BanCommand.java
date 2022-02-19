@@ -62,8 +62,10 @@ public class BanCommand implements ServerCommand {
 			u.ban(7).reason(grund).queue();
 
 			if (system.getIdLong() != channel.getIdLong()) {
-				((Message) channel.sendMessageEmbeds(builder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0])
-						.complete()).delete().queueAfter(20L, TimeUnit.SECONDS);
+				(channel.sendMessageEmbeds(builder.build()).complete()).delete().queueAfter(20L, TimeUnit.SECONDS);
+				system.sendMessageEmbeds(builder.build()).queue();
+			} else {
+				system.sendMessageEmbeds(builder.build()).queue();
 			}
 
 			String action = "ban";

@@ -103,7 +103,7 @@ public class StatsChannelCommand implements ServerCommand {
 			}
 
 		});
-		Klassenserver7bbot.INSTANCE.imShutdown = true;
+		Klassenserver7bbot.INSTANCE.imShutdown = false;
 	}
 
 	public static void onShutdown(boolean devmode) {

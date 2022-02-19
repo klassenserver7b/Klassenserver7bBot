@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class HelpSlashCommand implements SlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
+		
 		helpCommand help = new helpCommand();
 
 		event.reply("** look into your DM's **" + event.getMember().getAsMention()

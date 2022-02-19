@@ -6,7 +6,6 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.manage.PermissionError;
 import de.k7bot.manage.SyntaxError;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -16,8 +15,8 @@ public class RestartCommand implements ServerCommand{
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		message.delete().queue();
-		if(m.hasPermission(Permission.ADMINISTRATOR)) {
-			Logger log = Klassenserver7bbot.INSTANCE.logger;
+		if(m.getIdLong()==Klassenserver7bbot.INSTANCE.getOwnerId()) {
+			Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 			String[] args = message.getContentDisplay().split(" ");
 			
 			if(args.length>1) {

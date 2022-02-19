@@ -6,7 +6,6 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.manage.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -19,7 +18,7 @@ public class Shutdownslashcommand implements SlashCommand {
 		Member m = event.getMember();
 		TextChannel channel = event.getTextChannel();
 
-		if (m.hasPermission(new Permission[] { Permission.ADMINISTRATOR })) {
+		if (m.getIdLong()==Klassenserver7bbot.INSTANCE.getOwnerId()) {
 
 			EmbedBuilder build = new EmbedBuilder();
 

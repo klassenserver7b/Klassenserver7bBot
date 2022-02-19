@@ -44,7 +44,7 @@ public class VoiceListener extends ListenerAdapter {
 			vc.getManager().setUserLimit(voice.getUserLimit()).queue();
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
-			lsql.onUpdate("INSERT INTO channellogs(channelId) VALUES(" + vc.getIdLong() + ")");
+			lsql.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
 		}
 	}
 
@@ -57,7 +57,7 @@ public class VoiceListener extends ListenerAdapter {
 				}
 				if (this.tempchannels.contains(Long.valueOf(audioChannel.getIdLong()))) {
 					audioChannel.delete().queue();
-					lsql.onUpdate("DELETE FROM channellogs WHERE channelId = " + audioChannel.getIdLong());
+					lsql.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
 					this.tempchannels.clear();
 				}
 

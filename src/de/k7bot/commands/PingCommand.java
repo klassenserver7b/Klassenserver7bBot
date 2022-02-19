@@ -10,11 +10,23 @@ public class PingCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		message.delete().queue();
-		long gatewayping = channel.getJDA().getGatewayPing();
-		channel.getJDA().getRestPing()
-				.queue((time) -> channel.sendMessageFormat("Pong! %dms", time, gatewayping, "s").queue()
 
-				);
-		message.addReaction("U+1F3D3");
+		long gatewayping = getGatewayping(channel);
+		long time = getRESTping(channel);
+		channel.sendMessageFormat("Pong! %dms", time, gatewayping, "s").queue();
+	}
+
+	public Long getGatewayping(TextChannel channel) {
+
+		long gatewayping = channel.getJDA().getGatewayPing();
+
+		return gatewayping;
+	}
+
+	public Long getRESTping(TextChannel channel) {
+
+		long time = channel.getJDA().getRestPing().complete();
+
+		return time;
 	}
 }

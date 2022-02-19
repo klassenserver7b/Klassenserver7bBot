@@ -18,7 +18,7 @@ public class ReactRolesCommand implements ServerCommand {
 		message.delete().queue();
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
-		if (m.hasPermission(new Permission[] { Permission.MANAGE_ROLES })) {
+		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 			String[] args = message.getContentDisplay().split(" ");
 
 			if (args.length == 5) {
@@ -40,18 +40,16 @@ public class ReactRolesCommand implements ServerCommand {
 
 							tc.addReactionById(MessageId, emote).queue();
 
-							lsql.onUpdate(
-									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
-											+ ", '" + emote.getId() + "', " + role.getIdLong() + ")");
+							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
+									+ emote.getId() + "', " + role.getIdLong() + ")");
 						} else {
 							String utfemote = args[3];
 							tc.addReactionById(MessageId, utfemote).queue();
 
-							lsql.onUpdate(
-									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
-											+ ", '" + utfemote + "', " + role.getIdLong() + ")");
+							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
+									+ utfemote + "', " + role.getIdLong() + ")");
 						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();

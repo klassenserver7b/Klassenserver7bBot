@@ -1,6 +1,6 @@
-
 package de.k7bot;
 
+import com.google.gdata.client.youtube.YouTubeService;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -11,7 +11,7 @@ import de.k7bot.commands.StatsChannelCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.AutoRickroll;
 import de.k7bot.listener.BanListener;
-import de.k7bot.listener.ChannelCreate_RemoveListener;
+import de.k7bot.listener.ChannelCreateRemoveListener;
 import de.k7bot.listener.CommandListener;
 import de.k7bot.listener.JoinandLeaveListener;
 import de.k7bot.listener.MemesReact;
@@ -25,7 +25,6 @@ import de.k7bot.manage.SQLManager;
 import de.k7bot.manage.SlashCommandManager;
 import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
-import de.k7bot.timed.Dechemaxx;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VPlan_main;
 
@@ -36,13 +35,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.OffsetDateTime;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 import javax.security.auth.login.LoginException;
@@ -77,20 +73,20 @@ public class Klassenserver7bbot {
 	public Thread shutdownT;
 	public AudioPlayerManager audioPlayerManager;
 	public PlayerManager playerManager;
-	public GitHub github;
-	public Logger logger;
-	public LiteSQL sqlite;
-	public MusicUtil musicutil;
-	public LyricsClient lyricsapi;
-	public GLA lyricsapiold;
+	private GitHub github;
+	private Logger logger;
+	private LiteSQL sqlite;
+	private MusicUtil musicutil;
+	private LyricsClient lyricsapi;
+	private GLA lyricsapiold;
+	public YouTubeService ytservice;
+	private Long ownerId;
 
 	public int sec = 60;
 	public int min = 0;
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
-	public String token = "";
-
-	public boolean imShutdown;
+	public boolean imShutdown = false;
 	public boolean minlock = false;
 	public boolean exit = false;
 	public boolean hasstarted = false;
@@ -121,34 +117,72 @@ public class Klassenserver7bbot {
 
 		List<String> conf = new ArrayList<>();
 
-		String token = "";
-		String canaryToken = "";
-		String hypixelToken = "";
-		String githubtoken = "";
-		int shardc = -1;
-
 		try {
 			conf = Files.readAllLines(Paths.get("bot.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		token = conf.get(0).substring(6);
-		canaryToken = conf.get(1).substring(13);
-		hypixelToken = conf.get(2).substring(16);
-		githubtoken = conf.get(3).substring(19);
-		
-			try {
-				shardc = Integer.parseInt(conf.get(5).substring(11));
-			}catch(NumberFormatException e) {
-				shardc=-1;
-			}
+		String[] tokenarr = conf.get(0).split("\\=");
+		String token = "";
+
+		String[] canaryTokenarr = conf.get(1).split("\\=");
+		String canaryToken = "";
+
+		String[] hypixelTokenarr = conf.get(2).split("\\=");
+		String hypixelToken = "";
+
+		String[] githubtokenarr = conf.get(3).split("\\=");
+		String githubtoken = "";
+
+		// String yttoken = "";
+		String[] owneridarr = conf.get(4).split("\\=");
+
+		String[] shardcarr = conf.get(5).split("\\=");
+		int shardc = -1;
+
+		if (tokenarr.length >= 2) {
+			token = tokenarr[1];
+		}
+
+		if (canaryTokenarr.length >= 2) {
+			canaryToken = canaryTokenarr[1];
+		} else {
+			indev = false;
+		}
+
+		if (hypixelTokenarr.length >= 2) {
+			hypixelToken = hypixelTokenarr[1];
+		}
+
+		if (githubtokenarr.length >= 2) {
+			githubtoken = githubtokenarr[1];
+		}
+
+		// yttoken = conf.get(6).substring(16);
+
+		if (owneridarr.length >= 2) {
+			this.ownerId = Long.parseLong(owneridarr[1]);
+		}
+
+		try {
+			shardc = Integer.parseInt(shardcarr[1]);
+		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+			shardc = -1;
+		}
 
 		this.indev = indev;
 		this.sqlite = new LiteSQL();
 		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
+		// this.ytservice = new YouTubeService("Klassenserver7bBot", yttoken);
+		this.cmdMan = new CommandManager();
+		this.hypMan = new HypixelCommandManager();
+		this.vmain = new VPlan_main();
+		this.audioPlayerManager = (AudioPlayerManager) new DefaultAudioPlayerManager();
+		this.playerManager = new PlayerManager();
+		this.logger = LoggerFactory.getLogger("K7Bot-Main");
 
 		sqlite.connect();
 		SQLManager.onCreate();
@@ -159,20 +193,12 @@ public class Klassenserver7bbot {
 		} else {
 			builder = DefaultShardManagerBuilder.create(canaryToken, EnumSet.allOf(GatewayIntent.class));
 		}
-		
+
 		builder.setShardsTotal(shardc);
 		builder.setMemberCachePolicy(MemberCachePolicy.ALL);
 		builder.setActivity(Activity.listening("-help"));
 
 		builder.setStatus(OnlineStatus.ONLINE);
-
-		this.cmdMan = new CommandManager();
-		this.hypMan = new HypixelCommandManager();
-		this.vmain = new VPlan_main();
-		this.audioPlayerManager = (AudioPlayerManager) new DefaultAudioPlayerManager();
-		this.playerManager = new PlayerManager();
-		this.imShutdown = false;
-		this.logger = LoggerFactory.getLogger("K7Bot-Main");
 
 		String key = System.getProperty("apiKey", hypixelToken);
 		this.API = new HypixelAPI((HypixelHttpClient) new ApacheHttpClient(UUID.fromString(key)));
@@ -185,7 +211,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new Role_InviteListener());
 		builder.addEventListeners(new BanListener());
 		builder.addEventListeners(new JoinandLeaveListener());
-		builder.addEventListeners(new ChannelCreate_RemoveListener());
+		builder.addEventListeners(new ChannelCreateRemoveListener());
 		builder.addEventListeners(new SlashCommandListener());
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
@@ -285,7 +311,7 @@ public class Klassenserver7bbot {
 			this.shardMan.shutdown();
 			sqlite.disconnect();
 			this.shutdownT.interrupt();
-		}else {
+		} else {
 			logger.info("ShardMan was null!");
 		}
 	}
@@ -307,16 +333,16 @@ public class Klassenserver7bbot {
 
 				if (min % 60 == 0) {
 
-					OffsetDateTime time = OffsetDateTime.now();
-					if (time.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase()
-							.equalsIgnoreCase("dienstag")
-							|| time.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase()
-									.equalsIgnoreCase("mittwoch")) {
-
-						if (time.getHour() >= 15 && time.getHour() <= 21) {
-							Dechemaxx.notifymessage();
-						}
-					}
+					/*
+					 * OffsetDateTime time = OffsetDateTime.now(); if
+					 * (time.getDayOfWeek().getDisplayName(TextStyle.FULL,
+					 * Locale.GERMAN).toLowerCase() .equalsIgnoreCase("dienstag") ||
+					 * time.getDayOfWeek().getDisplayName(TextStyle.FULL,
+					 * Locale.GERMAN).toLowerCase() .equalsIgnoreCase("mittwoch")) {
+					 * 
+					 * if (time.getHour() >= 15 && time.getHour() <= 21) {
+					 * Dechemaxx.notifymessage(); } }
+					 */
 				}
 
 				if ((!hasstarted)) {
@@ -411,5 +437,13 @@ public class Klassenserver7bbot {
 
 	public GLA getLyricsAPIold() {
 		return this.lyricsapiold;
+	}
+
+	public Logger getMainLogger() {
+		return this.logger;
+	}
+
+	public Long getOwnerId() {
+		return this.ownerId;
 	}
 }

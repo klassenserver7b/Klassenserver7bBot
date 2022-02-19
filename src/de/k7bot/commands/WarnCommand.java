@@ -65,10 +65,12 @@ public class WarnCommand implements ServerCommand {
 		TextChannel system = guild.getSystemChannel();
 
 		try {
-			system.sendMessageEmbeds(builder.build()).queue();
 
 			if (system.getIdLong() != channel.getIdLong()) {
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+				system.sendMessageEmbeds(builder.build()).queue();
+			}else {
+				system.sendMessageEmbeds(builder.build()).queue();
 			}
 
 			u.getUser().openPrivateChannel().queue((ch) -> {

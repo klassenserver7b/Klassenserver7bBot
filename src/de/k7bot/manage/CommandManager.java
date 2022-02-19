@@ -8,7 +8,7 @@ import de.k7bot.commands.EveryoneCommand;
 import de.k7bot.commands.MemberLogsCommand;
 import de.k7bot.commands.MessagetoEmbedCommand;
 import de.k7bot.commands.ModLogsCommand;
-import de.k7bot.commands.MuteCommand;
+import de.k7bot.commands.TimeoutCommand;
 import de.k7bot.commands.PingCommand;
 import de.k7bot.commands.PrefixCommand;
 import de.k7bot.commands.ReactRolesCommand;
@@ -16,7 +16,8 @@ import de.k7bot.commands.RestartCommand;
 import de.k7bot.commands.RoleCreation;
 import de.k7bot.commands.ShutdownCommand;
 import de.k7bot.commands.StatsChannelCommand;
-import de.k7bot.commands.UnmuteCommand;
+import de.k7bot.commands.TestCommand;
+import de.k7bot.commands.StopTimeoutCommand;
 import de.k7bot.commands.WarnCommand;
 import de.k7bot.commands.addReactionCommand;
 import de.k7bot.commands.helpCommand;
@@ -73,8 +74,8 @@ public class CommandManager {
 		this.commands.put("createrole", new RoleCreation());
 		this.commands.put("modlogs", new ModLogsCommand());
 		this.commands.put("memberlogs", new MemberLogsCommand());
-		this.commands.put("mute", new MuteCommand());
-		this.commands.put("unmute", new UnmuteCommand());
+		this.commands.put("timeout", new TimeoutCommand());
+		this.commands.put("stoptimeout", new StopTimeoutCommand());
 		this.commands.put("play", new PlayCommand());
 		this.commands.put("p", new PlayCommand());
 		this.commands.put("stop", new StopCommand());
@@ -96,6 +97,7 @@ public class CommandManager {
 		this.commands.put("lyrics", new LyricsCommand());
 		this.commands.put("lyricsold", new Lyricsoldcommand());
 		this.commands.put("queuelist", new QueuelistCommand());
+		this.commands.put("test", new TestCommand());
 
 		this.help.put("help", "Zeigt diese Hilfe.");
 		this.help.put("clear", "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50");
@@ -112,17 +114,17 @@ public class CommandManager {
 				"Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #textchannel [messageid] :emote: :emote: :emote: usw.");
 		this.help.put("reactrole",
 				"Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role");
-		this.help.put("ping", "Gibt den aktuellen pig des Bots zurück.");
+		this.help.put("ping", "Gibt den aktuellen Ping des Bots zurück.");
 		this.help.put("createrole",
 				"Erstellt eine Rolle mit dem gewählten Namen und ggf. der gewählten Farbe.\n - kann nur von Mitgliedern mit der Berechtigung 'Manage-Roles' ausgeführt werden!\n - z.B. [prefix]createrole [test] <#ffffff>");
 		this.help.put("modlogs",
 				"Zeigt die Logs zu einem Moderator.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @moderator");
 		this.help.put("memberlogs",
 				"Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member");
-		this.help.put("mute",
-				"Mutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]mute @member [reason]");
-		this.help.put("unmute",
-				"Entmuted den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]unmute @member");
+		this.help.put("timeout",
+				"timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member");
+		this.help.put("stoptimeout",
+				"Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member");
 		this.help.put("play",
 				"Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]play [url / YouTube Suchbegriff]");
 		this.help.put("p", "Alias für play.");
@@ -160,8 +162,8 @@ public class CommandManager {
 		this.category.put("createrole", "Tools");
 		this.category.put("modlogs", "Moderation");
 		this.category.put("memberlogs", "Moderation");
-		this.category.put("mute", "Moderation");
-		this.category.put("unmute", "Moderation");
+		this.category.put("timeout", "Moderation");
+		this.category.put("stoptimeout", "Moderation");
 		this.category.put("play", "Musik");
 		this.category.put("p", "Musik");
 		this.category.put("stop", "Musik");

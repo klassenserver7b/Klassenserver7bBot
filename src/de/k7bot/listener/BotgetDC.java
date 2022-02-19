@@ -22,7 +22,6 @@ public class BotgetDC extends ListenerAdapter {
 	}
 
 	@Override
-
 	public void onUnavailableGuildLeave(@Nonnull UnavailableGuildLeaveEvent event) {
 		Long guildid = event.getGuildIdLong();
 

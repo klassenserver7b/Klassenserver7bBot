@@ -5,7 +5,9 @@ import de.k7bot.Klassenserver7bbot;
 
 public class SQLManager {
 	public static void onCreate() {
+		
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
+		
 		lsql.onUpdate(
 				"CREATE TABLE IF NOT EXISTS reactroles(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, channelId INTEGER, messageId INTEGER, emote VARCHAR, roleId INTEGER)");
 
@@ -13,7 +15,7 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS modlogs(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, memberId INTEGER, requesterId INTEGER, memberName STRING, requesterName STRING, action STRING, reason STRING, date STRING)");
 
 		lsql.onUpdate(
-				"CREATE TABLE IF NOT EXISTS channellogs(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, channelId INTEGER)");
+				"CREATE TABLE IF NOT EXISTS createdprivatevcs(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, channelId INTEGER)");
 
 		lsql.onUpdate(
 				"CREATE TABLE IF NOT EXISTS musicchannel(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, channelId INTEGER)");

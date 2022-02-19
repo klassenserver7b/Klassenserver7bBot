@@ -3,6 +3,7 @@ package de.k7bot.music.commands;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
@@ -83,7 +84,7 @@ public class PlayCommand implements ServerCommand {
 						}
 						manager.openAudioConnection(vc);
 
-						apm.loadItem(url, (AudioLoadResultHandler) new AudioLoadResult(controller, url));
+						apm.loadItem(url, new AudioLoadResult(controller, url));
 					} else {
 
 						if (!queue.emptyQueueList()) {

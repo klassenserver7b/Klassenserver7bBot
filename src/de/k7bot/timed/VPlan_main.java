@@ -34,7 +34,7 @@ public class VPlan_main {
 
 	public static List<JsonObject> finalentries = new ArrayList<>();
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-	Logger log = Klassenserver7bbot.INSTANCE.logger;
+	Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 
 	public void sendvplanMessage(String cunext) {
 
