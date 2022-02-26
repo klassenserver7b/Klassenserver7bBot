@@ -59,9 +59,9 @@ public class SlashCommandManager {
 							.addOption(OptionType.CHANNEL, "channel", "Der Channel in dem die Message ist", true)
 							.addOption(OptionType.STRING, "messageid",
 									"Die MessageId der Message an die die Reaction angefügt werden soll", true)
-							.addOption(OptionType.STRING, "emoteid",
-									"Die EmoteId des Emotes auf das die Rolle registriert werden soll", true)
-							.addOption(OptionType.ROLE, "role", "Die Rolle die zugewiesen werden soll", true));
+							.addOption(OptionType.STRING, "emoteid-oder-utfemote",
+									"Die EmoteId des Emotes bzw. das UTF8 Emoji auf das die Rolle registriert werden soll", true)
+							.addOption(OptionType.ROLE, "role", "Die Rolle die zugewiesen werden soll - **stelle sicher, dass die rolle des Bots vom Rechtesystem über der angegebenen Rolle liegt**", true));
 
 			commup.complete();
 		});

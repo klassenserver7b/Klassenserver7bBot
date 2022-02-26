@@ -56,11 +56,12 @@ public class VPlan_main {
 		}
 
 		if (fien != null) {
-			
-			if(log !=null) {
-			log.debug("send Vplanmessage (cunext = "+cunext+") with following hash: "+fien.hashCode()+" and devmode = "+Klassenserver7bbot.INSTANCE.indev);
+
+			if (log != null) {
+				log.debug("sending Vplanmessage (cunext = " + cunext + ") with following hash: " + fien.hashCode()
+						+ " and devmode = " + Klassenserver7bbot.INSTANCE.indev);
 			}
-			
+
 			StringBuilder builder = new StringBuilder();
 
 			if (cunext.equalsIgnoreCase("next")) {
@@ -107,13 +108,13 @@ public class VPlan_main {
 
 	public List<JsonObject> finalplancheck(String cunext) {
 		Integer dbh = null;
-		JsonObject plan = getPlan(cunext);	
+		JsonObject plan = getPlan(cunext);
 		boolean synced = false;
-		
-		if(cunext.equalsIgnoreCase("next")) {
-			
+
+		if (cunext.equalsIgnoreCase("next")) {
+
 			synced = synchronizePlanDB(plan);
-			
+
 		}
 
 		List<JsonObject> getC = getyourC(plan);
@@ -214,7 +215,8 @@ public class VPlan_main {
 			JsonArray arr = obj.get("body").getAsJsonArray();
 			arr.forEach(element -> {
 				String elem = element.getAsJsonObject().get("class").toString();
-				if (elem.equalsIgnoreCase("\"9b\"") || elem.equalsIgnoreCase("\"9b,9c\"")|| elem.equalsIgnoreCase("Manos")) {
+				if (elem.equalsIgnoreCase("\"9b\"") || elem.equalsIgnoreCase("\"9b,9c\"")
+						|| elem.equalsIgnoreCase("Manos")) {
 
 					classentries.add(element.getAsJsonObject());
 
@@ -233,7 +235,7 @@ public class VPlan_main {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
-				new UsernamePasswordCredentials("manos", "Man18Vplan"));
+				new UsernamePasswordCredentials("manos", Klassenserver7bbot.INSTANCE.getVplanpw()));
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
 			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/" + cunext + "/students.json");

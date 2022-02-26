@@ -25,9 +25,10 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 
+			Emote emote;
 			OptionMapping channel = event.getOption("channel");
 			OptionMapping messageid = event.getOption("messageid");
-			OptionMapping emoteop = event.getOption("emoteid");
+			OptionMapping emoteop = event.getOption("emoteid-oder-utfemote");
 			OptionMapping roleop = event.getOption("role");
 
 			TextChannel tc = channel.getAsTextChannel();
@@ -36,18 +37,25 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 			try {
 
-				Emote emote = tc.getGuild().getEmoteById(emoteop.getAsLong());
-
+				emote = tc.getGuild().getEmoteById(emoteop.getAsLong());
+				
 				tc.addReactionById(MessageId, emote).queue();
-
+				
 				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '" + emote.getId()
 						+ "', " + role.getIdLong() + ")");
 
-				hook.sendMessage("Reactrole was successfull set for Message: " + MessageId).queue();
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+
+				tc.addReactionById(MessageId, emoteop.getAsString()).queue();;
+				
+				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
+						+ emoteop.getAsString() + "', " + role.getIdLong() + ")");
+
 			}
+
+			hook.sendMessage("Reactrole was successfull set for Message: " + MessageId).queue();
 
 		} else {
 			PermissionError.onPermissionError(m, event.getTextChannel());

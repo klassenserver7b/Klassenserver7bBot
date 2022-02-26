@@ -81,6 +81,7 @@ public class Klassenserver7bbot {
 	private GLA lyricsapiold;
 	public YouTubeService ytservice;
 	private Long ownerId;
+	private String vplanpw = "";
 
 	public int sec = 60;
 	public int min = 0;
@@ -141,6 +142,8 @@ public class Klassenserver7bbot {
 		String[] shardcarr = conf.get(5).split("\\=");
 		int shardc = -1;
 
+		String[] vplanpwarr = conf.get(6).split("\\=");
+
 		if (tokenarr.length >= 2) {
 			token = tokenarr[1];
 		}
@@ -169,6 +172,10 @@ public class Klassenserver7bbot {
 			shardc = Integer.parseInt(shardcarr[1]);
 		} catch (NumberFormatException | IndexOutOfBoundsException e) {
 			shardc = -1;
+		}
+
+		if (vplanpwarr.length >= 2) {
+			this.vplanpw = vplanpwarr[1];
 		}
 
 		this.indev = indev;
@@ -445,5 +452,9 @@ public class Klassenserver7bbot {
 
 	public Long getOwnerId() {
 		return this.ownerId;
+	}
+
+	public String getVplanpw() {
+		return this.vplanpw;
 	}
 }

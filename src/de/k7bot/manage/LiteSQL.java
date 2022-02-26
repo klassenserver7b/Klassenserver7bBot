@@ -45,7 +45,7 @@ public class LiteSQL {
 		}
 	}
 
-	public void onUpdate(String sql){
+	public void onUpdate(String sql) {
 		try {
 			String query = sql;
 			stmt.execute(query);
@@ -64,7 +64,7 @@ public class LiteSQL {
 			return null;
 		}
 	}
-	
+
 	public Logger getdblog() {
 		return dblog;
 	}
