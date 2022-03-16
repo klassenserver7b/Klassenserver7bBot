@@ -54,14 +54,17 @@ public class SlashCommandManager {
 					.addOption(OptionType.STRING, "description", "Welchen Inhalt soll der Embed haben?", true)
 					.addOption(OptionType.STRING, "color", "Die Farbe des Embeds als hexadezimale Zahl"));
 
-			commup.addCommands(
-					Commands.slash("reactrole", "Erstellt eine Reactionrole mit den übermittelten Parametern")
-							.addOption(OptionType.CHANNEL, "channel", "Der Channel in dem die Message ist", true)
-							.addOption(OptionType.STRING, "messageid",
-									"Die MessageId der Message an die die Reaction angefügt werden soll", true)
-							.addOption(OptionType.STRING, "emoteid-oder-utfemote",
-									"Die EmoteId des Emotes bzw. das UTF8 Emoji auf das die Rolle registriert werden soll", true)
-							.addOption(OptionType.ROLE, "role", "Die Rolle die zugewiesen werden soll - **stelle sicher, dass die rolle des Bots vom Rechtesystem über der angegebenen Rolle liegt**", true));
+			commup.addCommands(Commands
+					.slash("reactrole", "Erstellt eine Reactionrole mit den übermittelten Parametern")
+					.addOption(OptionType.CHANNEL, "channel", "Der Channel in dem die Message ist", true)
+					.addOption(OptionType.STRING, "messageid",
+							"Die MessageId der Message an die die Reaction angefügt werden soll", true)
+					.addOption(OptionType.STRING, "emoteid-oder-utfemote",
+							"Die EmoteId des Emotes bzw. das UTF8 Emoji auf das die Rolle registriert werden soll",
+							true)
+					.addOption(OptionType.ROLE, "role",
+							"Die Rolle die zugewiesen werden soll – stelle sicher: Rechte und Rolle des Bots > Rechte der Rolle",
+							true));
 
 			commup.complete();
 		});

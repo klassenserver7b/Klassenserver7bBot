@@ -39,26 +39,31 @@ public class VoiceListener extends ListenerAdapter {
 		if (audioChannel.getIdLong() == 841212695259775027L) {
 			VoiceChannel voice = (VoiceChannel) audioChannel;
 			Category cat = voice.getParentCategory();
-			VoiceChannel vc = cat.createVoiceChannel(String.valueOf(member.getEffectiveName()) + "s Voicechannel")
-					.complete();
+			VoiceChannel vc = cat.createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
 			vc.getManager().setUserLimit(voice.getUserLimit()).queue();
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
 			lsql.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
+			Klassenserver7bbot.INSTANCE.getMainLogger().info("Created custom VoiceChannel for Member: "
+					+ member.getEffectiveName() + " with the following ID: " + audioChannel.getIdLong());
 		}
 	}
 
 	public void onLeave(AudioChannel audioChannel) {
 		if (audioChannel.getMembers().size() <= 0) {
-			ResultSet set = lsql.onQuery("SELECT channelId FROM channellogs");
+
+			ResultSet set = lsql.onQuery("SELECT channelId FROM createdprivatevcs");
+
 			try {
 				while (set.next()) {
-					this.tempchannels.add(Long.valueOf(set.getLong("channelId")));
+					this.tempchannels.add(set.getLong("channelId"));
 				}
-				if (this.tempchannels.contains(Long.valueOf(audioChannel.getIdLong()))) {
+				if (this.tempchannels.contains(audioChannel.getIdLong())) {
 					audioChannel.delete().queue();
 					lsql.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
 					this.tempchannels.clear();
+					Klassenserver7bbot.INSTANCE.getMainLogger().info("Removed custom VoiceChannel with the Name: "
+							+ audioChannel.getName() + " with the following ID: " + audioChannel.getIdLong());
 				}
 
 			} catch (SQLException e) {

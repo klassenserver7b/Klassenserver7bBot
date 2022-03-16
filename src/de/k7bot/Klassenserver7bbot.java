@@ -1,6 +1,5 @@
 package de.k7bot;
 
-import com.google.gdata.client.youtube.YouTubeService;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -57,7 +56,6 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.hypixel.api.HypixelAPI;
 import net.hypixel.api.apache.ApacheHttpClient;
-import net.hypixel.api.http.HypixelHttpClient;
 
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
@@ -79,7 +77,6 @@ public class Klassenserver7bbot {
 	private MusicUtil musicutil;
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
-	public YouTubeService ytservice;
 	private Long ownerId;
 	private String vplanpw = "";
 
@@ -136,7 +133,6 @@ public class Klassenserver7bbot {
 		String[] githubtokenarr = conf.get(3).split("\\=");
 		String githubtoken = "";
 
-		// String yttoken = "";
 		String[] owneridarr = conf.get(4).split("\\=");
 
 		String[] shardcarr = conf.get(5).split("\\=");
@@ -162,8 +158,6 @@ public class Klassenserver7bbot {
 			githubtoken = githubtokenarr[1];
 		}
 
-		// yttoken = conf.get(6).substring(16);
-
 		if (owneridarr.length >= 2) {
 			this.ownerId = Long.parseLong(owneridarr[1]);
 		}
@@ -183,7 +177,6 @@ public class Klassenserver7bbot {
 		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
-		// this.ytservice = new YouTubeService("Klassenserver7bBot", yttoken);
 		this.cmdMan = new CommandManager();
 		this.hypMan = new HypixelCommandManager();
 		this.vmain = new VPlan_main();
@@ -208,7 +201,7 @@ public class Klassenserver7bbot {
 		builder.setStatus(OnlineStatus.ONLINE);
 
 		String key = System.getProperty("apiKey", hypixelToken);
-		this.API = new HypixelAPI((HypixelHttpClient) new ApacheHttpClient(UUID.fromString(key)));
+		this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
 
 		this.MAPI = new MojangAPI();
 
@@ -222,7 +215,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new SlashCommandListener());
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
-
+		
 		this.shardMan = builder.build();
 		AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
 		this.audioPlayerManager.getConfiguration().setFilterHotSwapEnabled(true);

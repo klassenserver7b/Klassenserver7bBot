@@ -27,7 +27,6 @@ import de.k7bot.hypixel.commands.SCtoHC;
 import de.k7bot.music.commands.ClearQueueCommand;
 import de.k7bot.music.commands.LyricsCommand;
 import de.k7bot.music.commands.Lyricsoldcommand;
-import de.k7bot.music.commands.NoncoreCommand;
 import de.k7bot.music.commands.PauseCommand;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.music.commands.QueuelistCommand;
@@ -91,7 +90,7 @@ public class CommandManager {
 		this.commands.put("hypixel", new SCtoHC());
 		this.commands.put("shutdown", new ShutdownCommand());
 		this.commands.put("everyone", new EveryoneCommand());
-		this.commands.put("noncore", new NoncoreCommand());
+		//this.commands.put("noncore", new NoncoreCommand());
 		this.commands.put("uvolume", new UebersteuerungAdmin());
 		this.commands.put("restart", new RestartCommand());
 		this.commands.put("lyrics", new LyricsCommand());

@@ -1,2 +1,10 @@
 # Project exclude paths
-/target/
+/logs
+/target
+/.idea
+/.vs
+
+bot.properties
+datenbank.db
+.classpath
+.project

@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import java.awt.Color;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,19 +29,18 @@ import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.manage.LiteSQL;
-
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class VPlan_main {
 
-	public static List<JsonObject> finalentries = new ArrayList<>();
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 
 	public void sendvplanMessage(String cunext) {
 
-		List<JsonObject> fien = finalplancheck(cunext);
+		ConcurrentHashMap<List<JsonObject>,String> input = finalplancheck(cunext);
 		Guild guild;
 		TextChannel channel;
 
@@ -55,60 +57,104 @@ public class VPlan_main {
 			channel = guild.getTextChannelById(920777920681738390l);
 		}
 
-		if (fien != null) {
-
+		if (input != null) {
+			
+			List<JsonObject> fien = input.keys().nextElement();
+			
+			String info = input.values().toString();
+				
+			info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
+			
 			if (log != null) {
 				log.debug("sending Vplanmessage (cunext = " + cunext + ") with following hash: " + fien.hashCode()
 						+ " and devmode = " + Klassenserver7bbot.INSTANCE.indev);
 			}
 
 			StringBuilder builder = new StringBuilder();
+			EmbedBuilder embbuild = new EmbedBuilder();
 
 			if (cunext.equalsIgnoreCase("next")) {
-				builder.append("Es gibt einen neuen Vertretungsplan für den nächsten Schultag! \n");
+				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für den nächsten Schultag! \n");
 			} else {
-				builder.append("Es gibt einen neuen Vertretungsplan für Heute! \n");
+				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für Heute! \n");
 			}
 			if (fien.isEmpty()) {
 
-				channel.sendMessage("**KEINE ÄNDERUNGEN 😭**").queue();
+				embbuild.setTitle("**KEINE ÄNDERUNGEN 😭**");
 
 			} else {
+
 				fien.forEach(entry -> {
 
-					builder.append("Stunde: " + entry.get("lesson"));
+					JsonArray changes = entry.get("changed").getAsJsonArray();
+					String subjectchange = "";
+					String teacherchange = "";
+					String roomchange = "";
+
+					if (changes.size() != 0) {
+
+						if (changes.toString().contains("subject")) {
+							subjectchange = "**";
+						}
+						if (changes.toString().contains("teacher")) {
+							teacherchange = "**";
+						}
+						if (changes.toString().contains("room")) {
+							roomchange = "**";
+						}
+
+					}
+
+					builder.append("Stunde: " + entry.get("lesson").getAsString().replaceAll("\"", ""));
+
 					if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
 
-						builder.append(" Fach: " + entry.get("subject"));
-						builder.append(" Lehrer: " + entry.get("teacher"));
-						builder.append(" Raum: " + entry.get("room"));
+						builder.append(" | Fach: " + subjectchange
+								+ entry.get("subject").getAsString().replaceAll("\"", "") + subjectchange);
 
-						if (!(entry.get("changed").getAsJsonArray().size() == 0)) {
-							builder.append(" Veränderung: " + entry.get("changed"));
-						}
+						builder.append(" | Lehrer: " + teacherchange
+								+ entry.get("teacher").getAsString().replaceAll("\"", "") + teacherchange);
+
+						builder.append(" | Raum: " + roomchange + entry.get("room").getAsString().replaceAll("\"", "")
+								+ roomchange);
 
 					} else {
 
-						builder.append(" **AUSFALL**");
+						builder.append(" | **AUSFALL**");
 
 					}
 
 					if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
-						builder.append(" Info: " + entry.get("info"));
+
+						builder.append(" |  Info: " + entry.get("info").getAsString().replaceAll("\"", ""));
+
 					}
+
 					builder.append("\n");
+
 				});
-				channel.sendMessage(builder.toString().trim()).queue();
+
+				embbuild.addField("Änderungen", builder.toString().trim(), false);
+
 			}
+			embbuild.addField("Sonstige Infos", info, false);
+
+			embbuild.setColor(Color.decode("#038aff"));
+			embbuild.setFooter("Stand vom " + OffsetDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+
+			channel.sendMessageEmbeds(embbuild.build()).queue();
 
 			lsql.onUpdate("UPDATE vplan" + cunext + " SET classeintraege = " + fien.hashCode());
 
 		}
 	}
 
-	public List<JsonObject> finalplancheck(String cunext) {
+	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(String cunext) {
+
 		Integer dbh = null;
+		List<JsonObject> finalentries = new ArrayList<>();
 		JsonObject plan = getPlan(cunext);
+		String info = plan.get("info").toString();
 		boolean synced = false;
 
 		if (cunext.equalsIgnoreCase("next")) {
@@ -117,12 +163,13 @@ public class VPlan_main {
 
 		}
 
+		ConcurrentHashMap<List<JsonObject>, String> fien = new ConcurrentHashMap<>();
+
 		List<JsonObject> getC = getyourC(plan);
 		if (getC != null) {
 			int h = getC.hashCode();
 
 			ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplan" + cunext);
-
 			try {
 				if (set.next()) {
 
@@ -159,8 +206,10 @@ public class VPlan_main {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
-			return finalentries;
+			
+			fien.put(finalentries, info);
+			return fien;
+			
 		} else {
 			return null;
 
@@ -179,8 +228,8 @@ public class VPlan_main {
 			String realdate = "" + time.getDayOfMonth() + "."
 					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
-			ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
 			try {
+				ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");

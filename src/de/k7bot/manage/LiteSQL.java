@@ -54,15 +54,16 @@ public class LiteSQL {
 		}
 	}
 
-	public ResultSet onQuery(String sql) {
-		try {
-			String query = sql;
-			return stmt.executeQuery(query);
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-			return null;
-		}
+	public ResultSet onQuery(String sql){
+			
+			try {
+				String query = sql;
+				return stmt.executeQuery(query);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
 	}
 
 	public Logger getdblog() {
