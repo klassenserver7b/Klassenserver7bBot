@@ -45,7 +45,7 @@ public class VoiceListener extends ListenerAdapter {
 			controller.moveVoiceMember(member, vc).queue();
 			lsql.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
 			Klassenserver7bbot.INSTANCE.getMainLogger().info("Created custom VoiceChannel for Member: "
-					+ member.getEffectiveName() + " with the following ID: " + audioChannel.getIdLong());
+					+ member.getEffectiveName() + " with the following Channel-ID: " + audioChannel.getIdLong());
 		}
 	}
 
@@ -63,7 +63,7 @@ public class VoiceListener extends ListenerAdapter {
 					lsql.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
 					this.tempchannels.clear();
 					Klassenserver7bbot.INSTANCE.getMainLogger().info("Removed custom VoiceChannel with the Name: "
-							+ audioChannel.getName() + " with the following ID: " + audioChannel.getIdLong());
+							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
 				}
 
 			} catch (SQLException e) {
