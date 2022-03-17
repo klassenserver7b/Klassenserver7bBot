@@ -1,5 +1,4 @@
 Mehr logging allerdings auf debug level z.B. hypixel api errors oder reconnecting zeugs
-statt "Veränderung" auszugeben die betreffenden texte z.B. fett machen (das geht ja mit dc formatierung; müsstest du schauen, wie du das mit dem bot machst)
 YT-Api
 Vplan in Tabelle
 Stundenplan integration
