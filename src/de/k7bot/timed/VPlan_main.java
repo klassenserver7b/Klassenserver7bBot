@@ -154,6 +154,8 @@ public class VPlan_main {
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
 		JsonObject plan = getPlan(cunext);
+		
+		if(plan!=null) {
 		String info = plan.get("info").toString();
 		boolean synced = false;
 
@@ -213,6 +215,9 @@ public class VPlan_main {
 		} else {
 			return null;
 
+		}
+		}else {
+			return null;
 		}
 	}
 
