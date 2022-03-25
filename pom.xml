@@ -5,6 +5,8 @@
 	<groupId>DiscordBot</groupId>
 	<artifactId>DiscordBot</artifactId>
 	<version>3.1.4-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -17,6 +19,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	
 	<repositories>
 		<repository>
 			<id>dv8tion</id>

@@ -40,7 +40,7 @@ public class VPlan_main {
 
 	public void sendvplanMessage(String cunext) {
 
-		ConcurrentHashMap<List<JsonObject>,String> input = finalplancheck(cunext);
+		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(cunext);
 		Guild guild;
 		TextChannel channel;
 
@@ -58,13 +58,13 @@ public class VPlan_main {
 		}
 
 		if (input != null) {
-			
+
 			List<JsonObject> fien = input.keys().nextElement();
-			
+
 			String info = input.values().toString();
-				
+
 			info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
-			
+
 			if (log != null) {
 				log.debug("sending Vplanmessage (cunext = " + cunext + ") with following hash: " + fien.hashCode()
 						+ " and devmode = " + Klassenserver7bbot.INSTANCE.indev);
@@ -136,8 +136,13 @@ public class VPlan_main {
 
 				embbuild.addField("Änderungen", builder.toString().trim(), false);
 
+				if (!(info.equalsIgnoreCase("") || info == null)) {
+
+					embbuild.addField("Sonstige Infos", info, false);
+
+				}
+
 			}
-			embbuild.addField("Sonstige Infos", info, false);
 
 			embbuild.setColor(Color.decode("#038aff"));
 			embbuild.setFooter("Stand vom " + OffsetDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
@@ -154,69 +159,70 @@ public class VPlan_main {
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
 		JsonObject plan = getPlan(cunext);
-		
-		if(plan!=null) {
-		String info = plan.get("info").toString();
-		boolean synced = false;
 
-		if (cunext.equalsIgnoreCase("next")) {
+		if (plan != null) {
+			String info = plan.get("info").toString();
+			boolean synced = false;
 
-			synced = synchronizePlanDB(plan);
+			if (cunext.equalsIgnoreCase("next")) {
 
-		}
+				synced = synchronizePlanDB(plan);
 
-		ConcurrentHashMap<List<JsonObject>, String> fien = new ConcurrentHashMap<>();
+			}
 
-		List<JsonObject> getC = getyourC(plan);
-		if (getC != null) {
-			int h = getC.hashCode();
+			ConcurrentHashMap<List<JsonObject>, String> fien = new ConcurrentHashMap<>();
 
-			ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplan" + cunext);
-			try {
-				if (set.next()) {
+			List<JsonObject> getC = getyourC(plan);
+			if (getC != null) {
+				int h = getC.hashCode();
 
-					dbh = set.getInt("classeintraege");
+				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplan" + cunext);
+				try {
+					if (set.next()) {
 
-				}
-				if (dbh != null) {
-					if (dbh != h || synced) {
+						dbh = set.getInt("classeintraege");
 
+					}
+					if (dbh != null) {
+						if (dbh != h || synced) {
+
+							finalentries = getC;
+
+							lsql.onUpdate("UPDATE vplan" + cunext + " SET zieldatum = '"
+									+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+											.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
+											.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
+											.replaceAll("Mittwoch", "").replaceAll("Donnerstag", "")
+											.replaceAll("Freitag", "").toLowerCase()
+									+ "'");
+
+						} else {
+							return null;
+
+						}
+					} else {
 						finalentries = getC;
-
-						lsql.onUpdate("UPDATE vplan" + cunext + " SET zieldatum = '"
+						lsql.onUpdate("INSERT INTO vplan" + cunext + "(zieldatum, classeintraege) VALUES('"
 								+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
 										.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
 										.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
 										.replaceAll("Mittwoch", "").replaceAll("Donnerstag", "")
 										.replaceAll("Freitag", "").toLowerCase()
-								+ "'");
-
-					} else {
-						return null;
-
+								+ "', " + finalentries.hashCode() + ")");
 					}
-				} else {
-					finalentries = getC;
-					lsql.onUpdate("INSERT INTO vplan" + cunext + "(zieldatum, classeintraege) VALUES('"
-							+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-									.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-									.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-									.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase()
-							+ "', " + finalentries.hashCode() + ")");
+
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-			fien.put(finalentries, info);
-			return fien;
-			
-		} else {
-			return null;
+				fien.put(finalentries, info);
+				return fien;
 
-		}
-		}else {
+			} else {
+				return null;
+
+			}
+		} else {
 			return null;
 		}
 	}

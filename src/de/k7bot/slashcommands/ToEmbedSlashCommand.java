@@ -21,7 +21,7 @@ public class ToEmbedSlashCommand implements SlashCommand {
 
 			OptionMapping title = event.getOption("title");
 			OptionMapping description = event.getOption("description");
-			OptionMapping colortxt = event.getOption("color");
+			OptionMapping coloropt = event.getOption("color");
 
 			InteractionHook hook = event.deferReply().complete();
 
@@ -31,9 +31,18 @@ public class ToEmbedSlashCommand implements SlashCommand {
 			builder.setDescription(description.getAsString());
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 
-			if (colortxt != null) {
-				Color color = Color.decode(colortxt.getAsString());
+			if (coloropt != null) {
+
+				String colortxt = "#000000";
+				colortxt = coloropt.getAsString();
+				
+				if (!colortxt.startsWith("#")) {
+					colortxt = "#" + colortxt;
+				}
+
+				Color color = Color.decode(colortxt);
 				builder.setColor(color);
+
 			}
 
 			hook.sendMessageEmbeds(builder.build()).queue();
