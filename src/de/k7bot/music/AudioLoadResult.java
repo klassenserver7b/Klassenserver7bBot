@@ -28,10 +28,23 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		Queue queue = this.controller.getQueue();
 
 		if (this.uri.startsWith("ytsearch: ")) {
+
+			// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
+			// Queue hinzugefügt
 			queue.addTracktoQueue(playlist.getTracks().get(0));
 
 			return;
 		}
+		
+		if (this.uri.startsWith("scsearch: ")) {
+
+			// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
+			// Queue hinzugefügt
+			queue.addTracktoQueue(playlist.getTracks().get(0));
+
+			return;
+		}
+
 		int added = 0;
 
 		for (AudioTrack track : playlist.getTracks()) {
@@ -40,14 +53,20 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		}
 
 		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(OffsetDateTime.now())
-				.setTitle(String.valueOf(added) + " tracks added to queue");
+				.setTitle(added + " tracks added to queue");
 
 		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 
 	public void noMatches() {
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
+				.setDescription("Couldn't find the Song you Searched for! :sob:");
+		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 
 	public void loadFailed(FriendlyException exception) {
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
+				.setDescription(exception.getMessage());
+		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 }

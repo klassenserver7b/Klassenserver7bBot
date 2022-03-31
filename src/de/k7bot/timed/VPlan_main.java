@@ -136,7 +136,7 @@ public class VPlan_main {
 
 				embbuild.addField("Änderungen", builder.toString().trim(), false);
 
-				if (!(info.equalsIgnoreCase("") || info == null)) {
+				if (!(info.equalsIgnoreCase(""))) {
 
 					embbuild.addField("Sonstige Infos", info, false);
 
@@ -270,13 +270,12 @@ public class VPlan_main {
 	}
 
 	public List<JsonObject> getyourC(JsonObject obj) {
-		List<JsonObject> classentries = new ArrayList<JsonObject>();
+		List<JsonObject> classentries = new ArrayList<>();
 		if (obj != null) {
 			JsonArray arr = obj.get("body").getAsJsonArray();
 			arr.forEach(element -> {
-				String elem = element.getAsJsonObject().get("class").toString();
-				if (elem.equalsIgnoreCase("\"9b\"") || elem.equalsIgnoreCase("\"9b,9c\"")
-						|| elem.equalsIgnoreCase("Manos")) {
+				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
+				if (elem.equalsIgnoreCase("9b") || elem.equalsIgnoreCase("9b,9c") || elem.equalsIgnoreCase("9a-9c/ Spw")) {
 
 					classentries.add(element.getAsJsonObject());
 

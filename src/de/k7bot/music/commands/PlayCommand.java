@@ -51,7 +51,6 @@ public class PlayCommand implements ServerCommand {
 					try {
 						if (set.next()) {
 							int volume = set.getInt("volume");
-							System.out.println(volume);
 							if (volume != 0) {
 								player.setVolume(volume);
 							} else {
@@ -70,11 +69,17 @@ public class PlayCommand implements ServerCommand {
 					}
 
 					for (int i = 1; i < args.length; i++) {
-						strBuilder.append(String.valueOf(args[i]) + " ");
+						strBuilder.append(args[i] + " ");
 					}
 
 					String url = strBuilder.toString().trim();
-					if (!url.startsWith("http")) {
+
+					if (url.startsWith("lf: ")) {
+
+						url = url.substring(4);
+
+					} else if (!(url.startsWith("http") || url.startsWith("scsearch: ")
+							|| url.startsWith("ytsearch: "))) {
 						url = "ytsearch: " + url;
 					}
 
@@ -92,18 +97,18 @@ public class PlayCommand implements ServerCommand {
 						}
 						next = true;
 						player.stopTrack();
-						apm.loadItem(url, (AudioLoadResultHandler) new AudioLoadResult(controller, url));
+						apm.loadItem(url, new AudioLoadResult(controller, url));
 						player.setPaused(false);
 						next = false;
 					}
 				} else {
 
-					((Message) channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete())
-							.delete().queueAfter(10L, TimeUnit.SECONDS);
+					channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
+							.queueAfter(10L, TimeUnit.SECONDS);
 				}
 			} else {
 
-				((Message) channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete()).delete()
+				channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
 						.queueAfter(10L, TimeUnit.SECONDS);
 			}
 		} else {
@@ -127,18 +132,18 @@ public class PlayCommand implements ServerCommand {
 
 					Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
 
-					String url = "https://www.youtube.com/watch?v=Sj2xVgJrTNc";
+					String url = "D:\\Felix\\Desktop\\Bot\\audio.mp4";
 					player.stopTrack();
-					apm.loadItem(url, (AudioLoadResultHandler) new AudioLoadResult(controller, url));
+					apm.loadItem(url, new AudioLoadResult(controller, url));
 					player.setPaused(false);
 				} else {
 
-					((Message) channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete())
-							.delete().queueAfter(10L, TimeUnit.SECONDS);
+					channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
+							.queueAfter(10L, TimeUnit.SECONDS);
 				}
 			} else {
 
-				((Message) channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete()).delete()
+				channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
 						.queueAfter(10L, TimeUnit.SECONDS);
 			}
 		}
