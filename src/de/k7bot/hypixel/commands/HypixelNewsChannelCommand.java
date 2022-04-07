@@ -2,8 +2,9 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.manage.LiteSQL;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.LiteSQL;
+import de.k7bot.util.SyntaxError;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,14 +21,14 @@ public class HypixelNewsChannelCommand implements HypixelCommand {
 		if (!message.getMentionedChannels().isEmpty()) {
 
 			TextChannel chan = message.getMentionedChannels().get(0);
-			Long chanId = Long.valueOf(chan.getIdLong());
-			Long guildId = Long.valueOf(chan.getGuild().getIdLong());
+			long chanId = chan.getIdLong();
+			Long guildId = chan.getGuild().getIdLong();
 			ResultSet set = lsql.onQuery("select guildId from hypixelnewschannels");
 			List<Long> guilds = new ArrayList<>();
 
 			try {
 				while (set.next()) {
-					guilds.add(Long.valueOf(set.getLong("guildId")));
+					guilds.add(set.getLong("guildId"));
 				}
 
 				if (guilds.contains(guildId)) {

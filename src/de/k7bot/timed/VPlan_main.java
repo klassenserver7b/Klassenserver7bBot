@@ -28,7 +28,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.manage.LiteSQL;
+import de.k7bot.util.Cell;
+import de.k7bot.util.LiteSQL;
+import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -45,16 +47,16 @@ public class VPlan_main {
 		TextChannel channel;
 
 		if (!Klassenserver7bbot.INSTANCE.indev) {
-			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454l);
+			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L);
 
 			if (cunext.equalsIgnoreCase("next")) {
-				channel = guild.getTextChannelById(918904387739459645l);
+				channel = guild.getTextChannelById(918904387739459645L);
 			} else {
-				channel = guild.getTextChannelById(931287317774221322l);
+				channel = guild.getTextChannelById(931287317774221322L);
 			}
 		} else {
-			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368l);
-			channel = guild.getTextChannelById(920777920681738390l);
+			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L);
+			channel = guild.getTextChannelById(920777920681738390L);
 		}
 
 		if (input != null) {
@@ -70,7 +72,6 @@ public class VPlan_main {
 						+ " and devmode = " + Klassenserver7bbot.INSTANCE.indev);
 			}
 
-			StringBuilder builder = new StringBuilder();
 			EmbedBuilder embbuild = new EmbedBuilder();
 
 			if (cunext.equalsIgnoreCase("next")) {
@@ -83,58 +84,58 @@ public class VPlan_main {
 				embbuild.setTitle("**KEINE ÄNDERUNGEN 😭**");
 
 			} else {
+				
+				TableMessage tablemess = new TableMessage();
+				tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
 
 				fien.forEach(entry -> {
 
 					JsonArray changes = entry.get("changed").getAsJsonArray();
-					String subjectchange = "";
-					String teacherchange = "";
-					String roomchange = "";
+					boolean subjectchange = false;
+					boolean teacherchange = false;
+					boolean roomchange = false;
 
 					if (changes.size() != 0) {
 
 						if (changes.toString().contains("subject")) {
-							subjectchange = "**";
+							subjectchange = true;
 						}
 						if (changes.toString().contains("teacher")) {
-							teacherchange = "**";
+							teacherchange = true;
 						}
 						if (changes.toString().contains("room")) {
-							roomchange = "**";
+							roomchange = true;
 						}
 
 					}
 
-					builder.append("Stunde: " + entry.get("lesson").getAsString().replaceAll("\"", ""));
+					tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
 
 					if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
+						
+						Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""), (subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+						Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""), (teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+						Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""), (roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-						builder.append(" | Fach: " + subjectchange
-								+ entry.get("subject").getAsString().replaceAll("\"", "") + subjectchange);
-
-						builder.append(" | Lehrer: " + teacherchange
-								+ entry.get("teacher").getAsString().replaceAll("\"", "") + teacherchange);
-
-						builder.append(" | Raum: " + roomchange + entry.get("room").getAsString().replaceAll("\"", "")
-								+ roomchange);
+						tablemess.addRow(subject, teacher, room);
 
 					} else {
 
-						builder.append(" | **AUSFALL**");
+						tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
 
 					}
 
 					if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
 
-						builder.append(" |  Info: " + entry.get("info").getAsString().replaceAll("\"", ""));
+						tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
 
+					}else {
+						tablemess.addCell("---");
 					}
-
-					builder.append("\n");
 
 				});
 
-				embbuild.addField("Änderungen", builder.toString().trim(), false);
+				embbuild.addField("Änderungen", tablemess.build(), false);
 
 				if (!(info.equalsIgnoreCase(""))) {
 
@@ -262,10 +263,8 @@ public class VPlan_main {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			return false;
-		} else {
-			return false;
 		}
+		return false;
 
 	}
 

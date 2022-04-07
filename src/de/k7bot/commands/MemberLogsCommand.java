@@ -4,8 +4,9 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.PermissionError;
+import de.k7bot.util.SyntaxError;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -22,16 +23,16 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class MemberLogsCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		message.delete().queue();
-		if (m.hasPermission(new Permission[] { Permission.KICK_MEMBERS })) {
+		if (m.hasPermission(Permission.KICK_MEMBERS)) {
 			List<Member> memb = message.getMentionedMembers();
 			if (!memb.isEmpty()) {
-				List<Role> roles = ((Member) memb.get(0)).getRoles();
+				List<Role> roles = memb.get(0).getRoles();
 				ArrayList<Long> roleid = new ArrayList<>();
 				for (Role r : roles) {
-					roleid.add(Long.valueOf(r.getIdLong()));
+					roleid.add(r.getIdLong());
 				}
 				long guildid = channel.getGuild().getIdLong();
-				long membid = ((Member) memb.get(0)).getIdLong();
+				long membid = memb.get(0).getIdLong();
 				ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
 						.onQuery("SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = " + guildid
 								+ " AND memberId = " + membid);
@@ -52,20 +53,20 @@ public class MemberLogsCommand implements ServerCommand {
 					if (!requName.isEmpty()) {
 						for (int j = 0; j < requName.size(); j++) {
 							EmbedBuilder embed = new EmbedBuilder();
-							embed.setTitle("Memberlogs for @" + ((Member) memb.get(0)).getEffectiveName());
+							embed.setTitle("Memberlogs for @" + memb.get(0).getEffectiveName());
 							embed.setColor(13565967);
 							embed.setTimestamp(OffsetDateTime.now());
-							embed.setThumbnail(((Member) memb.get(0)).getUser().getEffectiveAvatarUrl());
+							embed.setThumbnail(memb.get(0).getUser().getEffectiveAvatarUrl());
 							embed.setFooter("requested by @" + m.getEffectiveName());
-							embed.setDescription("user: @" + ((Member) memb.get(0)).getEffectiveName() + "\n"
-									+ "action: " + (String) action.get(j) + "\n" + "moderator: "
-									+ (String) requName.get(j) + "\n" + "reason: " + (String) reason.get(j) + "\n"
-									+ "date: " + (String) date.get(j));
+							embed.setDescription("user: @" + memb.get(0).getEffectiveName() + "\n"
+									+ "action: " + action.get(j) + "\n" + "moderator: "
+									+ requName.get(j) + "\n" + "reason: " + reason.get(j) + "\n"
+									+ "date: " + date.get(j));
 							channel.sendMessageEmbeds(embed.build()).queue();
 						}
 					} else {
 
-						((Message) channel.sendMessage("This user hasn't a log!").complete()).delete().queueAfter(20l,
+						channel.sendMessage("This user hasn't a log!").complete().delete().queueAfter(20L,
 								TimeUnit.SECONDS);
 					}
 				} catch (SQLException e) {

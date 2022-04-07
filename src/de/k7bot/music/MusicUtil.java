@@ -1,7 +1,8 @@
 package de.k7bot.music;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.manage.LiteSQL;
+import de.k7bot.util.LiteSQL;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import net.dv8tion.jda.api.EmbedBuilder;

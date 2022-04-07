@@ -1,4 +1,4 @@
-package de.k7bot.manage;
+package de.k7bot.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +20,8 @@ public class LiteSQL {
 		conn = null;
 
 		try {
-			File file = new File("datenbank.db");
-			if (!file.exists()) {
+			File file = new File("resources/datenbank.db");
 				file.createNewFile();
-			}
 
 			String url = "jdbc:sqlite:" + file.getPath();
 			conn = DriverManager.getConnection(url);
@@ -47,8 +45,7 @@ public class LiteSQL {
 
 	public void onUpdate(String sql) {
 		try {
-			String query = sql;
-			stmt.execute(query);
+			stmt.execute(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -57,8 +54,7 @@ public class LiteSQL {
 	public ResultSet onQuery(String sql){
 			
 			try {
-				String query = sql;
-				return stmt.executeQuery(query);
+				return stmt.executeQuery(sql);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return null;

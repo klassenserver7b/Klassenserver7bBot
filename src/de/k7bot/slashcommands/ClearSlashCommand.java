@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 
 import de.k7bot.commands.ClearCommand;
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.manage.PermissionError;
+import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -31,13 +31,13 @@ public class ClearSlashCommand implements SlashCommand {
 				ClearCommand.onclear(amount - 1, event.getTextChannel(), event.getMember());
 			}
 
-			hook.sendMessage(String.valueOf(amount) + " messages deleted.").queue();
+			hook.sendMessage(amount + " messages deleted.").queue();
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(16345358);
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(String.valueOf(amount) + " messages deleted!\n\n" + "**Channel: **\n" + "#"
+			builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
 					+ event.getTextChannel().getName());
 			event.getTextChannel().getGuild().getSystemChannel().sendMessageEmbeds(builder.build()).queue();
 

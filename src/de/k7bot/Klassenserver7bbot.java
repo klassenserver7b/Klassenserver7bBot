@@ -1,5 +1,8 @@
 package de.k7bot;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -8,18 +11,8 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import core.GLA;
 import de.k7bot.commands.StatsChannelCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
-import de.k7bot.listener.AutoRickroll;
-import de.k7bot.listener.BanListener;
-import de.k7bot.listener.ChannelCreateRemoveListener;
-import de.k7bot.listener.CommandListener;
-import de.k7bot.listener.JoinandLeaveListener;
-import de.k7bot.listener.MemesReact;
-import de.k7bot.listener.ReactionListener;
-import de.k7bot.listener.Role_InviteListener;
-import de.k7bot.listener.SlashCommandListener;
-import de.k7bot.listener.VoiceListener;
+import de.k7bot.listener.*;
 import de.k7bot.manage.CommandManager;
-import de.k7bot.manage.LiteSQL;
 import de.k7bot.manage.SQLManager;
 import de.k7bot.manage.SlashCommandManager;
 import de.k7bot.music.MusicInitializer;
@@ -27,11 +20,14 @@ import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VPlan_main;
+import de.k7bot.util.LiteSQL;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,6 +76,7 @@ public class Klassenserver7bbot {
     private final GLA lyricsapiold;
     private Long ownerId;
     private String vplanpw = "";
+    public static JsonObject teacherslist;
 
     public int sec = 60;
     public int min = 0;
@@ -113,6 +110,25 @@ public class Klassenserver7bbot {
         INSTANCE = this;
 
         List<String> conf = new ArrayList<>();
+        
+        File file = new File("resources/teachers.json");
+
+		if (file != null) {
+
+			try {
+
+				String jsonstring = Files.readString(Path.of(file.getPath()));
+
+				JsonElement json = JsonParser.parseString(jsonstring);
+				teacherslist = json.getAsJsonObject();
+
+			} catch (IOException e1) {
+
+				e1.printStackTrace();
+
+			}
+
+		}
 
         try {
             conf = Files.readAllLines(Paths.get("bot.properties"));
@@ -208,12 +224,14 @@ public class Klassenserver7bbot {
         builder.addEventListeners(new VoiceListener());
         builder.addEventListeners(new ReactionListener());
         builder.addEventListeners(new Role_InviteListener());
+        builder.addEventListeners(new RoleEditListener());
         builder.addEventListeners(new BanListener());
         builder.addEventListeners(new JoinandLeaveListener());
         builder.addEventListeners(new ChannelCreateRemoveListener());
         builder.addEventListeners(new SlashCommandListener());
         builder.addEventListeners(new AutoRickroll());
         builder.addEventListeners(new MemesReact());
+        builder.addEventListeners(new BotgetDC());
 
         this.shardMan = builder.build();
         AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);

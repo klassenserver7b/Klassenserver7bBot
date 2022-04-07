@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.LiteSQL;
-import de.k7bot.manage.PermissionError;
+import de.k7bot.util.LiteSQL;
+import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

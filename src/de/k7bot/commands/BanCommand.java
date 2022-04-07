@@ -3,8 +3,9 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.PermissionError;
+import de.k7bot.util.SyntaxError;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,15 +22,15 @@ public class BanCommand implements ServerCommand {
 		List<Member> ment = message.getMentionedMembers();
 		try {
 			String grund = message.getContentDisplay()
-					.substring(((Member) ment.get(0)).getEffectiveName().length() + 8);
+					.substring(ment.get(0).getEffectiveName().length() + 8);
 			message.delete().queue();
 
 			channel.sendTyping().queue();
 
-			if (m.hasPermission(new Permission[] { Permission.BAN_MEMBERS })) {
+			if (m.hasPermission(Permission.BAN_MEMBERS)) {
 				if (ment.size() > 0) {
 					for (Member u : ment) {
-						onBan(m, u, channel, message, grund);
+						onBan(m, u, channel, grund);
 					}
 				}
 			} else {
@@ -40,7 +41,7 @@ public class BanCommand implements ServerCommand {
 		}
 	}
 
-	public void onBan(Member requester, Member u, TextChannel channel, Message message, String grund) {
+	public void onBan(Member requester, Member u, TextChannel channel, String grund) {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setFooter("Requested by @" + requester.getEffectiveName());
 		builder.setTimestamp(OffsetDateTime.now());

@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 import java.awt.Color;
 
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.manage.PermissionError;
+import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -33,7 +33,7 @@ public class ToEmbedSlashCommand implements SlashCommand {
 
 			if (coloropt != null) {
 
-				String colortxt = "#000000";
+				String colortxt;
 				colortxt = coloropt.getAsString();
 				
 				if (!colortxt.startsWith("#")) {
