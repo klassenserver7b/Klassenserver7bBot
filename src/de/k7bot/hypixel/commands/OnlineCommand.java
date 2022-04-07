@@ -3,7 +3,7 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.SyntaxError;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -75,7 +75,7 @@ public class OnlineCommand implements HypixelCommand {
 						state = "offline";
 					}
 
-					channel.sendMessage(String.valueOf(name) + " is currently " + state).queue();
+					channel.sendMessage(name + " is currently " + state).queue();
 				}
 			}
 

@@ -2,8 +2,8 @@ package de.k7bot.slashcommands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.manage.LiteSQL;
-import de.k7bot.manage.PermissionError;
+import de.k7bot.util.LiteSQL;
+import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
@@ -33,7 +33,7 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 			TextChannel tc = channel.getAsTextChannel();
 			Role role = roleop.getAsRole();
-			Long MessageId = messageid.getAsLong();
+			long MessageId = messageid.getAsLong();
 
 			try {
 
@@ -47,7 +47,7 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 			} catch (NumberFormatException e) {
 
-				tc.addReactionById(MessageId, emoteop.getAsString()).queue();;
+				tc.addReactionById(MessageId, emoteop.getAsString()).queue();
 				
 				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"

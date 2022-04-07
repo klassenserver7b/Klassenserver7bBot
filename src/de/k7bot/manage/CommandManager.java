@@ -18,6 +18,7 @@ import de.k7bot.commands.ShutdownCommand;
 import de.k7bot.commands.StatsChannelCommand;
 import de.k7bot.commands.TestCommand;
 import de.k7bot.commands.StopTimeoutCommand;
+import de.k7bot.commands.TeacherCommand;
 import de.k7bot.commands.WarnCommand;
 import de.k7bot.commands.addReactionCommand;
 import de.k7bot.commands.helpCommand;
@@ -97,6 +98,7 @@ public class CommandManager {
 		this.commands.put("lyricsold", new Lyricsoldcommand());
 		this.commands.put("queuelist", new QueuelistCommand());
 		this.commands.put("test", new TestCommand());
+		this.commands.put("teacher", new TeacherCommand());
 
 		this.help.put("help", "Zeigt diese Hilfe.");
 		this.help.put("clear", "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50");
@@ -146,6 +148,7 @@ public class CommandManager {
 		this.help.put("lyrics", "Sendet die lyrics des aktuell gespielten songs in den aktuellen channel.");
 		this.help.put("lyricsold", "Siehe lyrics! - Unterstützt nur Genius als Lyrics-Provider (findet weniger als der main-command), besitzt aber ein Embed-icon und bessere Lyrics-Gliederung (in z.B. Chorus, pre-Chorus, Strophe, etc.)");
 		this.help.put("queuelist", "Zeigt die aktuelle Queuelist an.");
+		this.help.put("teacher", "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählen Lehrer an. \n - z.B. [prefix]teacher [Leherkürzel]");
 
 		this.category.put("help", "Allgemein");
 		this.category.put("clear", "Tools");
@@ -181,6 +184,7 @@ public class CommandManager {
 		this.category.put("lyrics", "Musik");
 		this.category.put("lyricsold", "Musik");
 		this.category.put("queuelist", "Musik");
+		this.category.put("teacher", "Allgemein");
 	}
 
 	public boolean perform(String command, Member m, TextChannel channel, Message message) {

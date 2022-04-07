@@ -2,7 +2,8 @@
 package de.k7bot.commands;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
+import de.k7bot.util.PermissionError;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class ClearCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (m.hasPermission((GuildChannel) channel, new Permission[] { Permission.MESSAGE_MANAGE })) {
+		if (m.hasPermission(channel, Permission.MESSAGE_MANAGE)) {
 
 			String[] args = message.getContentStripped().split(" ");
 
@@ -31,7 +32,7 @@ public class ClearCommand implements ServerCommand {
 				TextChannel system = channel.getGuild().getSystemChannel();
 				if (channel != system) {
 
-					channel.sendMessage(String.valueOf(amount) + " messages deleted.").complete().delete()
+					channel.sendMessage(amount + " messages deleted.").complete().delete()
 							.queueAfter(3L, TimeUnit.SECONDS);
 
 				}
@@ -40,7 +41,7 @@ public class ClearCommand implements ServerCommand {
 				builder.setColor(16345358);
 				builder.setFooter("requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());
-				builder.setDescription(String.valueOf(amount) + " messages deleted!\n\n" + "**Channel: **\n" + "#"
+				builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
 						+ channel.getName());
 				system.sendMessageEmbeds(builder.build()).queue();
 
@@ -61,10 +62,8 @@ public class ClearCommand implements ServerCommand {
 
 			chan.purgeMessages(get(chan, amount));
 
-			return;
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 

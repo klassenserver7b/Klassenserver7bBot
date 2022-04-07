@@ -3,8 +3,9 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.PermissionError;
+import de.k7bot.util.SyntaxError;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

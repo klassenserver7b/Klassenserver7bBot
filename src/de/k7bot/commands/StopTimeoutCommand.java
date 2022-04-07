@@ -2,8 +2,9 @@ package de.k7bot.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.PermissionError;
+import de.k7bot.util.SyntaxError;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,10 +25,10 @@ public class StopTimeoutCommand implements ServerCommand {
 
 			channel.sendTyping().queue();
 
-			if (m.hasPermission(new Permission[] { Permission.MESSAGE_MANAGE })) {
+			if (m.hasPermission(Permission.MESSAGE_MANAGE)) {
 				if (ment.size() > 0) {
 					for (Member u : ment) {
-						stopTimeout(m, u, channel, message);
+						stopTimeout(m, u, channel);
 					}
 				}
 			} else {
@@ -38,7 +39,7 @@ public class StopTimeoutCommand implements ServerCommand {
 		}
 	}
 
-	public void stopTimeout(Member requester, Member u, TextChannel channel, Message message) {
+	public void stopTimeout(Member requester, Member u, TextChannel channel) {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setFooter("Requested by @" + requester.getEffectiveName());
 		builder.setTimestamp(OffsetDateTime.now());

@@ -3,8 +3,9 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.PermissionError;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.PermissionError;
+import de.k7bot.util.SyntaxError;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,16 +23,16 @@ public class kickCommand implements ServerCommand {
 
 		try {
 			String grund = message.getContentDisplay()
-					.substring(((Member) ment.get(0)).getEffectiveName().length() + 8);
+					.substring(ment.get(0).getEffectiveName().length() + 8);
 
 			message.delete().queue();
 
 			channel.sendTyping().queue();
 
-			if (m.hasPermission(new Permission[] { Permission.KICK_MEMBERS })) {
+			if (m.hasPermission(Permission.KICK_MEMBERS)) {
 				if (ment.size() > 0) {
 					for (Member u : ment) {
-						onkick(m, u, channel, message, grund);
+						onkick(m, u, channel, grund);
 					}
 				}
 			} else {
@@ -42,7 +43,7 @@ public class kickCommand implements ServerCommand {
 		}
 	}
 
-	public void onkick(Member requester, Member u, TextChannel channel, Message message, String grund) {
+	public void onkick(Member requester, Member u, TextChannel channel, String grund) {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setFooter("Requested by @" + requester.getEffectiveName());
 		builder.setTimestamp(OffsetDateTime.now());

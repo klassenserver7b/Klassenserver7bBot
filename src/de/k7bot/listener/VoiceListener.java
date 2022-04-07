@@ -2,7 +2,8 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.manage.LiteSQL;
+import de.k7bot.util.LiteSQL;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

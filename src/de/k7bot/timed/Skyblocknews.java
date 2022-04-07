@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.gson.JsonArray;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.manage.LiteSQL;
+import de.k7bot.util.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.hypixel.api.HypixelAPI;
@@ -34,8 +34,8 @@ public class Skyblocknews {
 				while (set.next()) {
 
 					String time = set.getString(1);
-					Long chan = set.getLong(2);
-					Long guildId = set.getLong(3);
+					long chan = set.getLong(2);
+					long guildId = set.getLong(3);
 					Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildId);
 
 					datesdb.add(time);
@@ -43,9 +43,7 @@ public class Skyblocknews {
 
 				}
 
-				arr.forEach(json -> {
-					dates.add(json.getAsJsonObject().get("text").getAsString());
-				});
+				arr.forEach(json -> dates.add(json.getAsJsonObject().get("text").getAsString()));
 
 				dates.forEach(str -> {
 

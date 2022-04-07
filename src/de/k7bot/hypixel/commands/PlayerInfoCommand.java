@@ -3,9 +3,10 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.manage.SyntaxError;
+import de.k7bot.util.SyntaxError;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -70,8 +71,8 @@ public class PlayerInfoCommand implements HypixelCommand {
 					if (friend.getUuidSender().compareTo(this.id) != 0) {
 
 						try {
-							if (MojangAPI.getName(this.id) != MojangAPI.getName(friend.getUuidSender())) {
-								this.friends = String.valueOf(this.friends)
+							if (!Objects.equals(MojangAPI.getName(this.id), MojangAPI.getName(friend.getUuidSender()))) {
+								this.friends = this.friends
 										+ MojangAPI.getUsername(friend.getUuidSender()) + ", ";
 							}
 						} catch (APIException | IOException e) {
@@ -82,7 +83,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 						try {
 
-							this.friends = String.valueOf(this.friends)
+							this.friends = this.friends
 									+ MojangAPI.getUsername(friend.getUuidReceiver()) + ", ";
 						} catch (APIException | IOException e) {
 							e.printStackTrace();
@@ -122,13 +123,11 @@ public class PlayerInfoCommand implements HypixelCommand {
 				System.err.println("Oh no, our API request failed!");
 				e.getCause().printStackTrace();
 
-				return;
 			} catch (InterruptedException e) {
 				System.err.println("Oh no, the player fetch thread was interrupted!");
 				e.printStackTrace();
 				Thread.currentThread().interrupt();
 
-				return;
 			}
 		} else {
 			SyntaxError.oncmdSyntaxError(channel, "hypixel playerinfo [playername]", m);
