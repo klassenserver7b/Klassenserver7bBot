@@ -4,8 +4,11 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,14 +16,28 @@ import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class helpCommand implements ServerCommand {
+	private int limitmultiplicator = 1;
+	private int buildlength = 0;
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
 
 		onHelpEmbed(m, channel);
 
-		((Message) channel.sendMessage("** look into your DM's **" + m.getAsMention()
+		channel.sendMessage("** look into your DM's **" + m.getAsMention()
 				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)")
-				.complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
+				.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt diese Hilfe an.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Allgemein";
+		return category;
 	}
 
 	/**
@@ -35,56 +52,84 @@ public class helpCommand implements ServerCommand {
 	 */
 	public void onHelpEmbed(Member member, TextChannel channel) {
 		ConcurrentHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
-		ConcurrentHashMap<String, String> help = (Klassenserver7bbot.INSTANCE.getCmdMan()).help;
-		ConcurrentHashMap<String, String> category = (Klassenserver7bbot.INSTANCE.getCmdMan()).category;
-
-		StringBuilder strbuild = new StringBuilder();
-
-		strbuild.append("**Allgemein**\n\n");
-
-		commands.forEachKey(0L, name -> {
-			if (help.get(name) != null && category.get(name).equalsIgnoreCase("Allgemein")) {
-				strbuild.append("`-" + name + "` - " + (String) help.get(name) + "\n\n");
-			}
-		});
-
-		strbuild.append("**Tools**\n\n");
-
-		commands.forEachKey(0L, name -> {
-			if (help.get(name) != null && category.get(name).equalsIgnoreCase("Tools")) {
-				strbuild.append("`-" + name + "` - " + (String) help.get(name) + "\n\n");
-			}
-		});
-
-		strbuild.append("**Musik**\n\n");
-
-		commands.forEachKey(0L, name -> {
-			if (help.get(name) != null && category.get(name).equalsIgnoreCase("Musik")) {
-				strbuild.append("`-" + name + "` - " + (String) help.get(name) + "\n\n");
-			}
-		});
-
-		strbuild.append("**Games**\n\n");
-
-		commands.forEachKey(0L, name -> {
-			if (help.get(name) != null && category.get(name).equalsIgnoreCase("Games")) {
-				strbuild.append("`-" + name + "` - " + (String) category.get(name) + "\n\n");
-			}
-		});
-
-		strbuild.append("**Moderation**\n\n");
-
-		commands.forEachKey(0L, name -> {
-			if (help.get(name) != null && category.get(name).equalsIgnoreCase("Moderation")) {
-				strbuild.append("`-" + name + "` - " + (String) help.get(name) + "\n\n");
-			}
-		});
+		List<String> categories = new ArrayList<>();
 
 		EmbedBuilder messbuild = new EmbedBuilder();
 
-		messbuild.setDescription("Befehle auf diesem Server beginnen mit `"
-				+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()) + "`\n\n"
-				+ "**Hilfe zum Bot:**\n\n" + strbuild.toString().trim());
+		commands.forEachValue(0, command -> {
+
+			if (command.getcategory() != null && !categories.contains(command.getcategory())) {
+
+				categories.add(command.getcategory());
+
+			}
+
+		});
+
+		// adds the headline to the Embed
+		messbuild.addField("**General**",
+				"Befehle auf diesem Server beginnen mit `"
+						+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()) + "`\n"
+						+ "[TEXT] stellt benötigte Commandargumente dar.\n"
+						+ "<TEXT> stellt optionale Commandargumente dar.\n" + "\n\n",
+				false);
+
+		categories.forEach(cat -> {
+
+			StringBuilder build = new StringBuilder();
+
+			commands.forEachKey(0, key -> {
+
+				String help = commands.get(key).gethelp();
+
+				if (commands.get(key).getcategory() != null && commands.get(key).getcategory().equalsIgnoreCase(cat)
+						&& help != null) {
+
+					StringBuilder inbuild = new StringBuilder();
+
+					inbuild.append("`");
+					inbuild.append(Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()));
+					inbuild.append(key);
+					inbuild.append("` - ");
+					inbuild.append(help);
+					inbuild.append("\n\n");
+
+					if (buildlength + inbuild.length() >= 1024 * limitmultiplicator) {
+						
+						buildlength += inbuild.length();
+						limitmultiplicator++;
+						build.append("?%?");
+						build.append(inbuild.toString().trim());
+
+					} else {
+
+						buildlength += inbuild.length();
+						build.append(inbuild.toString().trim());
+
+					}
+
+				}
+
+			});
+
+			String[] helpparts = build.toString().split("\\?%\\?");
+			
+			//System.out.println(helpparts.length + "; " + cat);
+
+			for (int i = 0; i < helpparts.length; i++) {
+				
+				//System.out.println("length: " + helpparts[i].length());
+
+				if (i == 0) {
+					messbuild.addField("**" + cat + "**", helpparts[i], false);
+				} else {
+					messbuild.addField("", helpparts[i], false);
+				}
+			}
+
+			limitmultiplicator = 1;
+			buildlength = 0;
+		});
 
 		messbuild.setColor(3066993);
 		messbuild.setFooter("by @Klassenserver 7b");
@@ -107,6 +152,9 @@ public class helpCommand implements ServerCommand {
 
 			channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 		}
+
+		limitmultiplicator = 1;
+		buildlength = 0;
 
 	}
 }

@@ -19,13 +19,13 @@ public class QueuelistCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+		
 
 		MusicController contr = Klassenserver7bbot.INSTANCE.playerManager.getController(channel.getGuild().getIdLong());
 		Queue queue = contr.getQueue();
-		List<AudioTrack> queuelist = queue.queuelist;
+		List<AudioTrack> queuelist = queue.getQueuelist();
 
-		if (!queue.queuelist.isEmpty()) {
+		if (!queuelist.isEmpty()) {
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setFooter("Requested by @" + m.getEffectiveName());
@@ -65,6 +65,18 @@ public class QueuelistCommand implements ServerCommand {
 
 		}
 
+	}
+	
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die aktuelle Queuelist an.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 
 }

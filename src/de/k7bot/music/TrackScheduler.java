@@ -29,6 +29,7 @@ public class TrackScheduler extends AudioEventAdapter {
 	}
 
 	public void onPlayerResume(AudioPlayer player) {
+
 	}
 
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
@@ -90,26 +91,30 @@ public class TrackScheduler extends AudioEventAdapter {
 	}
 
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+
 		long guildid = Klassenserver7bbot.INSTANCE.playerManager.getGuildbyPlayerHash(player.hashCode());
 		Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildid);
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
+		Queue queue = controller.getQueue();
+		AudioManager manager = guild.getAudioManager();
 
 		if (endReason.mayStartNext) {
-			Queue queue = controller.getQueue();
-			if (queue.next()) {
+
+			if (queue.next(track)) {
 				return;
 			}
-			AudioManager manager = guild.getAudioManager();
 			player.stopTrack();
 			manager.closeAudioConnection();
+
 		} else {
 
-			Queue queue = controller.getQueue();
 			if (queue.emptyQueueList() && !PlayCommand.next) {
-				AudioManager manager = guild.getAudioManager();
+
 				player.stopTrack();
 				manager.closeAudioConnection();
+
 			}
+
 		}
 
 	}

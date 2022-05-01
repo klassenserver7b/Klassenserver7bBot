@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class PauseCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		MusicUtil util = Klassenserver7bbot.INSTANCE.getMusicUtil();
-		message.delete().queue();
+		
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
 			AudioChannel vc;
@@ -38,5 +38,17 @@ public class PauseCommand implements ServerCommand {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public String gethelp() {
+		String help = "Pausiert den aktuellen Track.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

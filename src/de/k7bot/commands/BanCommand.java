@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -21,9 +20,7 @@ public class BanCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentionedMembers();
 		try {
-			String grund = message.getContentDisplay()
-					.substring(ment.get(0).getEffectiveName().length() + 8);
-			message.delete().queue();
+			String grund = message.getContentDisplay().substring(ment.get(0).getEffectiveName().length() + 8);
 
 			channel.sendTyping().queue();
 
@@ -41,6 +38,18 @@ public class BanCommand implements ServerCommand {
 		}
 	}
 
+	@Override
+	public String gethelp() {
+		String help = "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
+	}
+
 	public void onBan(Member requester, Member u, TextChannel channel, String grund) {
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setFooter("Requested by @" + requester.getEffectiveName());
@@ -56,17 +65,21 @@ public class BanCommand implements ServerCommand {
 
 		builder.setDescription(strBuilder);
 
-		Guild guild = channel.getGuild();
-		TextChannel system = guild.getSystemChannel();
+		TextChannel system;
 
 		try {
 			u.ban(7).reason(grund).queue();
 
+			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
+				system.sendMessageEmbeds(builder.build()).queue();
+
+			}
+
 			if (system.getIdLong() != channel.getIdLong()) {
-				(channel.sendMessageEmbeds(builder.build()).complete()).delete().queueAfter(20L, TimeUnit.SECONDS);
-				system.sendMessageEmbeds(builder.build()).queue();
-			} else {
-				system.sendMessageEmbeds(builder.build()).queue();
+
+				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+
 			}
 
 			String action = "ban";

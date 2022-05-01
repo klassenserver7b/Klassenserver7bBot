@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 public class TimeoutCommand implements ServerCommand {
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+		
 
 		List<Member> ment = message.getMentionedMembers();
 		String[] args = message.getContentStripped().split(" ");
@@ -64,11 +64,16 @@ public class TimeoutCommand implements ServerCommand {
 			builder.setTitle("@" + u.getEffectiveName() + " has been timeouted for "+Long.parseLong(time)+" minutes");
 			builder.setDescription(strBuilder);
 			
+			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
+				system.sendMessageEmbeds(builder.build()).queue();
+
+			}
+
 			if (system.getIdLong() != channel.getIdLong()) {
+				
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
-				system.sendMessageEmbeds(builder.build()).queue();
-			}else {
-				system.sendMessageEmbeds(builder.build()).queue();
+				
 			}
 
 			String action = "timeout";
@@ -86,5 +91,18 @@ public class TimeoutCommand implements ServerCommand {
 			SyntaxError.oncmdSyntaxError(channel, "timeout [time (in minutes)] [reason] @user", requester);
 
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
+		
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 }

@@ -11,7 +11,7 @@ public class TestCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+		
 
 		List<Member> memb = message.getMentionedMembers();
 
@@ -25,6 +25,16 @@ public class TestCommand implements ServerCommand {
 
 		}
 
+	}
+	
+	@Override
+	public String gethelp() {
+		return null;
+	}
+
+	@Override
+	public String getcategory() {
+		return null;
 	}
 
 }

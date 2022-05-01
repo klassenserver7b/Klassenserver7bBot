@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ReactRolesCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
@@ -63,5 +63,17 @@ public class ReactRolesCommand implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Tools";
+		return category;
 	}
 }

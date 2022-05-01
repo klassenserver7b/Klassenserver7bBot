@@ -89,5 +89,17 @@ public class RoleCreation implements ServerCommand {
 			PermissionError.onPermissionError(m, channel);
 		}
 	}
+	
+	@Override
+	public String gethelp() {
+		String help = "Erstellt eine Rolle mit dem gewählten Namen und ggf. der gewählten Farbe.\n - kann nur von Mitgliedern mit der Berechtigung 'Manage-Roles' ausgeführt werden!\n - z.B. [prefix]createrole [test] <#ffffff>";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+String category = "Tools";
+		return category;
+	}
 
 }

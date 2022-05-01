@@ -21,7 +21,7 @@ public class StatsChannelCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-		message.delete().queue();
+		
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
 			Guild guild = channel.getGuild();
@@ -57,6 +57,18 @@ public class StatsChannelCommand implements ServerCommand {
 			PermissionError.onPermissionError(m, channel);
 		}
 
+	}
+	
+	@Override
+	public String gethelp() {
+		String help = "Legt eine Kategorie mit dem Bot-Status (Online/Offline) an.\n - kann nur von Mitgliedern mit der Berechtigung 'Administrator' ausgeührt werden!";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Tools";
+		return category;
 	}
 
 	public static void fillCategory(Category cat, boolean devmode) {

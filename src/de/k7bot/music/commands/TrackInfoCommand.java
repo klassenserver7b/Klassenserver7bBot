@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class TrackInfoCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		MusicUtil util = Klassenserver7bbot.INSTANCE.getMusicUtil();
-		message.delete().queue();
+		
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 				.getController(channel.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
@@ -52,5 +52,17 @@ public class TrackInfoCommand implements ServerCommand {
 			builder.setDescription("Der Bot spielt gerade keinen Song");
 			util.sendEmbed(channel.getGuild().getIdLong(), builder);
 		}
+	}
+	
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Info zum aktuellen Track.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

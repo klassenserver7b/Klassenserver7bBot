@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>5.0.0-alpha.9</version>
+			<version>5.0.0-alpha.11</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sedmelluq</groupId>
@@ -103,6 +103,16 @@
 			<groupId>com.github.LowLevelSubmarine</groupId>
 			<artifactId>GeniusLyricsAPI</artifactId>
 			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-youtube</artifactId>
+			<version>v3-rev189-1.23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vdurmont</groupId>
+			<artifactId>emoji-java</artifactId>
+			<version>4.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

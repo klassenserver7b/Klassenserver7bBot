@@ -15,18 +15,18 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class PrefixCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
-		if (m.hasPermission(Permission.ADMINISTRATOR )) {
+
+		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 			String[] args = message.getContentDisplay().split(" ");
 			if (args.length > 1) {
 				Klassenserver7bbot.INSTANCE.prefixl.put(channel.getGuild().getIdLong(), args[1]);
-				Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET prefix = '" + args[1] + "' WHERE guildId = " + channel.getGuild().getIdLong());
+				Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET prefix = '" + args[1]
+						+ "' WHERE guildId = " + channel.getGuild().getIdLong());
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setFooter("Requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());
 				builder.setTitle("Prefix was set to \"" + args[1] + "\"");
-				(channel.sendMessageEmbeds(builder.build())
-						.complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
+				(channel.sendMessageEmbeds(builder.build()).complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
 			} else {
 
 				SyntaxError.oncmdSyntaxError(channel, "prefix [String]", m);
@@ -34,5 +34,17 @@ public class PrefixCommand implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix] '-'";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Tools";
+		return category;
 	}
 }

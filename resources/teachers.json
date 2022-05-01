@@ -219,6 +219,11 @@
     "gender": "female",
     "full_name": "E. Santura"
   },
+  "Sat": {
+    "is_doctor": false,
+    "gender": "male",
+    "full_name": "Robert Sattler"
+  },
   "Sch": {
     "is_doctor": true,
     "gender": "female",

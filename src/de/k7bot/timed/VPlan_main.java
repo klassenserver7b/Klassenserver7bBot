@@ -42,7 +42,9 @@ public class VPlan_main {
 
 	public void sendvplanMessage(String cunext) {
 
-		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(cunext);
+		JsonObject plan = getPlan(cunext);
+		
+		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(cunext, plan);
 		Guild guild;
 		TextChannel channel;
 
@@ -75,7 +77,7 @@ public class VPlan_main {
 			EmbedBuilder embbuild = new EmbedBuilder();
 
 			if (cunext.equalsIgnoreCase("next")) {
-				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für den nächsten Schultag! \n");
+				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "+plan.get("head").getAsJsonObject().get("title").getAsString()+"\n");
 			} else {
 				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für Heute! \n");
 			}
@@ -155,11 +157,10 @@ public class VPlan_main {
 		}
 	}
 
-	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(String cunext) {
+	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(String cunext, JsonObject plan) {
 
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
-		JsonObject plan = getPlan(cunext);
 
 		if (plan != null) {
 			String info = plan.get("info").toString();

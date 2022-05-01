@@ -6,11 +6,14 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import core.GLA;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.util.SongTitle;
+import de.k7bot.util.TitleStripper;
 import genius.SongSearch;
 import genius.SongSearch.Hit;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,7 +28,6 @@ public class Lyricsoldcommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		message.delete().queue();
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
 			AudioChannel vc;
@@ -38,25 +40,38 @@ public class Lyricsoldcommand implements ServerCommand {
 					GLA lapi = Klassenserver7bbot.INSTANCE.getLyricsAPIold();
 					SongSearch search = null;
 
-					
-						try {
-							search = lapi.search(player.getPlayingTrack().getInfo().title);
-						} catch (IOException e) {
-							e.printStackTrace();
+					Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Old-Lyrics Querry: "
+							+ TitleStripper.stripTitle(player.getPlayingTrack().getInfo().title));
+					try {
+
+						AudioTrackInfo info = player.getPlayingTrack().getInfo();
+						SongTitle stitle = TitleStripper.stripTitle(info.title);
+						String title = stitle.getTitle();
+
+						if (stitle.containsauthor()) {
+
+							search = lapi.search(title);
+
+						} else {
+
+							search = lapi.search(info.author + " - " + title);
+
 						}
 
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 
 					if (!search.getHits().isEmpty()) {
 						Hit hit = search.getHits().getFirst();
 						channel.sendTyping().queue();
 
 						EmbedBuilder builder = new EmbedBuilder();
-						
+
 						builder.setThumbnail(hit.getThumbnailUrl());
 						builder.setAuthor(channel.getGuild().getSelfMember().getEffectiveName());
 						builder.setTitle("Lyrics of " + hit.getTitle() + " from " + hit.getArtist().getName());
-						builder.setFooter(
-								"Requested by @" + m.getEffectiveName() + " | Lyrics by Genius");
+						builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by Genius");
 						builder.setTimestamp(OffsetDateTime.now());
 						builder.setColor(Color.decode("#14cdc8"));
 
@@ -87,6 +102,18 @@ public class Lyricsoldcommand implements ServerCommand {
 			}
 		}
 
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Siehe lyrics! - Unterstützt nur Genius als Lyrics-Provider (findet weniger als der Haupt-command), besitzt aber ein Embed-icon und bessere Lyrics-Gliederung (in z.B. Chorus, pre-Chorus, Strophe, etc.)";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 
 }

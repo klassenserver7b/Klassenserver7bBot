@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 public class StopCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
 			AudioChannel vc;
@@ -29,5 +29,17 @@ public class StopCommand implements ServerCommand {
 				manager.closeAudioConnection();
 			}
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Stopt den aktuellen Track und der Bot verlässt den VoiceChannel.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

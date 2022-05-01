@@ -1,6 +1,15 @@
-Mehr logging allerdings auf debug level z.B. hypixel api errors oder reconnecting zeugs
+Lyrics search verwendet wenn "Title = songtitle" und nicht "Title = songtitle - autor"  -> "title + autor" als query
+APIs ohne angegebenen config key schalten sich ab
+Equalizer für Music
+Mehrere player per guild (music)
 YT-Api
 Vplan in Tabelle
 Stundenplan integration
 Language per channel
 GitHub-API
+
+
+Generell:
+
+Mehr logging allerdings auf debug level z.B. hypixel api errors oder reconnecting zeugs
+KOMMENTIEREN!!!

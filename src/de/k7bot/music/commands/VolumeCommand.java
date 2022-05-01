@@ -17,12 +17,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class VolumeCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		String[] args = message.getContentDisplay().split(" ");
 		try {
-			int volume = Integer.parseInt(args[1]);
 			Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
 			if (args.length > 1) {
+				int volume = Integer.parseInt(args[1]);
 				if (volume > 0) {
 					if (volume <= 100) {
 						Guild guild = channel.getGuild();
@@ -30,7 +30,8 @@ public class VolumeCommand implements ServerCommand {
 								.getController(guild.getIdLong());
 						AudioPlayer player = controller.getPlayer();
 						player.setVolume(volume);
-						Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET volume = " + volume + " WHERE guildId = "+channel.getGuild().getIdLong());
+						Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET volume = " + volume
+								+ " WHERE guildId = " + channel.getGuild().getIdLong());
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setFooter("Requested by @" + m.getEffectiveName());
 						builder.setTimestamp(OffsetDateTime.now());
@@ -46,7 +47,8 @@ public class VolumeCommand implements ServerCommand {
 				} else {
 					channel.sendMessage(
 							"Brudi was willst den du? Wenn du nix hören willst dann lefte doch den channel oder gebe `"
-									+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()) + "stop ` ein :rage:")
+									+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong())
+									+ "stop ` ein :rage:")
 							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 				}
 			} else {
@@ -55,5 +57,17 @@ public class VolumeCommand implements ServerCommand {
 		} catch (NumberFormatException e) {
 			SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

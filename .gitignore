@@ -5,6 +5,6 @@
 /.vs
 
 bot.properties
-datenbank.db
+/resources/datenbank.db
 .classpath
 .project

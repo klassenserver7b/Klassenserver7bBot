@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ModLogsCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		if (m.hasPermission(Permission.KICK_MEMBERS)) {
 			List<Member> memb = message.getMentionedMembers();
 			if (!memb.isEmpty()) {
@@ -58,17 +58,16 @@ public class ModLogsCommand implements ServerCommand {
 							embed.setTimestamp(OffsetDateTime.now());
 							embed.setThumbnail(memb.get(0).getUser().getEffectiveAvatarUrl());
 							embed.setFooter("requested by @" + m.getEffectiveName());
-							embed.setDescription("moderator: @" + memb.get(0).getEffectiveName() + "\n"
-									+ "action: " + action.get(j) + "\n" + "user: " + membName.get(j)
-									+ "\n" + "reason: " + reason.get(j) + "\n" + "date: "
-									+ date.get(j));
+							embed.setDescription("moderator: @" + memb.get(0).getEffectiveName() + "\n" + "action: "
+									+ action.get(j) + "\n" + "user: " + membName.get(j) + "\n" + "reason: "
+									+ reason.get(j) + "\n" + "date: " + date.get(j));
 							channel.sendMessageEmbeds(embed.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0])
 									.queue();
 						}
 					} else {
 
-						channel.sendMessage("This moderator hasn't a log!").complete().delete()
-								.queueAfter(20L, TimeUnit.SECONDS);
+						channel.sendMessage("This moderator hasn't a log!").complete().delete().queueAfter(20L,
+								TimeUnit.SECONDS);
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -80,5 +79,17 @@ public class ModLogsCommand implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Logs zu einem Moderator.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @moderator";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 }

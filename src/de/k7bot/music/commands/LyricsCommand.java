@@ -8,10 +8,13 @@ import java.util.concurrent.TimeUnit;
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.util.SongTitle;
+import de.k7bot.util.TitleStripper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -23,7 +26,7 @@ public class LyricsCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
 			AudioChannel vc;
@@ -35,21 +38,38 @@ public class LyricsCommand implements ServerCommand {
 				if (player.getPlayingTrack() != null) {
 					LyricsClient lapi = Klassenserver7bbot.INSTANCE.getLyricsAPI();
 					Lyrics lyrics = null;
-					
-						try {
-							lyrics = lapi.getLyrics(player.getPlayingTrack().getInfo().title).get();
-						} catch (InterruptedException | ExecutionException e) {
-							e.printStackTrace();
+
+					Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
+							+ TitleStripper.stripTitle(player.getPlayingTrack().getInfo().title));
+					try {
+
+						AudioTrackInfo info = player.getPlayingTrack().getInfo();
+						SongTitle stitle = TitleStripper.stripTitle(info.title);
+						String title = stitle.getTitle();
+
+						if (stitle.containsauthor()) {
+
+							lyrics = lapi.getLyrics(title).get();
+
+						} else {
+
+							lyrics = lapi.getLyrics(info.author + " - " + title).get();
+
 						}
-						
-					if (lyrics!=null) {
+
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+					}
+
+					if (lyrics != null) {
 						channel.sendTyping().queue();
 
 						EmbedBuilder builder = new EmbedBuilder();
 
 						builder.setAuthor(channel.getGuild().getSelfMember().getEffectiveName());
 						builder.setTitle("Lyrics of " + lyrics.getTitle() + " from " + lyrics.getAuthor());
-						builder.setFooter("Requested by @" + m.getEffectiveName()+ " | Lyrics by "+lyrics.getSource());
+						builder.setFooter(
+								"Requested by @" + m.getEffectiveName() + " | Lyrics by " + lyrics.getSource());
 						builder.setTimestamp(OffsetDateTime.now());
 						builder.setColor(Color.decode("#14cdc8"));
 
@@ -80,6 +100,18 @@ public class LyricsCommand implements ServerCommand {
 			}
 		}
 
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 
 }

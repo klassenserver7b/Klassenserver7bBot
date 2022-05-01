@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class MemberLogsCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		if (m.hasPermission(Permission.KICK_MEMBERS)) {
 			List<Member> memb = message.getMentionedMembers();
 			if (!memb.isEmpty()) {
@@ -58,10 +58,9 @@ public class MemberLogsCommand implements ServerCommand {
 							embed.setTimestamp(OffsetDateTime.now());
 							embed.setThumbnail(memb.get(0).getUser().getEffectiveAvatarUrl());
 							embed.setFooter("requested by @" + m.getEffectiveName());
-							embed.setDescription("user: @" + memb.get(0).getEffectiveName() + "\n"
-									+ "action: " + action.get(j) + "\n" + "moderator: "
-									+ requName.get(j) + "\n" + "reason: " + reason.get(j) + "\n"
-									+ "date: " + date.get(j));
+							embed.setDescription("user: @" + memb.get(0).getEffectiveName() + "\n" + "action: "
+									+ action.get(j) + "\n" + "moderator: " + requName.get(j) + "\n" + "reason: "
+									+ reason.get(j) + "\n" + "date: " + date.get(j));
 							channel.sendMessageEmbeds(embed.build()).queue();
 						}
 					} else {
@@ -78,5 +77,17 @@ public class MemberLogsCommand implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 }

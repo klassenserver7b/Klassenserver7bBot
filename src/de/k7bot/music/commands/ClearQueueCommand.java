@@ -9,12 +9,26 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ClearQueueCommand implements ServerCommand {
+	
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+		
 		long guildid = channel.getGuild().getIdLong();
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
 		Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
 		Queue queue = controller.getQueue();
 		queue.clearQueue();
+	}
+	
+
+	@Override
+	public String gethelp() {
+		String help = "Löscht die aktuelle Queuelist.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

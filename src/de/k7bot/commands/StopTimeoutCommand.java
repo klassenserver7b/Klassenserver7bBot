@@ -21,7 +21,6 @@ public class StopTimeoutCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentionedMembers();
 		try {
-			message.delete().queue();
 
 			channel.sendTyping().queue();
 
@@ -37,6 +36,18 @@ public class StopTimeoutCommand implements ServerCommand {
 		} catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(channel, "stoptimeout [@user]", m);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 
 	public void stopTimeout(Member requester, Member u, TextChannel channel) {
@@ -59,13 +70,18 @@ public class StopTimeoutCommand implements ServerCommand {
 		try {
 			u.removeTimeout().queue();
 
-			if (system.getIdLong() != channel.getIdLong()) {
-				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10, TimeUnit.SECONDS);
+			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
 				system.sendMessageEmbeds(builder.build()).queue();
-			}else {
-				system.sendMessageEmbeds(builder.build()).queue();
+
 			}
-			
+
+			if (system.getIdLong() != channel.getIdLong()) {
+
+				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+
+			}
+
 			String action = "stoptimeout";
 			Klassenserver7bbot.INSTANCE.getDB().onUpdate(
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("

@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class NoncoreCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		List<String> songs = new ArrayList<>();
 
 		GuildVoiceState state;
@@ -67,5 +67,17 @@ public class NoncoreCommand implements ServerCommand {
 			((Message) channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete()).delete()
 					.queueAfter(10L, TimeUnit.SECONDS);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = null;
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = null;
+		return category;
 	}
 }

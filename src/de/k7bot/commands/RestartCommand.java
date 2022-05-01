@@ -10,33 +10,45 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-public class RestartCommand implements ServerCommand{
+public class RestartCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
-		if(m.getIdLong()==Klassenserver7bbot.INSTANCE.getOwnerId()) {
+
+		if (m.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
 			Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 			String[] args = message.getContentDisplay().split(" ");
-			
-			if(args.length>1) {
-				
+
+			if (args.length > 1) {
+
 				try {
-				Klassenserver7bbot.INSTANCE.shardMan.restart(Integer.parseInt(args[1]));
-				log.info("Restarting Shard "+ args[1]);
-				}catch(NumberFormatException e) {
+					Klassenserver7bbot.INSTANCE.shardMan.restart(Integer.parseInt(args[1]));
+					log.info("Restarting Shard " + args[1]);
+				} catch (NumberFormatException e) {
 					SyntaxError.oncmdSyntaxError(channel, "restart <shardId>", m);
 				}
-				
-			}else {			
-			Klassenserver7bbot.INSTANCE.shardMan.restart();
-			log.info("Restarting all Shards");
+
+			} else {
+				Klassenserver7bbot.INSTANCE.shardMan.restart();
+				log.info("Restarting all Shards");
 			}
-			
-		}else {
+
+		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
-		
+
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeührt werden!";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Tools";
+		return category;
 	}
 
 }

@@ -20,7 +20,7 @@ public class WarnCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+
 		List<Member> ment = message.getMentionedMembers();
 		try {
 			if (!ment.isEmpty()) {
@@ -66,11 +66,16 @@ public class WarnCommand implements ServerCommand {
 
 		try {
 
+			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
+				system.sendMessageEmbeds(builder.build()).queue();
+
+			}
+
 			if (system.getIdLong() != channel.getIdLong()) {
-				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-				system.sendMessageEmbeds(builder.build()).queue();
-			}else {
-				system.sendMessageEmbeds(builder.build()).queue();
+
+				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+
 			}
 
 			u.getUser().openPrivateChannel().queue((ch) -> {
@@ -87,6 +92,19 @@ public class WarnCommand implements ServerCommand {
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Verwarnt den angegebenen Nutzer und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]warn @K7Bot [reason]";
+
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 
 }

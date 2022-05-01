@@ -11,6 +11,7 @@ import de.k7bot.music.Queue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.AudioChannel;
@@ -22,17 +23,19 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 public class PlayCommand implements ServerCommand {
 	public static boolean next = false;
+	public static boolean party = false;
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
 
 		String[] args = message.getContentDisplay().split(" ");
 
-		if (args.length > 1) {
-			GuildVoiceState state;
-			if ((state = m.getVoiceState()) != null) {
-				AudioChannel vc;
-				if ((vc = state.getChannel()) != null) {
+		GuildVoiceState state;
+
+		if ((state = m.getVoiceState()) != null) {
+			AudioChannel vc;
+			if ((vc = state.getChannel()) != null) {
+
+				if (args.length > 1) {
 
 					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 							.getController(vc.getGuild().getIdLong());
@@ -40,6 +43,7 @@ public class PlayCommand implements ServerCommand {
 					AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
 					AudioPlayer player = controller.getPlayer();
 					Queue queue = controller.getQueue();
+					queue.unLoop();
 
 					Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
 
@@ -73,7 +77,12 @@ public class PlayCommand implements ServerCommand {
 
 					String url = strBuilder.toString().trim();
 
-					if (url.startsWith("lf: ")) {
+					if (url.equalsIgnoreCase("party")) {
+
+						url = "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F";
+						party = true;
+
+					} else if (url.startsWith("lf: ")) {
 
 						url = url.substring(4);
 
@@ -83,39 +92,36 @@ public class PlayCommand implements ServerCommand {
 					}
 
 					if (player.getPlayingTrack() == null) {
-						if (!queue.emptyQueueList()) {
-							queue.clearQueue();
-						}
+
+						queue.clearQueue();
+
 						manager.openAudioConnection(vc);
 
-						apm.loadItem(url, new AudioLoadResult(controller, url));
+						Klassenserver7bbot.INSTANCE.getMainLogger()
+								.info("Bot startet searching a track: no current track -> new Track(channelName = "
+										+ vc.getName() + ", url = " + url + ")");
+
+						try {
+							apm.loadItem(url, new AudioLoadResult(controller, url)).get();
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+						}
+
 					} else {
 
-						if (!queue.emptyQueueList()) {
-							queue.clearQueue();
-						}
+						queue.clearQueue();
+
 						next = true;
 						player.stopTrack();
+						Klassenserver7bbot.INSTANCE.getMainLogger().info(
+								"Bot startet searching a track: overwriting current track -> new Track(channelName = "
+										+ vc.getName() + ", url = " + url + ")");
 						apm.loadItem(url, new AudioLoadResult(controller, url));
 						player.setPaused(false);
 						next = false;
 					}
+
 				} else {
-
-					channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
-							.queueAfter(10L, TimeUnit.SECONDS);
-				}
-			} else {
-
-				channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
-						.queueAfter(10L, TimeUnit.SECONDS);
-			}
-		} else {
-			GuildVoiceState state;
-
-			if ((state = m.getVoiceState()) != null) {
-				AudioChannel vc;
-				if ((vc = state.getChannel()) != null) {
 
 					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 							.getController(vc.getGuild().getIdLong());
@@ -135,16 +141,28 @@ public class PlayCommand implements ServerCommand {
 					player.stopTrack();
 					apm.loadItem(url, new AudioLoadResult(controller, url));
 					player.setPaused(false);
-				} else {
-
-					channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
-							.queueAfter(10L, TimeUnit.SECONDS);
 				}
 			} else {
 
 				channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
 						.queueAfter(10L, TimeUnit.SECONDS);
 			}
+		} else {
+
+			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
+					TimeUnit.SECONDS);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
 	}
 }

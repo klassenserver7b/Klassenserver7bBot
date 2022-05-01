@@ -15,7 +15,7 @@ public class GithubRepoCommand implements ServerCommand{
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
+		
 		GitHub ghub = Klassenserver7bbot.INSTANCE.getGitapi();
 		
 		GHRepository dcbot;
@@ -29,6 +29,16 @@ public class GithubRepoCommand implements ServerCommand{
 		}
 		
 		
+	}
+	
+	@Override
+	public String gethelp() {
+		return null;
+	}
+
+	@Override
+	public String getcategory() {
+		return null;
 	}
 
 }

@@ -22,10 +22,7 @@ public class kickCommand implements ServerCommand {
 		List<Member> ment = message.getMentionedMembers();
 
 		try {
-			String grund = message.getContentDisplay()
-					.substring(ment.get(0).getEffectiveName().length() + 8);
-
-			message.delete().queue();
+			String grund = message.getContentDisplay().substring(ment.get(0).getEffectiveName().length() + 8);
 
 			channel.sendTyping().queue();
 
@@ -41,6 +38,18 @@ public class kickCommand implements ServerCommand {
 		} catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(channel, "kick [@user] [reason]", m);
 		}
+	}
+
+	@Override
+	public String gethelp() {
+		String help = "Kickt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. kick @K7Bot [reason]";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Moderation";
+		return category;
 	}
 
 	public void onkick(Member requester, Member u, TextChannel channel, String grund) {
@@ -64,12 +73,16 @@ public class kickCommand implements ServerCommand {
 		try {
 			u.kick().reason(grund).queue();
 
-			system.sendMessageEmbeds(builder.build()).queue();
+			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
+				system.sendMessageEmbeds(builder.build()).queue();
+
+			}
+
 			if (system.getIdLong() != channel.getIdLong()) {
-				(channel.sendMessageEmbeds(builder.build()).complete()).delete().queueAfter(20L, TimeUnit.SECONDS);
-				system.sendMessageEmbeds(builder.build()).queue();
-			} else {
-				system.sendMessageEmbeds(builder.build()).queue();
+
+				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+
 			}
 
 			String action = "kick";
