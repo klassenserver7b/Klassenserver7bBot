@@ -1,4 +1,3 @@
-Lyrics search verwendet wenn "Title = songtitle" und nicht "Title = songtitle - autor"  -> "title + autor" als query
 APIs ohne angegebenen config key schalten sich ab
 Equalizer für Music
 Mehrere player per guild (music)

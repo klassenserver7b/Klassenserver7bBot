@@ -40,22 +40,19 @@ public class VPlan_main {
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 
-	public void sendvplanMessage(String cunext) {
+	public void sendvplanMessage() {
 
-		JsonObject plan = getPlan(cunext);
-		
-		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(cunext, plan);
+		JsonObject plan = getPlan();
+
+		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(plan);
 		Guild guild;
 		TextChannel channel;
 
 		if (!Klassenserver7bbot.INSTANCE.indev) {
 			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L);
 
-			if (cunext.equalsIgnoreCase("next")) {
-				channel = guild.getTextChannelById(918904387739459645L);
-			} else {
-				channel = guild.getTextChannelById(931287317774221322L);
-			}
+			channel = guild.getTextChannelById(918904387739459645L);
+
 		} else {
 			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L);
 			channel = guild.getTextChannelById(920777920681738390L);
@@ -70,23 +67,21 @@ public class VPlan_main {
 			info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
 
 			if (log != null) {
-				log.debug("sending Vplanmessage (cunext = " + cunext + ") with following hash: " + fien.hashCode()
-						+ " and devmode = " + Klassenserver7bbot.INSTANCE.indev);
+				log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
+						+ Klassenserver7bbot.INSTANCE.indev);
 			}
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			if (cunext.equalsIgnoreCase("next")) {
-				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "+plan.get("head").getAsJsonObject().get("title").getAsString()+"\n");
-			} else {
-				embbuild.setTitle("Es gibt einen neuen Vertretungsplan für Heute! \n");
-			}
+			embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "
+					+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
+
 			if (fien.isEmpty()) {
 
 				embbuild.setTitle("**KEINE ÄNDERUNGEN 😭**");
 
 			} else {
-				
+
 				TableMessage tablemess = new TableMessage();
 				tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
 
@@ -114,10 +109,13 @@ public class VPlan_main {
 					tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
 
 					if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
-						
-						Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""), (subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-						Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""), (teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-						Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""), (roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+						Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
+								(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+						Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
+								(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+						Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
+								(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
 						tablemess.addRow(subject, teacher, room);
 
@@ -131,7 +129,7 @@ public class VPlan_main {
 
 						tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
 
-					}else {
+					} else {
 						tablemess.addCell("---");
 					}
 
@@ -152,25 +150,21 @@ public class VPlan_main {
 
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			lsql.onUpdate("UPDATE vplan" + cunext + " SET classeintraege = " + fien.hashCode());
+			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + fien.hashCode());
 
 		}
 	}
 
-	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(String cunext, JsonObject plan) {
+	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(JsonObject plan) {
 
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
 
 		if (plan != null) {
 			String info = plan.get("info").toString();
-			boolean synced = false;
+			boolean synced;
 
-			if (cunext.equalsIgnoreCase("next")) {
-
-				synced = synchronizePlanDB(plan);
-
-			}
+			synced = synchronizePlanDB(plan);
 
 			ConcurrentHashMap<List<JsonObject>, String> fien = new ConcurrentHashMap<>();
 
@@ -178,7 +172,7 @@ public class VPlan_main {
 			if (getC != null) {
 				int h = getC.hashCode();
 
-				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplan" + cunext);
+				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplannext");
 				try {
 					if (set.next()) {
 
@@ -190,7 +184,7 @@ public class VPlan_main {
 
 							finalentries = getC;
 
-							lsql.onUpdate("UPDATE vplan" + cunext + " SET zieldatum = '"
+							lsql.onUpdate("UPDATE vplannext SET zieldatum = '"
 									+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
 											.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
 											.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
@@ -204,7 +198,7 @@ public class VPlan_main {
 						}
 					} else {
 						finalentries = getC;
-						lsql.onUpdate("INSERT INTO vplan" + cunext + "(zieldatum, classeintraege) VALUES('"
+						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('"
 								+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
 										.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
 										.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
@@ -275,7 +269,8 @@ public class VPlan_main {
 			JsonArray arr = obj.get("body").getAsJsonArray();
 			arr.forEach(element -> {
 				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
-				if (elem.equalsIgnoreCase("9b") || elem.equalsIgnoreCase("9b,9c") || elem.equalsIgnoreCase("9a-9c/ Spw")) {
+				if (elem.equalsIgnoreCase("9b") || elem.equalsIgnoreCase("9b,9c")
+						|| elem.equalsIgnoreCase("9a-9c/ Spw")) {
 
 					classentries.add(element.getAsJsonObject());
 
@@ -290,14 +285,14 @@ public class VPlan_main {
 
 	}
 
-	public JsonObject getPlan(String cunext) {
+	public JsonObject getPlan() {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
 				new UsernamePasswordCredentials("manos", Klassenserver7bbot.INSTANCE.getVplanpw()));
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
-			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/" + cunext + "/students.json");
+			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 			if (response.getStatusLine().getStatusCode() == 200) {
 				JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));

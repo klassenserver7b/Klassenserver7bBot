@@ -30,14 +30,14 @@ public class helpCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Zeigt diese Hilfe an.";
-		return help;
+
+		return "Zeigt diese Hilfe an.";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Allgemein";
-		return category;
+
+		return "Allgemein";
 	}
 
 	/**
@@ -87,14 +87,14 @@ public class helpCommand implements ServerCommand {
 
 					StringBuilder inbuild = new StringBuilder();
 
+					inbuild.append("|\n\n");
 					inbuild.append("`");
 					inbuild.append(Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()));
 					inbuild.append(key);
 					inbuild.append("` - ");
 					inbuild.append(help);
-					inbuild.append("\n\n");
 
-					if (buildlength + inbuild.length() >= 1024 * limitmultiplicator) {
+					if (buildlength + inbuild.length() + 5>= 1020 * limitmultiplicator) {
 						
 						buildlength += inbuild.length();
 						limitmultiplicator++;
