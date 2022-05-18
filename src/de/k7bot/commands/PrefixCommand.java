@@ -38,13 +38,11 @@ public class PrefixCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix] '-'";
-		return help;
+		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix] '-'";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Tools";
-		return category;
+		return "Allgemein";
 	}
 }

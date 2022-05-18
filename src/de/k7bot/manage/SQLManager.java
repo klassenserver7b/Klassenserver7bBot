@@ -25,14 +25,8 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS statschannels(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, categoryId INTEGER)");
 
 		lsql.onUpdate(
-				"CREATE TABLE IF NOT EXISTS botutil(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, prefix STRING, volume INTEGER)");
-
-		lsql.onUpdate(
-				"CREATE TABLE IF NOT EXISTS werwolfchannels(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, categoryId INTEGER, loginchannelId INTEGER, adminchannelId INTEGER)");
-
-		lsql.onUpdate(
-				"CREATE TABLE IF NOT EXISTS werwolfusers(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, memberId INTEGER, roleId INTEGER, state STRING)");
-
+				"CREATE TABLE IF NOT EXISTS botutil(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, syschannelId INTEGER, prefix STRING, volume INTEGER)");
+		
 		lsql.onUpdate(
 				"CREATE TABLE IF NOT EXISTS hypixelnewschannels(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, channelId INTEGER)");
 

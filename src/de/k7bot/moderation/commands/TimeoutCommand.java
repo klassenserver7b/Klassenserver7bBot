@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.moderation.commands;
 
 import de.k7bot.Klassenserver7bbot;
 
@@ -20,19 +20,23 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 public class TimeoutCommand implements ServerCommand {
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		
 
 		List<Member> ment = message.getMentionedMembers();
-		String[] args = message.getContentStripped().split(" ");
+		String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
+		String grund = "";
+		
+		for(int i = 2; i<args.length; i++) {
+			grund = grund + args[i];
+		}
 
 		try {
-			
+
 			channel.sendTyping().queue();
 
 			if (m.hasPermission(Permission.MESSAGE_MANAGE)) {
 				if (ment.size() > 0) {
 					for (Member u : ment) {
-						onTimeout(m, u, channel, args[1], args[2]);
+						onTimeout(m, u, channel, args[1], grund);
 					}
 				}
 			} else {
@@ -55,25 +59,41 @@ public class TimeoutCommand implements ServerCommand {
 		strBuilder.append("**Case: **" + grund + "\n");
 		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
 
-
 		Guild guild = channel.getGuild();
-		TextChannel system = guild.getSystemChannel();
+		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
 
 		try {
 			u.timeoutFor(Long.parseLong(time), TimeUnit.MINUTES).queue();
-			builder.setTitle("@" + u.getEffectiveName() + " has been timeouted for "+Long.parseLong(time)+" minutes");
+			builder.setTitle(
+					"@" + u.getEffectiveName() + " has been timeouted for " + Long.parseLong(time) + " minutes");
 			builder.setDescription(strBuilder);
-			
-			if ((system = channel.getGuild().getSystemChannel()) != null) {
+
+			if (system != null) {
 
 				system.sendMessageEmbeds(builder.build()).queue();
 
 			}
 
 			if (system.getIdLong() != channel.getIdLong()) {
-				
+
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+
+			}
+
+			if (requester.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
+				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
+				builder.setFooter("");
+				builder.setDescription("**Case: **" + grund + "\n");
 				
+				u.getUser().openPrivateChannel().queue((ch) -> {
+					ch.sendMessageEmbeds(builder.build()).queue();
+				});
+			} else {
+				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
+				builder.setDescription("**Case: **" + grund + "\n**Requester: **" + requester.getAsMention() + "\n");
+				u.getUser().openPrivateChannel().queue((ch) -> {
+					ch.sendMessageEmbeds(builder.build()).queue();
+				});
 			}
 
 			String action = "timeout";
@@ -96,7 +116,7 @@ public class TimeoutCommand implements ServerCommand {
 	@Override
 	public String gethelp() {
 		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
-		
+
 		return help;
 	}
 

@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,19 +15,17 @@ public class EveryoneCommand implements ServerCommand {
 		}
 
 		channel.sendMessage(
-				String.valueOf(channel.getGuild().getPublicRole().getAsMention()) + " " + builder.toString().trim())
+						channel.getGuild().getPublicRole().getAsMention() + " " + builder.toString().trim())
 				.queue();
 	}
 
 	@Override
 	public String gethelp() {
-		String help = "Sendet die aktuelle Nachricht als @everyone.\n - z.B. [prefix]everyone [Nachricht]";
-		return help;
+		return "Sendet die aktuelle Nachricht als @everyone.\n - z.B. [prefix]everyone [Nachricht]";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Tools";
-		return category;
+		return "Tools";
 	}
 }

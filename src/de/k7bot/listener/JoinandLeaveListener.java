@@ -1,7 +1,10 @@
 package de.k7bot.listener;
 
 import java.time.OffsetDateTime;
+
+import de.k7bot.Klassenserver7bbot;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -11,8 +14,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class JoinandLeaveListener extends ListenerAdapter {
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		TextChannel system = event.getGuild().getSystemChannel();
-		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
+		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
+		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
+		BaseGuildMessageChannel def = event.getGuild().getDefaultChannel();
 		String guildname = event.getGuild().getName();
 		Member memb = event.getGuild().getMember(event.getUser());
 		EmbedBuilder embbuild = new EmbedBuilder();
@@ -23,12 +27,16 @@ public class JoinandLeaveListener extends ListenerAdapter {
 		embbuild.setColor(58944);
 		embbuild.setDescription(memb.getAsMention() + " joined");
 
-		system.sendMessageEmbeds(embbuild.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
-		def.sendMessage("Willkommen auf dem " + guildname + " Server " + memb.getAsMention()).queue();
+		system.sendMessageEmbeds(embbuild.build()).queue();
+
+		if (def != null) {
+			def.sendMessage("Willkommen auf dem " + guildname + " Server " + memb.getAsMention()).queue();
+		}
 	}
 
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-		TextChannel system = event.getGuild().getSystemChannel();
+		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
+		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
 		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
 		User usr = event.getUser();
 		EmbedBuilder embbuild = new EmbedBuilder();

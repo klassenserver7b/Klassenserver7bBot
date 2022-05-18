@@ -1,5 +1,5 @@
 
-package de.k7bot.commands;
+package de.k7bot.moderation.commands;
 
 import de.k7bot.Klassenserver7bbot;
 
@@ -81,13 +81,11 @@ public class MemberLogsCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
-		return help;
+		return "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Moderation";
-		return category;
+		return "Moderation";
 	}
 }

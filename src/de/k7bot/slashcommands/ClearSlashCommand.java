@@ -3,11 +3,13 @@ package de.k7bot.slashcommands;
 
 import java.time.OffsetDateTime;
 
-import de.k7bot.commands.ClearCommand;
+import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.PermissionError;
+import de.k7bot.util.commands.ClearCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -20,7 +22,7 @@ public class ClearSlashCommand implements SlashCommand {
 			OptionMapping amountOption = event.getOption("amount");
 
 			InteractionHook hook = event.deferReply(true).complete();
-			int amount = 1;
+			int amount;
 			amount = (int) amountOption.getAsLong();
 
 			if (amount > 200) {
@@ -28,7 +30,7 @@ public class ClearSlashCommand implements SlashCommand {
 						.queue();
 			} else {
 
-				ClearCommand.onclear(amount - 1, event.getTextChannel(), event.getMember());
+				ClearCommand.onclear(amount - 1, event.getTextChannel());
 			}
 
 			hook.sendMessage(amount + " messages deleted.").queue();
@@ -37,9 +39,13 @@ public class ClearSlashCommand implements SlashCommand {
 			builder.setColor(16345358);
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
-					+ event.getTextChannel().getName());
-			event.getTextChannel().getGuild().getSystemChannel().sendMessageEmbeds(builder.build()).queue();
+			builder.setDescription(
+					amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + event.getTextChannel().getName());
+			TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
+
+			if (system != null) {
+				system.sendMessageEmbeds(builder.build()).queue();
+			}
 
 		} else {
 

@@ -17,15 +17,17 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
-import de.k7bot.commands.StatsChannelCommand;
+
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
+import de.k7bot.moderation.SystemNotificationChannelHolder;
 import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VPlan_main;
 import de.k7bot.util.LiteSQL;
+import de.k7bot.util.commands.StatsCategoryCommand;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,40 +63,47 @@ import net.hypixel.api.apache.ApacheHttpClient;
 
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
-	public HashMap<Long, String> prefixl = new HashMap<>();
-	public final HypixelAPI API;
-	public MojangAPI MAPI;
-	public ShardManager shardMan;
+	public static JsonObject teacherslist;
+
+	private final MojangAPI MAPI;
+	private final HypixelAPI API;
 	private final CommandManager cmdMan;
 	private final HypixelCommandManager hypMan;
 	private final SlashCommandManager slashMan;
 	private final VPlan_main vmain;
-	public Thread loop;
-	public Thread shutdownT;
-	public AudioPlayerManager audioPlayerManager;
-	public PlayerManager playerManager;
-	private GitHub github;
 	private final Logger logger;
 	private final LiteSQL sqlite;
 	private final MusicUtil musicutil;
 	private final LyricsClient lyricsapi;
 	private final GLA lyricsapiold;
-	private Long ownerId;
-	private String vplanpw = "";
-	public static JsonObject teacherslist;
+	private final SystemNotificationChannelHolder syschannels;
+
+	public HashMap<Long, String> prefixl = new HashMap<>();
+	public ShardManager shardMan;
+	public AudioPlayerManager audioPlayerManager;
+	public PlayerManager playerManager;
+
+	public Thread loop;
+	public Thread shutdownT;
+
 	public boolean hypixelapienabled = false;
 	public boolean githubapienabled = false;
 	public boolean vplanenabled = false;
 
-	public int sec = 60;
-	public int min = 0;
-	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
-
 	public boolean imShutdown = false;
-	public boolean minlock = false;
 	public boolean exit = false;
 	public boolean hasstarted = false;
 	public boolean indev;
+
+	public boolean minlock = false;
+	public int sec = 60;
+	public int min = 0;
+
+	private GitHub github;
+	private Long ownerId;
+	private String vplanpw = "";
+
+	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
 	public static void main(String[] args) {
 		try {
@@ -200,6 +209,7 @@ public class Klassenserver7bbot {
 		this.cmdMan = new CommandManager();
 		this.hypMan = new HypixelCommandManager();
 		this.vmain = new VPlan_main();
+		this.syschannels = new SystemNotificationChannelHolder();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerManager = new PlayerManager();
@@ -350,7 +360,7 @@ public class Klassenserver7bbot {
 		}
 		if (this.shardMan != null) {
 			this.API.shutdown();
-			StatsChannelCommand.onShutdown(indev);
+			StatsCategoryCommand.onShutdown(indev);
 			this.shardMan.setStatus(OnlineStatus.OFFLINE);
 			logger.info("Bot offline");
 			this.shardMan.shutdown();
@@ -367,6 +377,7 @@ public class Klassenserver7bbot {
 			if ((min % 10 == 0) && !minlock) {
 				minlock = true;
 				this.checkpreflist();
+				this.getsyschannell().checkSysChannelList();
 				this.getvmain().sendvplanMessage();
 				Skyblocknews.onEventCheck();
 
@@ -387,7 +398,7 @@ public class Klassenserver7bbot {
 				 */
 
 				if ((!hasstarted)) {
-					StatsChannelCommand.onStartup(indev);
+					StatsCategoryCommand.onStartup(indev);
 					hasstarted = true;
 				}
 				Random rand = new Random();
@@ -492,5 +503,17 @@ public class Klassenserver7bbot {
 
 	public String getVplanpw() {
 		return this.vplanpw;
+	}
+
+	public HypixelAPI getHypixelAPI() {
+		return this.API;
+	}
+
+	public MojangAPI getMojangAPI() {
+		return this.MAPI;
+	}
+
+	public SystemNotificationChannelHolder getsyschannell() {
+		return syschannels;
 	}
 }

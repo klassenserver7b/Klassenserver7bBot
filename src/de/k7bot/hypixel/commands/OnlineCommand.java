@@ -24,7 +24,7 @@ public class OnlineCommand implements HypixelCommand {
 		String name;
 		message.delete().queue();
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.API;
+		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 
 		StatusReply apiReply = null;
 

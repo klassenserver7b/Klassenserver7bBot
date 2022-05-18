@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import de.k7bot.commands.types.ServerCommand;
 import java.time.OffsetDateTime;
@@ -24,13 +24,11 @@ public class MessagetoEmbedCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Sendet die eingegebene Nachricht als Embed.\n - z.B. [prefix]toembed [nachricht]";
-		return help;
+		return "Sendet die eingegebene Nachricht als Embed.\n - z.B. [prefix]toembed [nachricht]";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Tools";
-		return category;
+		return "Tools";
 	}
 }

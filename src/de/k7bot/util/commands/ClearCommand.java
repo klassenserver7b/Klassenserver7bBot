@@ -1,6 +1,7 @@
 
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
+import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 
@@ -26,23 +27,23 @@ public class ClearCommand implements ServerCommand {
 
 				int amount = Integer.parseInt(args[1]);
 
-				onclear(amount, channel, m);
+				onclear(amount, channel);
 
-				TextChannel system;
+				TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(channel.getGuild());
 
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setColor(16345358);
 				builder.setFooter("requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());
 				builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + channel.getName());
-
-				if ((system = channel.getGuild().getSystemChannel()) != null) {
+				
+				if (system != null) {
 
 					system.sendMessageEmbeds(builder.build()).queue();
 
 				}
 
-				if (system.getIdLong() != channel.getIdLong()) {
+				if (system != null && system.getIdLong() != channel.getIdLong()) {
 
 					channel.sendMessage(amount + " messages deleted.").complete().delete().queueAfter(3L,
 							TimeUnit.SECONDS);
@@ -62,17 +63,15 @@ public class ClearCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
-		return help;
+		return "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Tools";
-		return category;
+		return "Tools";
 	}
 
-	public static void onclear(int amount, TextChannel chan, Member m) {
+	public static void onclear(int amount, TextChannel chan) {
 		try {
 
 			chan.purgeMessages(get(chan, amount));

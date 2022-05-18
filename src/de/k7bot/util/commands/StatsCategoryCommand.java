@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Category;
 
-public class StatsChannelCommand implements ServerCommand {
+public class StatsCategoryCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {

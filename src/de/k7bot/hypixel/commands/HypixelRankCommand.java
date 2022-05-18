@@ -4,11 +4,13 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
 import de.k7bot.util.SyntaxError;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import me.kbrewster.exceptions.APIException;
+import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -21,7 +23,7 @@ public class HypixelRankCommand
     public void performHypixelCommand(Member m, TextChannel channel, Message message) {
         message.delete().queue();
 
-        HypixelAPI api = Klassenserver7bbot.INSTANCE.API;
+        HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 
         UUID id = null;
 
@@ -44,7 +46,7 @@ public class HypixelRankCommand
 
             try {
                 id = MojangAPI.getUUID(name);
-            } catch (APIException | me.kbrewster.exceptions.InvalidPlayerException | java.io.IOException e1) {
+            } catch (APIException | InvalidPlayerException | IOException e1) {
 
                 e1.printStackTrace();
             }

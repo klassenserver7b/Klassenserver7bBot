@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;

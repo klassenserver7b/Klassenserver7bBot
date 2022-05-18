@@ -17,7 +17,7 @@ import net.hypixel.api.HypixelAPI;
 public class Skyblocknews {
 
 	public static void onEventCheck() {
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.API;
+		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 		try {

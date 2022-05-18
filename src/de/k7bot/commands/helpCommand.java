@@ -70,7 +70,7 @@ public class helpCommand implements ServerCommand {
 		messbuild.addField("**General**",
 				"Befehle auf diesem Server beginnen mit `"
 						+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()) + "`\n"
-						+ "[TEXT] stellt benötigte Commandargumente dar.\n"
+						+ "[TEXT] stellt benÃ¶tigte Commandargumente dar.\n"
 						+ "<TEXT> stellt optionale Commandargumente dar.\n" + "\n\n",
 				false);
 
@@ -87,18 +87,19 @@ public class helpCommand implements ServerCommand {
 
 					StringBuilder inbuild = new StringBuilder();
 
-					inbuild.append("|\n\n");
+					inbuild.append("");
 					inbuild.append("`");
 					inbuild.append(Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong()));
 					inbuild.append(key);
 					inbuild.append("` - ");
 					inbuild.append(help);
+					inbuild.append("\n\n|");
 
-					if (buildlength + inbuild.length() + 5>= 1020 * limitmultiplicator) {
+					if (buildlength + inbuild.length() + 5>= 1024 * limitmultiplicator) {
 						
-						buildlength += inbuild.length();
+						buildlength = buildlength + inbuild.length();
 						limitmultiplicator++;
-						build.append("?%?");
+						build.append("<@>");
 						build.append(inbuild.toString().trim());
 
 					} else {
@@ -112,9 +113,9 @@ public class helpCommand implements ServerCommand {
 
 			});
 
-			String[] helpparts = build.toString().split("\\?%\\?");
+			String[] helpparts = build.toString().split("<@>");
 			
-			//System.out.println(helpparts.length + "; " + cat);
+			System.out.println(helpparts.length + "; " + cat);
 
 			for (int i = 0; i < helpparts.length; i++) {
 				

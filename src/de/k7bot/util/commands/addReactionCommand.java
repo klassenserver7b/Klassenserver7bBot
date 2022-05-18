@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import de.k7bot.commands.types.ServerCommand;
 import java.util.ArrayList;
@@ -44,13 +44,11 @@ public class addReactionCommand implements ServerCommand {
 	
 	@Override
 	public String gethelp() {
-		String help = "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #textchannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
-		return help;
+		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #textchannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Tools";
-		return category;
+		return "Tools";
 	}
 }

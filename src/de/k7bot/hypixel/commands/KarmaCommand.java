@@ -21,7 +21,7 @@ public class KarmaCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		message.delete().queue();
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.API;
+		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 
 		UUID id = null;
 

@@ -2,30 +2,24 @@
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.BanCommand;
-import de.k7bot.commands.ClearCommand;
 import de.k7bot.commands.ClientInfo;
-import de.k7bot.commands.EveryoneCommand;
-import de.k7bot.commands.MemberLogsCommand;
-import de.k7bot.commands.MessagetoEmbedCommand;
-import de.k7bot.commands.ModLogsCommand;
-import de.k7bot.commands.TimeoutCommand;
 import de.k7bot.commands.PingCommand;
 import de.k7bot.commands.PrefixCommand;
-import de.k7bot.commands.ReactRolesCommand;
 import de.k7bot.commands.RestartCommand;
-import de.k7bot.commands.RoleCreation;
 import de.k7bot.commands.ShutdownCommand;
-import de.k7bot.commands.StatsChannelCommand;
+import de.k7bot.commands.SystemchannelCommand;
 import de.k7bot.commands.TestCommand;
-import de.k7bot.commands.StopTimeoutCommand;
 import de.k7bot.commands.TeacherCommand;
-import de.k7bot.commands.WarnCommand;
-import de.k7bot.commands.addReactionCommand;
 import de.k7bot.commands.helpCommand;
-import de.k7bot.commands.kickCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;
+import de.k7bot.moderation.commands.BanCommand;
+import de.k7bot.moderation.commands.MemberLogsCommand;
+import de.k7bot.moderation.commands.ModLogsCommand;
+import de.k7bot.moderation.commands.StopTimeoutCommand;
+import de.k7bot.moderation.commands.TimeoutCommand;
+import de.k7bot.moderation.commands.WarnCommand;
+import de.k7bot.moderation.commands.kickCommand;
 import de.k7bot.music.commands.ClearQueueCommand;
 import de.k7bot.music.commands.LoopCommand;
 import de.k7bot.music.commands.LyricsCommand;
@@ -42,6 +36,13 @@ import de.k7bot.music.commands.TrackInfoCommand;
 import de.k7bot.music.commands.UebersteuerungAdmin;
 import de.k7bot.music.commands.UnLoopCommand;
 import de.k7bot.music.commands.VolumeCommand;
+import de.k7bot.util.commands.ClearCommand;
+import de.k7bot.util.commands.EveryoneCommand;
+import de.k7bot.util.commands.MessagetoEmbedCommand;
+import de.k7bot.util.commands.ReactRolesCommand;
+import de.k7bot.util.commands.RoleCreation;
+import de.k7bot.util.commands.StatsCategoryCommand;
+import de.k7bot.util.commands.addReactionCommand;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -88,7 +89,7 @@ public class CommandManager {
 		this.commands.put("nowplaying", new TrackInfoCommand());
 		this.commands.put("np", new TrackInfoCommand());
 		this.commands.put("clearqueue", new ClearQueueCommand());
-		this.commands.put("statscategory", new StatsChannelCommand());
+		this.commands.put("statscategory", new StatsCategoryCommand());
 		this.commands.put("hypixel", new SCtoHC());
 		this.commands.put("shutdown", new ShutdownCommand());
 		this.commands.put("everyone", new EveryoneCommand());
@@ -100,6 +101,7 @@ public class CommandManager {
 		this.commands.put("teacher", new TeacherCommand());
 		this.commands.put("loop", new LoopCommand());
 		this.commands.put("unloop", new UnLoopCommand());
+		this.commands.put("syschannel", new SystemchannelCommand());
 
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());

@@ -1,4 +1,4 @@
-package de.k7bot.commands;
+package de.k7bot.util.commands;
 
 import java.awt.Color;
 import java.time.OffsetDateTime;

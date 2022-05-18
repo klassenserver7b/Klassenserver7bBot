@@ -18,6 +18,8 @@ public class BotgetDC extends ListenerAdapter {
 		lsql.onUpdate("DELETE * FROM hypixelnewschannels WHERE guildId = " + guildid);
 		lsql.onUpdate("DELETE * FROM musicchannel WHERE guildId = " + guildid);
 		lsql.onUpdate("DELETE * FROM statschannels WHERE guildId = " + guildid);
+		lsql.onUpdate("DELETE * FROM botutil WHERE guildId = " + guildid);
+		lsql.onUpdate("DELETE * FROM reactroles WHERE guildId = " + guildid);
 
 	}
 
@@ -28,5 +30,7 @@ public class BotgetDC extends ListenerAdapter {
 		lsql.onUpdate("DELETE * FROM hypixelnewschannels WHERE guildId = " + guildid);
 		lsql.onUpdate("DELETE * FROM musicchannel WHERE guildId = " + guildid);
 		lsql.onUpdate("DELETE * FROM statschannels WHERE guildId = " + guildid);
+		lsql.onUpdate("DELETE * FROM botutil WHERE guildId = " + guildid);
+		lsql.onUpdate("DELETE * FROM reactroles WHERE guildId = " + guildid);
 	}
 }
