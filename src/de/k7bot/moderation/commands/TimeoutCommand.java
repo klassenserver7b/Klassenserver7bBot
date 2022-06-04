@@ -21,7 +21,7 @@ public class TimeoutCommand implements ServerCommand {
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		List<Member> ment = message.getMentionedMembers();
+		List<Member> ment = message.getMentions().getMembers();
 		String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
 		String grund = "";
 		

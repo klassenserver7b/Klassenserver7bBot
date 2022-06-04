@@ -23,6 +23,10 @@
 
 	<repositories>
 		<repository>
+			<id>maven central</id>
+			<url>https://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
 			<id>dv8tion</id>
 			<name>m2-dv8tion</name>
 			<url>https://m2.dv8tion.net/releases</url>
@@ -48,10 +52,11 @@
 
 
 	<dependencies>
+
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>5.0.0-alpha.11</version>
+			<version>5.0.0-alpha.12</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sedmelluq</groupId>
@@ -108,6 +113,11 @@
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-youtube</artifactId>
 			<version>v3-rev189-1.23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>se.michaelthelin.spotify</groupId>
+			<artifactId>spotify-web-api-java</artifactId>
+			<version>7.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vdurmont</groupId>

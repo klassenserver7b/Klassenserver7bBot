@@ -51,7 +51,6 @@ import org.kohsuke.github.GitHubBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import me.kbrewster.mojangapi.MojangAPI;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -64,13 +63,10 @@ import net.hypixel.api.apache.ApacheHttpClient;
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
 	public static JsonObject teacherslist;
-
-	private final MojangAPI MAPI;
 	private final HypixelAPI API;
 	private final CommandManager cmdMan;
 	private final HypixelCommandManager hypMan;
 	private final SlashCommandManager slashMan;
-	private final VPlan_main vmain;
 	private final Logger logger;
 	private final LiteSQL sqlite;
 	private final MusicUtil musicutil;
@@ -206,9 +202,9 @@ public class Klassenserver7bbot {
 		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
-		this.cmdMan = new CommandManager();
+		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
 		this.hypMan = new HypixelCommandManager();
-		this.vmain = new VPlan_main();
+
 		this.syschannels = new SystemNotificationChannelHolder();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
@@ -239,8 +235,6 @@ public class Klassenserver7bbot {
 
 		String key = System.getProperty("apiKey", hypixelToken);
 		this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
-
-		this.MAPI = new MojangAPI();
 
 		builder.addEventListeners(new CommandListener());
 		builder.addEventListeners(new VoiceListener());
@@ -378,7 +372,10 @@ public class Klassenserver7bbot {
 				minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-				this.getvmain().sendvplanMessage();
+
+				if (this.vplanenabled) {
+					new VPlan_main(vplanpw).sendvplanMessage();
+				}
 				Skyblocknews.onEventCheck();
 
 				/*
@@ -430,16 +427,24 @@ public class Klassenserver7bbot {
 	public void checkpreflist() {
 
 		try {
+
 			ResultSet set = sqlite.onQuery("SELECT guildId, prefix FROM botutil");
-			while (set.next()) {
-				if (!this.prefixl.containsKey(set.getLong("guildId"))) {
-					this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
+			if (set != null) {
+
+				while (set.next()) {
+
+					if (!this.prefixl.containsKey(set.getLong("guildId"))) {
+						this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
+					}
+
+					if (set.getString("prefix") == null) {
+						this.getDB().onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
+					}
+
 				}
 
-				if (set.getString("prefix") == null) {
-					this.getDB().onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
-				}
 			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -456,11 +461,6 @@ public class Klassenserver7bbot {
 		});
 
 	}
-
-	public VPlan_main getvmain() {
-		return this.vmain;
-	}
-
 	public CommandManager getCmdMan() {
 		return this.cmdMan;
 	}
@@ -501,16 +501,8 @@ public class Klassenserver7bbot {
 		return this.ownerId;
 	}
 
-	public String getVplanpw() {
-		return this.vplanpw;
-	}
-
 	public HypixelAPI getHypixelAPI() {
 		return this.API;
-	}
-
-	public MojangAPI getMojangAPI() {
-		return this.MAPI;
 	}
 
 	public SystemNotificationChannelHolder getsyschannell() {

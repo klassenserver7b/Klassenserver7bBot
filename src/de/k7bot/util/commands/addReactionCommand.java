@@ -12,11 +12,11 @@ public class addReactionCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
-		List<TextChannel> channels = message.getMentionedChannels();
-		List<Emote> emotes = message.getEmotes();
+		List<TextChannel> channels = message.getMentions().getChannels(TextChannel.class);
+		List<Emote> emotes = message.getMentions().getEmotes();
 
 		if (!channels.isEmpty()) {
-			TextChannel tc = message.getMentionedChannels().get(0);
+			TextChannel tc = message.getMentions().getChannels(TextChannel.class).get(0);
 			String MessageIdString = args[2];
 
 			try {

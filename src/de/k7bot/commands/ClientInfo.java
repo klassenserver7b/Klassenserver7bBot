@@ -18,7 +18,7 @@ public class ClientInfo implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		channel.sendTyping().queue();
-		List<Member> ment = message.getMentionedMembers();
+		List<Member> ment = message.getMentions().getMembers();
 
 		if (m.hasPermission(Permission.KICK_MEMBERS, Permission.NICKNAME_MANAGE, Permission.NICKNAME_CHANGE)) {
 			if (ment.size() > 0) {

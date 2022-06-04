@@ -26,12 +26,14 @@ public class SystemchannelCommand implements ServerCommand {
 
 		if (m.hasPermission(Permission.MANAGE_SERVER)) {
 
-			if (!message.getMentionedChannels().isEmpty()) {
+			if (!message.getMentions().getChannels(TextChannel.class).isEmpty()) {
 				
-				TextChannel chan = message.getMentionedChannels().get(0);
+				TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
 				
 				SystemNotificationChannelHolder sys = Klassenserver7bbot.INSTANCE.getsyschannell();				
 				sys.insertChannel(chan);
+				
+				channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
 				
 			}else {
 				SyntaxError.oncmdSyntaxError(channel, "syschannel [@new syschannel]", m);

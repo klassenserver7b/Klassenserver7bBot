@@ -15,16 +15,19 @@ import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;
 import de.k7bot.moderation.commands.BanCommand;
 import de.k7bot.moderation.commands.MemberLogsCommand;
+import de.k7bot.moderation.commands.MemberdevicesCommand;
 import de.k7bot.moderation.commands.ModLogsCommand;
 import de.k7bot.moderation.commands.StopTimeoutCommand;
 import de.k7bot.moderation.commands.TimeoutCommand;
 import de.k7bot.moderation.commands.WarnCommand;
 import de.k7bot.moderation.commands.kickCommand;
+import de.k7bot.music.commands.AddQueueTrackCommand;
 import de.k7bot.music.commands.ClearQueueCommand;
 import de.k7bot.music.commands.LoopCommand;
 import de.k7bot.music.commands.LyricsCommand;
 import de.k7bot.music.commands.Lyricsoldcommand;
 import de.k7bot.music.commands.NoncoreCommand;
+import de.k7bot.music.commands.OverallChartsCommand;
 import de.k7bot.music.commands.PauseCommand;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.music.commands.QueuelistCommand;
@@ -36,6 +39,7 @@ import de.k7bot.music.commands.TrackInfoCommand;
 import de.k7bot.music.commands.UebersteuerungAdmin;
 import de.k7bot.music.commands.UnLoopCommand;
 import de.k7bot.music.commands.VolumeCommand;
+import de.k7bot.util.DisabledAPI;
 import de.k7bot.util.commands.ClearCommand;
 import de.k7bot.util.commands.EveryoneCommand;
 import de.k7bot.util.commands.MessagetoEmbedCommand;
@@ -57,7 +61,14 @@ public class CommandManager {
 	public ConcurrentHashMap<String, ServerCommand> commands;
 	public Logger commandlog;
 
-	public CommandManager() {
+	/**
+	 * 
+	 * @param hypenable <br>
+	 *                  Should the HypixelAPI be enabled
+	 * @param gitenable <br>
+	 *                  Should the GitHubAPI be enabled
+	 */
+	public CommandManager(Boolean hypenable, Boolean gitenable) {
 		this.commands = new ConcurrentHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
@@ -90,7 +101,6 @@ public class CommandManager {
 		this.commands.put("np", new TrackInfoCommand());
 		this.commands.put("clearqueue", new ClearQueueCommand());
 		this.commands.put("statscategory", new StatsCategoryCommand());
-		this.commands.put("hypixel", new SCtoHC());
 		this.commands.put("shutdown", new ShutdownCommand());
 		this.commands.put("everyone", new EveryoneCommand());
 		this.commands.put("uvolume", new UebersteuerungAdmin());
@@ -102,6 +112,14 @@ public class CommandManager {
 		this.commands.put("loop", new LoopCommand());
 		this.commands.put("unloop", new UnLoopCommand());
 		this.commands.put("syschannel", new SystemchannelCommand());
+		this.commands.put("onlinedevices", new MemberdevicesCommand());
+		this.commands.put("charts", new OverallChartsCommand());
+		this.commands.put("addtoqueue", new AddQueueTrackCommand());
+		if (hypenable) {
+			this.commands.put("hypixel", new SCtoHC());
+		} else {
+			this.commands.put("hypixel", new DisabledAPI());
+		}
 
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());

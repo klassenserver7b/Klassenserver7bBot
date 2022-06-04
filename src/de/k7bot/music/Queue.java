@@ -2,19 +2,23 @@ package de.k7bot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.util.LiteSQL;
+import de.k7bot.util.SongDataStripper;
+import de.k7bot.util.SongTitle;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
 
 public class Queue {
 	private boolean islooped = false;
 	private List<AudioTrack> looplist;
 	private List<AudioTrack> queuelist;
 	private MusicController controller;
+	private final LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
 
 	public Queue(MusicController controller) {
 		setController(controller);
@@ -22,58 +26,97 @@ public class Queue {
 	}
 
 	public boolean emptyQueueList() {
-		if (this.queuelist.size() == 0) {
-			return true;
-		}
-		return false;
+		return this.queuelist.size() == 0;
 	}
 
-	@Nonnull
 	public boolean next(AudioTrack currentTrack) {
+		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+		long datetime = Long.parseLong(datetimestring);
+
 		AudioPlayer player = this.controller.getPlayer();
+
+		AudioTrack track;
+
 		if (this.queuelist.size() > 1) {
-			AudioTrack track = this.queuelist.remove(0);
+
+			track = this.queuelist.remove(0);
+
 			if (track != null) {
 
-				if (player.getPlayingTrack() != null
-						&& (player.getPlayingTrack().equals(track) || player.getPlayingTrack() == track)) {
+				player.playTrack(track);
 
-					if (!queuelist.isEmpty()) {
-						next(track);
-					}
+				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
+				String songname = title.getTitle().replaceAll("'", "");
+				String songauthor = "";
 
-				} else {
-
-					player.playTrack(track.makeClone());
-					return true;
-
+				if (!title.containsauthor()) {
+					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
+
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+						+ songauthor + "', " + datetime + ")");
+
+				return true;
+
+			}
+
+		} else if (!this.queuelist.isEmpty()) {
+
+			if (this.islooped) {
+
+				track = this.queuelist.remove(0);
+				player.playTrack(track);
+
+				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
+				String songname = title.getTitle().replaceAll("'", "");
+				String songauthor = "";
+
+				if (!title.containsauthor()) {
+					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
+				}
+
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+						+ songauthor + "', " + datetime + ")");
+
+				this.queuelist = this.looplist;
+				return true;
+
+			} else {
+
+				track = this.queuelist.remove(0);
+				player.playTrack(track);
+
+				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
+				String songname = title.getTitle().replaceAll("'", "");
+				String songauthor = "";
+
+				if (!title.containsauthor()) {
+					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
+				}
+
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+						+ songauthor + "', " + datetime + ")");
+
+				return true;
+
 			}
 
 		} else if (this.islooped) {
 
-			AudioTrack track;
+			track = currentTrack.makeClone();
+			player.playTrack(track);
 
-			this.queuelist = this.looplist;
+			SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
+			String songname = title.getTitle().replaceAll("'", "");
+			String songauthor = "";
 
-			if (!this.queuelist.isEmpty()) {
-				track = this.queuelist.remove(0);
-			} else {
-				track = player.getPlayingTrack();
+			if (!title.containsauthor()) {
+				songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 			}
 
-			if (track != null) {
-				this.controller.getPlayer().playTrack(track.makeClone());
-				return true;
-			}
-			
-		} else if (!this.queuelist.isEmpty()) {
-
-			player.playTrack(this.queuelist.remove(0));
-			return true;
-
+			sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+					+ songauthor + "', " + datetime + ")");
 		}
-
 		return false;
 	}
 
@@ -90,7 +133,10 @@ public class Queue {
 	public void loop() {
 		this.islooped = true;
 		this.looplist = this.queuelist;
-		this.looplist.add(0, controller.getPlayer().getPlayingTrack());
+
+		if (this.queuelist.size() > 1) {
+			this.looplist.add(this.controller.getPlayer().getPlayingTrack());
+		}
 
 	}
 

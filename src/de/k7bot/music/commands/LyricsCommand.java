@@ -14,7 +14,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.util.SongTitle;
-import de.k7bot.util.TitleStripper;
+import de.k7bot.util.SongDataStripper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -39,21 +39,24 @@ public class LyricsCommand implements ServerCommand {
 					LyricsClient lapi = Klassenserver7bbot.INSTANCE.getLyricsAPI();
 					Lyrics lyrics = null;
 
-					Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
-							+ TitleStripper.stripTitle(player.getPlayingTrack().getInfo().title));
 					try {
 
 						AudioTrackInfo info = player.getPlayingTrack().getInfo();
-						SongTitle stitle = TitleStripper.stripTitle(info.title);
+						SongTitle stitle = SongDataStripper.stripTitle(info.title);
 						String title = stitle.getTitle();
 
 						if (stitle.containsauthor()) {
 
 							lyrics = lapi.getLyrics(title).get();
+							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
+									+ title);
 
 						} else {
 
 							lyrics = lapi.getLyrics(info.author + " - " + title).get();
+							
+							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
+									+ info.author + " - " + title);
 
 						}
 

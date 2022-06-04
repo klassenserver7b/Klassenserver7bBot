@@ -24,9 +24,9 @@ public class ReactRolesCommand implements ServerCommand {
 
 			if (args.length == 5) {
 
-				List<TextChannel> channels = message.getMentionedChannels();
-				List<Role> roles = message.getMentionedRoles();
-				List<Emote> emotes = message.getEmotes();
+				List<TextChannel> channels = message.getMentions().getChannels(TextChannel.class);
+				List<Role> roles = message.getMentions().getRoles();
+				List<Emote> emotes = message.getMentions().getEmotes();
 
 				if (!channels.isEmpty() && !roles.isEmpty()) {
 					TextChannel tc = channels.get(0);

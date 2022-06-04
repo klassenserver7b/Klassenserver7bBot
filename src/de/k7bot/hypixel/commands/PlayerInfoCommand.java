@@ -28,7 +28,6 @@ public class PlayerInfoCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
 		friends = "";
-		message.delete().queue();
 
 		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 

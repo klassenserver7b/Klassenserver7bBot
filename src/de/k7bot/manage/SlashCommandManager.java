@@ -1,8 +1,8 @@
-
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.slashcommands.ChartsSlashCommand;
 import de.k7bot.slashcommands.ClearSlashCommand;
 import de.k7bot.slashcommands.HelpSlashCommand;
 import de.k7bot.slashcommands.PingSlashCommand;
@@ -34,6 +34,7 @@ public class SlashCommandManager {
 		this.commands.put("ping", new PingSlashCommand());
 		this.commands.put("toembed", new ToEmbedSlashCommand());
 		this.commands.put("reactrole", new ReactRolesSlashCommand());
+		this.commands.put("charts", new ChartsSlashCommand());
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
 		Klassenserver7bbot.INSTANCE.shardMan.getShards().forEach(shard -> {
@@ -47,7 +48,7 @@ public class SlashCommandManager {
 
 			commup.addCommands(Commands.slash("clear", "Löscht die Ausgewählte Anzahl an Nachrichten.")
 					.addOptions(new OptionData(OptionType.INTEGER, "amount",
-							"Wie viele Nachrichten sollen gelöscht werden? (Standart = 1 Nachricht)")));
+							"Wie viele Nachrichten sollen gelöscht werden?", true)));
 
 			commup.addCommands(Commands.slash("toembed", "Erstellt einen Embed mit den gegebenen Parametern")
 					.addOption(OptionType.STRING, "title", "Welchen Titel soll der Embed haben?", true)
@@ -65,6 +66,13 @@ public class SlashCommandManager {
 					.addOption(OptionType.ROLE, "role",
 							"Die Rolle die zugewiesen werden soll – stelle sicher: Rechte und Rolle des Bots > Rechte der Rolle",
 							true));
+
+			commup.addCommands(Commands.slash("charts", "Liefert die Bot-Music Charts für die gewählten Parameter")
+					.addOption(OptionType.BOOLEAN, "guild",
+							"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
+					.addOption(OptionType.NUMBER, "time", "REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
+					.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"")
+					);
 
 			commup.complete();
 		});

@@ -22,7 +22,6 @@ import net.hypixel.api.reply.StatusReply;
 public class OnlineCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
-		message.delete().queue();
 
 		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 

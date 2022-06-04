@@ -2,18 +2,24 @@ package de.k7bot.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
+import de.k7bot.util.SpotifyConverter;
 
+import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -35,14 +41,14 @@ public class PlayCommand implements ServerCommand {
 			AudioChannel vc;
 			if ((vc = state.getChannel()) != null) {
 
+				MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+						.getController(vc.getGuild().getIdLong());
+				AudioManager manager = vc.getGuild().getAudioManager();
+				AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
+				AudioPlayer player = controller.getPlayer();
+				Queue queue = controller.getQueue();
 				if (args.length > 1) {
 
-					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
-							.getController(vc.getGuild().getIdLong());
-					AudioManager manager = vc.getGuild().getAudioManager();
-					AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
-					AudioPlayer player = controller.getPlayer();
-					Queue queue = controller.getQueue();
 					queue.unLoop();
 
 					Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
@@ -82,6 +88,31 @@ public class PlayCommand implements ServerCommand {
 						url = "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F";
 						party = true;
 
+					} else if (url.startsWith("https://open.spotify.com/playlist/")) {
+						
+						queue.clearQueue();
+						manager.openAudioConnection(vc);
+
+						SpotifyConverter conv = new SpotifyConverter();
+						Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
+						channel.sendTyping().queue();
+
+						long before = System.currentTimeMillis();
+						List<AudioTrack> results = conv
+								.convertPlaylist(url.replaceAll("https://open.spotify.com/playlist/", ""));
+
+						results.forEach(queue::addTracktoQueue);
+						
+						long after = System.currentTimeMillis();
+						
+						EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
+								.setTimestamp(LocalDateTime.now()).setTitle(results.size() + " tracks added to queue").setDescription(results.size() + " Spotify tracks were successful loaded!\nThis took "+(after-before)/1000+" seconds.");
+
+						load.delete().queue();
+						Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(controller.getGuild().getIdLong(), builder);
+
+						return;
+						
 					} else if (url.startsWith("lf: ")) {
 
 						url = url.substring(4);
@@ -94,7 +125,6 @@ public class PlayCommand implements ServerCommand {
 					if (player.getPlayingTrack() == null) {
 
 						queue.clearQueue();
-
 						manager.openAudioConnection(vc);
 
 						Klassenserver7bbot.INSTANCE.getMainLogger()
@@ -123,12 +153,6 @@ public class PlayCommand implements ServerCommand {
 
 				} else {
 
-					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
-							.getController(vc.getGuild().getIdLong());
-					AudioManager manager = vc.getGuild().getAudioManager();
-					AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
-					AudioPlayer player = controller.getPlayer();
-					Queue queue = controller.getQueue();
 					if (!queue.emptyQueueList()) {
 						queue.clearQueue();
 					}
@@ -156,13 +180,11 @@ public class PlayCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
-		return help;
+		return "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
 	}
 
 	@Override
 	public String getcategory() {
-		String category = "Musik";
-		return category;
+		return "Musik";
 	}
 }

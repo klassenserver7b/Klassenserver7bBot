@@ -21,8 +21,7 @@ import net.hypixel.api.HypixelAPI;
 public class HypixelRankCommand
         implements HypixelCommand {
     public void performHypixelCommand(Member m, TextChannel channel, Message message) {
-        message.delete().queue();
-
+    	
         HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
 
         UUID id = null;

@@ -18,7 +18,11 @@ public class PrefixCommand implements ServerCommand {
 
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 			String[] args = message.getContentDisplay().split(" ");
+			
 			if (args.length > 1) {
+				
+				Klassenserver7bbot.INSTANCE.checkpreflist();
+				
 				Klassenserver7bbot.INSTANCE.prefixl.put(channel.getGuild().getIdLong(), args[1]);
 				Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET prefix = '" + args[1]
 						+ "' WHERE guildId = " + channel.getGuild().getIdLong());

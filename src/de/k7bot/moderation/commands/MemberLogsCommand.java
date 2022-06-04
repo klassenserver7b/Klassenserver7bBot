@@ -24,7 +24,7 @@ public class MemberLogsCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.KICK_MEMBERS)) {
-			List<Member> memb = message.getMentionedMembers();
+			List<Member> memb = message.getMentions().getMembers();
 			if (!memb.isEmpty()) {
 				List<Role> roles = memb.get(0).getRoles();
 				ArrayList<Long> roleid = new ArrayList<>();

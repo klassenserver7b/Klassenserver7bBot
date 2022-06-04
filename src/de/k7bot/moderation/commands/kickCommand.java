@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class kickCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		List<Member> ment = message.getMentionedMembers();
+		List<Member> ment = message.getMentions().getMembers();
 
 		try {
 			String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");

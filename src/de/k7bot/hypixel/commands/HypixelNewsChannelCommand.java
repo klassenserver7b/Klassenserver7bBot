@@ -15,12 +15,11 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class HypixelNewsChannelCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
 		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
-		if (!message.getMentionedChannels().isEmpty()) {
+		if (!message.getMentions().getChannels(TextChannel.class).isEmpty()) {
 
-			TextChannel chan = message.getMentionedChannels().get(0);
+			TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
 			long chanId = chan.getIdLong();
 			Long guildId = chan.getGuild().getIdLong();
 			ResultSet set = lsql.onQuery("select guildId from hypixelnewschannels");

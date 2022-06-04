@@ -21,7 +21,7 @@ public class WarnCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		List<Member> ment = message.getMentionedMembers();
+		List<Member> ment = message.getMentions().getMembers();
 		try {
 			if (!ment.isEmpty()) {
 				String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");

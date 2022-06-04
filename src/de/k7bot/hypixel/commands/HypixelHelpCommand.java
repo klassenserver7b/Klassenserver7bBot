@@ -13,8 +13,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class HypixelHelpCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
-		message.delete().queue();
-
+		
 		ConcurrentHashMap<String, HypixelCommand> commands = (Klassenserver7bbot.INSTANCE.gethypMan()).commands;
 		ConcurrentHashMap<String, String> help = (Klassenserver7bbot.INSTANCE.gethypMan()).help;
 

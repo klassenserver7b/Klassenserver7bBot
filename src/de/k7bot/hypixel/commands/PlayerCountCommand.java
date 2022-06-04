@@ -13,9 +13,7 @@
  public class PlayerCountCommand
    implements HypixelCommand
  {
-   public void performHypixelCommand(Member m, TextChannel channel, Message message) {
-     message.delete().queue();
- 
+   public void performHypixelCommand(Member m, TextChannel channel, Message message) { 
      
      HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
      

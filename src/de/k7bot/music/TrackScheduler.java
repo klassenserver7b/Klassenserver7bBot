@@ -22,8 +22,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class TrackScheduler extends AudioEventAdapter {
-	public static boolean repeat;
-	public static AudioTrack repeattrack;
 
 	public void onPlayerPause(AudioPlayer player) {
 	}
@@ -53,8 +51,8 @@ public class TrackScheduler extends AudioEventAdapter {
 			builder.addField(info.author, "[" + info.title + "](" + url + ")", false);
 			builder.addField("length: ",
 					info.isStream ? "LiveStream"
-							: (String.valueOf((stunden > 0L) ? (String.valueOf(stunden) + "h ") : "")
-									+ ((minuten > 0L) ? (String.valueOf(minuten) + "min ") : "") + sekunden + "s"),
+							: (((stunden > 0L) ? (stunden + "h ") : "")
+									+ ((minuten > 0L) ? (minuten + "min ") : "") + sekunden + "s"),
 					true);
 			if (url.startsWith("https://www.youtube.com/watch?v=")) {
 				String videoId = url.replace("https://www.youtube.com/watch?v=", "").trim();
@@ -71,9 +69,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
 							long channelid = set.getLong("channelId");
 							TextChannel channel;
-							if ((channel = guild.getTextChannelById(channelid)) != null) {
+							if (guild != null && (channel = guild.getTextChannelById(channelid)) != null) {
 								channel.sendTyping().queue();
-								channel.sendFile(file, "thumbnail.png").setEmbeds(builder.build()).queue();
+								channel.sendFile(file, "thumbnail.png").setEmbeds(builder.build()).complete();
 							}
 
 						}
@@ -96,7 +94,10 @@ public class TrackScheduler extends AudioEventAdapter {
 		Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildid);
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
 		Queue queue = controller.getQueue();
-		AudioManager manager = guild.getAudioManager();
+		AudioManager manager = null;
+		if (guild != null) {
+			manager = guild.getAudioManager();
+		}
 
 		if (endReason.mayStartNext) {
 

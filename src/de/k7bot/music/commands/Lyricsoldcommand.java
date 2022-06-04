@@ -13,7 +13,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.util.SongTitle;
-import de.k7bot.util.TitleStripper;
+import de.k7bot.util.SongDataStripper;
 import genius.SongSearch;
 import genius.SongSearch.Hit;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -41,11 +41,11 @@ public class Lyricsoldcommand implements ServerCommand {
 					SongSearch search = null;
 
 					Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Old-Lyrics Querry: "
-							+ TitleStripper.stripTitle(player.getPlayingTrack().getInfo().title));
+							+ SongDataStripper.stripTitle(player.getPlayingTrack().getInfo().title));
 					try {
 
 						AudioTrackInfo info = player.getPlayingTrack().getInfo();
-						SongTitle stitle = TitleStripper.stripTitle(info.title);
+						SongTitle stitle = SongDataStripper.stripTitle(info.title);
 						String title = stitle.getTitle();
 
 						if (stitle.containsauthor()) {

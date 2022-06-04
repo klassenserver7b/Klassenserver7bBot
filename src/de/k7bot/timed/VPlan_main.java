@@ -36,9 +36,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class VPlan_main {
-
+	
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-	Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+	private Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+	private String vplanpw;
+
+	public VPlan_main(String pw) {
+		vplanpw = pw;
+	}
 
 	public void sendvplanMessage() {
 
@@ -130,7 +135,7 @@ public class VPlan_main {
 						tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
 
 					} else {
-						tablemess.addCell("---");
+						tablemess.addCell("   ");
 					}
 
 				});
@@ -289,7 +294,7 @@ public class VPlan_main {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
-				new UsernamePasswordCredentials("manos", Klassenserver7bbot.INSTANCE.getVplanpw()));
+				new UsernamePasswordCredentials("manos", vplanpw));
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
 			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
