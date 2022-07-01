@@ -41,7 +41,7 @@ public class Lyricsoldcommand implements ServerCommand {
 					SongSearch search = null;
 
 					Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Old-Lyrics Querry: "
-							+ SongDataStripper.stripTitle(player.getPlayingTrack().getInfo().title));
+							+ SongDataStripper.stripTitle(player.getPlayingTrack().getInfo().title).getTitle());
 					try {
 
 						AudioTrackInfo info = player.getPlayingTrack().getInfo();
@@ -54,7 +54,7 @@ public class Lyricsoldcommand implements ServerCommand {
 
 						} else {
 
-							search = lapi.search(info.author + " - " + title);
+							search = lapi.search(title + " - " + info.author);
 
 						}
 

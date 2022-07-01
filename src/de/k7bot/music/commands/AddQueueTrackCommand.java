@@ -1,8 +1,6 @@
 package de.k7bot.music.commands;
 
 import java.awt.Color;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -16,13 +14,11 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
 import de.k7bot.util.SpotifyConverter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
@@ -70,8 +66,6 @@ public class AddQueueTrackCommand implements ServerCommand {
 					apm.registerSourceManager(new BeamAudioSourceManager());
 					apm.registerSourceManager(new HttpAudioSourceManager());
 					apm.registerSourceManager(new LocalAudioSourceManager());
-					
-					Queue queue = controller.getQueue();
 
 					if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
 
@@ -105,26 +99,8 @@ public class AddQueueTrackCommand implements ServerCommand {
 						SpotifyConverter conv = new SpotifyConverter();
 						Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
 						channel.sendTyping().queue();
-
-						long before = System.currentTimeMillis();
-						List<AudioTrack> results = conv
-								.convertPlaylist(url.replaceAll("https://open.spotify.com/playlist/", ""));
-
-						results.forEach(res -> {
-							queue.addTracktoQueue(res);
-						});
-
-						long after = System.currentTimeMillis();
-
-						EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
-								.setTimestamp(LocalDateTime.now()).setTitle(results.size() + " tracks added to queue")
-								.setDescription(
-										results.size() + " Spotify tracks were successfully added to queue!\nThis took "
-												+ (after - before) / 1000 + " seconds.");
 						
-						Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(vc.getGuild().getIdLong(), builder);
-
-						load.delete().queue();
+						conv.convertPlaylist(url.replaceAll("https://open.spotify.com/playlist/", ""), load, vc);
 
 						return;
 

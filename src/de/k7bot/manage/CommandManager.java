@@ -115,6 +115,7 @@ public class CommandManager {
 		this.commands.put("onlinedevices", new MemberdevicesCommand());
 		this.commands.put("charts", new OverallChartsCommand());
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
+		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {

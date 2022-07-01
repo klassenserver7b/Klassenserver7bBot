@@ -2,10 +2,7 @@ bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatische
 
 Helpcommand auf die Kategorien verteilen d.h. z.B. -help allgemein aber auf auf -help die Kategorien und maybe die meistgenutzten commands oder typische commands aus diesen mit anzeigen.
 
-APIs ohne angegebenen config key schalten sich ab
-
 Equalizer für Music
-Spotify playlists in YT playlists umwandeln und abspielen
 Mehrere player per guild (music)
 
 YT-Api
@@ -17,6 +14,7 @@ Language per channel
 
 GitHub-API
 
+ggf. Queue reroll
 
 Generell:
 

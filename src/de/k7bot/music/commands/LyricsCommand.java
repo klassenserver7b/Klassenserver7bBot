@@ -48,15 +48,14 @@ public class LyricsCommand implements ServerCommand {
 						if (stitle.containsauthor()) {
 
 							lyrics = lapi.getLyrics(title).get();
-							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
-									+ title);
+							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: " + title);
 
 						} else {
 
-							lyrics = lapi.getLyrics(info.author + " - " + title).get();
-							
-							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: "
-									+ info.author + " - " + title);
+							lyrics = lapi.getLyrics(title + " - " + info.author).get();
+
+							Klassenserver7bbot.INSTANCE.getMainLogger()
+									.info("Searching Lyrics Querry: " + title + " - " + info.author);
 
 						}
 

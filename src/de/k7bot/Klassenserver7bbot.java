@@ -24,6 +24,7 @@ import de.k7bot.manage.*;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
 import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
+import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VPlan_main;
 import de.k7bot.util.LiteSQL;
@@ -248,6 +249,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
+		builder.addEventListeners(new ChartsAutocomplete());
 
 		this.shardMan = builder.build();
 
@@ -284,8 +286,8 @@ public class Klassenserver7bbot {
 		}
 
 		Shutdown();
-		runLoop();
 		Skyblocknews.onEventCheck();
+		runLoop();
 	}
 
 	public void InitializeMusic(AudioPlayerManager manager) {
@@ -349,10 +351,16 @@ public class Klassenserver7bbot {
 	public void onShutdown() {
 		logger.info("Bot is shutting down!");
 		this.imShutdown = true;
+		
+		if(PlayCommand.conv.converter!=null) {
+			PlayCommand.conv.converter.interrupt();	
+		}
+		
 		if (this.loop != null) {
 			this.loop.interrupt();
 		}
 		if (this.shardMan != null) {
+			
 			this.API.shutdown();
 			StatsCategoryCommand.onShutdown(indev);
 			this.shardMan.setStatus(OnlineStatus.OFFLINE);
@@ -377,22 +385,6 @@ public class Klassenserver7bbot {
 					new VPlan_main(vplanpw).sendvplanMessage();
 				}
 				Skyblocknews.onEventCheck();
-
-				/*
-				 * if (min % 60 == 0) {
-				 *
-				 *
-				 * OffsetDateTime time = OffsetDateTime.now(); if
-				 * (time.getDayOfWeek().getDisplayName(TextStyle.FULL,
-				 * Locale.GERMAN).toLowerCase() .equalsIgnoreCase("dienstag") ||
-				 * time.getDayOfWeek().getDisplayName(TextStyle.FULL,
-				 * Locale.GERMAN).toLowerCase() .equalsIgnoreCase("mittwoch")) {
-				 *
-				 * if (time.getHour() >= 15 && time.getHour() <= 21) {
-				 * Dechemaxx.notifymessage(); } }
-				 *
-				 * }
-				 */
 
 				if ((!hasstarted)) {
 					StatsCategoryCommand.onStartup(indev);

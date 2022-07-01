@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +35,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class VPlan_main {
-	
+
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-	private Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 	private String vplanpw;
 
 	public VPlan_main(String pw) {
@@ -119,6 +118,39 @@ public class VPlan_main {
 								(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 						Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
 								(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+						StringBuilder strbuild = new StringBuilder();
+						JsonElement elem = entry.get("teacher");
+						
+						if (elem != null) {
+							JsonElement teachelem = Klassenserver7bbot.teacherslist
+									.get(elem.getAsString().replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+									
+							if(teachelem != null) {
+								
+								JsonObject teach = teachelem.getAsJsonObject();
+								
+								String gender = teach.get("gender").getAsString();
+								if (gender.equalsIgnoreCase("female")) {
+									strbuild.append("Frau ");
+								} else if (gender.equalsIgnoreCase("male")) {
+									strbuild.append("Herr ");
+								}
+
+								if (teach.get("is_doctor").getAsBoolean()) {
+
+									strbuild.append("Dr. ");
+
+								}
+
+								strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+								
+							}
+						}
+
+						teacher.setLinkTitle(strbuild.toString().trim());
+						teacher.setLinkURL("https://manos-dresden.de/lehrer");
+
 						Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
 								(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
@@ -140,7 +172,8 @@ public class VPlan_main {
 
 				});
 
-				embbuild.addField("Änderungen", tablemess.build(), false);
+				tablemess.automaticLineBreaks(4);
+				embbuild.setDescription("**Änderungen**\n" + tablemess.build());
 
 				if (!(info.equalsIgnoreCase(""))) {
 
@@ -151,7 +184,7 @@ public class VPlan_main {
 			}
 
 			embbuild.setColor(Color.decode("#038aff"));
-			embbuild.setFooter("Stand vom " + OffsetDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+			embbuild.setFooter("Stand vom " + OffsetDateTime.now());
 
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
@@ -189,13 +222,11 @@ public class VPlan_main {
 
 							finalentries = getC;
 
-							lsql.onUpdate("UPDATE vplannext SET zieldatum = '"
-									+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-											.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
-											.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
-											.replaceAll("Mittwoch", "").replaceAll("Donnerstag", "")
-											.replaceAll("Freitag", "").toLowerCase()
-									+ "'");
+							lsql.onUpdate("UPDATE vplannext SET zieldatum = '" + plan.get("head").getAsJsonObject()
+									.get("title").getAsString().replaceAll(" ", "").replaceAll("\\(B-Woche\\)", "")
+									.replaceAll("\\(A-Woche\\)", "").replaceAll(",", "").replaceAll("Montag", "")
+									.replaceAll("Dienstag", "").replaceAll("Mittwoch", "").replaceAll("Donnerstag", "")
+									.replaceAll("Freitag", "").toLowerCase() + "'");
 
 						} else {
 							return null;
@@ -274,8 +305,7 @@ public class VPlan_main {
 			JsonArray arr = obj.get("body").getAsJsonArray();
 			arr.forEach(element -> {
 				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
-				if (elem.equalsIgnoreCase("9b") || elem.equalsIgnoreCase("9b,9c")
-						|| elem.equalsIgnoreCase("9a-9c/ Spw")) {
+				if (elem.contains("9b") || elem.equalsIgnoreCase("9a-9c/ Spw") || elem.equalsIgnoreCase("9a-9c")) {
 
 					classentries.add(element.getAsJsonObject());
 

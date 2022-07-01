@@ -53,8 +53,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
-						+ songauthor + "', " + datetime + ")");
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				return true;
 
@@ -75,8 +75,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
-						+ songauthor + "', " + datetime + ")");
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				this.queuelist = this.looplist;
 				return true;
@@ -94,8 +94,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
-						+ songauthor + "', " + datetime + ")");
+				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				return true;
 
@@ -114,8 +114,8 @@ public class Queue {
 				songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 			}
 
-			sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
-					+ songauthor + "', " + datetime + ")");
+			sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+					+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 		}
 		return false;
 	}

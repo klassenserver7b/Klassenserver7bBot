@@ -70,8 +70,8 @@ public class SlashCommandManager {
 			commup.addCommands(Commands.slash("charts", "Liefert die Bot-Music Charts für die gewählten Parameter")
 					.addOption(OptionType.BOOLEAN, "guild",
 							"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
-					.addOption(OptionType.NUMBER, "time", "REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
-					.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"")
+					.addOption(OptionType.INTEGER, "time", "REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
+					.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"", false, true)
 					);
 
 			commup.complete();

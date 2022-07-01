@@ -2,7 +2,6 @@ package de.k7bot.music.commands;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,10 +65,9 @@ public class OverallChartsCommand implements ServerCommand {
 		}
 		Set<Long> treeValues = treeMap.keySet();
 
-		List<Long> reverseKeys = new LinkedList<>(treeValues);
-		Collections.reverse(reverseKeys);
+		List<Long> orderedKeys = new LinkedList<>(treeValues);
 
-		for (Long Long : reverseKeys) {
+		for (Long Long : orderedKeys) {
 			Set<String> values = treeMap.get(Long);
 
 			for (String title : values) {

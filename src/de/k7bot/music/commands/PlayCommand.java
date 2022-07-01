@@ -2,7 +2,6 @@ package de.k7bot.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
@@ -11,15 +10,11 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.util.SpotifyConverter;
 
-import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,8 +26,10 @@ public class PlayCommand implements ServerCommand {
 	public static boolean next = false;
 	public static boolean party = false;
 
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public static final SpotifyConverter conv = new SpotifyConverter();
 
+	public void performCommand(Member m, TextChannel channel, Message message) {
+		
 		String[] args = message.getContentDisplay().split(" ");
 
 		GuildVoiceState state;
@@ -92,24 +89,12 @@ public class PlayCommand implements ServerCommand {
 						
 						queue.clearQueue();
 						manager.openAudioConnection(vc);
-
-						SpotifyConverter conv = new SpotifyConverter();
+						
 						Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
 						channel.sendTyping().queue();
 
-						long before = System.currentTimeMillis();
-						List<AudioTrack> results = conv
-								.convertPlaylist(url.replaceAll("https://open.spotify.com/playlist/", ""));
-
-						results.forEach(queue::addTracktoQueue);
-						
-						long after = System.currentTimeMillis();
-						
-						EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
-								.setTimestamp(LocalDateTime.now()).setTitle(results.size() + " tracks added to queue").setDescription(results.size() + " Spotify tracks were successful loaded!\nThis took "+(after-before)/1000+" seconds.");
-
-						load.delete().queue();
-						Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(controller.getGuild().getIdLong(), builder);
+						url = url.replaceAll("https://open.spotify.com/playlist/", "");
+						conv.convertPlaylist(url, load, vc);
 
 						return;
 						
@@ -146,7 +131,11 @@ public class PlayCommand implements ServerCommand {
 						Klassenserver7bbot.INSTANCE.getMainLogger().info(
 								"Bot startet searching a track: overwriting current track -> new Track(channelName = "
 										+ vc.getName() + ", url = " + url + ")");
-						apm.loadItem(url, new AudioLoadResult(controller, url));
+						try {
+							apm.loadItem(url, new AudioLoadResult(controller, url)).get();
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+						}
 						player.setPaused(false);
 						next = false;
 					}
@@ -177,6 +166,7 @@ public class PlayCommand implements ServerCommand {
 					TimeUnit.SECONDS);
 		}
 	}
+	
 
 	@Override
 	public String gethelp() {

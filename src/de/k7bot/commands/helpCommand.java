@@ -95,8 +95,8 @@ public class helpCommand implements ServerCommand {
 					inbuild.append(help);
 					inbuild.append("\n\n|");
 
-					if (buildlength + inbuild.length() + 5>= 1024 * limitmultiplicator) {
-						
+					if (buildlength + inbuild.length() + 5 >= 1024 * limitmultiplicator) {
+
 						buildlength = buildlength + inbuild.length();
 						limitmultiplicator++;
 						build.append("<@>");
@@ -114,12 +114,12 @@ public class helpCommand implements ServerCommand {
 			});
 
 			String[] helpparts = build.toString().split("<@>");
-			
+
 			System.out.println(helpparts.length + "; " + cat);
 
 			for (int i = 0; i < helpparts.length; i++) {
-				
-				//System.out.println("length: " + helpparts[i].length());
+
+				// System.out.println("length: " + helpparts[i].length());
 
 				if (i == 0) {
 					messbuild.addField("**" + cat + "**", helpparts[i], false);
