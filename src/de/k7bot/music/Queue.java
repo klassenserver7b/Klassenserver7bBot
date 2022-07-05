@@ -129,6 +129,15 @@ public class Queue {
 			next(track);
 		}
 	}
+	
+	public void setplaynext(AudioTrack track) {
+		this.queuelist.add(0, track);
+		if (this.controller.getPlayer().getPlayingTrack() == null) {
+			Klassenserver7bbot.INSTANCE.getMainLogger()
+					.debug("Queue - setNextTrack: playing track = null -> next(track)");
+			next(track);
+		}
+	}
 
 	public void loop() {
 		this.islooped = true;

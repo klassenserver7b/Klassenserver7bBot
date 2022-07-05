@@ -54,7 +54,8 @@ public class PlayCommand implements ServerCommand {
 
 					ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
 							.onQuery("SELECT volume FROM botutil WHERE guildId = " + channel.getGuild().getIdLong());
-					try {
+
+					try{
 						if (set.next()) {
 							int volume = set.getInt("volume");
 							if (volume != 0) {
@@ -75,7 +76,8 @@ public class PlayCommand implements ServerCommand {
 					}
 
 					for (int i = 1; i < args.length; i++) {
-						strBuilder.append(args[i] + " ");
+						strBuilder.append(args[i]);
+						strBuilder.append(" ");
 					}
 
 					String url = strBuilder.toString().trim();
@@ -117,7 +119,7 @@ public class PlayCommand implements ServerCommand {
 										+ vc.getName() + ", url = " + url + ")");
 
 						try {
-							apm.loadItem(url, new AudioLoadResult(controller, url)).get();
+							apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
 						}
@@ -132,7 +134,7 @@ public class PlayCommand implements ServerCommand {
 								"Bot startet searching a track: overwriting current track -> new Track(channelName = "
 										+ vc.getName() + ", url = " + url + ")");
 						try {
-							apm.loadItem(url, new AudioLoadResult(controller, url)).get();
+							apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
 						}
@@ -152,7 +154,7 @@ public class PlayCommand implements ServerCommand {
 
 					String url = "D:\\Felix\\Desktop\\Bot\\audio.mp4";
 					player.stopTrack();
-					apm.loadItem(url, new AudioLoadResult(controller, url));
+					apm.loadItem(url, new AudioLoadResult(controller, url, false));
 					player.setPaused(false);
 				}
 			} else {

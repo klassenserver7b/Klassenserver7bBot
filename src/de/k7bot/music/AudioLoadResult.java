@@ -21,16 +21,18 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	private final String uri;
 	private final MusicController controller;
 	private final LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
+	private final boolean setasnext;
 
-	public AudioLoadResult(MusicController controller, String uri) {
+	public AudioLoadResult(MusicController controller, String uri, boolean loadasnext) {
 		this.uri = uri;
 		this.controller = controller;
+		this.setasnext = loadasnext;
 	}
 
 	public void trackLoaded(AudioTrack track) {
 		
 		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-		Long datetime = Long.valueOf(datetimestring);
+		long datetime = Long.parseLong(datetimestring);
 		
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a single track");
 		this.controller.getPlayer().playTrack(track);
@@ -60,7 +62,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
-				queue.addTracktoQueue(track);
+				addtoqueue(queue, track);
 				return;
 			}
 
@@ -70,14 +72,14 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
-				queue.addTracktoQueue(track);
+				addtoqueue(queue, track);
 				return;
 			}
 
 			int added = 0;
 
 			for (AudioTrack track : playlist.getTracks()) {
-				queue.addTracktoQueue(track);
+				addtoqueue(queue, track);
 				added++;
 			}
 
@@ -94,6 +96,16 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		} else {
 			noMatches();
 		}
+	}
+	
+	private void addtoqueue(Queue queue, AudioTrack track) {
+		
+		if(setasnext) {
+			queue.setplaynext(track);
+		}else {
+			queue.addTracktoQueue(track);
+		}
+		
 	}
 
 	public void noMatches() {

@@ -30,6 +30,7 @@ import de.k7bot.music.commands.NoncoreCommand;
 import de.k7bot.music.commands.OverallChartsCommand;
 import de.k7bot.music.commands.PauseCommand;
 import de.k7bot.music.commands.PlayCommand;
+import de.k7bot.music.commands.PlayNextCommand;
 import de.k7bot.music.commands.QueuelistCommand;
 import de.k7bot.music.commands.ResumeCommand;
 import de.k7bot.music.commands.ShuffleCommand;
@@ -115,6 +116,8 @@ public class CommandManager {
 		this.commands.put("onlinedevices", new MemberdevicesCommand());
 		this.commands.put("charts", new OverallChartsCommand());
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
+		this.commands.put("playnext", new PlayNextCommand());
+		this.commands.put("pn", new PlayNextCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());

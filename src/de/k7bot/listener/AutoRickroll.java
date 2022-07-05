@@ -32,7 +32,7 @@ public class AutoRickroll extends ListenerAdapter {
 					queue.clearQueue();
 				}
 				manager.openAudioConnection(vc);
-				apm.loadItem(url, new AudioLoadResult(controller, url));
+				apm.loadItem(url, new AudioLoadResult(controller, url, false));
 				player.setPaused(false);
 			} else {
 
@@ -40,7 +40,7 @@ public class AutoRickroll extends ListenerAdapter {
 					queue.clearQueue();
 				}
 				player.stopTrack();
-				apm.loadItem(url, new AudioLoadResult(controller, url));
+				apm.loadItem(url, new AudioLoadResult(controller, url, false));
 				player.setPaused(false);
 			}
 		}

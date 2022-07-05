@@ -28,11 +28,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-public class AddQueueTrackCommand implements ServerCommand {
+public class PlayNextCommand implements ServerCommand{
 
 	@Override
 	public String gethelp() {
-		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie der aktuellen Queue hinzu.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
+		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie als nächsten in die Queue ein.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\\n - z.B. [prefix]playnext [url / YouTube Suchbegriff]";
 	}
 
 	@Override
@@ -42,7 +42,6 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-
 		String[] args = message.getContentDisplay().split(" ");
 
 		GuildVoiceState state;
@@ -119,7 +118,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 									+ vc.getName() + ", url = " + url + ")");
 
 					try {
-						apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
+						apm.loadItem(url, new AudioLoadResult(controller, url, true)).get();
 							Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(vc.getGuild().getIdLong(), new EmbedBuilder().setColor(Color.decode("#4d05e8")).setDescription("1 Song successful added to queue"));
 					} catch (InterruptedException | ExecutionException e) {
 						e.printStackTrace();
@@ -136,5 +135,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 						.queueAfter(10L, TimeUnit.SECONDS);
 			}
 		}
+		
 	}
+
 }
