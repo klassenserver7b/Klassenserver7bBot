@@ -4,6 +4,7 @@
 /.idea
 /.vs
 
+commit.txt
 bot.properties
 /resources/datenbank.db
 .classpath

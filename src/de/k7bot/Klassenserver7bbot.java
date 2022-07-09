@@ -17,7 +17,7 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
-
+import de.k7bot.commands.NEWHelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
@@ -253,6 +253,7 @@ public class Klassenserver7bbot {
 
 		this.shardMan = builder.build();
 
+		NEWHelpCommand.updateCategoryList();
 		InitializeMusic(this.audioPlayerManager);
 		AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
 		AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
