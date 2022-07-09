@@ -76,12 +76,14 @@ public class OverallChartsCommand implements ServerCommand {
 
 				String[] titleparts = title.split("%%SPLITTER%%");
 
-				String songname = titleparts[0];
 				String songauthor;
+				String songname;
 
 				if (titleparts.length > 1) {
-					songauthor = titleparts[1];
+					songname = titleparts[1];
+					songauthor = titleparts[0];
 				} else {
+					songname = titleparts[0];
 					songauthor = "";
 				}
 
