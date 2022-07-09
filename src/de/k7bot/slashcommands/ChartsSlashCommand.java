@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -152,21 +153,24 @@ public class ChartsSlashCommand implements SlashCommand {
 		}
 		Set<Long> treeValues = treeMap.keySet();
 
-		List<Long> orderedKeys = new LinkedList<>(treeValues);
-
-		for (Long Long : orderedKeys) {
+		List<Long> reverseKeys = new LinkedList<>(treeValues);
+		Collections.reverse(reverseKeys);
+		
+		for (Long Long : reverseKeys) {
 			Set<String> values = treeMap.get(Long);
 
 			for (String title : values) {
 
 				String[] titleparts = title.split("%%SPLITTER%%");
 
-				String songname = titleparts[0];
 				String songauthor;
+				String songname;
 
 				if (titleparts.length > 1) {
-					songauthor = titleparts[1];
+					songname = titleparts[1];
+					songauthor = titleparts[0];
 				} else {
+					songname = titleparts[0];
 					songauthor = "";
 				}
 
