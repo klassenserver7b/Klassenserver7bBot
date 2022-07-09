@@ -3,6 +3,7 @@ package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.ClientInfo;
+import de.k7bot.commands.NEWHelpCommand;
 import de.k7bot.commands.PingCommand;
 import de.k7bot.commands.PrefixCommand;
 import de.k7bot.commands.RestartCommand;
@@ -128,6 +129,7 @@ public class CommandManager {
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());
 			this.commands.put("test", new TestCommand());
+			this.commands.put("newhelp", new NEWHelpCommand());
 		}
 	}
 
