@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,57 +23,60 @@ public class CommandListener extends ListenerAdapter {
 			Klassenserver7bbot.INSTANCE.checkpreflist();
 			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 
-			String prefix = Klassenserver7bbot.INSTANCE.prefixl.get(event.getGuild().getIdLong()).toLowerCase();
+			try{
+				String prefix = Klassenserver7bbot.INSTANCE.prefixl.get(event.getGuild().getIdLong()).toLowerCase();
 
-			if (event.isFromType(ChannelType.TEXT)) {
-				TextChannel channel = event.getTextChannel();
+				if (event.isFromType(ChannelType.TEXT)) {
+					TextChannel channel = event.getTextChannel();
 
-				if (message.equalsIgnoreCase("-help")) {
+					if (message.equalsIgnoreCase("-help")) {
 
-					Klassenserver7bbot.INSTANCE.getCmdMan().perform("help", event.getMember(), channel,
-							event.getMessage());
+						Klassenserver7bbot.INSTANCE.getCmdMan().perform("help", event.getMember(), channel,
+								event.getMessage());
 
-					inserttoLog("help", LocalDateTime.now());
+						inserttoLog("help", LocalDateTime.now(), event.getGuild());
 
-				} else if (message.equalsIgnoreCase("-getprefix")) {
+					} else if (message.equalsIgnoreCase("-getprefix")) {
 
-					channel.sendMessage("The prefix for your Guild is: `" + prefix + "`.").queue();
+						channel.sendMessage("The prefix for your Guild is: `" + prefix + "`.").queue();
 
-					inserttoLog("getprefix", LocalDateTime.now());
+						inserttoLog("getprefix", LocalDateTime.now(), event.getGuild());
 
-				} else {
-					if (message.startsWith(prefix) && message.length() != 0) {
+					} else {
+						if (message.startsWith(prefix) && message.length() != 0) {
 
-						String[] args = message.substring(prefix.length()).split(" ");
+							String[] args = message.substring(prefix.length()).split(" ");
 
-						if (args.length > 0) {
+							if (args.length > 0) {
 
-							if (Klassenserver7bbot.INSTANCE.getCmdMan().perform(args[0], event.getMember(), channel,
-									event.getMessage())) {
+								if (Klassenserver7bbot.INSTANCE.getCmdMan().perform(args[0], event.getMember(), channel,
+										event.getMessage())) {
 
-								inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now());
+									inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild());
 
-							} else {
+								} else {
 
-								channel.sendMessage("`unbekannter Command`").complete().delete().queueAfter(10L,
-										TimeUnit.SECONDS);
+									channel.sendMessage("`unbekannter Command`").complete().delete().queueAfter(10L,
+											TimeUnit.SECONDS);
+
+								}
 
 							}
-
 						}
 					}
 				}
+			}catch(IllegalStateException e) {
+				
 			}
 		}
 	}
 
-	private void inserttoLog(String command, LocalDateTime time) {
+	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
 
 		LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
 
 		if (!Klassenserver7bbot.INSTANCE.exit) {
-			sqlite.onUpdate("INSERT INTO commandlog(command, timestamp) VALUES('" + command + "', "
-					+ time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")) + ")");
+			sqlite.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES('" + command + "', "+guild.getIdLong()+", "+ time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")) + ")");
 		}
 
 	}

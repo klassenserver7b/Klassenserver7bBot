@@ -46,7 +46,7 @@ public class VoiceListener extends ListenerAdapter {
 			controller.moveVoiceMember(member, vc).queue();
 			lsql.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
 			Klassenserver7bbot.INSTANCE.getMainLogger().info("Created custom VoiceChannel for Member: "
-					+ member.getEffectiveName() + " with the following Channel-ID: " + audioChannel.getIdLong());
+					+ member.getEffectiveName() + " with the following Channel-ID: " + vc.getIdLong());
 		}
 	}
 
