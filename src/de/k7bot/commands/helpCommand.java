@@ -1,4 +1,3 @@
-
 package de.k7bot.commands;
 
 import de.k7bot.Klassenserver7bbot;
