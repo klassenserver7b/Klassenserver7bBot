@@ -2,7 +2,7 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.NEWHelpCommand;
+import de.k7bot.commands.HelpCommand;
 import de.k7bot.util.LiteSQL;
 
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ public class CommandListener extends ListenerAdapter {
 		PrivateChannel channel = event.getPrivateChannel();
 		
 		if(message.getContentStripped().startsWith("-help")) {
-			NEWHelpCommand help = new NEWHelpCommand();
+			HelpCommand help = new HelpCommand();
 			
 			help.performCommand(channel, message);
 		}

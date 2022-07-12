@@ -82,11 +82,11 @@ public class SlashCommandManager {
 		SlashCommand cmd;
 		if ((cmd = this.commands.get(event.getName().toLowerCase())) != null) {
 
-			cmd.performSlashCommand(event);
-
 			commandlog.info("SlashCommand - see next lines:\n\nMember: " + event.getMember().getEffectiveName()
 					+ " | \nGuild: " + event.getGuild().getName() + " | \nChannel: " + event.getChannel().getName()
 					+ " | \nMessage: " + event.getName() + "\n");
+
+			cmd.performSlashCommand(event);
 
 			return true;
 		}
