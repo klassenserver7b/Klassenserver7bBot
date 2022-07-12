@@ -128,6 +128,7 @@ public class CommandManager {
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());
 			this.commands.put("test", new TestCommand());
+			this.commands.put("newhelp", new NEWHelpCommand());
 		}
 	}
 

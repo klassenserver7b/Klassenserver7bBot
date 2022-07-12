@@ -220,6 +220,7 @@ public class Klassenserver7bbot {
 
 		sqlite.connect();
 		SQLManager.onCreate();
+		NEWHelpCommand.updateCategoryList();
 		DefaultShardManagerBuilder builder;
 
 		if (!indev) {
