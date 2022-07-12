@@ -83,6 +83,12 @@ public class VPlan_main {
 			if (fien.isEmpty()) {
 
 				embbuild.setTitle("**KEINE ÄNDERUNGEN 😭**");
+				
+				if (!(info.equalsIgnoreCase(""))) {
+
+					embbuild.addField("Sonstige Infos", info, false);
+
+				}
 
 			} else {
 
