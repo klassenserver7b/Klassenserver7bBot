@@ -8,5 +8,6 @@ commit.txt
 bot.properties
 /resources/datenbank.db
 /resources/bot.properties
+/resources/dance.json
 .classpath
 .project
