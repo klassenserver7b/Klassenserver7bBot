@@ -7,5 +7,6 @@
 commit.txt
 bot.properties
 /resources/datenbank.db
+/resources/bot.properties
 .classpath
 .project
