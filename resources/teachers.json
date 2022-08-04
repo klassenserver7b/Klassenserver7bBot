@@ -158,7 +158,7 @@
     "Hal": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "H. Haltenhoff",
+        "full_name": "Heike Haltenhoff",
         "subjects": [
             "LA",
             "DE"
@@ -355,7 +355,7 @@
     "Neu": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "J. Neumann",
+        "full_name": "Juliane Neumann",
         "subjects": [
             "DE",
             "FR"
@@ -409,7 +409,7 @@
     "ScR": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "R. Schölzel",
+        "full_name": "Ralf Schölzel",
         "subjects": [
             "SPO",
             "GEO"
@@ -463,7 +463,7 @@
     "Sta": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "S. Stange",
+        "full_name": "Sarah Stange",
         "subjects": [
             "MA",
             "GEO"
@@ -526,7 +526,7 @@
     "Wei": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "M. Weise",
+        "full_name": "Matthias Weise",
         "subjects": [
             "MA",
             "CH"
