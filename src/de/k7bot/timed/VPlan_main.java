@@ -29,10 +29,17 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.util.Cell;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
+import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+/**
+ * 
+ * @author felix
+ * @Deprecated use {@link de.k7bot.timed.VplanNEW_XML VplanNEW_XML instead}
+ */
+@DeprecatedSince(value = "1.14.0")
 public class VPlan_main {
 
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
@@ -43,6 +50,10 @@ public class VPlan_main {
 		vplanpw = pw;
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	public void sendvplanMessage() {
 
 		JsonObject plan = getPlan();
@@ -196,6 +207,10 @@ public class VPlan_main {
 		}
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> finalplancheck(JsonObject plan) {
 
 		Integer dbh = null;
@@ -257,6 +272,10 @@ public class VPlan_main {
 		}
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private boolean synchronizePlanDB(JsonObject plan) {
 		if (plan != null) {
 			String dbdate = "";
@@ -297,6 +316,10 @@ public class VPlan_main {
 
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> getyourC(JsonObject obj) {
 		List<JsonObject> classentries = new ArrayList<>();
 		if (obj != null) {
@@ -318,6 +341,10 @@ public class VPlan_main {
 
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private JsonObject getPlan() {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
