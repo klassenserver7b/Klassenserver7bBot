@@ -14,7 +14,7 @@ public class PingSlashCommand implements SlashCommand {
 		InteractionHook hook = event.deferReply().complete();
 
 		PingCommand pc = new PingCommand();
-		TextChannel channel = event.getTextChannel();
+		TextChannel channel = event.getChannel().asTextChannel();
 
 		long gatewayping = pc.getGatewayping(channel);
 		long time = pc.getRESTping(channel);

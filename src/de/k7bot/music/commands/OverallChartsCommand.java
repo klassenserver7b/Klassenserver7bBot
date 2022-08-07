@@ -90,8 +90,8 @@ public class OverallChartsCommand implements ServerCommand {
 				if (songauthor.equalsIgnoreCase("")) {
 
 					String[] split = songname.split(" - ");
-					songname = split[0];
-					songauthor = split[1];
+					songname = split[1];
+					songauthor = split[0];
 
 				}
 

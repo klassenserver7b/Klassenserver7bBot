@@ -8,7 +8,6 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
 import java.awt.Color;
 
 import org.apache.http.auth.AuthScope;
@@ -48,7 +47,7 @@ public class VPlan_main {
 
 		JsonObject plan = getPlan();
 
-		ConcurrentHashMap<List<JsonObject>, String> input = finalplancheck(plan);
+		List<JsonObject> fien = finalplancheck(plan);
 		Guild guild;
 		TextChannel channel;
 
@@ -62,11 +61,9 @@ public class VPlan_main {
 			channel = guild.getTextChannelById(920777920681738390L);
 		}
 
-		if (input != null) {
+		if (fien != null) {
 
-			List<JsonObject> fien = input.keys().nextElement();
-
-			String info = input.values().toString();
+			String info = plan.get("info").toString();
 
 			info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
 
@@ -83,6 +80,12 @@ public class VPlan_main {
 			if (fien.isEmpty()) {
 
 				embbuild.setTitle("**KEINE ÄNDERUNGEN 😭**");
+
+				if (!(info.equalsIgnoreCase(""))) {
+
+					embbuild.addField("Sonstige Infos", info, false);
+
+				}
 
 			} else {
 
@@ -121,15 +124,15 @@ public class VPlan_main {
 
 						StringBuilder strbuild = new StringBuilder();
 						JsonElement elem = entry.get("teacher");
-						
+
 						if (elem != null) {
-							JsonElement teachelem = Klassenserver7bbot.teacherslist
-									.get(elem.getAsString().replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
-									
-							if(teachelem != null) {
-								
+							JsonElement teachelem = Klassenserver7bbot.teacherslist.get(elem.getAsString()
+									.replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+
+							if (teachelem != null) {
+
 								JsonObject teach = teachelem.getAsJsonObject();
-								
+
 								String gender = teach.get("gender").getAsString();
 								if (gender.equalsIgnoreCase("female")) {
 									strbuild.append("Frau ");
@@ -144,7 +147,7 @@ public class VPlan_main {
 								}
 
 								strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-								
+
 							}
 						}
 
@@ -193,18 +196,15 @@ public class VPlan_main {
 		}
 	}
 
-	public ConcurrentHashMap<List<JsonObject>, String> finalplancheck(JsonObject plan) {
+	private List<JsonObject> finalplancheck(JsonObject plan) {
 
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
 
 		if (plan != null) {
-			String info = plan.get("info").toString();
 			boolean synced;
 
 			synced = synchronizePlanDB(plan);
-
-			ConcurrentHashMap<List<JsonObject>, String> fien = new ConcurrentHashMap<>();
 
 			List<JsonObject> getC = getyourC(plan);
 			if (getC != null) {
@@ -246,9 +246,7 @@ public class VPlan_main {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-
-				fien.put(finalentries, info);
-				return fien;
+				return finalentries;
 
 			} else {
 				return null;
@@ -259,7 +257,7 @@ public class VPlan_main {
 		}
 	}
 
-	public boolean synchronizePlanDB(JsonObject plan) {
+	private boolean synchronizePlanDB(JsonObject plan) {
 		if (plan != null) {
 			String dbdate = "";
 
@@ -299,7 +297,7 @@ public class VPlan_main {
 
 	}
 
-	public List<JsonObject> getyourC(JsonObject obj) {
+	private List<JsonObject> getyourC(JsonObject obj) {
 		List<JsonObject> classentries = new ArrayList<>();
 		if (obj != null) {
 			JsonArray arr = obj.get("body").getAsJsonArray();
@@ -320,7 +318,7 @@ public class VPlan_main {
 
 	}
 
-	public JsonObject getPlan() {
+	private JsonObject getPlan() {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),

@@ -17,7 +17,7 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
-
+import de.k7bot.commands.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
@@ -26,23 +26,25 @@ import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
-import de.k7bot.timed.VPlan_main;
+import de.k7bot.timed.VplanNEW_XML;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.commands.StatsCategoryCommand;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import javax.security.auth.login.LoginException;
@@ -64,17 +66,8 @@ import net.hypixel.api.apache.ApacheHttpClient;
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
 	public static JsonObject teacherslist;
-	private final HypixelAPI API;
-	private final CommandManager cmdMan;
-	private final HypixelCommandManager hypMan;
-	private final SlashCommandManager slashMan;
-	private final Logger logger;
-	private final LiteSQL sqlite;
-	private final MusicUtil musicutil;
-	private final LyricsClient lyricsapi;
-	private final GLA lyricsapiold;
-	private final SystemNotificationChannelHolder syschannels;
 
+	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
 	public AudioPlayerManager audioPlayerManager;
@@ -97,129 +90,105 @@ public class Klassenserver7bbot {
 	public int min = 0;
 
 	private GitHub github;
+	private HypixelAPI API;
 	private Long ownerId;
-	private String vplanpw = "";
+	private String vplanpw;
+	private Integer schoolID;
+	private CommandManager cmdMan;
+	private HypixelCommandManager hypMan;
+	private SlashCommandManager slashMan;
+	private LiteSQL sqlite;
+	private MusicUtil musicutil;
+	private LyricsClient lyricsapi;
+	private GLA lyricsapiold;
+	private SystemNotificationChannelHolder syschannels;
+	private VplanNEW_XML vplan;
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
-	public static void main(String[] args) {
-		try {
-			if (args.length <= 0) {
-				new Klassenserver7bbot(false);
-			} else {
-				if (args[0].equals("--devmode")) {
-					new Klassenserver7bbot(true);
-				} else {
-					new Klassenserver7bbot(false);
-				}
-
-			}
-
-		} catch (LoginException | IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
 		INSTANCE = this;
+		this.indev = indev;
 
-		List<String> conf = new ArrayList<>();
+		Properties prop = new Properties();
+		FileInputStream in;
 
-		File file = new File("resources/teachers.json");
+		try {
+			in = new FileInputStream("resources/bot.properties");
+			prop.load(in);
+			in.close();
+		} catch (IOException e) {
 
-		if (file.exists()) {
+			logger.error("No valid config File found! generating a new one");
+			File f = new File("resources/bot.properties");
 
-			try {
-
-				String jsonstring = Files.readString(Path.of(file.getPath()));
-
-				JsonElement json = JsonParser.parseString(jsonstring);
-				teacherslist = json.getAsJsonObject();
-
-			} catch (IOException e1) {
-
-				e1.printStackTrace();
-
+			if (!f.exists()) {
+				generateConfigFile(f);
 			}
 
 		}
 
-		try {
-			conf = Files.readAllLines(Paths.get("bot.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
+		initialize(prop);
+		checkpreflist();
+		awaitReady();
+
+		Shutdown();
+		Skyblocknews.onEventCheck();
+		runLoop();
+	}
+
+	public boolean initialize(Properties prop) {
+		loadTeacherList();
+
+		String token = prop.getProperty("token");
+
+		String canaryToken;
+		if ((canaryToken = prop.getProperty("canary-token")) == null) {
+			this.indev = false;
 		}
 
-		String[] tokenarr = conf.get(0).split("\\=");
-		String token = "";
-
-		String[] canaryTokenarr = conf.get(1).split("\\=");
-		String canaryToken = "";
-
-		String[] hypixelTokenarr = conf.get(2).split("\\=");
-		String hypixelToken = "";
-
-		String[] githubtokenarr = conf.get(3).split("\\=");
-		String githubtoken = "";
-
-		String[] owneridarr = conf.get(4).split("\\=");
-
-		String[] shardcarr = conf.get(5).split("\\=");
-		int shardc = -1;
-
-		String[] vplanpwarr = conf.get(6).split("\\=");
-
-		if (tokenarr.length >= 2) {
-			token = tokenarr[1];
-		}
-
-		if (canaryTokenarr.length >= 2) {
-			canaryToken = canaryTokenarr[1];
-		} else {
-			indev = false;
-		}
-
-		if (hypixelTokenarr.length >= 2) {
-			hypixelToken = hypixelTokenarr[1];
+		String hypixelToken;
+		if ((hypixelToken = prop.getProperty("hypixel-api-key")) != null) {
 			this.hypixelapienabled = true;
 		}
 
-		if (githubtokenarr.length >= 2) {
-			githubtoken = githubtokenarr[1];
+		String githubtoken;
+		if ((githubtoken = prop.getProperty("github-oauth-token")) != null) {
 			this.githubapienabled = true;
 		}
 
-		if (owneridarr.length >= 2) {
-			this.ownerId = Long.parseLong(owneridarr[1]);
-		}
+		this.ownerId = Long.valueOf(prop.getProperty("ownerId"));
 
-		if (vplanpwarr.length >= 2) {
-			this.vplanpw = vplanpwarr[1];
+		if ((this.vplanpw = prop.getProperty("vplanpw")) != null && prop.getProperty("schoolID") != null) {
+			this.schoolID = Integer.valueOf(prop.getProperty("schoolID"));
 			this.vplanenabled = true;
 		}
 
-		this.indev = indev;
-		this.sqlite = new LiteSQL();
-		this.musicutil = new MusicUtil();
-		this.lyricsapi = new LyricsClient();
-		this.lyricsapiold = new GLA();
-		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
-		this.hypMan = new HypixelCommandManager();
+		String shards;
+		int shardc;
 
-		this.syschannels = new SystemNotificationChannelHolder();
-
-		this.audioPlayerManager = new DefaultAudioPlayerManager();
-		this.playerManager = new PlayerManager();
-		this.logger = LoggerFactory.getLogger("K7Bot-Main");
-
-		try {
-			shardc = Integer.parseInt(shardcarr[1]);
-		} catch (NumberFormatException | IndexOutOfBoundsException e) {
+		if ((shards = prop.getProperty("shardCount")) != null && !shards.equalsIgnoreCase("")) {
+			shardc = Integer.valueOf(shards);
+		} else {
+			shardc = -1;
 			this.logger.info("Empty Shard-Count Config");
 		}
 
-		sqlite.connect();
-		SQLManager.onCreate();
+		try {
+			buildBot(token, canaryToken, shardc);
+		} catch (LoginException | IllegalArgumentException e) {
+			this.logger.error("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
+			e.printStackTrace();
+		}
+
+		initializeApis(hypixelToken, githubtoken);
+		initializeObjects();
+
+		return true;
+	}
+
+	public void buildBot(String token, String canaryToken, int shardc) throws LoginException, IllegalArgumentException {
+
 		DefaultShardManagerBuilder builder;
 
 		if (!indev) {
@@ -233,9 +202,6 @@ public class Klassenserver7bbot {
 		builder.setActivity(Activity.listening("-help"));
 
 		builder.setStatus(OnlineStatus.ONLINE);
-
-		String key = System.getProperty("apiKey", hypixelToken);
-		this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
 
 		builder.addEventListeners(new CommandListener());
 		builder.addEventListeners(new VoiceListener());
@@ -252,13 +218,73 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new ChartsAutocomplete());
 
 		this.shardMan = builder.build();
+	}
+
+	public void initializeApis(String hypixelToken, String githubtoken) {
+
+		if (this.hypixelapienabled) {
+
+			String key = System.getProperty("apiKey", hypixelToken);
+			this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
+
+		}
+
+		if (this.githubapienabled) {
+
+			try {
+				new GitHubBuilder();
+				this.github = new GitHubBuilder().withOAuthToken(githubtoken).build();
+			} catch (IOException e) {
+				this.logger.error("couldn't start GitHub-API");
+			}
+
+		}
+	}
+
+	public void initializeObjects() {
+
+		this.sqlite = new LiteSQL();
+		sqlite.connect();
+
+		this.musicutil = new MusicUtil();
+		this.lyricsapi = new LyricsClient();
+		this.lyricsapiold = new GLA();
+		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
+		this.hypMan = new HypixelCommandManager();
+
+		this.syschannels = new SystemNotificationChannelHolder();
+
+		this.audioPlayerManager = new DefaultAudioPlayerManager();
+		this.playerManager = new PlayerManager();
+
+		this.slashMan = new SlashCommandManager();
+		this.vplan = new VplanNEW_XML();
+
+		SQLManager.onCreate();
+
+		HelpCommand.updateCategoryList();
 
 		InitializeMusic(this.audioPlayerManager);
-		AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
-		AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
-		this.audioPlayerManager.getConfiguration().setFilterHotSwapEnabled(true);
-		this.slashMan = new SlashCommandManager();
-		this.checkpreflist();
+	}
+
+	public void InitializeMusic(AudioPlayerManager manager) {
+
+		AudioSourceManagers.registerRemoteSources(manager);
+		AudioSourceManagers.registerLocalSource(manager);
+		manager.getConfiguration().setFilterHotSwapEnabled(true);
+
+		manager.registerSourceManager(new YoutubeAudioSourceManager());
+		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+		manager.registerSourceManager(new BandcampAudioSourceManager());
+		manager.registerSourceManager(new VimeoAudioSourceManager());
+		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
+		manager.registerSourceManager(new BeamAudioSourceManager());
+		manager.registerSourceManager(new HttpAudioSourceManager());
+		manager.registerSourceManager(new LocalAudioSourceManager());
+
+	}
+
+	public void awaitReady() {
 
 		logger.info("Awaiting jda ready");
 		shardMan.getShards().forEach(jda -> {
@@ -273,34 +299,11 @@ public class Klassenserver7bbot {
 			}
 
 		});
-		try {
-			new GitHubBuilder();
-			this.github = new GitHubBuilder().withOAuthToken(githubtoken).build();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (!indev) {
+		if (!this.indev) {
 			logger.info("Bot was started (nondev)");
 		} else {
 			logger.info("Bot was started in Canary mode");
 		}
-
-		Shutdown();
-		Skyblocknews.onEventCheck();
-		runLoop();
-	}
-
-	public void InitializeMusic(AudioPlayerManager manager) {
-
-		manager.registerSourceManager(new YoutubeAudioSourceManager());
-		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-		manager.registerSourceManager(new BandcampAudioSourceManager());
-		manager.registerSourceManager(new VimeoAudioSourceManager());
-		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-		manager.registerSourceManager(new BeamAudioSourceManager());
-		manager.registerSourceManager(new HttpAudioSourceManager());
-		manager.registerSourceManager(new LocalAudioSourceManager());
-
 	}
 
 	public void Shutdown() {
@@ -351,16 +354,16 @@ public class Klassenserver7bbot {
 	public void onShutdown() {
 		logger.info("Bot is shutting down!");
 		this.imShutdown = true;
-		
-		if(PlayCommand.conv.converter!=null) {
-			PlayCommand.conv.converter.interrupt();	
+
+		if (PlayCommand.conv.converter != null) {
+			PlayCommand.conv.converter.interrupt();
 		}
-		
+
 		if (this.loop != null) {
 			this.loop.interrupt();
 		}
 		if (this.shardMan != null) {
-			
+
 			this.API.shutdown();
 			StatsCategoryCommand.onShutdown(indev);
 			this.shardMan.setStatus(OnlineStatus.OFFLINE);
@@ -374,29 +377,25 @@ public class Klassenserver7bbot {
 	}
 
 	public void onsecond() {
-		if (!loop.isInterrupted()) {
+		if (!this.loop.isInterrupted()) {
 
-			if ((min % 10 == 0) && !minlock) {
-				minlock = true;
+			if ((this.min % 10 == 0) && !this.minlock) {
+				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-
-				if (this.vplanenabled) {
-					new VPlan_main(vplanpw).sendvplanMessage();
-				}
+				vplan.sendVplanMessage(false, "10b", null);
 				Skyblocknews.onEventCheck();
 
-				if ((!hasstarted)) {
-					StatsCategoryCommand.onStartup(indev);
-					hasstarted = true;
+				if ((!this.hasstarted)) {
+					StatsCategoryCommand.onStartup(this.indev);
+					this.hasstarted = true;
 				}
 				Random rand = new Random();
 
-				int i = rand.nextInt(status.length);
+				int i = rand.nextInt(this.status.length);
 
-				shardMan.getShards().forEach(jda -> {
-					String text = status[i].replaceAll("%members", "" + shardMan.getGuilds().get(0).getMemberCount());
-					jda.getPresence().setActivity(Activity.listening(text));
+				this.shardMan.getShards().forEach(jda -> {
+					jda.getPresence().setActivity(Activity.listening(this.status[i]));
 				});
 
 			}
@@ -453,6 +452,56 @@ public class Klassenserver7bbot {
 		});
 
 	}
+
+	public void generateConfigFile(File f) {
+
+		try {
+			f.createNewFile();
+
+			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
+					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+
+			Properties prop = new Properties();
+
+			prop.setProperty("token", "");
+			prop.setProperty("canary-token", "");
+			prop.setProperty("hypixel-api-key", "");
+			prop.setProperty("github-oauth-token", "");
+			prop.setProperty("ownerId", "");
+			prop.setProperty("shardCount", "");
+			prop.setProperty("vplanpw", "");
+			prop.setProperty("schoolID", "");
+
+			prop.store(stream, "Bot-Configfile\n 'token' is required!");
+			stream.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void loadTeacherList() {
+		File file = new File("resources/teachers.json");
+
+		if (file.exists()) {
+
+			try {
+
+				String jsonstring = Files.readString(Path.of(file.getPath()));
+
+				JsonElement json = JsonParser.parseString(jsonstring);
+				teacherslist = json.getAsJsonObject();
+
+			} catch (IOException e1) {
+
+				e1.printStackTrace();
+
+			}
+
+		}
+	}
+
 	public CommandManager getCmdMan() {
 		return this.cmdMan;
 	}
@@ -499,5 +548,13 @@ public class Klassenserver7bbot {
 
 	public SystemNotificationChannelHolder getsyschannell() {
 		return syschannels;
+	}
+
+	public String getVplanPW() {
+		return this.vplanpw;
+	}
+
+	public int getSchoolID() {
+		return this.schoolID;
 	}
 }
