@@ -13,11 +13,11 @@ public class MemesReact extends ListenerAdapter {
 			if (event.getGuild().getIdLong() == 779024287733776454L
 					&& event.getChannel().getIdLong() == 780000480406405130L) {
 				Long messid = event.getMessage().getIdLong();
-				TextChannel chan = event.getTextChannel();
+				TextChannel chan = event.getChannel().asTextChannel();
 
-				chan.addReactionById(messid, chan.getGuild().getEmoteById(896482215473610812L)).queue();
+				chan.addReactionById(messid, chan.getGuild().getEmojiById(896482215473610812L)).queue();
 
-				chan.addReactionById(messid, chan.getGuild().getEmoteById(896482181759778897L)).queue();
+				chan.addReactionById(messid, chan.getGuild().getEmojiById(896482181759778897L)).queue();
 			}
 		}
 	}

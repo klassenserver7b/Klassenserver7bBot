@@ -15,6 +15,6 @@ public class HelpSlashCommand implements SlashCommand {
 		event.reply("** look into your DM's **" + event.getMember().getAsMention()
 				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)")
 				.complete().deleteOriginal().queueAfter(10, TimeUnit.SECONDS);
-		help.performCommand(event.getMember(), event.getTextChannel(), new MessageBuilder().append("-help").build());
+		help.performCommand(event.getMember(), event.getChannel().asTextChannel(), new MessageBuilder().append("-help").build());
 	}
 }

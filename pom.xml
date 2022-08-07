@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>5.0.0-alpha.12</version>
+			<version>5.0.0-alpha.17</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sedmelluq</groupId>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>net.hypixel</groupId>
 			<artifactId>hypixel-api-transport-apache</artifactId>
-			<version>4.1</version>
+			<version>4.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>

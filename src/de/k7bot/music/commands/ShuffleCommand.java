@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ShuffleCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -24,7 +25,7 @@ public class ShuffleCommand implements ServerCommand {
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setDescription("playlist shuffled");
 				builder.setColor(10827773);
-				channel.sendMessageEmbeds(builder.build()).complete().addReaction("U+1F500").queue();
+				channel.sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("U+1F500")).queue();
 			} else {
 
 				channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
