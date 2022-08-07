@@ -25,6 +25,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,8 +47,9 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 /**
  * @author felix
- *
+ * @since 1.14.0
  */
+@AvailableSince(value = "1.14.0")
 public class VplanNEW_XML {
 
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
@@ -56,6 +58,7 @@ public class VplanNEW_XML {
 	/**
 	 * 
 	 * @param force
+	 * @since 1.14.0
 	 */
 	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
@@ -73,7 +76,7 @@ public class VplanNEW_XML {
 
 			TextChannel channel;
 
-			if ((channel=(TextChannel) chan)==null) {
+			if ((channel = (TextChannel) chan) == null) {
 
 				channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
 						.getTextChannelById(918904387739459645L);
@@ -91,7 +94,7 @@ public class VplanNEW_XML {
 			EmbedBuilder embbuild = new EmbedBuilder();
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
-					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " ("+klasse+")");
+					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
 			TableMessage tablemess = new TableMessage();
@@ -190,6 +193,7 @@ public class VplanNEW_XML {
 	 * @param plan
 	 * @param classPlan
 	 * @return
+	 * @since 1.14.0
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
 
@@ -241,6 +245,7 @@ public class VplanNEW_XML {
 	 * @param obj
 	 * @param klasse
 	 * @return
+	 * @since 1.14.0
 	 */
 	private Element getyourClass(Document obj, String klasse) {
 
@@ -273,6 +278,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param plan
 	 * @return
+	 * @since 1.14.0
 	 */
 	private boolean synchronizePlanDB(Document plan) {
 		if (plan != null) {
@@ -312,6 +318,7 @@ public class VplanNEW_XML {
 	/**
 	 * 
 	 * @return
+	 * @since 1.14.0
 	 */
 	private OffsetDateTime checkdate() {
 
@@ -330,6 +337,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param date
 	 * @return
+	 * @since 1.14.0
 	 */
 	private Document read(OffsetDateTime date) {
 		if (date == null) {
@@ -362,6 +370,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param date
 	 * @return
+	 * @since 1.14.0
 	 */
 	private String getVplanXML(OffsetDateTime date) {
 
