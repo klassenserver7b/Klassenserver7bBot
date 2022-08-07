@@ -41,7 +41,7 @@ import de.k7bot.util.Cell;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 /**
@@ -53,31 +53,35 @@ public class VplanNEW_XML {
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
-	public void sendVplanMessage(boolean force) {
+	/**
+	 * 
+	 * @param force
+	 */
+	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
 		OffsetDateTime d = checkdate();
-		//d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
+		d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
 		Document doc = read(d);
-		Element classPlan = getyourClass(doc, "10b");
+		Element classPlan = getyourClass(doc, klasse);
 		boolean sendApproved = true;
-		
-		if(!force && (doc==null || !checkPlanChanges(doc, classPlan))) {
-			sendApproved=false;
+
+		if (!force && (doc == null || !checkPlanChanges(doc, classPlan))) {
+			sendApproved = false;
 		}
 
 		if (sendApproved) {
 
-			Guild guild;
 			TextChannel channel;
 
-			if (!Klassenserver7bbot.INSTANCE.indev) {
-				guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L);
+			if ((channel=(TextChannel) chan)==null) {
 
-				channel = guild.getTextChannelById(918904387739459645L);
+				channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
+						.getTextChannelById(918904387739459645L);
 
-			} else {
-				guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L);
-				channel = guild.getTextChannelById(920777920681738390L);
+				if (Klassenserver7bbot.INSTANCE.indev) {
+					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L)
+							.getTextChannelById(920777920681738390L);
+				}
 			}
 
 			String info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
@@ -162,7 +166,6 @@ public class VplanNEW_XML {
 				}
 
 			}
-			
 
 			tablemess.automaticLineBreaks(4);
 			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
@@ -182,6 +185,12 @@ public class VplanNEW_XML {
 
 	}
 
+	/**
+	 * 
+	 * @param plan
+	 * @param classPlan
+	 * @return
+	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
 
 		Integer dbhash = null;
@@ -227,6 +236,12 @@ public class VplanNEW_XML {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param obj
+	 * @param klasse
+	 * @return
+	 */
 	private Element getyourClass(Document obj, String klasse) {
 
 		if (obj == null) {
@@ -254,13 +269,17 @@ public class VplanNEW_XML {
 		return yourclass;
 	}
 
+	/**
+	 * 
+	 * @param plan
+	 * @return
+	 */
 	private boolean synchronizePlanDB(Document plan) {
 		if (plan != null) {
 			String dbdate = "";
 
 			String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
 			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
-			String realdate = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
 			try {
 				ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
@@ -269,7 +288,7 @@ public class VplanNEW_XML {
 					dbdate = next.getString("zieldatum");
 				}
 
-				if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
+				if (!dbdate.equalsIgnoreCase(onlinedate)) {
 
 					lsql.getdblog().info("Plan-DB-Sync");
 
@@ -367,7 +386,7 @@ public class VplanNEW_XML {
 					return null;
 				}
 
-				log.warn("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + "\nReason: "
+				log.warn("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
 						+ response.getStatusLine().getReasonPhrase());
 				return null;
 

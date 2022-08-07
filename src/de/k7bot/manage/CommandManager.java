@@ -119,7 +119,6 @@ public class CommandManager {
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
-		this.commands.put("vtest", new VTestCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());
@@ -130,6 +129,7 @@ public class CommandManager {
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());
 			this.commands.put("test", new TestCommand());
+			this.commands.put("vtest", new VTestCommand());
 		}
 	}
 
