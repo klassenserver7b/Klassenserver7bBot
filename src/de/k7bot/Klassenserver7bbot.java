@@ -68,8 +68,6 @@ public class Klassenserver7bbot {
 	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
-	private final VplanNEW_XML vplan = new VplanNEW_XML();
-
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
 	public AudioPlayerManager audioPlayerManager;
@@ -104,6 +102,7 @@ public class Klassenserver7bbot {
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
 	private SystemNotificationChannelHolder syschannels;
+	private VplanNEW_XML vplan;
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
@@ -259,6 +258,7 @@ public class Klassenserver7bbot {
 		this.playerManager = new PlayerManager();
 
 		this.slashMan = new SlashCommandManager();
+		this.vplan = new VplanNEW_XML();
 
 		SQLManager.onCreate();
 
@@ -383,7 +383,7 @@ public class Klassenserver7bbot {
 				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-				vplan.sendVplanMessage(false);
+				vplan.sendVplanMessage(false, "10b", null);
 				Skyblocknews.onEventCheck();
 
 				if ((!this.hasstarted)) {
