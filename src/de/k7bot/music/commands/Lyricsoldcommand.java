@@ -54,7 +54,7 @@ public class Lyricsoldcommand implements ServerCommand {
 
 						} else {
 
-							search = lapi.search(title + " - " + info.author);
+							search = lapi.search(info.author + " - " + title);
 
 						}
 

@@ -2,6 +2,7 @@
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.VTestCommand;
 import de.k7bot.commands.ClientInfo;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.commands.PingCommand;
@@ -118,6 +119,7 @@ public class CommandManager {
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
+		this.commands.put("vtest", new VTestCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());

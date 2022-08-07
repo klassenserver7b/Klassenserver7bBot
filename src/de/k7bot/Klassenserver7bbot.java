@@ -26,7 +26,6 @@ import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
-import de.k7bot.timed.VPlan_main;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.commands.StatsCategoryCommand;
 
@@ -66,7 +65,7 @@ import net.hypixel.api.apache.ApacheHttpClient;
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
 	public static JsonObject teacherslist;
-	
+
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 
 	public HashMap<Long, String> prefixl = new HashMap<>();
@@ -93,7 +92,8 @@ public class Klassenserver7bbot {
 	private GitHub github;
 	private HypixelAPI API;
 	private Long ownerId;
-	private String vplanpw = "";
+	private String vplanpw;
+	private Integer schoolID;
 	private CommandManager cmdMan;
 	private HypixelCommandManager hypMan;
 	private SlashCommandManager slashMan;
@@ -126,7 +126,7 @@ public class Klassenserver7bbot {
 			}
 
 		}
-		
+
 		initialize(prop);
 		checkpreflist();
 		awaitReady();
@@ -158,14 +158,15 @@ public class Klassenserver7bbot {
 
 		this.ownerId = Long.valueOf(prop.getProperty("ownerId"));
 
-		if ((this.vplanpw = prop.getProperty("vplanpw")) != null) {
+		if ((this.vplanpw = prop.getProperty("vplanpw")) != null && prop.getProperty("schoolID") != null) {
+			this.schoolID = Integer.valueOf(prop.getProperty("schoolID"));
 			this.vplanenabled = true;
 		}
 
 		String shards;
 		int shardc;
 
-		if ((shards = prop.getProperty("shardCount")) != null) {
+		if ((shards = prop.getProperty("shardCount")) != null && !shards.equalsIgnoreCase("")) {
 			shardc = Integer.valueOf(shards);
 		} else {
 			shardc = -1;
@@ -175,10 +176,10 @@ public class Klassenserver7bbot {
 		try {
 			buildBot(token, canaryToken, shardc);
 		} catch (LoginException | IllegalArgumentException e) {
-			this.logger.error("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage()+"'");
+			this.logger.error("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
 			e.printStackTrace();
 		}
-		
+
 		initializeApis(hypixelToken, githubtoken);
 		initializeObjects();
 
@@ -221,29 +222,29 @@ public class Klassenserver7bbot {
 	public void initializeApis(String hypixelToken, String githubtoken) {
 
 		if (this.hypixelapienabled) {
-			
+
 			String key = System.getProperty("apiKey", hypixelToken);
 			this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
-			
+
 		}
 
 		if (this.githubapienabled) {
-			
+
 			try {
 				new GitHubBuilder();
 				this.github = new GitHubBuilder().withOAuthToken(githubtoken).build();
 			} catch (IOException e) {
 				this.logger.error("couldn't start GitHub-API");
 			}
-			
+
 		}
 	}
-	
-	public void initializeObjects(){
-		
+
+	public void initializeObjects() {
+
 		this.sqlite = new LiteSQL();
 		sqlite.connect();
-		
+
 		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
@@ -254,13 +255,13 @@ public class Klassenserver7bbot {
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerManager = new PlayerManager();
-		
+
 		this.slashMan = new SlashCommandManager();
-	
+
 		SQLManager.onCreate();
-		
+
 		HelpCommand.updateCategoryList();
-		
+
 		InitializeMusic(this.audioPlayerManager);
 	}
 
@@ -269,7 +270,7 @@ public class Klassenserver7bbot {
 		AudioSourceManagers.registerRemoteSources(manager);
 		AudioSourceManagers.registerLocalSource(manager);
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
-		
+
 		manager.registerSourceManager(new YoutubeAudioSourceManager());
 		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
 		manager.registerSourceManager(new BandcampAudioSourceManager());
@@ -280,7 +281,7 @@ public class Klassenserver7bbot {
 		manager.registerSourceManager(new LocalAudioSourceManager());
 
 	}
-	
+
 	public void awaitReady() {
 
 		logger.info("Awaiting jda ready");
@@ -374,29 +375,25 @@ public class Klassenserver7bbot {
 	}
 
 	public void onsecond() {
-		if (!loop.isInterrupted()) {
+		if (!this.loop.isInterrupted()) {
 
-			if ((min % 10 == 0) && !minlock) {
-				minlock = true;
+			if ((this.min % 10 == 0) && !this.minlock) {
+				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
 
-				if (this.vplanenabled) {
-					new VPlan_main(vplanpw).sendvplanMessage();
-				}
 				Skyblocknews.onEventCheck();
 
-				if ((!hasstarted)) {
-					StatsCategoryCommand.onStartup(indev);
-					hasstarted = true;
+				if ((!this.hasstarted)) {
+					StatsCategoryCommand.onStartup(this.indev);
+					this.hasstarted = true;
 				}
 				Random rand = new Random();
 
-				int i = rand.nextInt(status.length);
+				int i = rand.nextInt(this.status.length);
 
-				shardMan.getShards().forEach(jda -> {
-					String text = status[i].replaceAll("%members", "" + shardMan.getGuilds().get(0).getMemberCount());
-					jda.getPresence().setActivity(Activity.listening(text));
+				this.shardMan.getShards().forEach(jda -> {
+					jda.getPresence().setActivity(Activity.listening(this.status[i]));
 				});
 
 			}
@@ -458,11 +455,12 @@ public class Klassenserver7bbot {
 
 		try {
 			f.createNewFile();
-			
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"), Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-			
+
+			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
+					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+
 			Properties prop = new Properties();
-			
+
 			prop.setProperty("token", "");
 			prop.setProperty("canary-token", "");
 			prop.setProperty("hypixel-api-key", "");
@@ -471,16 +469,16 @@ public class Klassenserver7bbot {
 			prop.setProperty("shardCount", "");
 			prop.setProperty("vplanpw", "");
 			prop.setProperty("schoolID", "");
-			
+
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	public void loadTeacherList() {
 		File file = new File("resources/teachers.json");
 
@@ -548,5 +546,13 @@ public class Klassenserver7bbot {
 
 	public SystemNotificationChannelHolder getsyschannell() {
 		return syschannels;
+	}
+
+	public String getVplanPW() {
+		return this.vplanpw;
+	}
+
+	public int getSchoolID() {
+		return this.schoolID;
 	}
 }
