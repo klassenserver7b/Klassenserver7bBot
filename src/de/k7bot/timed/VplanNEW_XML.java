@@ -91,7 +91,7 @@ public class VplanNEW_XML {
 			EmbedBuilder embbuild = new EmbedBuilder();
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
-					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + "\n");
+					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " ("+klasse+")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
 			TableMessage tablemess = new TableMessage();
