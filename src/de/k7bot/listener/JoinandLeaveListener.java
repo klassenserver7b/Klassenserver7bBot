@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 
 import de.k7bot.Klassenserver7bbot;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -16,7 +15,7 @@ public class JoinandLeaveListener extends ListenerAdapter {
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
-		BaseGuildMessageChannel def = event.getGuild().getDefaultChannel();
+		TextChannel def = event.getGuild().getDefaultChannel().asTextChannel();
 		String guildname = event.getGuild().getName();
 		Member memb = event.getGuild().getMember(event.getUser());
 		EmbedBuilder embbuild = new EmbedBuilder();

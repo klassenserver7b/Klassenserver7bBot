@@ -30,7 +30,7 @@ public class ClearSlashCommand implements SlashCommand {
 						.queue();
 			} else {
 
-				ClearCommand.onclear(amount - 1, event.getTextChannel());
+				ClearCommand.onclear(amount - 1, event.getChannel().asTextChannel());
 			}
 
 			hook.sendMessage(amount + " messages deleted.").queue();
@@ -40,7 +40,7 @@ public class ClearSlashCommand implements SlashCommand {
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 			builder.setTimestamp(OffsetDateTime.now());
 			builder.setDescription(
-					amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + event.getTextChannel().getName());
+					amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + event.getChannel().asTextChannel().getName());
 			TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
 
 			if (system != null) {
@@ -49,7 +49,7 @@ public class ClearSlashCommand implements SlashCommand {
 
 		} else {
 
-			PermissionError.onPermissionError(event.getMember(), event.getTextChannel());
+			PermissionError.onPermissionError(event.getMember(), event.getChannel().asTextChannel());
 		}
 	}
 }

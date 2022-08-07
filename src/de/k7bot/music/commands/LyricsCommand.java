@@ -52,10 +52,10 @@ public class LyricsCommand implements ServerCommand {
 
 						} else {
 
-							lyrics = lapi.getLyrics(title + " - " + info.author).get();
+							lyrics = lapi.getLyrics(info.author + " - " + title).get();
 
 							Klassenserver7bbot.INSTANCE.getMainLogger()
-									.info("Searching Lyrics Querry: " + title + " - " + info.author);
+									.info("Searching Lyrics Querry: " + info.author + " - " + title);
 
 						}
 

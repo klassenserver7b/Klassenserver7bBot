@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -20,16 +21,11 @@ public class ReactionListener extends ListenerAdapter {
 			long channelid = event.getChannel().getIdLong();
 			long messageid = event.getMessageIdLong();
 
-			String emote = "";
-			if (event.getReactionEmote().isEmoji()) {
-				emote = event.getReactionEmote().getEmoji();
-			} else {
-				emote = event.getReactionEmote().getId();
-			}
+			EmojiUnion emote = event.getEmoji();
 
 			ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
 					.onQuery("SELECT roleId FROM reactroles WHERE guildId = " + guildid + " AND channelId = "
-							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote + "'");
+							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote.getName() + "'");
 			try {
 				if (set.next()) {
 					long rollenid = set.getLong("roleId");
@@ -50,16 +46,12 @@ public class ReactionListener extends ListenerAdapter {
 			long guildid = event.getGuild().getIdLong();
 			long channelid = event.getChannel().getIdLong();
 			long messageid = event.getMessageIdLong();
-			String emote = "";
-			if (event.getReactionEmote().isEmoji()) {
-				emote = event.getReactionEmote().getEmoji();
-			} else {
-				emote = event.getReactionEmote().getId();
-			}
+			
+			EmojiUnion emote = event.getEmoji();
 
 			ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
 					.onQuery("SELECT roleId FROM reactroles WHERE guildId = " + guildid + " AND channelId = "
-							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote + "'");
+							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote.getName() + "'");
 			try {
 				if (set.next()) {
 					long rollenid = set.getLong("roleId");

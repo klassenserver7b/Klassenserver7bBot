@@ -10,6 +10,7 @@ import de.k7bot.commands.RestartCommand;
 import de.k7bot.commands.ShutdownCommand;
 import de.k7bot.commands.SystemchannelCommand;
 import de.k7bot.commands.TestCommand;
+import de.k7bot.commands.VTestCommand;
 import de.k7bot.commands.TeacherCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;
@@ -118,6 +119,7 @@ public class CommandManager {
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
+		this.commands.put("vtest", new VTestCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());

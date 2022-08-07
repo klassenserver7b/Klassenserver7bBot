@@ -47,7 +47,7 @@ public class CommandListener extends ListenerAdapter {
 	}
 
 	public void privateMessageRecieved(@NotNull MessageReceivedEvent event, Message message) {
-		PrivateChannel channel = event.getPrivateChannel();
+		PrivateChannel channel = event.getChannel().asPrivateChannel();
 		
 		if(message.getContentStripped().startsWith("-help")) {
 			HelpCommand help = new HelpCommand();
@@ -58,7 +58,7 @@ public class CommandListener extends ListenerAdapter {
 
 	public void guildMessageRecieved(@NotNull MessageReceivedEvent event, String message, String prefix) {
 
-		TextChannel channel = event.getTextChannel();
+		TextChannel channel = event.getChannel().asTextChannel();
 
 		if (message.equalsIgnoreCase("-help")) {
 
