@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,7 +62,6 @@ public class VplanNEW_XML {
 	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
 		OffsetDateTime d = checkdate();
-		d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
 		Document doc = read(d);
 		Element classPlan = getyourClass(doc, klasse);
 		boolean sendApproved = true;
