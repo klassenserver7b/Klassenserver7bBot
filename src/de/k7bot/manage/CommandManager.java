@@ -2,7 +2,6 @@
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.VTestCommand;
 import de.k7bot.commands.ClientInfo;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.commands.PingCommand;
@@ -11,6 +10,7 @@ import de.k7bot.commands.RestartCommand;
 import de.k7bot.commands.ShutdownCommand;
 import de.k7bot.commands.SystemchannelCommand;
 import de.k7bot.commands.TestCommand;
+import de.k7bot.commands.VTestCommand;
 import de.k7bot.commands.TeacherCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;

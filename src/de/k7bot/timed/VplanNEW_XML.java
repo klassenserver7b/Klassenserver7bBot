@@ -3,6 +3,7 @@
  */
 package de.k7bot.timed;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +32,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.api.client.util.Charsets;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.util.Cell;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -47,14 +53,19 @@ public class VplanNEW_XML {
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
-	public void sendVplanMessage() {
+	public void sendVplanMessage(boolean force) {
 
 		OffsetDateTime d = checkdate();
-		d = OffsetDateTime.of(2022, 07, 01, 10, 10, 10, 10, ZoneOffset.ofHours(2));
+		//d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
 		Document doc = read(d);
 		Element classPlan = getyourClass(doc, "10b");
+		boolean sendApproved = true;
+		
+		if(!force && (doc==null || !checkPlanChanges(doc, classPlan))) {
+			sendApproved=false;
+		}
 
-		if (doc != null && checkPlanChanges(doc, classPlan)) {
+		if (sendApproved) {
 
 			Guild guild;
 			TextChannel channel;
@@ -68,26 +79,105 @@ public class VplanNEW_XML {
 				guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L);
 				channel = guild.getTextChannelById(920777920681738390L);
 			}
-			
+
 			String info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.INSTANCE.indev);
-			
+
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan für "+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() +"\n");
-			embbuild.setFooter("Stand vom "+ doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-			
+			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
+					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + "\n");
+			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
+
 			TableMessage tablemess = new TableMessage();
 			tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
-			
+
 			NodeList lessons = classPlan.getElementsByTagName("Std");
-			
-			for(int i=0; i<lessons.getLength(); i++) {
+
+			for (int i = 0; i < lessons.getLength(); i++) {
 				Element e = (Element) lessons.item(i);
-				
+
+				boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
+				boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
+				boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+
+				tablemess.addCell(e.getElementsByTagName("St").item(0).getTextContent());
+
+				if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
+
+					Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
+							(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+					Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
+							(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+					StringBuilder strbuild = new StringBuilder();
+					String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
+
+					if (teacher != null && !teacher.equalsIgnoreCase("")) {
+						JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
+
+						if (teachelem != null) {
+
+							JsonObject teach = teachelem.getAsJsonObject();
+
+							String gender = teach.get("gender").getAsString();
+							if (gender.equalsIgnoreCase("female")) {
+								strbuild.append("Frau ");
+							} else if (gender.equalsIgnoreCase("male")) {
+								strbuild.append("Herr ");
+							}
+
+							if (teach.get("is_doctor").getAsBoolean()) {
+
+								strbuild.append("Dr. ");
+
+							}
+
+							strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+
+						}
+					}
+
+					teachercell.setLinkTitle(strbuild.toString());
+					teachercell.setLinkURL("https://manos-dresden.de/lehrer");
+
+					Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
+							(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+					tablemess.addRow(subjectcell, teachercell, room);
+
+				} else {
+
+					tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+
+				}
+
+				if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
+
+					tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
+
+				} else {
+					tablemess.addCell("   ");
+				}
+
 			}
 			
+
+			tablemess.automaticLineBreaks(4);
+			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+
+			if (!(info.equalsIgnoreCase(""))) {
+
+				embbuild.addField("Sonstige Infos", info, false);
+
+			}
+
+			embbuild.setColor(Color.decode("#038aff"));
+			channel.sendMessageEmbeds(embbuild.build()).queue();
+
+			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.hashCode());
+
 		}
 
 	}
@@ -269,8 +359,7 @@ public class VplanNEW_XML {
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 
 			if (response.getStatusLine().getStatusCode() == 200) {
-
-				return EntityUtils.toString(response.getEntity());
+				return EntityUtils.toString(response.getEntity(), Charsets.UTF_8);
 
 			} else {
 
@@ -278,7 +367,6 @@ public class VplanNEW_XML {
 					return null;
 				}
 
-				response.getEntity().getContent().transferTo(System.out);
 				log.warn("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + "\nReason: "
 						+ response.getStatusLine().getReasonPhrase());
 				return null;

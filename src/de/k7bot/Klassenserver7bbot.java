@@ -26,6 +26,7 @@ import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
+import de.k7bot.timed.VplanNEW_XML;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.commands.StatsCategoryCommand;
 
@@ -67,6 +68,7 @@ public class Klassenserver7bbot {
 	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
+	private final VplanNEW_XML vplan = new VplanNEW_XML();
 
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
@@ -381,7 +383,7 @@ public class Klassenserver7bbot {
 				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-
+				vplan.sendVplanMessage(false);
 				Skyblocknews.onEventCheck();
 
 				if ((!this.hasstarted)) {
