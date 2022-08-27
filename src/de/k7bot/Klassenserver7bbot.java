@@ -68,6 +68,8 @@ public class Klassenserver7bbot {
 	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
+	private final LiteSQL sqlite = new LiteSQL();
+	
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
 	public AudioPlayerManager audioPlayerManager;
@@ -97,7 +99,6 @@ public class Klassenserver7bbot {
 	private CommandManager cmdMan;
 	private HypixelCommandManager hypMan;
 	private SlashCommandManager slashMan;
-	private LiteSQL sqlite;
 	private MusicUtil musicutil;
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
@@ -139,6 +140,7 @@ public class Klassenserver7bbot {
 
 	public boolean initialize(Properties prop) {
 		loadTeacherList();
+		sqlite.connect();
 
 		String token = prop.getProperty("token");
 
@@ -181,14 +183,13 @@ public class Klassenserver7bbot {
 			e.printStackTrace();
 		}
 
-		initializeApis(hypixelToken, githubtoken);
 		initializeObjects();
-
+		initializeApis(hypixelToken, githubtoken);
 		return true;
 	}
 
 	public void buildBot(String token, String canaryToken, int shardc) throws LoginException, IllegalArgumentException {
-
+		
 		DefaultShardManagerBuilder builder;
 
 		if (!indev) {
@@ -242,9 +243,6 @@ public class Klassenserver7bbot {
 	}
 
 	public void initializeObjects() {
-
-		this.sqlite = new LiteSQL();
-		sqlite.connect();
 
 		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();

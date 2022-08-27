@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,7 +62,6 @@ public class VplanNEW_XML {
 	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
 		OffsetDateTime d = checkdate();
-		d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
 		Document doc = read(d);
 		Element classPlan = getyourClass(doc, klasse);
 		boolean sendApproved = true;
@@ -78,12 +76,12 @@ public class VplanNEW_XML {
 
 			if ((channel = (TextChannel) chan) == null) {
 
-				channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
-						.getTextChannelById(918904387739459645L);
-
 				if (Klassenserver7bbot.INSTANCE.indev) {
 					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L)
 							.getTextChannelById(920777920681738390L);
+				} else {
+					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
+							.getTextChannelById(918904387739459645L);
 				}
 			}
 
@@ -182,7 +180,7 @@ public class VplanNEW_XML {
 			embbuild.setColor(Color.decode("#038aff"));
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.hashCode());
+			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.toString().hashCode());
 
 		}
 
@@ -203,7 +201,7 @@ public class VplanNEW_XML {
 			boolean synced = synchronizePlanDB(plan);
 
 			if (classPlan != null) {
-				int planhash = classPlan.hashCode();
+				int planhash = classPlan.toString().hashCode();
 
 				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplannext");
 				try {
@@ -212,11 +210,16 @@ public class VplanNEW_XML {
 						dbhash = set.getInt("classeintraege");
 
 					}
+					
+					String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+					onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+					
 					if (dbhash != null) {
+
 						if (dbhash != planhash || synced) {
 
-							lsql.onUpdate("UPDATE vplannext SET zieldatum = '"
-									+ OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "'");
+							lsql.onUpdate("UPDATE vplannext SET zieldatum = '" + onlinedate + "'");
+							return true;
 
 						} else {
 							return false;
@@ -224,9 +227,8 @@ public class VplanNEW_XML {
 						}
 					} else {
 
-						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('"
-								+ OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "', "
-								+ classPlan.hashCode() + ")");
+						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate + "', "
+								+ planhash + ")");
 					}
 
 				} catch (SQLException e) {
@@ -306,6 +308,8 @@ public class VplanNEW_XML {
 						lsql.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
 					}
 					return true;
+				} else {
+					return false;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

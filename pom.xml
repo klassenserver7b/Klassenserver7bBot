@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DiscordBot</groupId>
 	<artifactId>DiscordBot</artifactId>
@@ -100,9 +98,9 @@
 			<version>1.303</version>
 		</dependency>
 		<dependency>
-			<groupId>com.jagrosh</groupId>
+			<groupId>com.github.jagrosh</groupId>
 			<artifactId>JLyrics</artifactId>
-			<version>0.4</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.LowLevelSubmarine</groupId>

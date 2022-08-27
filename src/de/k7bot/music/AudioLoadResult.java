@@ -31,11 +31,12 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	public void trackLoaded(AudioTrack track) {
 		
+		Queue queue = this.controller.getQueue();
 		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
 		long datetime = Long.parseLong(datetimestring);
 		
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a single track");
-		this.controller.getPlayer().playTrack(track);
+		addtoqueue(queue, track);
 
 		SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
 		String songname = title.getTitle().replaceAll("'", "");
@@ -44,6 +45,11 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		if (!title.containsauthor()) {
 			songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 		}
+		
+		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
+				.setTimestamp(LocalDateTime.now()).setTitle("1 track added to queue");
+
+		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
 		sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
 				+ songauthor + "', " + datetime + ")");

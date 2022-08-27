@@ -1,4 +1,13 @@
 {
+	"Ahs": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "?.Ahsmus",
+        "subjects": [
+            "MA",
+            "PH"
+        ]
+    },
     "Asp": {
         "is_doctor": false,
         "gender": "male",
@@ -12,7 +21,18 @@
         "is_doctor": false,
         "gender": "male",
         "full_name": "Hugo Bamberg",
-        "subjects": []
+        "subjects": [
+            "Schulsozialarbeit"
+        ]
+    },
+	"BeN": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "N. Berndt",
+        "subjects": [
+            "MA",
+            "SPO"
+        ]
     },
     "Bec": {
         "is_doctor": false,
@@ -30,6 +50,15 @@
         "subjects": [
             "EN",
             "TK"
+        ]
+    },
+	"Bey": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "S. Beyer",
+        "subjects": [
+            "EN",
+            "CH"
         ]
     },
     "Bon": {
@@ -97,6 +126,14 @@
             "PH"
         ]
     },
+	"Gor": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "E. Gorbatschow",
+        "subjects": [
+            "RE"
+        ]
+    },
     "Gos": {
         "is_doctor": false,
         "gender": "female",
@@ -113,6 +150,15 @@
         "subjects": [
             "DE",
             "KU"
+        ]
+    },
+	"Gre": {
+        "is_doctor": false,
+        "gender": "female",
+        "full_name": "?. Greuel",
+        "subjects": [
+            "GE",
+            "GRW"
         ]
     },
     "Gro": {
@@ -158,7 +204,7 @@
     "Hal": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "H. Haltenhoff",
+        "full_name": "Heike Haltenhoff",
         "subjects": [
             "LA",
             "DE"
@@ -247,10 +293,18 @@
     "Keg": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "C. Kegel",
+        "full_name": "Cristina Kegel",
         "subjects": [
             "EN",
             "CH"
+        ]
+    },
+	"Kne": {
+        "is_doctor": false,
+        "gender": "female",
+        "full_name": "C. Knepper",
+        "subjects": [
+            "RE"
         ]
     },
     "Kog": {
@@ -278,6 +332,14 @@
         "subjects": [
             "MA",
             "CH"
+        ]
+    },
+	"Kuc": {
+        "is_doctor": false,
+        "gender": "unknown",
+        "full_name": "A. Kucherenko",
+        "subjects": [
+            "Lehrkraft für ukrainische Klassen"
         ]
     },
     "Köh": {
@@ -310,10 +372,10 @@
     "Mic": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "C. Michel",
+        "full_name": "?. Michel",
         "subjects": [
-            "DE",
-            "GE"
+            "FR",
+            "KU"
         ]
     },
     "Mül": {
@@ -355,7 +417,7 @@
     "Neu": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "J. Neumann",
+        "full_name": "Juliane Neumann",
         "subjects": [
             "DE",
             "FR"
@@ -406,10 +468,18 @@
             "PH"
         ]
     },
-    "ScR": {
+	"ScI": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "R. Schölzel",
+        "full_name": "I. Schirmer",
+        "subjects": [
+            "RE"
+        ]
+    },
+    "ScR": {
+        "is_doctor": false,
+		"gender": "male",
+        "full_name": "Ralf Schölzel",
         "subjects": [
             "SPO",
             "GEO"
@@ -418,10 +488,27 @@
     "ScS": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "S. Schäfer",
+        "full_name": "Steffen Schäfer",
         "subjects": [
             "CH",
             "BIO"
+        ]
+    },
+	"ScW": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "W. Schönherz",
+        "subjects": [
+            "MA",
+            "ETH"
+        ]
+    },
+    "Sca": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "S. Schade",
+        "subjects": [
+            "RE"
         ]
     },
     "Sch": {
@@ -463,10 +550,20 @@
     "Sta": {
         "is_doctor": false,
         "gender": "female",
-        "full_name": "S. Stange",
+        "full_name": "Sarah Stange",
         "subjects": [
             "MA",
             "GEO"
+        ]
+    },
+	"Ste": {
+        "is_doctor": false,
+        "gender": "male",
+        "full_name": "T. Steuer",
+        "subjects": [
+            "MA",
+            "PH",
+            "INF"
         ]
     },
     "Suh": {
@@ -496,6 +593,14 @@
             "PH"
         ]
     },
+	"Tru": {
+        "is_doctor": false,
+        "gender": "female",
+        "full_name": "K. Trunk",
+        "subjects": [
+            "Schulsozialarbeit"
+        ]
+    },
     "Ulb": {
         "is_doctor": false,
         "gender": "female",
@@ -514,6 +619,15 @@
             "PH"
         ]
     },
+	"Wag": {
+        "is_doctor": false,
+        "gender": "female",
+        "full_name": "A. Wagenhausen",
+        "subjects": [
+            "DE",
+            "FR"
+        ]
+    },
     "Wal": {
         "is_doctor": false,
         "gender": "female",
@@ -526,7 +640,7 @@
     "Wei": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "M. Weise",
+        "full_name": "Matthias Weise",
         "subjects": [
             "MA",
             "CH"
