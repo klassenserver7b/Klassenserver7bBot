@@ -1,22 +1,20 @@
 bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 
-Helpcommand auf die Kategorien verteilen d.h. z.B. -help allgemein aber auf auf -help die Kategorien und maybe die meistgenutzten commands oder typische commands aus diesen mit anzeigen.
+CommandManager von ConcurrentHashMap auf Map o.ä. umstellen. -> Help geordnet für z.B. Alias
 
 Equalizer für Music
 Mehrere player per guild (music)
 
 YT-Api
 
-Stundenplan integration
-Lernsax Vplan API
+Lernsax Lernplan API
 
 Language per channel
 
 GitHub-API
 
-ggf. Queue reroll
+nen neues Game
 
 Generell:
 
-Mehr logging allerdings auf debug level z.B. hypixel api errors oder reconnecting zeugs
 KOMMENTIEREN/JavaDoc!

@@ -3,14 +3,15 @@ package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.ClientInfo;
+import de.k7bot.commands.HelpCommand;
 import de.k7bot.commands.PingCommand;
 import de.k7bot.commands.PrefixCommand;
 import de.k7bot.commands.RestartCommand;
 import de.k7bot.commands.ShutdownCommand;
 import de.k7bot.commands.SystemchannelCommand;
 import de.k7bot.commands.TestCommand;
+import de.k7bot.commands.VTestCommand;
 import de.k7bot.commands.TeacherCommand;
-import de.k7bot.commands.helpCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;
 import de.k7bot.moderation.commands.BanCommand;
@@ -73,7 +74,7 @@ public class CommandManager {
 		this.commands = new ConcurrentHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
-		this.commands.put("help", new helpCommand());
+		this.commands.put("help", new HelpCommand());
 		this.commands.put("clear", new ClearCommand());
 		this.commands.put("memberinfo", new ClientInfo());
 		this.commands.put("prefix", new PrefixCommand());
@@ -128,6 +129,7 @@ public class CommandManager {
 		if (Klassenserver7bbot.INSTANCE.indev) {
 			this.commands.put("noncore", new NoncoreCommand());
 			this.commands.put("test", new TestCommand());
+			this.commands.put("vtest", new VTestCommand());
 		}
 	}
 

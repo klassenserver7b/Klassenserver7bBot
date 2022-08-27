@@ -16,7 +16,7 @@ public class Shutdownslashcommand implements SlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		Member m = event.getMember();
-		TextChannel channel = event.getTextChannel();
+		TextChannel channel = event.getChannel().asTextChannel();
 
 		if (m.getIdLong()==Klassenserver7bbot.INSTANCE.getOwnerId()) {
 

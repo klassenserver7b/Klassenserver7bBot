@@ -1,14 +1,14 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.helpCommand;
+import de.k7bot.commands.HelpCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.concurrent.TimeUnit;
 
 public class SlashCommandListener extends ListenerAdapter {
-	helpCommand help = new helpCommand();
+	HelpCommand help = new HelpCommand();
 
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {

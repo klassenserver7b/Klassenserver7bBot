@@ -49,7 +49,7 @@ public class ToEmbedSlashCommand implements SlashCommand {
 
 		} else {
 
-			PermissionError.onPermissionError(event.getMember(), event.getTextChannel());
+			PermissionError.onPermissionError(event.getMember(), event.getChannel().asTextChannel());
 		}
 
 	}

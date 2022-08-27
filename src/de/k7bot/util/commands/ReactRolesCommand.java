@@ -8,11 +8,12 @@ import de.k7bot.util.SyntaxError;
 
 import java.util.List;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ReactRolesCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -26,7 +27,7 @@ public class ReactRolesCommand implements ServerCommand {
 
 				List<TextChannel> channels = message.getMentions().getChannels(TextChannel.class);
 				List<Role> roles = message.getMentions().getRoles();
-				List<Emote> emotes = message.getMentions().getEmotes();
+				List<CustomEmoji> emotes = message.getMentions().getCustomEmojis();
 
 				if (!channels.isEmpty() && !roles.isEmpty()) {
 					TextChannel tc = channels.get(0);
@@ -37,16 +38,16 @@ public class ReactRolesCommand implements ServerCommand {
 						long MessageId = Long.parseLong(MessageIdString);
 
 						if (!emotes.isEmpty()) {
-							Emote emote = emotes.get(0);
+							CustomEmoji emote = emotes.get(0);
 
 							tc.addReactionById(MessageId, emote).queue();
 
 							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
-									+ emote.getId() + "', " + role.getIdLong() + ")");
+									+ emote.getIdLong() + "', " + role.getIdLong() + ")");
 						} else {
 							String utfemote = args[3];
-							tc.addReactionById(MessageId, utfemote).queue();
+							tc.addReactionById(MessageId, Emoji.fromUnicode(utfemote)).queue();
 
 							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"

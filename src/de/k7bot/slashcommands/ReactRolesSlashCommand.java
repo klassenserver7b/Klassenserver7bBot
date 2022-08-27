@@ -5,10 +5,11 @@ import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.LiteSQL;
 import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -25,19 +26,19 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 
-			Emote emote;
+			CustomEmoji emote;
 			OptionMapping channel = event.getOption("channel");
 			OptionMapping messageid = event.getOption("messageid");
 			OptionMapping emoteop = event.getOption("emoteid-oder-utfemote");
 			OptionMapping roleop = event.getOption("role");
 
-			TextChannel tc = channel.getAsTextChannel();
+			TextChannel tc = channel.getAsChannel().asTextChannel();
 			Role role = roleop.getAsRole();
 			long MessageId = messageid.getAsLong();
 
 			try {
 
-				emote = tc.getGuild().getEmoteById(emoteop.getAsLong());
+				emote = tc.getGuild().getEmojiById(emoteop.getAsLong());
 				
 				tc.addReactionById(MessageId, emote).queue();
 				
@@ -47,7 +48,7 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 			} catch (NumberFormatException e) {
 
-				tc.addReactionById(MessageId, emoteop.getAsString()).queue();
+				tc.addReactionById(MessageId, Emoji.fromUnicode(emoteop.getAsString())).queue();
 				
 				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
@@ -58,7 +59,7 @@ public class ReactRolesSlashCommand implements SlashCommand {
 			hook.sendMessage("Reactrole was successfull set for Message: " + MessageId).queue();
 
 		} else {
-			PermissionError.onPermissionError(m, event.getTextChannel());
+			PermissionError.onPermissionError(m, event.getChannel().asTextChannel());
 		}
 
 	}
