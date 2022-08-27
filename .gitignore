@@ -3,6 +3,7 @@
 /target
 /.idea
 /.vs
+/.settings
 
 commit.txt
 bot.properties
