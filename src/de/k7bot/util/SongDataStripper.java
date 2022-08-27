@@ -24,104 +24,107 @@ public class SongDataStripper {
 
 		strippedtitle = strippedtitle.replaceAll("|", "");
 
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles musikvideo\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles musikvideo\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official musicvideo\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official musicvideo\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official music video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official music video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles audio\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles audio\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official audio\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official audio\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official lyric video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official lyric video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles lyric video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles lyric video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyric video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyric video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyrics video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyrics video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(short version\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[short version\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(videoclip\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[videoclip\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyrics\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyrics\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles musikvideo\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles musikvideo\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official musicvideo\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official musicvideo\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official music video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official music video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official lyric video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official lyric video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles lyric video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles lyric video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyric video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyric video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyrics video\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyrics video\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(short version\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[short version\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(videoclip\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[videoclip\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(lyrics\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[lyrics\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(offizielles audio\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[offizielles audio\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(official audio\\).*", "");
-		strippedtitle = strippedtitle.replaceAll("\\[official audio\\].*", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(.*edit\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[.*edit\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(.*video\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[.*video\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(.*musikvideo\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[.*musikvideo\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(.*musicvideo\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[.*musicvideo\\]", "");
-
-		strippedtitle = strippedtitle.replaceAll("\\(.*version\\)", "");
-		strippedtitle = strippedtitle.replaceAll("\\[.*version\\]", "");
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles musikvideo\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles musikvideo\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official musicvideo\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official musicvideo\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official music video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official music video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles audio\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles audio\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official audio\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official audio\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official lyric video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official lyric video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles lyric video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles lyric video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyric video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyric video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyrics video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyrics video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(short version\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[short version\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(videoclip\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[videoclip\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyrics\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyrics\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles musikvideo\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles musikvideo\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official musicvideo\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official musicvideo\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official music video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official music video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official lyric video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official lyric video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles lyric video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles lyric video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyric video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyric video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyrics video\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyrics video\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(short version\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[short version\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(videoclip\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[videoclip\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(lyrics\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[lyrics\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(offizielles audio\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[offizielles audio\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(official audio\\).*", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[official audio\\].*", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(.*edit\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[.*edit\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(.*video\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[.*video\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(.*musikvideo\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[.*musikvideo\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(.*musicvideo\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[.*musicvideo\\]", "");
+//
+//		strippedtitle = strippedtitle.replaceAll("\\(.*version\\)", "");
+//		strippedtitle = strippedtitle.replaceAll("\\[.*version\\]", "");
+		
+		strippedtitle = strippedtitle.replaceAll("\\(.*\\)", "");
+		strippedtitle = strippedtitle.replaceAll("\\[.*\\]", "");
 
 		stitle.setTitle(strippedtitle.toLowerCase().trim());
 		

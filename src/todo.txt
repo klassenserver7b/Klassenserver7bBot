@@ -1,11 +1,12 @@
 bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 
+CommandManager von ConcurrentHashMap auf Map o.ä. umstellen. -> Help geordnet für z.B. Alias
+
 Equalizer für Music
 Mehrere player per guild (music)
 
 YT-Api
 
-Stundenplan integration
 Lernsax Lernplan API
 
 Language per channel
