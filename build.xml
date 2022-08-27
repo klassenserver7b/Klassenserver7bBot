@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Klassenserver7bBot">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="15"/>
+    <property name="source" value="15"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../../.m2/repository/net/dv8tion/JDA/5.0.0-alpha.17/JDA-5.0.0-alpha.17.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"/>
+        <pathelement location="../../../.m2/repository/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar"/>
+        <pathelement location="../../../.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"/>
+        <pathelement location="../../../.m2/repository/com/neovisionaries/nv-websocket-client/2.14/nv-websocket-client-2.14.jar"/>
+        <pathelement location="../../../.m2/repository/com/squareup/okhttp3/okhttp/4.9.3/okhttp-4.9.3.jar"/>
+        <pathelement location="../../../.m2/repository/com/squareup/okio/okio/2.8.0/okio-2.8.0.jar"/>
+        <pathelement location="../../../.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0/kotlin-stdlib-common-1.4.0.jar"/>
+        <pathelement location="../../../.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.4.10/kotlin-stdlib-1.4.10.jar"/>
+        <pathelement location="../../../.m2/repository/club/minnced/opus-java/1.1.1/opus-java-1.1.1.jar"/>
+        <pathelement location="../../../.m2/repository/club/minnced/opus-java-api/1.1.1/opus-java-api-1.1.1.jar"/>
+        <pathelement location="../../../.m2/repository/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar"/>
+        <pathelement location="../../../.m2/repository/club/minnced/opus-java-natives/1.1.1/opus-java-natives-1.1.1.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar"/>
+        <pathelement location="../../../.m2/repository/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3.jar"/>
+        <pathelement location="../../../.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.2/jackson-core-2.13.2.jar"/>
+        <pathelement location="../../../.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.13.2.2/jackson-databind-2.13.2.2.jar"/>
+        <pathelement location="../../../.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.2/jackson-annotations-2.13.2.jar"/>
+        <pathelement location="../../../.m2/repository/com/sedmelluq/lavaplayer/1.3.78/lavaplayer-1.3.78.jar"/>
+        <pathelement location="../../../.m2/repository/com/sedmelluq/lava-common/1.1.2/lava-common-1.1.2.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/httpcore/4.4.12/httpcore-4.4.12.jar"/>
+        <pathelement location="../../../.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+        <pathelement location="../../../.m2/repository/com/sedmelluq/lavaplayer-natives/1.3.14/lavaplayer-natives-1.3.14.jar"/>
+        <pathelement location="../../../.m2/repository/commons-io/commons-io/2.6/commons-io-2.6.jar"/>
+        <pathelement location="../../../.m2/repository/org/jsoup/jsoup/1.12.1/jsoup-1.12.1.jar"/>
+        <pathelement location="../../../.m2/repository/net/iharder/base64/2.3.9/base64-2.3.9.jar"/>
+        <pathelement location="../../../.m2/repository/ch/qos/logback/logback-classic/1.2.7/logback-classic-1.2.7.jar"/>
+        <pathelement location="../../../.m2/repository/ch/qos/logback/logback-core/1.2.7/logback-core-1.2.7.jar"/>
+        <pathelement location="../../../.m2/repository/org/xerial/sqlite-jdbc/3.36.0.3/sqlite-jdbc-3.36.0.3.jar"/>
+        <pathelement location="../../../.m2/repository/net/hypixel/hypixel-api-transport-apache/4.2.1/hypixel-api-transport-apache-4.2.1.jar"/>
+        <pathelement location="../../../.m2/repository/net/hypixel/hypixel-api-core/4.2.1/hypixel-api-core-4.2.1.jar"/>
+        <pathelement location="../../../.m2/repository/com/konghq/unirest-java/3.13.4/unirest-java-3.13.4.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/httpmime/4.5.13/httpmime-4.5.13.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/httpcore-nio/4.4.13/httpcore-nio-4.4.13.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/httpasyncclient/4.1.4/httpasyncclient-4.1.4.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/code/gson/gson/2.8.8/gson-2.8.8.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/client5/httpclient5/5.1.3/httpclient5-5.1.3.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/core5/httpcore5/5.1.3/httpcore5-5.1.3.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/core5/httpcore5-h2/5.1.3/httpcore5-h2-5.1.3.jar"/>
+        <pathelement location="../../../.m2/repository/commons-codec/commons-codec/1.15/commons-codec-1.15.jar"/>
+        <pathelement location="../../../.m2/repository/com/github/KevinPriv/MojangAPI/1.0/MojangAPI-1.0.jar"/>
+        <pathelement location="../../../.m2/repository/org/kohsuke/github-api/1.303/github-api-1.303.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar"/>
+        <pathelement location="../../../.m2/repository/com/github/jagrosh/JLyrics/master-6e0d97d378-1/JLyrics-master-6e0d97d378-1.jar"/>
+        <pathelement location="../../../.m2/repository/com/typesafe/config/1.3.2/config-1.3.2.jar"/>
+        <pathelement location="../../../.m2/repository/org/json/json/20180813/json-20180813.jar"/>
+        <pathelement location="../../../.m2/repository/com/github/LowLevelSubmarine/GeniusLyricsAPI/1.0.3/GeniusLyricsAPI-1.0.3.jar"/>
+        <pathelement location="../../../.m2/repository/com/github/scribejava/scribejava-apis/5.5.0/scribejava-apis-5.5.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/github/scribejava/scribejava-core/5.5.0/scribejava-core-5.5.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/apis/google-api-services-youtube/v3-rev189-1.23.0/google-api-services-youtube-v3-rev189-1.23.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/api-client/google-api-client/1.23.0/google-api-client-1.23.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/oauth-client/google-oauth-client/1.23.0/google-oauth-client-1.23.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/http-client/google-http-client/1.23.0/google-http-client-1.23.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/http-client/google-http-client-jackson2/1.23.0/google-http-client-jackson2-1.23.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/google/guava/guava-jdk5/17.0/guava-jdk5-17.0.jar"/>
+        <pathelement location="../../../.m2/repository/se/michaelthelin/spotify/spotify-web-api-java/7.1.0/spotify-web-api-java-7.1.0.jar"/>
+        <pathelement location="../../../.m2/repository/com/neovisionaries/nv-i18n/1.29/nv-i18n-1.29.jar"/>
+        <pathelement location="../../../.m2/repository/org/apache/httpcomponents/client5/httpclient5-cache/5.1.3/httpclient5-cache-5.1.3.jar"/>
+        <pathelement location="../../../.m2/repository/com/vdurmont/emoji-java/4.0.0/emoji-java-4.0.0.jar"/>
+    </path>
+    <path id="Klassenserver7bBot.classpath">
+        <pathelement location="target/classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Bot-Dev.classpath">
+        <path refid="Klassenserver7bBot.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.Klassenserver7bbot nondev.classpath">
+        <path refid="Klassenserver7bBot.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="Klassenserver7bBot.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="Bot-Dev">
+        <java classname="de.k7bot.Main" failonerror="true" fork="yes">
+            <arg line="--devmode"/>
+            <classpath refid="run.Bot-Dev.classpath"/>
+        </java>
+    </target>
+    <target name="Klassenserver7bbot nondev">
+        <java classname="de.k7bot.Main" failonerror="true" fork="yes">
+            <classpath refid="run.Klassenserver7bbot nondev.classpath"/>
+        </java>
+    </target>
+</project>
