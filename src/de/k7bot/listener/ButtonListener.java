@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.PrivateChannel;
@@ -50,6 +50,7 @@ public class ButtonListener extends ListenerAdapter {
 	private void ApproveHA3Request(ButtonInteractionEvent event) {
 
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
+		event.getButton();
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
 		lsql.onUpdate("UPDATE HA3users SET approved=1 WHERE dcId=" + dcid);

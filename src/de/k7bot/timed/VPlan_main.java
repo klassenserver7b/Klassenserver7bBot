@@ -26,8 +26,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.Cell;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;

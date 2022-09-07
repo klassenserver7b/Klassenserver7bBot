@@ -7,8 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
+import org.apache.commons.collections4.map.HashMap;
+
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class ChartList {
@@ -104,8 +106,8 @@ public class ChartList {
 	}
 
 	/**
-	 * @return A {@link HashMap HashHashMap} containing the charts for all
-	 *         servers over all time. "songname - author" Strings are the
+	 * @return A {@link HashMap HashHashMap} containing the charts for all servers
+	 *         over all time. "songname - author" Strings are the
 	 *         {@link java.lang.String keys} and the "timesplayed" are the
 	 *         {@link java.lang.Long values}.
 	 */
@@ -125,8 +127,8 @@ public class ChartList {
 	 * @param timeunit <br>
 	 *                 The specification which {@link ChronoUnit Unit} is used for
 	 *                 time.
-	 * @return A {@link HashMap HashHashMap} containing the charts for all
-	 *         servers over all time. "songname - author" Strings are the
+	 * @return A {@link HashMap HashHashMap} containing the charts for all servers
+	 *         over all time. "songname - author" Strings are the
 	 *         {@link java.lang.String keys} and the "timesplayed" are the
 	 *         {@link java.lang.Long values}.
 	 */

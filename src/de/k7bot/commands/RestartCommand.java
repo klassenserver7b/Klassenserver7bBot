@@ -3,8 +3,8 @@ package de.k7bot.commands;
 import org.slf4j.Logger;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.SQLManager;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.manage.SQLManager;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
@@ -54,7 +54,7 @@ public class RestartCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeührt werden!";
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeï¿½hrt werden!";
 		return help;
 	}
 

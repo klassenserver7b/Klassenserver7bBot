@@ -1,7 +1,7 @@
 package de.k7bot.music;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

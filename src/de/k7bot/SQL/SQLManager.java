@@ -1,8 +1,7 @@
 
-package de.k7bot.manage;
+package de.k7bot.SQL;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
 
 public class SQLManager {
 	public static void onCreate() {

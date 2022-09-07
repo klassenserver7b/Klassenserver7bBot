@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.SQL;
 
 import java.io.File;
 import java.io.IOException;

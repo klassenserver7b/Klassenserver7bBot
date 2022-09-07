@@ -59,6 +59,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class CommandManager {
 	public ConcurrentHashMap<String, ServerCommand> commands;
 	public Logger commandlog;
@@ -133,6 +138,14 @@ public class CommandManager {
 		}
 	}
 
+	/**
+	 * 
+	 * @param command
+	 * @param m
+	 * @param channel
+	 * @param message
+	 * @return
+	 */
 	public boolean perform(String command, Member m, TextChannel channel, Message message) {
 		ServerCommand cmd;
 		if ((cmd = this.commands.get(command.toLowerCase())) != null) {

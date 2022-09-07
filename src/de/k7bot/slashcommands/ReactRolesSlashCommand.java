@@ -1,8 +1,8 @@
 package de.k7bot.slashcommands;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;

@@ -17,6 +17,8 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
+import de.k7bot.SQL.LiteSQL;
+import de.k7bot.SQL.SQLManager;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
@@ -27,7 +29,6 @@ import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VplanNEW_XML;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.commands.StatsCategoryCommand;
 
 import java.io.BufferedReader;

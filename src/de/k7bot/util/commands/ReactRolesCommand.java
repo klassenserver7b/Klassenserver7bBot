@@ -1,8 +1,8 @@
 package de.k7bot.util.commands;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
 
@@ -68,7 +68,7 @@ public class ReactRolesCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
+		String help = "Erstellt eine Reactionrole fï¿½r die ausgewï¿½hlte Nachricht mit dem ausgewï¿½hlten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
 		return help;
 	}
 

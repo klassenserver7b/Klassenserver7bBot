@@ -6,8 +6,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.SongDataStripper;
 import de.k7bot.util.SongTitle;
 
@@ -66,7 +66,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with ytsearch:");
 
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugefügt
+				// Queue hinzugefï¿½gt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;
@@ -76,7 +76,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with scsearch:");
 
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugefügt
+				// Queue hinzugefï¿½gt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;

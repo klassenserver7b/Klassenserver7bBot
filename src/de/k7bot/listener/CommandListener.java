@@ -2,8 +2,8 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.HelpCommand;
-import de.k7bot.util.LiteSQL;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

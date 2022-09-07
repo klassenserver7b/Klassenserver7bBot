@@ -37,8 +37,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.Cell;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -95,7 +95,7 @@ public class VplanNEW_XML {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
+			embbuild.setTitle("Es gibt einen neuen Stundenplan fï¿½r "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
@@ -126,7 +126,7 @@ public class VplanNEW_XML {
 			}
 
 			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+			embbuild.setDescription("**ï¿½nderungen**\n" + tablemess.build());
 
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);
