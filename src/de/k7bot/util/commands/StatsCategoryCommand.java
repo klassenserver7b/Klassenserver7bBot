@@ -61,7 +61,7 @@ public class StatsCategoryCommand implements ServerCommand {
 	
 	@Override
 	public String gethelp() {
-		String help = "Legt eine Kategorie mit dem Bot-Status (Online/Offline) an.\n - kann nur von Mitgliedern mit der Berechtigung 'Administrator' ausgeÃ¼hrt werden!";
+		String help = "Legt eine Kategorie mit dem Bot-Status (Online/Offline) an.\n - kann nur von Mitgliedern mit der Berechtigung 'Administrator' ausgeführt werden!";
 		return help;
 	}
 
