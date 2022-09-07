@@ -9,6 +9,7 @@ import de.k7bot.slashcommands.PingSlashCommand;
 import de.k7bot.slashcommands.ReactRolesSlashCommand;
 import de.k7bot.slashcommands.Shutdownslashcommand;
 import de.k7bot.slashcommands.ToEmbedSlashCommand;
+import de.k7bot.slashcommands.WhitelistSlashCommand;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,10 +23,12 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 public class SlashCommandManager {
+	
 	public ConcurrentHashMap<String, SlashCommand> commands;
-	public Logger commandlog;
+	public final Logger commandlog = LoggerFactory.getLogger("Commandlog");
 
 	public SlashCommandManager() {
+		
 		this.commands = new ConcurrentHashMap<>();
 
 		this.commands.put("help", new HelpSlashCommand());
@@ -35,7 +38,7 @@ public class SlashCommandManager {
 		this.commands.put("toembed", new ToEmbedSlashCommand());
 		this.commands.put("reactrole", new ReactRolesSlashCommand());
 		this.commands.put("charts", new ChartsSlashCommand());
-		this.commandlog = LoggerFactory.getLogger("Commandlog");
+		this.commands.put("whitelistadd", new WhitelistSlashCommand());
 
 		Klassenserver7bbot.INSTANCE.shardMan.getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
@@ -72,6 +75,10 @@ public class SlashCommandManager {
 							"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
 					.addOption(OptionType.INTEGER, "time", "REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
 					.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"", false, true)
+					);
+			commup.addCommands(Commands.slash("whitelistadd", "Fragt die Hinzufügung zur Whitelist an.")
+					.addOption(OptionType.STRING, "ingamename", "Dein Spielername in Minecraft", true)
+					.addOption(OptionType.STRING,"realname", "Der Name mit dem du im Talk etc. angesprochen werden willst.", true)
 					);
 
 			commup.complete();

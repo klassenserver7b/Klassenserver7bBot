@@ -44,5 +44,8 @@ public class SQLManager {
 
 		lsql.onUpdate(
 				"CREATE TABLE IF NOT EXISTS commandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, timestamp INTEGER)");
+		
+		lsql.onUpdate(
+				"CREATE TABLE IF NOT EXISTS ha3users(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ingamename STRING, realname STRING, dcname STRING, dcId INTEGER, approved INTEGER)");
 	}
 }

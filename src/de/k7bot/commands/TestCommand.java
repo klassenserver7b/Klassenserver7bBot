@@ -52,6 +52,7 @@ public class TestCommand implements ServerCommand {
 
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) {
+    		
 
         checkAccessToken();
         final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId("0971d").setAccessToken(accessToken).build();

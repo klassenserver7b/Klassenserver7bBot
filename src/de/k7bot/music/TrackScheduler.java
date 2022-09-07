@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 public class TrackScheduler extends AudioEventAdapter {
 
@@ -71,7 +72,7 @@ public class TrackScheduler extends AudioEventAdapter {
 							TextChannel channel;
 							if (guild != null && (channel = guild.getTextChannelById(channelid)) != null) {
 								channel.sendTyping().queue();
-								channel.sendFile(file, "thumbnail.jpg").setEmbeds(builder.build()).queue();
+								channel.sendFiles(FileUpload.fromData(file, "thumbnail.jpg")).setEmbeds(builder.build()).queue();
 							}
 
 						}

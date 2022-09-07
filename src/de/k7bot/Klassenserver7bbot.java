@@ -217,6 +217,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
 		builder.addEventListeners(new ChartsAutocomplete());
+		builder.addEventListeners(new ButtonListener());
 
 		this.shardMan = builder.build();
 	}

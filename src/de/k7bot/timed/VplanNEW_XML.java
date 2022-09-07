@@ -85,7 +85,11 @@ public class VplanNEW_XML {
 				}
 			}
 
-			String info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
+			String info = "";
+			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
+				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
+			}
+			
 			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.INSTANCE.indev);
 
@@ -100,76 +104,34 @@ public class VplanNEW_XML {
 
 			NodeList lessons = classPlan.getElementsByTagName("Std");
 
-			for (int i = 0; i < lessons.getLength(); i++) {
+			int limit = 6;
+			int ges = lessons.getLength();
+
+			if (lessons.getLength() < limit) {
+				limit = lessons.getLength();
+			}
+
+			for (int i = 0; i < limit; i++) {
 				Element e = (Element) lessons.item(i);
+				appendLesson(e, tablemess);
 
-				boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
-				boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
-				boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+			}
+			TableMessage additionalmess = new TableMessage();
+			additionalmess.setColums(5);
 
-				tablemess.addCell(e.getElementsByTagName("St").item(0).getTextContent());
-
-				if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
-
-					Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
-							(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-					Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
-							(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-					StringBuilder strbuild = new StringBuilder();
-					String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
-
-					if (teacher != null && !teacher.equalsIgnoreCase("")) {
-						JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
-
-						if (teachelem != null) {
-
-							JsonObject teach = teachelem.getAsJsonObject();
-
-							String gender = teach.get("gender").getAsString();
-							if (gender.equalsIgnoreCase("female")) {
-								strbuild.append("Frau ");
-							} else if (gender.equalsIgnoreCase("male")) {
-								strbuild.append("Herr ");
-							}
-
-							if (teach.get("is_doctor").getAsBoolean()) {
-
-								strbuild.append("Dr. ");
-
-							}
-
-							strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-
-						}
-					}
-
-					teachercell.setLinkTitle(strbuild.toString());
-					teachercell.setLinkURL("https://manos-dresden.de/lehrer");
-
-					Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
-							(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-					tablemess.addRow(subjectcell, teachercell, room);
-
-				} else {
-
-					tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
-
-				}
-
-				if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
-
-					tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
-
-				} else {
-					tablemess.addCell("   ");
-				}
+			for (int i = limit; i < ges; i++) {
+				Element e = (Element) lessons.item(i);
+				appendLesson(e, additionalmess);
 
 			}
 
 			tablemess.automaticLineBreaks(4);
 			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+
+			if (additionalmess.hasData()) {
+				additionalmess.automaticLineBreaks(4);
+				embbuild.addField("", additionalmess.build(), false);
+			}
 
 			if (!(info.equalsIgnoreCase(""))) {
 
@@ -184,6 +146,82 @@ public class VplanNEW_XML {
 
 		}
 
+	}
+
+	/**
+	 * 
+	 * @param e
+	 * @param tablemess
+	 * @return
+	 */
+	private TableMessage appendLesson(Element e, TableMessage tablemess) {
+		TableMessage ret;
+
+		boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
+		boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
+		boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+		String lesson = e.getElementsByTagName("St").item(0).getTextContent();
+
+		if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
+
+			Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
+					(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+			Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
+					(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+			StringBuilder strbuild = new StringBuilder();
+			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
+
+			if (teacher != null && !teacher.equalsIgnoreCase("")) {
+				JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
+
+				if (teachelem != null) {
+
+					JsonObject teach = teachelem.getAsJsonObject();
+
+					String gender = teach.get("gender").getAsString();
+					if (gender.equalsIgnoreCase("female")) {
+						strbuild.append("Frau ");
+					} else if (gender.equalsIgnoreCase("male")) {
+						strbuild.append("Herr ");
+					}
+
+					if (teach.get("is_doctor").getAsBoolean()) {
+
+						strbuild.append("Dr. ");
+
+					}
+
+					strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+
+				}
+			}
+
+			teachercell.setLinkTitle(strbuild.toString());
+			teachercell.setLinkURL("https://manos-dresden.de/lehrer");
+
+			Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
+					(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+			tablemess.addRow(lesson, subjectcell, teachercell, room);
+
+		} else {
+
+			tablemess.addRow(lesson, Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+
+		}
+
+		if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
+
+			tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
+
+		} else {
+			tablemess.addCell("   ");
+		}
+
+		ret = tablemess;
+
+		return ret;
 	}
 
 	/**
@@ -210,10 +248,10 @@ public class VplanNEW_XML {
 						dbhash = set.getInt("classeintraege");
 
 					}
-					
+
 					String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
 					onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
-					
+
 					if (dbhash != null) {
 
 						if (dbhash != planhash || synced) {

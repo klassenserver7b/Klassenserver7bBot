@@ -49,6 +49,16 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
 		}
 	}
+	
+	public void performCommand(Member m, TextChannel channel, String mess) {
+		String[] args = mess.split(" ");
+
+		if (args.length > 1) {
+			sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
+		} else {
+			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
+		}
+	}
 
 	public void performCommand(PrivateChannel channel, Message mess) {
 		String[] args = mess.getContentDisplay().split(" ");
@@ -59,6 +69,7 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(null), channel);
 		}
 	}
+
 
 	/**
 	 * 
