@@ -70,7 +70,7 @@ public class Klassenserver7bbot {
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 	private final LiteSQL sqlite = new LiteSQL();
-	
+
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
 	public AudioPlayerManager audioPlayerManager;
@@ -79,8 +79,6 @@ public class Klassenserver7bbot {
 	public Thread loop;
 	public Thread shutdownT;
 
-	public boolean hypixelapienabled = false;
-	public boolean githubapienabled = false;
 	public boolean vplanenabled = false;
 
 	public boolean imShutdown = false;
@@ -105,6 +103,9 @@ public class Klassenserver7bbot {
 	private GLA lyricsapiold;
 	private SystemNotificationChannelHolder syschannels;
 	private VplanNEW_XML vplan;
+
+	private boolean hypixelapienabled = false;
+	private boolean githubapienabled = false;
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
@@ -190,7 +191,7 @@ public class Klassenserver7bbot {
 	}
 
 	public void buildBot(String token, String canaryToken, int shardc) throws LoginException, IllegalArgumentException {
-		
+
 		DefaultShardManagerBuilder builder;
 
 		if (!indev) {
@@ -383,7 +384,10 @@ public class Klassenserver7bbot {
 				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-				vplan.sendVplanMessage(false, "10b", null);
+
+				if (this.vplanenabled) {
+					vplan.sendVplanMessage(false, "10b", null);
+				}
 				Skyblocknews.onEventCheck();
 
 				if ((!this.hasstarted)) {
@@ -471,6 +475,8 @@ public class Klassenserver7bbot {
 			prop.setProperty("shardCount", "");
 			prop.setProperty("vplanpw", "");
 			prop.setProperty("schoolID", "");
+			prop.setProperty("lsaxemail", "");
+			prop.setProperty("lsaxtoken", "");
 
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();

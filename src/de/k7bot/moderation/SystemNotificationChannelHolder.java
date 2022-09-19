@@ -112,13 +112,13 @@ public class SystemNotificationChannelHolder {
 		if (!systemchannellist.containsKey(guild)) {
 
 			systemchannellist.put(guild, channel);
-			Klassenserver7bbot.INSTANCE.getDB().onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES("
+			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES("
 					+ guild.getIdLong() + ", " + channel.getIdLong() + ")");
 
 		} else {
 
 			systemchannellist.replace(guild, channel);
-			Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong()
+			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong()
 					+ " WHERE guildId = " + guild.getIdLong());
 		}
 

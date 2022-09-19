@@ -3,6 +3,7 @@ package de.k7bot.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.util.SyntaxError;
@@ -30,7 +31,7 @@ public class VolumeCommand implements ServerCommand {
 								.getController(guild.getIdLong());
 						AudioPlayer player = controller.getPlayer();
 						player.setVolume(volume);
-						Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET volume = " + volume
+						LiteSQL.onUpdate("UPDATE botutil SET volume = " + volume
 								+ " WHERE guildId = " + channel.getGuild().getIdLong());
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setFooter("Requested by @" + m.getEffectiveName());

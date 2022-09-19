@@ -1,6 +1,6 @@
-bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
 
-CommandManager von ConcurrentHashMap auf Map o.ä. umstellen. -> Help geordnet für z.B. Alias
+bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 
 Equalizer für Music
 Mehrere player per guild (music)

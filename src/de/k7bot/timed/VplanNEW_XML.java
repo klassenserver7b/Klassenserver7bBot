@@ -48,7 +48,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
  * @author felix
  * @since 1.14.0
  */
-@AvailableSince(value = "1.14.0")
 public class VplanNEW_XML {
 
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
@@ -57,7 +56,10 @@ public class VplanNEW_XML {
 	/**
 	 * 
 	 * @param force
-	 * @since 1.14.0
+	 * @param klasse
+	 * @param chan
+	 * 
+	 * since 1.14.0
 	 */
 	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
@@ -95,7 +97,7 @@ public class VplanNEW_XML {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan fï¿½r "
+			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
@@ -126,7 +128,7 @@ public class VplanNEW_XML {
 			}
 
 			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**ï¿½nderungen**\n" + tablemess.build());
+			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
 
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);
@@ -437,7 +439,7 @@ public class VplanNEW_XML {
 					return null;
 				}
 
-				log.warn("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
+				log.debug("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
 						+ response.getStatusLine().getReasonPhrase());
 				return null;
 

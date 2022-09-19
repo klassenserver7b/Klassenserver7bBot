@@ -43,7 +43,7 @@ public class LiteSQL {
 		}
 	}
 
-	public void onUpdate(String sql) {
+	public static void onUpdate(String sql) {
 		try {
 			stmt.execute(sql);
 		} catch (SQLException e) {
@@ -51,7 +51,7 @@ public class LiteSQL {
 		}
 	}
 
-	public ResultSet onQuery(String sql){
+	public static ResultSet onQuery(String sql){
 			
 			try {
 				return stmt.executeQuery(sql);

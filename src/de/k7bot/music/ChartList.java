@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
-import org.apache.commons.collections4.map.HashMap;
-
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;

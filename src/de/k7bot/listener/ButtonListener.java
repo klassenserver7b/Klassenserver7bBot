@@ -53,7 +53,7 @@ public class ButtonListener extends ListenerAdapter {
 		event.getButton();
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE HA3users SET approved=1 WHERE dcId=" + dcid);
+		lsql.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
@@ -79,7 +79,7 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE HA3users SET approved=0 WHERE dcId=" + dcid);
+		lsql.onUpdate("UPDATE ha3users SET approved=0 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
@@ -103,7 +103,7 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE HA3users SET approved=2 WHERE dcId=" + dcid);
+		lsql.onUpdate("UPDATE ha3users SET approved=2 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		event.getMessage().delete().queue();

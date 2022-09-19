@@ -43,6 +43,7 @@ import de.k7bot.music.commands.UnLoopCommand;
 import de.k7bot.music.commands.VolumeCommand;
 import de.k7bot.util.DisabledAPI;
 import de.k7bot.util.commands.ClearCommand;
+import de.k7bot.util.commands.DanceInterpreterJsonGenerateCommand;
 import de.k7bot.util.commands.EveryoneCommand;
 import de.k7bot.util.commands.MessagetoEmbedCommand;
 import de.k7bot.util.commands.ReactRolesCommand;
@@ -50,7 +51,7 @@ import de.k7bot.util.commands.RoleCreation;
 import de.k7bot.util.commands.StatsCategoryCommand;
 import de.k7bot.util.commands.addReactionCommand;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.LinkedHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
  *
  */
 public class CommandManager {
-	public ConcurrentHashMap<String, ServerCommand> commands;
+	public LinkedHashMap<String, ServerCommand> commands;
 	public Logger commandlog;
 
 	/**
@@ -76,7 +77,7 @@ public class CommandManager {
 	 *                  Should the GitHubAPI be enabled
 	 */
 	public CommandManager(Boolean hypenable, Boolean gitenable) {
-		this.commands = new ConcurrentHashMap<>();
+		this.commands = new LinkedHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
 		this.commands.put("help", new HelpCommand());
@@ -124,6 +125,7 @@ public class CommandManager {
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
+		this.commands.put("DILoad", new DanceInterpreterJsonGenerateCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());
