@@ -5,7 +5,7 @@
  import java.util.concurrent.ExecutionException;
  import net.dv8tion.jda.api.entities.Member;
  import net.dv8tion.jda.api.entities.Message;
- import net.dv8tion.jda.api.entities.TextChannel;
+ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  import net.hypixel.api.HypixelAPI;
  import net.hypixel.api.reply.CountsReply;
  

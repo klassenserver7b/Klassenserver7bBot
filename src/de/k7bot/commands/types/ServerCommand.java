@@ -2,7 +2,7 @@ package de.k7bot.commands.types;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /** Interface used to specify and registrate a general Command.
  * 

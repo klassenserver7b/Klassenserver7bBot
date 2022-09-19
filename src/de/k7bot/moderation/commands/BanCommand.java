@@ -1,7 +1,7 @@
 package de.k7bot.moderation.commands;
 
 import de.k7bot.Klassenserver7bbot;
-
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class BanCommand implements ServerCommand {
@@ -73,7 +73,7 @@ public class BanCommand implements ServerCommand {
         TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(channel.getGuild());
 
         try {
-            u.ban(7).reason(grund).queue();
+            u.ban(7, TimeUnit.DAYS).reason(grund).queue();
 
             if (system != null) {
 
@@ -88,7 +88,7 @@ public class BanCommand implements ServerCommand {
             }
 
             String action = "ban";
-            Klassenserver7bbot.INSTANCE.getDB().onUpdate(
+            LiteSQL.onUpdate(
                     "INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
                             + channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
                             + ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action
