@@ -6,6 +6,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.MusicUtil;
 import de.k7bot.util.SyntaxError;
 
 import java.time.OffsetDateTime;
@@ -21,7 +22,7 @@ public class VolumeCommand implements ServerCommand {
 
 		String[] args = message.getContentDisplay().split(" ");
 		try {
-			Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
+			MusicUtil.updateChannel(channel);
 			if (args.length > 1) {
 				int volume = Integer.parseInt(args[1]);
 				if (volume > 0) {

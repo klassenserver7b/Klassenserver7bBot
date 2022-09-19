@@ -16,8 +16,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class ResumeCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		MusicUtil util = Klassenserver7bbot.INSTANCE.getMusicUtil();
-
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
 			AudioChannel vc;
@@ -26,9 +24,9 @@ public class ResumeCommand implements ServerCommand {
 				MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 						.getController(vc.getGuild().getIdLong());
 				AudioPlayer player = controller.getPlayer();
-				util.updateChannel(channel);
+				MusicUtil.updateChannel(channel);
 				if (player.isPaused()) {
-					util.updateChannel(channel);
+					MusicUtil.updateChannel(channel);
 					player.setPaused(false);
 					channel.sendMessage(":arrow_forward: resumed").queue();
 				} else {

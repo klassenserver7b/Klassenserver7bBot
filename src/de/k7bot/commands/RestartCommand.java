@@ -23,20 +23,19 @@ public class RestartCommand implements ServerCommand {
 			if (args.length > 1) {
 
 				try {
-					
-					Klassenserver7bbot.INSTANCE.playerManager.controller.values().forEach(contr ->{				
-						contr.getPlayer().stopTrack();	
-					});;
-					
+
+					Klassenserver7bbot.INSTANCE.playerManager.controller.values().forEach(contr -> {
+						contr.getPlayer().stopTrack();
+					});
+
 					Klassenserver7bbot.INSTANCE.loop.interrupt();
 					SQLManager.onCreate();
-					
+
 					Klassenserver7bbot.INSTANCE.shardMan.restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
-					
+
 					Klassenserver7bbot.INSTANCE.runLoop();
-					
-					
+
 				} catch (NumberFormatException e) {
 					SyntaxError.oncmdSyntaxError(channel, "restart <shardId>", m);
 				}
@@ -54,7 +53,7 @@ public class RestartCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeï¿½hrt werden!";
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
 		return help;
 	}
 

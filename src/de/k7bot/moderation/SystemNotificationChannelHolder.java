@@ -76,7 +76,6 @@ public class SystemNotificationChannelHolder {
 				}
 
 			});
-			;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -110,14 +109,14 @@ public class SystemNotificationChannelHolder {
 		if (!systemchannellist.containsKey(guild)) {
 
 			systemchannellist.put(guild, channel);
-			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES("
-					+ guild.getIdLong() + ", " + channel.getIdLong() + ")");
+			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + guild.getIdLong() + ", "
+					+ channel.getIdLong() + ")");
 
 		} else {
 
 			systemchannellist.replace(guild, channel);
-			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong()
-					+ " WHERE guildId = " + guild.getIdLong());
+			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong() + " WHERE guildId = "
+					+ guild.getIdLong());
 		}
 
 	}

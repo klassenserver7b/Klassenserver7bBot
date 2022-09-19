@@ -16,8 +16,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandListener extends ListenerAdapter {
+	Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (!Klassenserver7bbot.INSTANCE.exit) {
@@ -30,7 +34,9 @@ public class CommandListener extends ListenerAdapter {
 				try {
 					String prefix = Klassenserver7bbot.INSTANCE.prefixl.get(event.getGuild().getIdLong()).toLowerCase();
 					guildMessageRecieved(event, message, prefix);
-				} catch (IllegalStateException e) {}
+				} catch (IllegalStateException e) {
+					log.error(e.getMessage(), e);
+				}
 				break;
 			}
 			case PRIVATE: {

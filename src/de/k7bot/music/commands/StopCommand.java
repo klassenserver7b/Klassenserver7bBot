@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.MusicUtil;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,7 +25,7 @@ public class StopCommand implements ServerCommand {
 				AudioManager manager = vc.getGuild().getAudioManager();
 				AudioPlayer player = controller.getPlayer();
 
-				Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
+				MusicUtil.updateChannel(channel);
 				player.stopTrack();
 				manager.closeAudioConnection();
 			}

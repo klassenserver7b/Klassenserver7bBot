@@ -85,7 +85,7 @@ public class TrackScheduler extends AudioEventAdapter {
 					e.printStackTrace();
 				}
 			} else {
-				Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(guildid, builder);
+				MusicUtil.sendEmbed(guildid, builder);
 			}
 		}
 	}

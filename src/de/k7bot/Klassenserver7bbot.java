@@ -24,7 +24,6 @@ import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
-import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
@@ -97,7 +96,6 @@ public class Klassenserver7bbot {
 	private CommandManager cmdMan;
 	private HypixelCommandManager hypMan;
 	private SlashCommandManager slashMan;
-	private MusicUtil musicutil;
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
 	private SystemNotificationChannelHolder syschannels;
@@ -246,7 +244,6 @@ public class Klassenserver7bbot {
 
 	public void initializeObjects() {
 
-		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
 		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
@@ -521,10 +518,6 @@ public class Klassenserver7bbot {
 
 	public GitHub getGitapi() {
 		return this.github;
-	}
-
-	public MusicUtil getMusicUtil() {
-		return this.musicutil;
 	}
 
 	public LyricsClient getLyricsAPI() {
