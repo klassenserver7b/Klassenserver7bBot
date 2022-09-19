@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 public class AudioLoadResult implements AudioLoadResultHandler {
 	private final String uri;
 	private final MusicController controller;
-	private final LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
 	private final boolean setasnext;
 
 	public AudioLoadResult(MusicController controller, String uri, boolean loadasnext) {
@@ -51,7 +50,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
-		sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
 				+ songauthor + "', " + datetime + ")");
 
 	}

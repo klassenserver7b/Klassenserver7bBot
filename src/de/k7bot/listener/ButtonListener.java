@@ -12,7 +12,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 public class ButtonListener extends ListenerAdapter {
-	private final LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	public final Logger log = LoggerFactory.getLogger("HA3Buttons");
 	
 	
@@ -53,7 +52,7 @@ public class ButtonListener extends ListenerAdapter {
 		event.getButton();
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId=" + dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
@@ -79,7 +78,7 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE ha3users SET approved=0 WHERE dcId=" + dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved=0 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
@@ -103,7 +102,7 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		lsql.onUpdate("UPDATE ha3users SET approved=2 WHERE dcId=" + dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved=2 WHERE dcId=" + dcid);
 		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
 
 		event.getMessage().delete().queue();

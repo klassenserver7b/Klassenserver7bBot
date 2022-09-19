@@ -5,7 +5,7 @@ import de.k7bot.commands.types.ServerCommand;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SCtoHC implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {

@@ -1,27 +1,35 @@
 package de.k7bot.music;
 
 import de.k7bot.Klassenserver7bbot;
+
 import de.k7bot.SQL.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class MusicUtil {
-	LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-
+	/**
+	 * 
+	 * @param channel
+	 */
 	public void updateChannel(TextChannel channel) {
 
-		ResultSet set = lsql.onQuery("SELECT * FROM musicchannel WHERE guildId = " + channel.getGuild().getIdLong());
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicchannel WHERE guildId = " + channel.getGuild().getIdLong());
 
 		try {
 			if (set.next()) {
-				lsql.onUpdate("UPDATE musicchannel SET channelId = " + channel.getIdLong() + " WHERE guildId = "
+				LiteSQL.onUpdate("UPDATE musicchannel SET channelId = " + channel.getIdLong() + " WHERE guildId = "
 						+ channel.getGuild().getIdLong());
 			} else {
-				lsql.onUpdate("INSERT INTO musicchannel(guildId, channelId) VALUES(" + channel.getGuild().getIdLong()
+				LiteSQL.onUpdate("INSERT INTO musicchannel(guildId, channelId) VALUES(" + channel.getGuild().getIdLong()
 						+ "," + channel.getIdLong() + ")");
 			}
 		} catch (SQLException e) {
@@ -29,8 +37,13 @@ public class MusicUtil {
 		}
 	}
 
+	/**
+	 * 
+	 * @param guildid
+	 * @param builder
+	 */
 	public void sendEmbed(long guildid, EmbedBuilder builder) {
-		ResultSet set = lsql.onQuery("SELECT * FROM musicchannel WHERE guildId = " + guildid);
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicchannel WHERE guildId = " + guildid);
 
 		try {
 			if (set.next()) {

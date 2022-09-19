@@ -28,7 +28,7 @@ import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
@@ -36,6 +36,11 @@ import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 	private String accessToken;
 	private Long isoexpiration;
@@ -186,6 +191,9 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 
 	}
 
+	/**
+	 * 
+	 */
 	public void checkAccessToken() {
 
 		if (accessToken == null || accessToken.equalsIgnoreCase("") || clientId == null
@@ -220,6 +228,10 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getAccessToken() {
 
 		checkAccessToken();

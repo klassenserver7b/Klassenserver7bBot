@@ -18,10 +18,21 @@ import de.konsl.webweaverapi.model.messages.MessageType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class LernsaxInteractions {
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
+	/**
+	 * 
+	 * @param lsaxemail
+	 * @param token
+	 * @param applicationID
+	 */
 	public void connect(String lsaxemail, String token, String applicationID) {
 
 		this.client = new WebWeaverClient();
@@ -30,10 +41,18 @@ public class LernsaxInteractions {
 
 	}
 
+	/**
+	 * 
+	 */
 	public void disconnect() {
 		client.logout();
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Message> checkForLernplanMessages() throws SQLException {
 
 		List<Message> messages;
@@ -67,6 +86,10 @@ public class LernsaxInteractions {
 		return messages;
 	}
 
+	/**
+	 * 
+	 * @param lernplanmessages
+	 */
 	public void sendLernsaxEmbeds(List<Message> lernplanmessages) {
 
 		if (lernplanmessages.size() > 0) {
@@ -92,9 +115,9 @@ public class LernsaxInteractions {
 
 			});
 
-			for (MessageEmbed e : embeds) {
-
-			}
+//			for (MessageEmbed e : embeds) {
+//
+//			}
 
 		}
 

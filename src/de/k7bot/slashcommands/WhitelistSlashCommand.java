@@ -14,13 +14,12 @@ import de.k7bot.commands.types.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class WhitelistSlashCommand implements SlashCommand {
-	private final LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	private final Logger log = LoggerFactory.getLogger("Whitelist");
 
 	@Override
@@ -32,7 +31,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 
 		InteractionHook hook = event.deferReply(true).complete();
 
-		ResultSet set = lsql.onQuery("SELECT * FROM ha3users WHERE dcId=" + dcid);
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users WHERE dcId=" + dcid);
 
 		try {
 			if (set.next()) {
@@ -47,7 +46,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 			log.error(e.getMessage(), e);
 		}
 
-		lsql.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES('" + gamename + "', '"
+		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES('" + gamename + "', '"
 				+ realname + "', '" + dcname + "', " + dcid + ", 3);");
 
 		Guild g = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(701341683325075477L);

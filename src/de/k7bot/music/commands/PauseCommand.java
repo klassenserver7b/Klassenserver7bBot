@@ -8,11 +8,11 @@ import de.k7bot.music.MusicUtil;
 
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class PauseCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {

@@ -8,7 +8,6 @@ import java.time.OffsetDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.TableMessage;
@@ -19,7 +18,6 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class HA3MembersCommand implements SlashCommand{
 	
-	LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	private final Logger log = LoggerFactory.getLogger("HA3MemberList");
 
 	@Override
@@ -32,7 +30,7 @@ public class HA3MembersCommand implements SlashCommand{
 		
 		InteractionHook hook = event.deferReply(true).complete();
 		
-		ResultSet set = lsql.onQuery("SELECT * FROM ha3users");
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users");
 		
 		TableMessage mess = new TableMessage();
 		mess.addHeadline("Name","DC Name","InGame Name");
@@ -51,7 +49,7 @@ public class HA3MembersCommand implements SlashCommand{
 	
 	private boolean isHA3Member(User u) {
 		
-		ResultSet set = lsql.onQuery("SELECT dcId FROM ha3users");
+		ResultSet set = LiteSQL.onQuery("SELECT dcId FROM ha3users");
 		
 		try {
 			while(set.next()) {

@@ -7,8 +7,6 @@ Mehrere player per guild (music)
 
 YT-Api
 
-Lernsax Lernplan API
-
 Language per channel
 
 GitHub-API

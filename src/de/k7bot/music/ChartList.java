@@ -7,13 +7,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
-import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class ChartList {
-
-	private final LiteSQL litesql = Klassenserver7bbot.INSTANCE.getDB();
 
 	/**
 	 * 
@@ -153,7 +150,7 @@ public class ChartList {
 
 		HashMap<String, Long> chartslist = new HashMap<>();
 
-		ResultSet set = litesql
+		ResultSet set = LiteSQL
 				.onQuery("SELECT * FROM musiclogs" + guildselect + dateselect + " ORDER BY timestamp DESC");
 
 		if (set != null) {

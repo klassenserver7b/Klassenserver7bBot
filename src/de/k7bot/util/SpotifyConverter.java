@@ -30,7 +30,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.Queue;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Message;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;

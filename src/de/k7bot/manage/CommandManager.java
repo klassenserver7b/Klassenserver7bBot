@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
@@ -125,7 +125,7 @@ public class CommandManager {
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
-		this.commands.put("DILoad", new DanceInterpreterJsonGenerateCommand());
+		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
 		
 		if (hypenable) {
 			this.commands.put("hypixel", new SCtoHC());

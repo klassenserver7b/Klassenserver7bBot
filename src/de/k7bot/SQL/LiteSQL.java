@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 public class LiteSQL {
 	private static Connection conn;
 	private static Statement stmt;
-	public Logger dblog = LoggerFactory.getLogger("DB-Log");
+	public final static Logger dblog = LoggerFactory.getLogger("DB-Log");
 
-	public void connect() {
+	public static void connect() {
 		conn = null;
 
 		try {
@@ -32,7 +32,7 @@ public class LiteSQL {
 		}
 	}
 
-	public void disconnect() {
+	public static void disconnect() {
 		try {
 			if (conn != null) {
 				conn.close();
@@ -62,7 +62,7 @@ public class LiteSQL {
 			
 	}
 
-	public Logger getdblog() {
+	public static Logger getdblog() {
 		return dblog;
 	}
 }

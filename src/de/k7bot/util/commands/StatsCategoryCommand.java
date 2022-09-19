@@ -13,19 +13,18 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class StatsCategoryCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
-		
+
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
 			Guild guild = channel.getGuild();
-			ResultSet set = lsql
+			ResultSet set = LiteSQL
 					.onQuery("SELECT * FROM statschannels WHERE guildId = " + channel.getGuild().getIdLong());
 
 			try {
@@ -34,7 +33,7 @@ public class StatsCategoryCommand implements ServerCommand {
 					Category cat = guild.createCategory("botstatus").complete();
 					cat.getManager().setPosition(0);
 					long catid = cat.getIdLong();
-					lsql.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(" + guild.getIdLong() + ", "
+					LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(" + guild.getIdLong() + ", "
 							+ catid + ")");
 
 					fillCategory(cat, Klassenserver7bbot.INSTANCE.indev);
@@ -58,7 +57,7 @@ public class StatsCategoryCommand implements ServerCommand {
 		}
 
 	}
-	
+
 	@Override
 	public String gethelp() {
 		String help = "Legt eine Kategorie mit dem Bot-Status (Online/Offline) an.\n - kann nur von Mitgliedern mit der Berechtigung 'Administrator' ausgeführt werden!";
@@ -85,10 +84,10 @@ public class StatsCategoryCommand implements ServerCommand {
 	}
 
 	public static void onStartup(boolean devmode) {
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		Klassenserver7bbot.INSTANCE.imShutdown = true;
 		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(guild -> {
-			ResultSet set = lsql.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
+			ResultSet set = LiteSQL
+					.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
 
 			try {
 				if (set.next()) {
@@ -119,9 +118,9 @@ public class StatsCategoryCommand implements ServerCommand {
 	}
 
 	public static void onShutdown(boolean devmode) {
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(guild -> {
-			ResultSet set = lsql.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
+			ResultSet set = LiteSQL
+					.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
 			try {
 				if (set.next()) {
 					long catid = set.getLong("categoryId");

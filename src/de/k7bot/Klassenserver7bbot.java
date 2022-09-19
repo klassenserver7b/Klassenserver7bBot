@@ -69,7 +69,6 @@ public class Klassenserver7bbot {
 	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
-	private final LiteSQL sqlite = new LiteSQL();
 
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
@@ -142,7 +141,7 @@ public class Klassenserver7bbot {
 
 	public boolean initialize(Properties prop) {
 		loadTeacherList();
-		sqlite.connect();
+		LiteSQL.connect();
 
 		String token = prop.getProperty("token");
 
@@ -370,7 +369,7 @@ public class Klassenserver7bbot {
 			this.shardMan.setStatus(OnlineStatus.OFFLINE);
 			logger.info("Bot offline");
 			this.shardMan.shutdown();
-			sqlite.disconnect();
+			LiteSQL.disconnect();
 			this.shutdownT.interrupt();
 		} else {
 			logger.info("ShardMan was null!");
@@ -423,7 +422,7 @@ public class Klassenserver7bbot {
 
 		try {
 
-			ResultSet set = sqlite.onQuery("SELECT guildId, prefix FROM botutil");
+			ResultSet set = LiteSQL.onQuery("SELECT guildId, prefix FROM botutil");
 			if (set != null) {
 
 				while (set.next()) {
@@ -433,7 +432,7 @@ public class Klassenserver7bbot {
 					}
 
 					if (set.getString("prefix") == null) {
-						this.getDB().onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
+						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
 					}
 
 				}
@@ -450,7 +449,7 @@ public class Klassenserver7bbot {
 
 			if (!this.prefixl.containsKey(id)) {
 				this.prefixl.put(id, "-");
-				this.getDB().onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
+				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
 			}
 
 		});
@@ -522,10 +521,6 @@ public class Klassenserver7bbot {
 
 	public GitHub getGitapi() {
 		return this.github;
-	}
-
-	public LiteSQL getDB() {
-		return this.sqlite;
 	}
 
 	public MusicUtil getMusicUtil() {

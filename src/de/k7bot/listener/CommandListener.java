@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.PrivateChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -99,10 +99,8 @@ public class CommandListener extends ListenerAdapter {
 
 	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
 
-		LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
-
 		if (!Klassenserver7bbot.INSTANCE.exit) {
-			sqlite.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES('" + command + "', "
+			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES('" + command + "', "
 					+ guild.getIdLong() + ", " + time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")) + ")");
 		}
 

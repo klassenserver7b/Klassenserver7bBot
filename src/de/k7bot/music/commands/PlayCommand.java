@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
@@ -15,11 +16,11 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class PlayCommand implements ServerCommand {
@@ -29,7 +30,7 @@ public class PlayCommand implements ServerCommand {
 	public static final SpotifyConverter conv = new SpotifyConverter();
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		
+
 		String[] args = message.getContentDisplay().split(" ");
 
 		GuildVoiceState state;
@@ -52,22 +53,21 @@ public class PlayCommand implements ServerCommand {
 
 					StringBuilder strBuilder = new StringBuilder();
 
-					ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
+					ResultSet set = LiteSQL
 							.onQuery("SELECT volume FROM botutil WHERE guildId = " + channel.getGuild().getIdLong());
 
-					try{
+					try {
 						if (set.next()) {
 							int volume = set.getInt("volume");
 							if (volume != 0) {
 								player.setVolume(volume);
 							} else {
-								Klassenserver7bbot.INSTANCE.getDB()
-										.onUpdate("UPDATE botutil SET volume = 10 WHERE guildId = "
-												+ channel.getGuild().getIdLong());
+								LiteSQL.onUpdate("UPDATE botutil SET volume = 10 WHERE guildId = "
+										+ channel.getGuild().getIdLong());
 								player.setVolume(10);
 							}
 						} else {
-							Klassenserver7bbot.INSTANCE.getDB().onUpdate(
+							LiteSQL.onUpdate(
 									"UPDATE botutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
 							player.setVolume(10);
 						}
@@ -88,10 +88,10 @@ public class PlayCommand implements ServerCommand {
 						party = true;
 
 					} else if (url.startsWith("https://open.spotify.com/playlist/")) {
-						
+
 						queue.clearQueue();
 						manager.openAudioConnection(vc);
-						
+
 						Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
 						channel.sendTyping().queue();
 
@@ -99,7 +99,7 @@ public class PlayCommand implements ServerCommand {
 						conv.convertPlaylist(url, load, vc);
 
 						return;
-						
+
 					} else if (url.startsWith("lf: ")) {
 
 						url = url.substring(4);
@@ -168,7 +168,6 @@ public class PlayCommand implements ServerCommand {
 					TimeUnit.SECONDS);
 		}
 	}
-	
 
 	@Override
 	public String gethelp() {

@@ -24,7 +24,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,8 +40,8 @@ import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /**
  * @author felix
@@ -51,7 +50,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class VplanNEW_XML {
 
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
-	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 	/**
 	 * 
@@ -144,7 +142,7 @@ public class VplanNEW_XML {
 			embbuild.setColor(Color.decode("#038aff"));
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.toString().hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.toString().hashCode());
 
 		}
 
@@ -243,7 +241,7 @@ public class VplanNEW_XML {
 			if (classPlan != null) {
 				int planhash = classPlan.toString().hashCode();
 
-				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplannext");
+				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext");
 				try {
 					if (set.next()) {
 
@@ -258,7 +256,7 @@ public class VplanNEW_XML {
 
 						if (dbhash != planhash || synced) {
 
-							lsql.onUpdate("UPDATE vplannext SET zieldatum = '" + onlinedate + "'");
+							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '" + onlinedate + "'");
 							return true;
 
 						} else {
@@ -267,7 +265,7 @@ public class VplanNEW_XML {
 						}
 					} else {
 
-						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate + "', "
+						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate + "', "
 								+ planhash + ")");
 					}
 
@@ -330,7 +328,7 @@ public class VplanNEW_XML {
 			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
 
 			try {
-				ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
+				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext");
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");
@@ -338,14 +336,14 @@ public class VplanNEW_XML {
 
 				if (!dbdate.equalsIgnoreCase(onlinedate)) {
 
-					lsql.getdblog().info("Plan-DB-Sync");
+					LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					ResultSet old = lsql.onQuery("SELECT * FROM vplannext");
+					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext");
 
 					if (old.next()) {
-						lsql.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
+						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
 								+ "', classeintraege = '" + old.getInt("classeintraege") + "'");
-						lsql.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
+						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
 					}
 					return true;
 				} else {

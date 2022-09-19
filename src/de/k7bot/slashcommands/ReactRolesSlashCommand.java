@@ -1,13 +1,12 @@
 package de.k7bot.slashcommands;
 
-import de.k7bot.Klassenserver7bbot;
 import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -20,8 +19,6 @@ public class ReactRolesSlashCommand implements SlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		InteractionHook hook = event.deferReply(true).complete();
-
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 		Member m = event.getMember();
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
@@ -39,18 +36,18 @@ public class ReactRolesSlashCommand implements SlashCommand {
 			try {
 
 				emote = tc.getGuild().getEmojiById(emoteop.getAsLong());
-				
+
 				tc.addReactionById(MessageId, emote).queue();
-				
-				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+
+				LiteSQL.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '" + emote.getId()
 						+ "', " + role.getIdLong() + ")");
 
 			} catch (NumberFormatException e) {
 
 				tc.addReactionById(MessageId, Emoji.fromUnicode(emoteop.getAsString())).queue();
-				
-				lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+
+				LiteSQL.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
 						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
 						+ emoteop.getAsString() + "', " + role.getIdLong() + ")");
 

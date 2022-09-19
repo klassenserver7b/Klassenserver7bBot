@@ -2,7 +2,7 @@ package de.k7bot.timed;
 
 import de.k7bot.Klassenserver7bbot;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class Dechemaxx{
 

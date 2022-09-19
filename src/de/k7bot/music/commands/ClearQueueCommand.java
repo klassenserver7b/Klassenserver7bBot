@@ -6,7 +6,7 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ClearQueueCommand implements ServerCommand {
 	

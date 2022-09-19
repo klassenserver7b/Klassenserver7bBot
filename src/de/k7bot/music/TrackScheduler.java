@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.music.commands.SkipCommand;
 import java.awt.Color;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.utils.FileUpload;
 
@@ -62,7 +63,7 @@ public class TrackScheduler extends AudioEventAdapter {
 					InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg"))
 							.openStream();
 					builder.setImage("attachment://thumbnail.png");
-					ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
+					ResultSet set = LiteSQL
 							.onQuery("SELECT * FROM musicchannel WHERE guildId = " + guildid);
 
 					try {
