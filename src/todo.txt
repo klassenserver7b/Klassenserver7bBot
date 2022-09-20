@@ -1,13 +1,18 @@
+BotUtil Fixen!
+
+Alle Music Commands auf MusicUtil checks umstellen
+
+Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
+->Konsl fragen bzw. Datenbank !getrennt von Botutil!
+
 bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+-> Tabelle fixen
 
-CommandManager von ConcurrentHashMap auf Map o.ä. umstellen. -> Help geordnet für z.B. Alias
+Equalizer für Music -> Mehr Profile
 
-Equalizer für Music
 Mehrere player per guild (music)
 
 YT-Api
-
-Lernsax Lernplan API
 
 Language per channel
 

@@ -2,7 +2,7 @@ package de.k7bot.slashcommands;
 
 import de.k7bot.commands.PingCommand;
 import de.k7bot.commands.types.SlashCommand;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 

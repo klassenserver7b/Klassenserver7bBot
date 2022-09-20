@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.MusicUtil;
 import de.k7bot.util.SyntaxError;
 
 import java.time.OffsetDateTime;
@@ -13,7 +14,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class UebersteuerungAdmin implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -22,7 +23,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 			String[] args = message.getContentDisplay().split(" ");
 			try {
 				int volume = Integer.parseInt(args[1]);
-				Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
+				MusicUtil.updateChannel(channel);
 				if (args.length > 1) {
 					Guild guild = channel.getGuild();
 					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager

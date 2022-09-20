@@ -3,9 +3,9 @@ package de.k7bot.commands;
 import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.PrivateChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
@@ -49,6 +49,16 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
 		}
 	}
+	
+	public void performCommand(Member m, TextChannel channel, String mess) {
+		String[] args = mess.split(" ");
+
+		if (args.length > 1) {
+			sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
+		} else {
+			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
+		}
+	}
 
 	public void performCommand(PrivateChannel channel, Message mess) {
 		String[] args = mess.getContentDisplay().split(" ");
@@ -59,6 +69,7 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(null), channel);
 		}
 	}
+
 
 	/**
 	 * 
@@ -115,7 +126,7 @@ public class HelpCommand implements ServerCommand {
 	 */
 	public MessageEmbed generateHelpforCategory(String category, Guild guild) {
 
-		ConcurrentHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
+		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
 		List<Entry<String, ServerCommand>> searchresults = new ArrayList<>();
 
 		int limitmultiplicator = 1;
@@ -145,7 +156,7 @@ public class HelpCommand implements ServerCommand {
 
 		if (categories.contains(category)) {
 
-			commands.forEachEntry(0, key -> {
+			commands.entrySet().forEach(key -> {
 				ServerCommand comm = key.getValue();
 
 				if (comm.getcategory()!=null && comm.getcategory().equalsIgnoreCase(category)) {
@@ -212,9 +223,9 @@ public class HelpCommand implements ServerCommand {
 	 * Updates the List of used Categories by checking all Commands
 	 */
 	public static void updateCategoryList() {
-		ConcurrentHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
+		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
 
-		commands.forEachValue(0, command -> {
+		commands.values().forEach(command -> {
 
 			if (command.getcategory() != null && !categories.contains(command.getcategory())) {
 

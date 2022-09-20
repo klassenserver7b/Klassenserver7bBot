@@ -11,17 +11,16 @@ import java.time.OffsetDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class TrackInfoCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		MusicUtil util = Klassenserver7bbot.INSTANCE.getMusicUtil();
 		
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 				.getController(channel.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 		EmbedBuilder builder = new EmbedBuilder();
-		util.updateChannel(channel);
+		MusicUtil.updateChannel(channel);
 		AudioTrack track;
 		if ((track = player.getPlayingTrack()) != null) {
 			AudioTrackInfo info = track.getInfo();
@@ -47,10 +46,10 @@ public class TrackInfoCommand implements ServerCommand {
 									+ ((stunden > 0L) ? (String.valueOf(stunden) + "h ") : "")
 									+ ((minuten > 0L) ? (String.valueOf(minuten) + "min ") : "") + sekunden + "s"),
 					true);
-			util.sendEmbed(channel.getGuild().getIdLong(), builder);
+			MusicUtil.sendEmbed(channel.getGuild().getIdLong(), builder);
 		} else {
 			builder.setDescription("Der Bot spielt gerade keinen Song");
-			util.sendEmbed(channel.getGuild().getIdLong(), builder);
+			MusicUtil.sendEmbed(channel.getGuild().getIdLong(), builder);
 		}
 	}
 	

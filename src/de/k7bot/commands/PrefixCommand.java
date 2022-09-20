@@ -1,6 +1,7 @@
 package de.k7bot.commands;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class PrefixCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -24,7 +25,7 @@ public class PrefixCommand implements ServerCommand {
 				Klassenserver7bbot.INSTANCE.checkpreflist();
 				
 				Klassenserver7bbot.INSTANCE.prefixl.put(channel.getGuild().getIdLong(), args[1]);
-				Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET prefix = '" + args[1]
+				LiteSQL.onUpdate("UPDATE botutil SET prefix = '" + args[1]
 						+ "' WHERE guildId = " + channel.getGuild().getIdLong());
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setFooter("Requested by @" + m.getEffectiveName());

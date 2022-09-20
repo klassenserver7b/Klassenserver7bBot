@@ -6,7 +6,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;

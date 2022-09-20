@@ -166,6 +166,10 @@ public class TableMessage {
 
         return this;
     }
+    
+    public void setColums(int count) {
+    	this.columns = count;
+    }
 
     /**
      * Inserts line breaks in the cells of the specified column so that the table matches the width of an embed on a

@@ -14,7 +14,7 @@ import de.k7bot.hypixel.commands.WatchdogCommand;
 import java.util.concurrent.ConcurrentHashMap;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class HypixelCommandManager {
 	public ConcurrentHashMap<String, HypixelCommand> commands;
