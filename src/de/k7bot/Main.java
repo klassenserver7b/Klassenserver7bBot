@@ -9,7 +9,7 @@ public class Main {
 			if (args.length <= 0) {
 				new Klassenserver7bbot(false);
 			} else {
-				if (args[0].equals("--devmode")) {
+				if (args[0].equals("--devmode") || args[0].equals("-d")) {
 					new Klassenserver7bbot(true);
 				} else {
 					new Klassenserver7bbot(false);

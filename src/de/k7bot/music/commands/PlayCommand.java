@@ -30,7 +30,7 @@ public class PlayCommand implements ServerCommand {
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.membHasVcConnection(m)) {
 			return;
 		}
 
