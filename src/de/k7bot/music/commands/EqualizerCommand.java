@@ -33,7 +33,7 @@ public class EqualizerCommand implements ServerCommand{
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
-			SyntaxError.oncmdSyntaxError(channel, "seek [position in seconds]", m);
+			SyntaxError.oncmdSyntaxError(channel, "eq [id]", m);
 			return;
 		}
 
