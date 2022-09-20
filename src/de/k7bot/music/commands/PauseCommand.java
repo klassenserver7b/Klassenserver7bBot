@@ -16,13 +16,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class PauseCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.membHasVcConnection(m)) {
-
-			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
-					TimeUnit.SECONDS);
+		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
-
+		
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(vc.getGuild().getIdLong());

@@ -32,7 +32,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie der aktuellen Queue hinzu.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
+		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie der aktuellen Queue hinzu.\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
 	}
 
 	@Override
@@ -45,10 +45,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 		String[] args = message.getContentDisplay().split(" ");
 
-		if (!MusicUtil.membHasVcConnection(m)) {
-			
-			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
-					TimeUnit.SECONDS);
+		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
 

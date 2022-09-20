@@ -13,6 +13,10 @@ public class ClearQueueCommand implements ServerCommand {
 	
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		
+		if (!MusicUtil.checkConditions(channel, m)) {
+			return;
+		}
+		
 		long guildid = channel.getGuild().getIdLong();
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
 		MusicUtil.updateChannel(channel);

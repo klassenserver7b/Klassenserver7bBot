@@ -27,7 +27,7 @@ public class MusicController {
 
 		this.guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(this.player));
 		this.player.addListener((AudioEventListener) new TrackScheduler());
-		ResultSet set = LiteSQL.onQuery("SELECT volume FROM botutil WHERE guildId = " + guild.getIdLong());
+		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = " + guild.getIdLong());
 		try {
 			if (set.next()) {
 				try {
@@ -37,7 +37,7 @@ public class MusicController {
 					e.printStackTrace();
 				}
 			} else {
-				LiteSQL.onUpdate("UPDATE botutil SET volume = 10 WHERE guildId = " + guild.getIdLong());
+				LiteSQL.onUpdate("UPDATE musicutil SET volume = 10 WHERE guildId = " + guild.getIdLong());
 				this.player.setVolume(10);
 			}
 		} catch (SQLException e) {

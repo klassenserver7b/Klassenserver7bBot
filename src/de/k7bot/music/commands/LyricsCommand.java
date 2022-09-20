@@ -13,11 +13,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.MusicUtil;
 import de.k7bot.util.SongTitle;
 import de.k7bot.util.SongDataStripper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -27,14 +27,16 @@ public class LyricsCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		GuildVoiceState state;
-		if ((state = m.getVoiceState()) != null) {
-			AudioChannel vc;
-			if ((vc = state.getChannel()) != null) {
+		if (!MusicUtil.checkConditions(channel, m)) {
+			return;
+		}
+		
+		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
 				MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
 						.getController(vc.getGuild().getIdLong());
 				AudioPlayer player = controller.getPlayer();
+				
 				if (player.getPlayingTrack() != null) {
 					LyricsClient lapi = Klassenserver7bbot.INSTANCE.getLyricsAPI();
 					Lyrics lyrics = null;
@@ -99,8 +101,7 @@ public class LyricsCommand implements ServerCommand {
 					channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
 				}
-			}
-		}
+			
 
 	}
 

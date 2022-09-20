@@ -17,6 +17,19 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class UebersteuerungAdmin implements ServerCommand {
+	
+	@Override
+	public String gethelp() {
+		String help = null;
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = null;
+		return category;
+	}
+	
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 			
@@ -44,18 +57,6 @@ public class UebersteuerungAdmin implements ServerCommand {
 				SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
 			}
 		}
-	}
-	
-	@Override
-	public String gethelp() {
-		String help = null;
-		return help;
-	}
-
-	@Override
-	public String getcategory() {
-		String category = null;
-		return category;
 	}
 	
 }

@@ -14,6 +14,20 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class TrackInfoCommand implements ServerCommand {
+	
+	
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Info zum aktuellen Track.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
+	}
+	
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		
 		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
@@ -51,17 +65,5 @@ public class TrackInfoCommand implements ServerCommand {
 			builder.setDescription("Der Bot spielt gerade keinen Song");
 			MusicUtil.sendEmbed(channel.getGuild().getIdLong(), builder);
 		}
-	}
-	
-	@Override
-	public String gethelp() {
-		String help = "Zeigt die Info zum aktuellen Track.";
-		return help;
-	}
-
-	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
 	}
 }

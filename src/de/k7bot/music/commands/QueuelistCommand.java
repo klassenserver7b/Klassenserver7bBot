@@ -18,8 +18,19 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class QueuelistCommand implements ServerCommand {
 
 	@Override
+	public String gethelp() {
+		String help = "Zeigt die aktuelle Queuelist an.";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
+	}
+
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		
 
 		MusicController contr = Klassenserver7bbot.INSTANCE.playerManager.getController(channel.getGuild().getIdLong());
 		Queue queue = contr.getQueue();
@@ -64,19 +75,5 @@ public class QueuelistCommand implements ServerCommand {
 			channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
 		}
-
 	}
-	
-	@Override
-	public String gethelp() {
-		String help = "Zeigt die aktuelle Queuelist an.";
-		return help;
-	}
-
-	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
-	}
-
 }
