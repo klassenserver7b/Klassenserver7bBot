@@ -13,7 +13,7 @@ public class SkipForwardCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spult zur um die gewählte Anzahl an Sekunden vor.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]forward [time in seconds]";
+		return "Spult zur um die gewählte Anzahl an Sekunden vor.\n - z.B. [prefix]forward [time in seconds]";
 	}
 
 	@Override

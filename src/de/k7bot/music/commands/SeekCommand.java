@@ -20,7 +20,7 @@ public class SeekCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spult zur gewählten Position im Song vor.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]seek [position in seconds]";
+		return "Spult zur gewählten Position im Song vor.\n - z.B. [prefix]seek [position in seconds]";
 	}
 
 	@Override

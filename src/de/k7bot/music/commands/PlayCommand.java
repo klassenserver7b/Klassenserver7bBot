@@ -15,6 +15,7 @@ import de.k7bot.util.SpotifyConverter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
@@ -27,6 +28,17 @@ public class PlayCommand implements ServerCommand {
 	public static boolean party = false;
 
 	public static final SpotifyConverter conv = new SpotifyConverter();
+	
+
+	@Override
+	public String gethelp() {
+		return "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
+	}
+
+	@Override
+	public String getcategory() {
+		return "Musik";
+	}
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -42,6 +54,14 @@ public class PlayCommand implements ServerCommand {
 		AudioPlayer player = controller.getPlayer();
 		Queue queue = controller.getQueue();
 
+		if (player.getPlayingTrack() != null && vc.getIdLong() != manager.getConnectedChannel().getIdLong()) {
+
+			channel.sendMessage("The Bot is already playng a song.\nPlease join the channel the bot is playing in. -> Channel: "+manager.getConnectedChannel().getName() +"\n"+ m.getAsMention()).complete()
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return;
+
+		}
+
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length > 1) {
@@ -53,7 +73,7 @@ public class PlayCommand implements ServerCommand {
 			StringBuilder strBuilder = new StringBuilder();
 
 			ResultSet set = LiteSQL
-					.onQuery("SELECT volume FROM botutil WHERE guildId = " + channel.getGuild().getIdLong());
+					.onQuery("SELECT volume FROM musicutil WHERE guildId = " + channel.getGuild().getIdLong());
 
 			try {
 				if (set.next()) {
@@ -62,12 +82,12 @@ public class PlayCommand implements ServerCommand {
 						player.setVolume(volume);
 					} else {
 						LiteSQL.onUpdate(
-								"UPDATE botutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
+								"UPDATE musicutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
 						player.setVolume(10);
 					}
 				} else {
 					LiteSQL.onUpdate(
-							"UPDATE botutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
+							"UPDATE musicutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
 					player.setVolume(10);
 				}
 			} catch (SQLException e) {
@@ -156,15 +176,5 @@ public class PlayCommand implements ServerCommand {
 
 		}
 
-	}
-
-	@Override
-	public String gethelp() {
-		return "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
-	}
-
-	@Override
-	public String getcategory() {
-		return "Musik";
 	}
 }

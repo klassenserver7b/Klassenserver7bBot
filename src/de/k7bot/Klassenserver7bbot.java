@@ -424,9 +424,7 @@ public class Klassenserver7bbot {
 
 				while (set.next()) {
 
-					if (!this.prefixl.containsKey(set.getLong("guildId"))) {
-						this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
-					}
+					this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
 
 					if (set.getString("prefix") == null) {
 						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));

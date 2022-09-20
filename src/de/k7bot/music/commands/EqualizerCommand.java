@@ -13,14 +13,12 @@ public class EqualizerCommand implements ServerCommand{
 
 	@Override
 	public String gethelp() {
-		// TODO Auto-generated method stub
-		return null;
+		return "COMING SOON - read Bot-News or GitHub Commit-Message";
 	}
 
 	@Override
 	public String getcategory() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Musik";
 	}
 
 	@Override

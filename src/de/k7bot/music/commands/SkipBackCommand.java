@@ -13,7 +13,7 @@ public class SkipBackCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spult zur um die gewählte Anzahl an Sekunden zurück.\n - kann nur ausgeführt werden wenn sich der Nutzer in einem Voice Channel befindet!\n - z.B. [prefix]back [time in seconds]";
+		return "Spult zur um die gewählte Anzahl an Sekunden zurück.\n - z.B. [prefix]back [time in seconds]";
 	}
 
 	@Override
