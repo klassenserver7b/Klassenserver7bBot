@@ -14,7 +14,7 @@ public class BotgetDC extends ListenerAdapter {
 		long guildid = event.getGuild().getIdLong();
 
 		LiteSQL.onUpdate("DELETE * FROM hypixelnewschannels WHERE guildId = " + guildid);
-		LiteSQL.onUpdate("DELETE * FROM musicchannel WHERE guildId = " + guildid);
+		LiteSQL.onUpdate("DELETE * FROM musicutil WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM statschannels WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM botutil WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM reactroles WHERE guildId = " + guildid);
@@ -26,7 +26,7 @@ public class BotgetDC extends ListenerAdapter {
 		long guildid = event.getGuildIdLong();
 
 		LiteSQL.onUpdate("DELETE * FROM hypixelnewschannels WHERE guildId = " + guildid);
-		LiteSQL.onUpdate("DELETE * FROM musicchannel WHERE guildId = " + guildid);
+		LiteSQL.onUpdate("DELETE * FROM musicutil WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM statschannels WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM botutil WHERE guildId = " + guildid);
 		LiteSQL.onUpdate("DELETE * FROM reactroles WHERE guildId = " + guildid);

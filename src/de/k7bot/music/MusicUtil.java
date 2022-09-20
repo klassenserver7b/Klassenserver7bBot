@@ -28,14 +28,14 @@ public class MusicUtil {
 	 */
 	public static void updateChannel(TextChannel channel) {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicchannel WHERE guildId = " + channel.getGuild().getIdLong()+";");
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = " + channel.getGuild().getIdLong()+";");
 
 		try {
 			if (set.next()) {
-				LiteSQL.onUpdate("UPDATE musicchannel SET channelId = " + channel.getIdLong() + " WHERE guildId = "
+				LiteSQL.onUpdate("UPDATE musicutil SET channelId = " + channel.getIdLong() + " WHERE guildId = "
 						+ channel.getGuild().getIdLong());
 			} else {
-				LiteSQL.onUpdate("INSERT INTO musicchannel(guildId, channelId, volume) VALUES(" + channel.getGuild().getIdLong()
+				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(" + channel.getGuild().getIdLong()
 						+ "," + channel.getIdLong() + ", 10);");
 			}
 		} catch (SQLException e) {
@@ -49,7 +49,7 @@ public class MusicUtil {
 	 * @param builder
 	 */
 	public static void sendEmbed(long guildid, EmbedBuilder builder) {
-		ResultSet set = LiteSQL.onQuery("SELECT channelId FROM musicchannel WHERE guildId = " + guildid+";");
+		ResultSet set = LiteSQL.onQuery("SELECT channelId FROM musicutil WHERE guildId = " + guildid+";");
 
 		try {
 			if (set.next()) {
