@@ -17,8 +17,8 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
-import de.k7bot.SQL.LiteSQL;
-import de.k7bot.SQL.SQLManager;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.sql.SQLManager;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
@@ -488,14 +488,14 @@ public class Klassenserver7bbot {
 
 			try {
 
-				String jsonstring = Files.readString(Path.of(file.getPath()));
+				String jsonstring = Files.readString(file.toPath());
 
 				JsonElement json = JsonParser.parseString(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
 			} catch (IOException e1) {
 
-				e1.printStackTrace();
+				logger.error(e1.getMessage(),e1);
 
 			}
 

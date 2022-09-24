@@ -1,20 +1,19 @@
-BotUtil Fixen!
-
-Alle Music Commands auf MusicUtil checks umstellen
-
 Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
-->Konsl fragen bzw. Datenbank !getrennt von Botutil!
+
+unique Id für jede Subscription
+
+Equalizer für Music -> Mehr Profile
+
+Mehr Interactions auf SlashCommands und Buttons umstellen
 
 bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
-
-Equalizer für Music -> Mehr Profile
 
 Mehrere player per guild (music)
 
 YT-Api
 
-Language per channel
+Language per Guild - German and English Version
 
 GitHub-API
 

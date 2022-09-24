@@ -1,5 +1,5 @@
 
-package de.k7bot.SQL;
+package de.k7bot.sql;
 
 public class SQLManager {
 	
@@ -46,5 +46,8 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lernplanId STRING);");
+		
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER);");
 	}
 }

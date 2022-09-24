@@ -2,7 +2,7 @@ package de.k7bot.listener;
 
 import javax.annotation.Nonnull;
 
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
