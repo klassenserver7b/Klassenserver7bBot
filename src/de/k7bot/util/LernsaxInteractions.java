@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;

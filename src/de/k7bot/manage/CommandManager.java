@@ -21,7 +21,7 @@ import de.k7bot.moderation.commands.ModLogsCommand;
 import de.k7bot.moderation.commands.StopTimeoutCommand;
 import de.k7bot.moderation.commands.TimeoutCommand;
 import de.k7bot.moderation.commands.WarnCommand;
-import de.k7bot.moderation.commands.kickCommand;
+import de.k7bot.moderation.commands.KickCommand;
 import de.k7bot.music.commands.AddQueueTrackCommand;
 import de.k7bot.music.commands.ClearQueueCommand;
 import de.k7bot.music.commands.EqualizerCommand;
@@ -52,7 +52,7 @@ import de.k7bot.util.commands.MessagetoEmbedCommand;
 import de.k7bot.util.commands.ReactRolesCommand;
 import de.k7bot.util.commands.RoleCreation;
 import de.k7bot.util.commands.StatsCategoryCommand;
-import de.k7bot.util.commands.addReactionCommand;
+import de.k7bot.util.commands.AddReactionCommand;
 
 import java.util.LinkedHashMap;
 
@@ -95,7 +95,7 @@ public class CommandManager {
 		this.commands.put("clear", new ClearCommand());
 		this.commands.put("reactrole", new ReactRolesCommand());
 		this.commands.put("createrole", new RoleCreation());
-		this.commands.put("react", new addReactionCommand());
+		this.commands.put("react", new AddReactionCommand());
 		this.commands.put("toembed", new MessagetoEmbedCommand());
 		this.commands.put("memberinfo", new ClientInfo());
 		this.commands.put("onlinedevices", new MemberdevicesCommand());
@@ -104,7 +104,7 @@ public class CommandManager {
 
 		// Moderation Commands
 		this.commands.put("warn", new WarnCommand());
-		this.commands.put("kick", new kickCommand());
+		this.commands.put("kick", new KickCommand());
 		this.commands.put("ban", new BanCommand());
 		this.commands.put("modlogs", new ModLogsCommand());
 		this.commands.put("memberlogs", new MemberLogsCommand());

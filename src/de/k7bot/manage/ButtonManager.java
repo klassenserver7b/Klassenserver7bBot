@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.k7bot.Buttons.types.K7Button;
+import de.k7bot.buttons.types.K7Button;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 public class ButtonManager {

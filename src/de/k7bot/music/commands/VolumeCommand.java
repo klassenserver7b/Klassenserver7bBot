@@ -3,7 +3,7 @@ package de.k7bot.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.MusicUtil;
