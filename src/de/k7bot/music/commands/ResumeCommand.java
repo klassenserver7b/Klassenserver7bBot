@@ -7,37 +7,13 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.MusicUtil;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.AudioChannel;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ResumeCommand implements ServerCommand {
-	public void performCommand(Member m, TextChannel channel, Message message) {
-
-		MusicUtil util = Klassenserver7bbot.INSTANCE.getMusicUtil();
-
-		GuildVoiceState state;
-		if ((state = m.getVoiceState()) != null) {
-			AudioChannel vc;
-			if ((vc = state.getChannel()) != null) {
-
-				MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
-						.getController(vc.getGuild().getIdLong());
-				AudioPlayer player = controller.getPlayer();
-				util.updateChannel(channel);
-				if (player.isPaused()) {
-					util.updateChannel(channel);
-					player.setPaused(false);
-					channel.sendMessage(":arrow_forward: resumed").queue();
-				} else {
-					channel.sendMessage("player is already playing!" + m.getAsMention()).complete().delete()
-							.queueAfter(10L, TimeUnit.SECONDS);
-				}
-			}
-		}
-	}
+	
 
 	@Override
 	public String gethelp() {
@@ -49,5 +25,27 @@ public class ResumeCommand implements ServerCommand {
 	public String getcategory() {
 		String category = "Musik";
 		return category;
+	}
+	
+	public void performCommand(Member m, TextChannel channel, Message message) {
+
+		if (!MusicUtil.checkConditions(channel, m)) {
+			return;
+		}
+
+		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(vc.getGuild().getIdLong());
+		AudioPlayer player = controller.getPlayer();
+		MusicUtil.updateChannel(channel);
+		if (player.isPaused()) {
+			MusicUtil.updateChannel(channel);
+			player.setPaused(false);
+			channel.sendMessage(":arrow_forward: resumed").queue();
+		} else {
+			channel.sendMessage("player is already playing!" + m.getAsMention()).complete().delete().queueAfter(10L,
+					TimeUnit.SECONDS);
+		}
+
 	}
 }

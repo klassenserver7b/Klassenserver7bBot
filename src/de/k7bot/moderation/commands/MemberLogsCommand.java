@@ -1,8 +1,7 @@
 
 package de.k7bot.moderation.commands;
 
-import de.k7bot.Klassenserver7bbot;
-
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
@@ -18,7 +17,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class MemberLogsCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -33,7 +32,7 @@ public class MemberLogsCommand implements ServerCommand {
 				}
 				long guildid = channel.getGuild().getIdLong();
 				long membid = memb.get(0).getIdLong();
-				ResultSet set = Klassenserver7bbot.INSTANCE.getDB()
+				ResultSet set = LiteSQL
 						.onQuery("SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = " + guildid
 								+ " AND memberId = " + membid);
 

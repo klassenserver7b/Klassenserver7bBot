@@ -3,8 +3,10 @@ package de.k7bot.music.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.MusicUtil;
 import de.k7bot.util.SyntaxError;
 
 import java.time.OffsetDateTime;
@@ -13,14 +15,31 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class VolumeCommand implements ServerCommand {
+	
+	@Override
+	public String gethelp() {
+		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
+		return help;
+	}
+
+	@Override
+	public String getcategory() {
+		String category = "Musik";
+		return category;
+	}
+	
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
+		if (!MusicUtil.checkConditions(channel, m)) {
+			return;
+		}
+		
 		String[] args = message.getContentDisplay().split(" ");
 		try {
-			Klassenserver7bbot.INSTANCE.getMusicUtil().updateChannel(channel);
+			MusicUtil.updateChannel(channel);
 			if (args.length > 1) {
 				int volume = Integer.parseInt(args[1]);
 				if (volume > 0) {
@@ -30,7 +49,7 @@ public class VolumeCommand implements ServerCommand {
 								.getController(guild.getIdLong());
 						AudioPlayer player = controller.getPlayer();
 						player.setVolume(volume);
-						Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET volume = " + volume
+						LiteSQL.onUpdate("UPDATE musicutil SET volume = " + volume
 								+ " WHERE guildId = " + channel.getGuild().getIdLong());
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setFooter("Requested by @" + m.getEffectiveName());
@@ -57,17 +76,5 @@ public class VolumeCommand implements ServerCommand {
 		} catch (NumberFormatException e) {
 			SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
-		return help;
-	}
-
-	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
 	}
 }

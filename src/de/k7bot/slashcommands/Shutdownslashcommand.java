@@ -7,7 +7,7 @@ import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class Shutdownslashcommand implements SlashCommand {

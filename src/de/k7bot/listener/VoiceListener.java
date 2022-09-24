@@ -2,18 +2,18 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.dv8tion.jda.api.entities.AudioChannel;
-import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VoiceListener extends ListenerAdapter {
 	public List<Long> tempchannels = new ArrayList<>();
-	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
 		onJoin(event.getChannelJoined(), event.getEntity());
@@ -44,7 +43,7 @@ public class VoiceListener extends ListenerAdapter {
 			vc.getManager().setUserLimit(voice.getUserLimit()).queue();
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
-			lsql.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
+			LiteSQL.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
 			Klassenserver7bbot.INSTANCE.getMainLogger().info("Created custom VoiceChannel for Member: "
 					+ member.getEffectiveName() + " with the following Channel-ID: " + vc.getIdLong());
 		}
@@ -53,7 +52,7 @@ public class VoiceListener extends ListenerAdapter {
 	public void onLeave(AudioChannel audioChannel) {
 		if (audioChannel.getMembers().size() <= 0) {
 
-			ResultSet set = lsql.onQuery("SELECT channelId FROM createdprivatevcs");
+			ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs");
 
 			try {
 				while (set.next()) {
@@ -61,7 +60,7 @@ public class VoiceListener extends ListenerAdapter {
 				}
 				if (this.tempchannels.contains(audioChannel.getIdLong())) {
 					audioChannel.delete().queue();
-					lsql.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
+					LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
 					this.tempchannels.clear();
 					Klassenserver7bbot.INSTANCE.getMainLogger().info("Removed custom VoiceChannel with the Name: "
 							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());

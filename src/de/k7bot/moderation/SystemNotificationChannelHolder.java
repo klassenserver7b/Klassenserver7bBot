@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SystemNotificationChannelHolder {
 
@@ -25,8 +25,6 @@ public class SystemNotificationChannelHolder {
 	 */
 	public void checkSysChannelList() {
 
-		LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
-
 		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(gu -> {
 
 			if (!this.systemchannellist.containsKey(gu)) {
@@ -37,7 +35,7 @@ public class SystemNotificationChannelHolder {
 
 		try {
 
-			ResultSet set = sqlite.onQuery("SELECT guildId, syschannelId FROM botutil");
+			ResultSet set = LiteSQL.onQuery("SELECT guildId, syschannelId FROM botutil;");
 			List<Guild> dblist = new ArrayList<>();
 
 			if (set != null) {
@@ -57,9 +55,9 @@ public class SystemNotificationChannelHolder {
 								this.systemchannellist.put(guild, channel);
 							} else {
 								this.systemchannellist.put(guild, guild.getSystemChannel());
-								sqlite.onUpdate(
+								LiteSQL.onUpdate(
 										"UPDATE botutil SET syschannelId=" + guild.getSystemChannel().getIdLong()
-												+ " WHERE guildId=" + set.getLong("guildId"));
+												+ " WHERE guildId=" + set.getLong("guildId")+";");
 							}
 
 						}
@@ -70,15 +68,14 @@ public class SystemNotificationChannelHolder {
 			this.systemchannellist.keySet().forEach(key -> {
 
 				if (dblist.contains(key)) {
-					sqlite.onUpdate("UPDATE botutil SET syschannelId=" + this.systemchannellist.get(key).getIdLong()
-							+ " WHERE guildId=" + key.getIdLong());
+					LiteSQL.onUpdate("UPDATE botutil SET syschannelId=" + this.systemchannellist.get(key).getIdLong()
+							+ " WHERE guildId=" + key.getIdLong()+";");
 				} else {
-					sqlite.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + key.getIdLong() + ", "
-							+ this.systemchannellist.get(key).getIdLong() + ")");
+					LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + key.getIdLong() + ", "
+							+ this.systemchannellist.get(key).getIdLong() + ");");
 				}
 
 			});
-			;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -106,20 +103,22 @@ public class SystemNotificationChannelHolder {
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
 	 */
 	public void insertChannel(TextChannel channel) {
+		
 		checkSysChannelList();
 		Guild guild = channel.getGuild();
 
-		if (!systemchannellist.containsKey(guild)) {
+		if (systemchannellist.containsKey(guild)) {
 
-			systemchannellist.put(guild, channel);
-			Klassenserver7bbot.INSTANCE.getDB().onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES("
-					+ guild.getIdLong() + ", " + channel.getIdLong() + ")");
+			systemchannellist.replace(guild, channel);
+			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong() + " WHERE guildId = "
+					+ guild.getIdLong()+";");
 
 		} else {
 
-			systemchannellist.replace(guild, channel);
-			Klassenserver7bbot.INSTANCE.getDB().onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong()
-					+ " WHERE guildId = " + guild.getIdLong());
+			systemchannellist.put(guild, channel);
+			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + guild.getIdLong() + ", "
+					+ channel.getIdLong() + ");");
+			
 		}
 
 	}

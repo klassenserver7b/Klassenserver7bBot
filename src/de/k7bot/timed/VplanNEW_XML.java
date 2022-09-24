@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,30 +36,32 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.Cell;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /**
  * @author felix
- *
+ * @since 1.14.0
  */
 public class VplanNEW_XML {
 
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
-	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 	/**
 	 * 
 	 * @param force
+	 * @param klasse
+	 * @param chan
+	 * 
+	 * since 1.14.0
 	 */
 	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
 
 		OffsetDateTime d = checkdate();
-		d = OffsetDateTime.of(2022, 07, 04, 10, 10, 10, 10, ZoneOffset.ofHours(2));
 		Document doc = read(d);
 		Element classPlan = getyourClass(doc, klasse);
 		boolean sendApproved = true;
@@ -73,25 +74,29 @@ public class VplanNEW_XML {
 
 			TextChannel channel;
 
-			if ((channel=(TextChannel) chan)==null) {
-
-				channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
-						.getTextChannelById(918904387739459645L);
+			if ((channel = (TextChannel) chan) == null) {
 
 				if (Klassenserver7bbot.INSTANCE.indev) {
 					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L)
 							.getTextChannelById(920777920681738390L);
+				} else {
+					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
+							.getTextChannelById(918904387739459645L);
 				}
 			}
 
-			String info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
+			String info = "";
+			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
+				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
+			}
+			
 			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.INSTANCE.indev);
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
-					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " ("+klasse+")");
+					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
 			TableMessage tablemess = new TableMessage();
@@ -99,76 +104,34 @@ public class VplanNEW_XML {
 
 			NodeList lessons = classPlan.getElementsByTagName("Std");
 
-			for (int i = 0; i < lessons.getLength(); i++) {
+			int limit = 6;
+			int ges = lessons.getLength();
+
+			if (lessons.getLength() < limit) {
+				limit = lessons.getLength();
+			}
+
+			for (int i = 0; i < limit; i++) {
 				Element e = (Element) lessons.item(i);
+				appendLesson(e, tablemess);
 
-				boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
-				boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
-				boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+			}
+			TableMessage additionalmess = new TableMessage();
+			additionalmess.setColums(5);
 
-				tablemess.addCell(e.getElementsByTagName("St").item(0).getTextContent());
-
-				if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
-
-					Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
-							(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-					Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
-							(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-					StringBuilder strbuild = new StringBuilder();
-					String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
-
-					if (teacher != null && !teacher.equalsIgnoreCase("")) {
-						JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
-
-						if (teachelem != null) {
-
-							JsonObject teach = teachelem.getAsJsonObject();
-
-							String gender = teach.get("gender").getAsString();
-							if (gender.equalsIgnoreCase("female")) {
-								strbuild.append("Frau ");
-							} else if (gender.equalsIgnoreCase("male")) {
-								strbuild.append("Herr ");
-							}
-
-							if (teach.get("is_doctor").getAsBoolean()) {
-
-								strbuild.append("Dr. ");
-
-							}
-
-							strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-
-						}
-					}
-
-					teachercell.setLinkTitle(strbuild.toString());
-					teachercell.setLinkURL("https://manos-dresden.de/lehrer");
-
-					Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
-							(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-					tablemess.addRow(subjectcell, teachercell, room);
-
-				} else {
-
-					tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
-
-				}
-
-				if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
-
-					tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
-
-				} else {
-					tablemess.addCell("   ");
-				}
+			for (int i = limit; i < ges; i++) {
+				Element e = (Element) lessons.item(i);
+				appendLesson(e, additionalmess);
 
 			}
 
 			tablemess.automaticLineBreaks(4);
 			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+
+			if (additionalmess.hasData()) {
+				additionalmess.automaticLineBreaks(4);
+				embbuild.addField("", additionalmess.build(), false);
+			}
 
 			if (!(info.equalsIgnoreCase(""))) {
 
@@ -179,7 +142,7 @@ public class VplanNEW_XML {
 			embbuild.setColor(Color.decode("#038aff"));
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.toString().hashCode());
 
 		}
 
@@ -187,9 +150,86 @@ public class VplanNEW_XML {
 
 	/**
 	 * 
+	 * @param e
+	 * @param tablemess
+	 * @return
+	 */
+	private TableMessage appendLesson(Element e, TableMessage tablemess) {
+		TableMessage ret;
+
+		boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
+		boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
+		boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+		String lesson = e.getElementsByTagName("St").item(0).getTextContent();
+
+		if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
+
+			Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
+					(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+			Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
+					(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+			StringBuilder strbuild = new StringBuilder();
+			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
+
+			if (teacher != null && !teacher.equalsIgnoreCase("")) {
+				JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
+
+				if (teachelem != null) {
+
+					JsonObject teach = teachelem.getAsJsonObject();
+
+					String gender = teach.get("gender").getAsString();
+					if (gender.equalsIgnoreCase("female")) {
+						strbuild.append("Frau ");
+					} else if (gender.equalsIgnoreCase("male")) {
+						strbuild.append("Herr ");
+					}
+
+					if (teach.get("is_doctor").getAsBoolean()) {
+
+						strbuild.append("Dr. ");
+
+					}
+
+					strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+
+				}
+			}
+
+			teachercell.setLinkTitle(strbuild.toString());
+			teachercell.setLinkURL("https://manos-dresden.de/lehrer");
+
+			Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
+					(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+			tablemess.addRow(lesson, subjectcell, teachercell, room);
+
+		} else {
+
+			tablemess.addRow(lesson, Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+
+		}
+
+		if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
+
+			tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
+
+		} else {
+			tablemess.addCell("   ");
+		}
+
+		ret = tablemess;
+
+		return ret;
+	}
+
+	/**
+	 * 
 	 * @param plan
 	 * @param classPlan
 	 * @return
+	 * @since 1.14.0
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
 
@@ -199,20 +239,25 @@ public class VplanNEW_XML {
 			boolean synced = synchronizePlanDB(plan);
 
 			if (classPlan != null) {
-				int planhash = classPlan.hashCode();
+				int planhash = classPlan.toString().hashCode();
 
-				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplannext");
+				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext");
 				try {
 					if (set.next()) {
 
 						dbhash = set.getInt("classeintraege");
 
 					}
+
+					String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+					onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+
 					if (dbhash != null) {
+
 						if (dbhash != planhash || synced) {
 
-							lsql.onUpdate("UPDATE vplannext SET zieldatum = '"
-									+ OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "'");
+							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '" + onlinedate + "'");
+							return true;
 
 						} else {
 							return false;
@@ -220,9 +265,8 @@ public class VplanNEW_XML {
 						}
 					} else {
 
-						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('"
-								+ OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "', "
-								+ classPlan.hashCode() + ")");
+						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate + "', "
+								+ planhash + ")");
 					}
 
 				} catch (SQLException e) {
@@ -241,6 +285,7 @@ public class VplanNEW_XML {
 	 * @param obj
 	 * @param klasse
 	 * @return
+	 * @since 1.14.0
 	 */
 	private Element getyourClass(Document obj, String klasse) {
 
@@ -273,6 +318,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param plan
 	 * @return
+	 * @since 1.14.0
 	 */
 	private boolean synchronizePlanDB(Document plan) {
 		if (plan != null) {
@@ -282,7 +328,7 @@ public class VplanNEW_XML {
 			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
 
 			try {
-				ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
+				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext");
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");
@@ -290,16 +336,18 @@ public class VplanNEW_XML {
 
 				if (!dbdate.equalsIgnoreCase(onlinedate)) {
 
-					lsql.getdblog().info("Plan-DB-Sync");
+					LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					ResultSet old = lsql.onQuery("SELECT * FROM vplannext");
+					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext");
 
 					if (old.next()) {
-						lsql.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
+						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
 								+ "', classeintraege = '" + old.getInt("classeintraege") + "'");
-						lsql.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
+						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
 					}
 					return true;
+				} else {
+					return false;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -312,6 +360,7 @@ public class VplanNEW_XML {
 	/**
 	 * 
 	 * @return
+	 * @since 1.14.0
 	 */
 	private OffsetDateTime checkdate() {
 
@@ -330,6 +379,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param date
 	 * @return
+	 * @since 1.14.0
 	 */
 	private Document read(OffsetDateTime date) {
 		if (date == null) {
@@ -362,6 +412,7 @@ public class VplanNEW_XML {
 	 * 
 	 * @param date
 	 * @return
+	 * @since 1.14.0
 	 */
 	private String getVplanXML(OffsetDateTime date) {
 
@@ -386,7 +437,7 @@ public class VplanNEW_XML {
 					return null;
 				}
 
-				log.warn("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
+				log.debug("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
 						+ response.getStatusLine().getReasonPhrase());
 				return null;
 

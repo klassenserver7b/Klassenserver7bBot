@@ -1,6 +1,7 @@
 package de.k7bot.moderation.commands;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
@@ -14,7 +15,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class StopTimeoutCommand implements ServerCommand {
@@ -81,7 +82,7 @@ public class StopTimeoutCommand implements ServerCommand {
 			}
 
 			String action = "stoptimeout";
-			Klassenserver7bbot.INSTANCE.getDB().onUpdate(
+			LiteSQL.onUpdate(
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
 							+ channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
 							+ ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action

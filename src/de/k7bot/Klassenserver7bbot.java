@@ -17,17 +17,17 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
+import de.k7bot.SQL.LiteSQL;
+import de.k7bot.SQL.SQLManager;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
-import de.k7bot.music.MusicUtil;
 import de.k7bot.music.PlayerManager;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
 import de.k7bot.timed.VplanNEW_XML;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.commands.StatsCategoryCommand;
 
 import java.io.BufferedReader;
@@ -68,6 +68,7 @@ public class Klassenserver7bbot {
 	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
+
 	public HashMap<Long, String> prefixl = new HashMap<>();
 	public ShardManager shardMan;
 	public AudioPlayerManager audioPlayerManager;
@@ -76,8 +77,6 @@ public class Klassenserver7bbot {
 	public Thread loop;
 	public Thread shutdownT;
 
-	public boolean hypixelapienabled = false;
-	public boolean githubapienabled = false;
 	public boolean vplanenabled = false;
 
 	public boolean imShutdown = false;
@@ -97,12 +96,13 @@ public class Klassenserver7bbot {
 	private CommandManager cmdMan;
 	private HypixelCommandManager hypMan;
 	private SlashCommandManager slashMan;
-	private LiteSQL sqlite;
-	private MusicUtil musicutil;
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
 	private SystemNotificationChannelHolder syschannels;
 	private VplanNEW_XML vplan;
+
+	private boolean hypixelapienabled = false;
+	private boolean githubapienabled = false;
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
@@ -139,6 +139,7 @@ public class Klassenserver7bbot {
 
 	public boolean initialize(Properties prop) {
 		loadTeacherList();
+		LiteSQL.connect();
 
 		String token = prop.getProperty("token");
 
@@ -181,9 +182,8 @@ public class Klassenserver7bbot {
 			e.printStackTrace();
 		}
 
-		initializeApis(hypixelToken, githubtoken);
 		initializeObjects();
-
+		initializeApis(hypixelToken, githubtoken);
 		return true;
 	}
 
@@ -216,6 +216,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
 		builder.addEventListeners(new ChartsAutocomplete());
+		builder.addEventListeners(new ButtonListener());
 
 		this.shardMan = builder.build();
 	}
@@ -243,10 +244,6 @@ public class Klassenserver7bbot {
 
 	public void initializeObjects() {
 
-		this.sqlite = new LiteSQL();
-		sqlite.connect();
-
-		this.musicutil = new MusicUtil();
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
 		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
@@ -369,7 +366,7 @@ public class Klassenserver7bbot {
 			this.shardMan.setStatus(OnlineStatus.OFFLINE);
 			logger.info("Bot offline");
 			this.shardMan.shutdown();
-			sqlite.disconnect();
+			LiteSQL.disconnect();
 			this.shutdownT.interrupt();
 		} else {
 			logger.info("ShardMan was null!");
@@ -383,7 +380,10 @@ public class Klassenserver7bbot {
 				this.minlock = true;
 				this.checkpreflist();
 				this.getsyschannell().checkSysChannelList();
-				vplan.sendVplanMessage(false, "10b", null);
+
+				if (this.vplanenabled) {
+					vplan.sendVplanMessage(false, "10b", null);
+				}
 				Skyblocknews.onEventCheck();
 
 				if ((!this.hasstarted)) {
@@ -419,17 +419,15 @@ public class Klassenserver7bbot {
 
 		try {
 
-			ResultSet set = sqlite.onQuery("SELECT guildId, prefix FROM botutil");
+			ResultSet set = LiteSQL.onQuery("SELECT guildId, prefix FROM botutil");
 			if (set != null) {
 
 				while (set.next()) {
 
-					if (!this.prefixl.containsKey(set.getLong("guildId"))) {
-						this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
-					}
+					this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
 
 					if (set.getString("prefix") == null) {
-						this.getDB().onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
+						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
 					}
 
 				}
@@ -446,7 +444,7 @@ public class Klassenserver7bbot {
 
 			if (!this.prefixl.containsKey(id)) {
 				this.prefixl.put(id, "-");
-				this.getDB().onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
+				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
 			}
 
 		});
@@ -471,6 +469,8 @@ public class Klassenserver7bbot {
 			prop.setProperty("shardCount", "");
 			prop.setProperty("vplanpw", "");
 			prop.setProperty("schoolID", "");
+			prop.setProperty("lsaxemail", "");
+			prop.setProperty("lsaxtoken", "");
 
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();
@@ -516,14 +516,6 @@ public class Klassenserver7bbot {
 
 	public GitHub getGitapi() {
 		return this.github;
-	}
-
-	public LiteSQL getDB() {
-		return this.sqlite;
-	}
-
-	public MusicUtil getMusicUtil() {
-		return this.musicutil;
 	}
 
 	public LyricsClient getLyricsAPI() {

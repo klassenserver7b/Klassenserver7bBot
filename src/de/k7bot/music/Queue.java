@@ -2,8 +2,9 @@ package de.k7bot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.SongDataStripper;
 import de.k7bot.util.SongTitle;
 
@@ -18,7 +19,6 @@ public class Queue {
 	private List<AudioTrack> looplist;
 	private List<AudioTrack> queuelist;
 	private MusicController controller;
-	private final LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
 
 	public Queue(MusicController controller) {
 		setController(controller);
@@ -53,7 +53,7 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
 						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				return true;
@@ -75,7 +75,7 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
 						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				this.queuelist = this.looplist;
@@ -94,7 +94,7 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
 						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 
 				return true;
@@ -114,7 +114,7 @@ public class Queue {
 				songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 			}
 
-			sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
+			LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
 					+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
 		}
 		return false;

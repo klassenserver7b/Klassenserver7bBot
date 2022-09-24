@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.SQL;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 public class LiteSQL {
 	private static Connection conn;
 	private static Statement stmt;
-	public Logger dblog = LoggerFactory.getLogger("DB-Log");
+	public final static Logger dblog = LoggerFactory.getLogger("DB-Log");
 
-	public void connect() {
+	public static void connect() {
 		conn = null;
 
 		try {
@@ -32,7 +32,7 @@ public class LiteSQL {
 		}
 	}
 
-	public void disconnect() {
+	public static void disconnect() {
 		try {
 			if (conn != null) {
 				conn.close();
@@ -43,7 +43,7 @@ public class LiteSQL {
 		}
 	}
 
-	public void onUpdate(String sql) {
+	public static void onUpdate(String sql) {
 		try {
 			stmt.execute(sql);
 		} catch (SQLException e) {
@@ -51,7 +51,7 @@ public class LiteSQL {
 		}
 	}
 
-	public ResultSet onQuery(String sql){
+	public static ResultSet onQuery(String sql){
 			
 			try {
 				return stmt.executeQuery(sql);
@@ -62,7 +62,7 @@ public class LiteSQL {
 			
 	}
 
-	public Logger getdblog() {
+	public static Logger getdblog() {
 		return dblog;
 	}
 }

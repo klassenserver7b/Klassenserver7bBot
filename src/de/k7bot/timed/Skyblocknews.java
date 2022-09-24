@@ -9,16 +9,15 @@ import java.util.concurrent.ExecutionException;
 import com.google.gson.JsonArray;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.LiteSQL;
+import de.k7bot.SQL.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.hypixel.api.HypixelAPI;
 
 public class Skyblocknews {
 
 	public static void onEventCheck() {
 		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 		try {
 
@@ -27,7 +26,7 @@ public class Skyblocknews {
 			List<String> dates = new ArrayList<>();
 			List<TextChannel> chans = new ArrayList<>();
 
-			ResultSet set = lsql.onQuery(
+			ResultSet set = LiteSQL.onQuery(
 					"SELECT hypnewstime.datum, hypixelnewschannels.channelId, hypixelnewschannels.guildId FROM hypnewstime, hypixelnewschannels");
 
 			try {
@@ -54,7 +53,7 @@ public class Skyblocknews {
 							arr.forEach(json -> {
 								if (json.getAsJsonObject().get("text").getAsString().equalsIgnoreCase(str)) {
 									chan.sendMessage(json.getAsJsonObject().get("link").getAsString()).queue();
-									lsql.onUpdate("INSERT INTO hypnewstime(datum) VALUES('" + str + "')");
+									LiteSQL.onUpdate("INSERT INTO hypnewstime(datum) VALUES('" + str + "')");
 								}
 							});
 

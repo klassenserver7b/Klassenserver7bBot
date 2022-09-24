@@ -1,8 +1,7 @@
 package de.k7bot.util.commands;
 
-import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
 
@@ -11,14 +10,12 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ReactRolesCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
-
-		LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 			String[] args = message.getContentDisplay().split(" ");
@@ -42,16 +39,18 @@ public class ReactRolesCommand implements ServerCommand {
 
 							tc.addReactionById(MessageId, emote).queue();
 
-							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
-									+ emote.getIdLong() + "', " + role.getIdLong() + ")");
+							LiteSQL.onUpdate(
+									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
+											+ ", '" + emote.getIdLong() + "', " + role.getIdLong() + ")");
 						} else {
 							String utfemote = args[3];
 							tc.addReactionById(MessageId, Emoji.fromUnicode(utfemote)).queue();
 
-							lsql.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-									+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
-									+ utfemote + "', " + role.getIdLong() + ")");
+							LiteSQL.onUpdate(
+									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
+											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
+											+ ", '" + utfemote + "', " + role.getIdLong() + ")");
 						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
@@ -68,7 +67,7 @@ public class ReactRolesCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
+		String help = "Erstellt eine Reactionrole fï¿½r die ausgewï¿½hlte Nachricht mit dem ausgewï¿½hlten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
 		return help;
 	}
 

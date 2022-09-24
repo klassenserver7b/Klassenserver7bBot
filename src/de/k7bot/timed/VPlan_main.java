@@ -26,16 +26,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.util.Cell;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.TableMessage;
+import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+/**
+ * 
+ * @author felix
+ * @Deprecated use {@link de.k7bot.timed.VplanNEW_XML VplanNEW_XML instead}
+ */
+@DeprecatedSince(value = "1.14.0")
 public class VPlan_main {
 
-	public LiteSQL lsql = Klassenserver7bbot.INSTANCE.getDB();
 	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
 	private String vplanpw;
 
@@ -43,6 +49,10 @@ public class VPlan_main {
 		vplanpw = pw;
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	public void sendvplanMessage() {
 
 		JsonObject plan = getPlan();
@@ -191,11 +201,15 @@ public class VPlan_main {
 
 			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			lsql.onUpdate("UPDATE vplannext SET classeintraege = " + fien.hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + fien.hashCode());
 
 		}
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> finalplancheck(JsonObject plan) {
 
 		Integer dbh = null;
@@ -210,7 +224,7 @@ public class VPlan_main {
 			if (getC != null) {
 				int h = getC.hashCode();
 
-				ResultSet set = lsql.onQuery("SELECT classeintraege FROM vplannext");
+				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext");
 				try {
 					if (set.next()) {
 
@@ -222,7 +236,7 @@ public class VPlan_main {
 
 							finalentries = getC;
 
-							lsql.onUpdate("UPDATE vplannext SET zieldatum = '" + plan.get("head").getAsJsonObject()
+							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '" + plan.get("head").getAsJsonObject()
 									.get("title").getAsString().replaceAll(" ", "").replaceAll("\\(B-Woche\\)", "")
 									.replaceAll("\\(A-Woche\\)", "").replaceAll(",", "").replaceAll("Montag", "")
 									.replaceAll("Dienstag", "").replaceAll("Mittwoch", "").replaceAll("Donnerstag", "")
@@ -234,7 +248,7 @@ public class VPlan_main {
 						}
 					} else {
 						finalentries = getC;
-						lsql.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('"
+						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('"
 								+ plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
 										.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
 										.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
@@ -257,6 +271,10 @@ public class VPlan_main {
 		}
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private boolean synchronizePlanDB(JsonObject plan) {
 		if (plan != null) {
 			String dbdate = "";
@@ -270,7 +288,7 @@ public class VPlan_main {
 					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
 			try {
-				ResultSet next = lsql.onQuery("SELECT zieldatum FROM vplannext");
+				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext");
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");
@@ -278,14 +296,14 @@ public class VPlan_main {
 
 				if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
 
-					lsql.getdblog().info("Plan-DB-Sync");
+					LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					ResultSet old = lsql.onQuery("SELECT * FROM vplannext");
+					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext");
 
 					if (old.next()) {
-						lsql.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
+						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
 								+ "', classeintraege = '" + old.getInt("classeintraege") + "'");
-						lsql.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
+						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
 					}
 					return true;
 				}
@@ -297,6 +315,10 @@ public class VPlan_main {
 
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> getyourC(JsonObject obj) {
 		List<JsonObject> classentries = new ArrayList<>();
 		if (obj != null) {
@@ -318,6 +340,10 @@ public class VPlan_main {
 
 	}
 
+	/**
+	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 */
+	@DeprecatedSince(value = "1.14.0")
 	private JsonObject getPlan() {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();

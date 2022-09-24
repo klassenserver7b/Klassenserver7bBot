@@ -6,8 +6,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.SQL.LiteSQL;
 import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.util.LiteSQL;
 import de.k7bot.util.SongDataStripper;
 import de.k7bot.util.SongTitle;
 
@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 public class AudioLoadResult implements AudioLoadResultHandler {
 	private final String uri;
 	private final MusicController controller;
-	private final LiteSQL sqlite = Klassenserver7bbot.INSTANCE.getDB();
 	private final boolean setasnext;
 
 	public AudioLoadResult(MusicController controller, String uri, boolean loadasnext) {
@@ -31,11 +30,12 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	public void trackLoaded(AudioTrack track) {
 		
+		Queue queue = this.controller.getQueue();
 		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
 		long datetime = Long.parseLong(datetimestring);
 		
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a single track");
-		this.controller.getPlayer().playTrack(track);
+		addtoqueue(queue, track);
 
 		SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
 		String songname = title.getTitle().replaceAll("'", "");
@@ -44,8 +44,13 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		if (!title.containsauthor()) {
 			songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 		}
+		
+		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
+				.setTimestamp(LocalDateTime.now()).setTitle("1 track added to queue");
 
-		sqlite.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
+		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
+
+		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
 				+ songauthor + "', " + datetime + ")");
 
 	}
@@ -60,7 +65,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with ytsearch:");
 
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugefügt
+				// Queue hinzugefï¿½gt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;
@@ -70,7 +75,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with scsearch:");
 
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugefügt
+				// Queue hinzugefï¿½gt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;
@@ -86,7 +91,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 			EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
 					.setTimestamp(LocalDateTime.now()).setTitle(added + " tracks added to queue");
 
-			Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
+			MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
 			if (PlayCommand.party) {
 				queue.shuffle();
@@ -112,13 +117,13 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult couldn't find a matching audio track");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
 				.setDescription("Couldn't find the Song you Searched for! :sob:");
-		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
+		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 
 	public void loadFailed(FriendlyException exception) {
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
 				.setDescription(exception.getMessage());
-		Klassenserver7bbot.INSTANCE.getMusicUtil().sendEmbed(this.controller.getGuild().getIdLong(), builder);
+		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 }

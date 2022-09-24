@@ -3,7 +3,7 @@ package de.k7bot.util;
 import de.k7bot.Klassenserver7bbot;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SyntaxError {
 	public static void oncmdSyntaxError(TextChannel channel, String syntax, Member memb) {
