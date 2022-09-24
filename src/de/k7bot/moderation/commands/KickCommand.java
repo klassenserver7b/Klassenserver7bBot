@@ -1,7 +1,7 @@
 package de.k7bot.moderation.commands;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;
@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
-public class kickCommand implements ServerCommand {
+public class KickCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
 

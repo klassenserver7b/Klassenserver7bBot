@@ -1,4 +1,4 @@
-package de.k7bot.SQL;
+package de.k7bot.sql;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class LiteSQL {
 			stmt = conn.createStatement();
 			dblog.info("Datenbankverbindung hergestellt");
 		} catch (SQLException | IOException e) {
-			e.printStackTrace();
+			dblog.error(e.getMessage(),e);
 		}
 	}
 
@@ -39,7 +39,7 @@ public class LiteSQL {
 				dblog.info("Datenbankverbindung getrennt");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			dblog.error(e.getMessage(),e);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class LiteSQL {
 		try {
 			stmt.execute(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			dblog.error(e.getMessage(),e);
 		}
 	}
 
@@ -56,7 +56,7 @@ public class LiteSQL {
 			try {
 				return stmt.executeQuery(sql);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				dblog.error(e.getMessage(),e);
 				return null;
 			}
 			

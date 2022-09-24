@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 
-public class addReactionCommand implements ServerCommand {
+public class AddReactionCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");

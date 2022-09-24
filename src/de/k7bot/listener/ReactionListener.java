@@ -1,7 +1,7 @@
 
 package de.k7bot.listener;
 
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

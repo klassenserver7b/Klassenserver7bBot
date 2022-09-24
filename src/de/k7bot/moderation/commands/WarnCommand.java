@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;

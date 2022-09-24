@@ -3,7 +3,7 @@ package de.k7bot.commands;
 import org.slf4j.Logger;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.SQLManager;
+import de.k7bot.sql.SQLManager;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.PermissionError;
 import de.k7bot.util.SyntaxError;

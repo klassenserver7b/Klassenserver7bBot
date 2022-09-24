@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.SongDataStripper;
 import de.k7bot.util.SongTitle;
 
