@@ -82,8 +82,12 @@ public class VplanNEW_XML {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+
+			if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+			} else {
+				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+			}
 		}
 	}
 
@@ -370,7 +374,8 @@ public class VplanNEW_XML {
 					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;");
 
 					if (old.next()) {
-						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;", old.getString("zieldatum"),old.getInt("classeintraege"));
+						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
+								old.getString("zieldatum"), old.getInt("classeintraege"));
 						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
 					}
 					return true;

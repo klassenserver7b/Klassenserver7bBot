@@ -95,21 +95,27 @@ public class SubscribeSlashCommand implements SlashCommand {
 			GuildChannelUnion union = event.getOption("channel").getAsChannel();
 			SubscriptionDeliveryType delivery;
 
-			switch (union.getType()) {
+			if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+				switch (union.getType()) {
 
-			case TEXT: {
-				delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
-				break;
-			}
-			case NEWS: {
-				delivery = SubscriptionDeliveryType.NEWS;
-			}
-			default:
-				delivery = SubscriptionDeliveryType.UNKNOWN;
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
-						.setTimestamp(OffsetDateTime.now()).setDescription("Can't create subscription in "
-								+ union.getType() + "!\nPlease use a Text or News Channel")
-						.build()).queue();
+				case TEXT: {
+					delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
+					break;
+				}
+				case NEWS: {
+					delivery = SubscriptionDeliveryType.NEWS;
+				}
+				default:
+					delivery = SubscriptionDeliveryType.UNKNOWN;
+					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+							.setTimestamp(OffsetDateTime.now()).setDescription("Can't create subscription in "
+									+ union.getType() + "!\nPlease use a Text or News Channel")
+							.build()).queue();
+				}
+			} else {
+
+				delivery = SubscriptionDeliveryType.CANARY;
+
 			}
 
 			if (delivery != SubscriptionDeliveryType.UNKNOWN) {
