@@ -34,7 +34,7 @@ public class ShuffleCommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
 		controller.getQueue().shuffle();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setDescription("playlist shuffled");

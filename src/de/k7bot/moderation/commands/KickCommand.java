@@ -24,10 +24,12 @@ public class KickCommand implements ServerCommand {
 		try {
 			String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
 			String grund = "";
-			
-			for(int i = 2; i<args.length; i++) {
-				grund = grund + args[i];
+
+			for (int i = 2; i < args.length; i++) {
+				grund += args[i] + " ";
 			}
+			
+			grund = grund.trim();
 
 			channel.sendTyping().queue();
 

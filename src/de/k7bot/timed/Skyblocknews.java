@@ -35,7 +35,7 @@ public class Skyblocknews {
 					String time = set.getString(1);
 					long chan = set.getLong(2);
 					long guildId = set.getLong(3);
-					Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildId);
+					Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildId);
 
 					datesdb.add(time);
 					chans.add(guild.getTextChannelById(chan));

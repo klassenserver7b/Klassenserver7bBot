@@ -32,7 +32,7 @@ public class QueuelistCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		MusicController contr = Klassenserver7bbot.INSTANCE.playerManager.getController(channel.getGuild().getIdLong());
+		MusicController contr = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(channel.getGuild().getIdLong());
 		Queue queue = contr.getQueue();
 		List<AudioTrack> queuelist = queue.getQueuelist();
 

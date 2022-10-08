@@ -11,7 +11,7 @@ public class ShutdownCommand implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		
 		if (m.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
-			Klassenserver7bbot.INSTANCE.exit = true;
+			Klassenserver7bbot.INSTANCE.setexit(true);
 			Klassenserver7bbot.INSTANCE.onShutdown();
 		} else {
 			PermissionError.onPermissionError(m, channel);

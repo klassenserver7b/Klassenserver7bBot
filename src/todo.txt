@@ -1,6 +1,6 @@
-Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
+Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
-unique Id für jede Subscription
+Interface für alle SubscriptionAPIS -> Klassenserver7bbot fürt nur bei einem manager checkforUpdates aus -> Interface besitzt methode checkUpdates()
 
 Equalizer für Music -> Mehr Profile
 

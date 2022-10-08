@@ -1,6 +1,9 @@
 package de.k7bot.slashcommands;
 
 import de.k7bot.sql.LiteSQL;
+
+import org.jetbrains.annotations.NotNull;
+
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
@@ -11,7 +14,10 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ReactRolesSlashCommand implements SlashCommand {
 
@@ -59,6 +65,19 @@ public class ReactRolesSlashCommand implements SlashCommand {
 			PermissionError.onPermissionError(m, event.getChannel().asTextChannel());
 		}
 
+	}
+
+	@Override
+	public @NotNull SlashCommandData getCommandData() {
+		return Commands.slash("reactrole", "Erstellt eine Reactionrole mit den übermittelten Parametern")
+				.addOption(OptionType.CHANNEL, "channel", "Der Channel in dem die Message ist", true)
+				.addOption(OptionType.STRING, "messageid",
+						"Die MessageId der Message an die die Reaction angefügt werden soll", true)
+				.addOption(OptionType.STRING, "emoteid-oder-utfemote",
+						"Die EmoteId des Emotes bzw. das UTF8 Emoji auf das die Rolle registriert werden soll", true)
+				.addOption(OptionType.ROLE, "role",
+						"Die Rolle die zugewiesen werden soll -  stelle sicher: Rechte und Rolle des Bots > Rechte der Rolle",
+						true);
 	}
 
 }

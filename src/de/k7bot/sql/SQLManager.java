@@ -48,6 +48,6 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lernplanId STRING);");
 		
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER);");
+				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER, subscriptionId INTEGER);");
 	}
 }

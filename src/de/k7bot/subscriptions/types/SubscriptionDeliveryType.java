@@ -15,7 +15,7 @@ public enum SubscriptionDeliveryType {
 	/**
 	 * A {@link GuildChannel GuildChannel}, Guild-Only.
 	 */
-	GUILD_CHANNEL(0, true),
+	TEXT_CHANNEL(0, true),
 
 	/**
 	 * A {@link PrivateChannel PrivateChannel}

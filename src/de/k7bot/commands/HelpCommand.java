@@ -89,7 +89,7 @@ public class HelpCommand implements ServerCommand {
 		if (guild != null) {
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.INSTANCE.prefixl.get(guild.getIdLong()) + "`\r\n"
+							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
 							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
 					false);
@@ -137,10 +137,10 @@ public class HelpCommand implements ServerCommand {
 
 		if (guild != null) {
 
-			prefix = Klassenserver7bbot.INSTANCE.prefixl.get(guild.getIdLong());
+			prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong());
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.INSTANCE.prefixl.get(guild.getIdLong()) + "`\r\n"
+							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
 							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
 					false);

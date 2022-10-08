@@ -53,7 +53,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 		if (args.length > 1) {
 
-			MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+			MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
 			AudioManager manager = vc.getGuild().getAudioManager();
 			AudioPlayerManager apm = new DefaultAudioPlayerManager();
@@ -73,7 +73,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
 						.setDescription(
 								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.INSTANCE.prefixl.get(vc.getGuild().getIdLong())
+										+ Klassenserver7bbot.INSTANCE.getPrefixList().get(vc.getGuild().getIdLong())
 										+ "play` INSTEAD!")
 						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 
@@ -119,8 +119,6 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 			try {
 				apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
-				MusicUtil.sendEmbed(vc.getGuild().getIdLong(), new EmbedBuilder().setColor(Color.decode("#4d05e8"))
-						.setDescription("1 Song successful added to queue"));
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}

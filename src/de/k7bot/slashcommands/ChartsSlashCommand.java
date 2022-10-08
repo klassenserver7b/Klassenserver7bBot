@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map.Entry;
 
 import de.k7bot.commands.types.SlashCommand;
@@ -22,7 +25,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ChartsSlashCommand implements SlashCommand {
 
@@ -94,7 +100,7 @@ public class ChartsSlashCommand implements SlashCommand {
 				if (timeunitopt != null) {
 
 					Long time = timeopt.getAsLong();
-					
+
 					switch (timeunitopt.getAsString().toLowerCase()) {
 					case "days": {
 						sheduledcharts = chartlist.getcharts(time, ChronoUnit.DAYS);
@@ -155,7 +161,7 @@ public class ChartsSlashCommand implements SlashCommand {
 
 		List<Long> reverseKeys = new LinkedList<>(treeValues);
 		Collections.reverse(reverseKeys);
-		
+
 		for (Long Long : reverseKeys) {
 			Set<String> values = treeMap.get(Long);
 
@@ -217,6 +223,17 @@ public class ChartsSlashCommand implements SlashCommand {
 
 		hook.sendMessageEmbeds(builder.build()).queue();
 
+	}
+
+	@Override
+	public @NotNull SlashCommandData getCommandData() {
+		return Commands.slash("charts", "Liefert die Bot-Music Charts für die gewühlten Parameter")
+				.addOption(OptionType.BOOLEAN, "guild",
+						"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
+				.addOption(OptionType.INTEGER, "time",
+						"REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
+				.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"", false,
+						true);
 	}
 
 }

@@ -22,12 +22,14 @@ public class BanCommand implements ServerCommand {
         List<Member> ment = message.getMentions().getMembers();
         try {
 
-            String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
+            String[] args = message.getContentDisplay().replaceAll("<@(\\d+)?>", "").split(" ");
             String grund = "";
 
             for (int i = 1; i < args.length; i++) {
-                grund += args[i];
+                grund += args[i]+" ";
             }
+            
+            grund = grund.trim();
 
             channel.sendTyping().queue();
 

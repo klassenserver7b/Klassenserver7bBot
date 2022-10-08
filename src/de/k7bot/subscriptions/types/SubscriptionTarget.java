@@ -2,8 +2,8 @@ package de.k7bot.subscriptions.types;
 
 import javax.annotation.Nonnull;
 
-import de.k7bot.timed.VplanNEW_XML;
-import de.k7bot.util.LernsaxInteractions;
+import de.k7bot.util.internalapis.LernsaxInteractions;
+import de.k7bot.util.internalapis.VplanNEW_XML;
 
 /**
  * 
@@ -13,41 +13,48 @@ import de.k7bot.util.LernsaxInteractions;
 public enum SubscriptionTarget {
 
 	/**
-	 * The Type for Systemnotification subscriptions.
-	 */
-	SYSNOTIFICATIONS(0, false),
-
-	/**
 	 * The Type for {@link VplanNEW_XML} Subscription, only when Vplan API enabled.
 	 */
-	VPLAN(1, true),
+	VPLAN(1, true, true),
 
 	/**
 	 * The Type for BotNews such as Updates and Fixes, only fully functional when
 	 * GitHub API enabled.
 	 */
-	BOT_NEWS(2, false),
+	BOT_NEWS(2, false, false),
 
 	/**
 	 * The Type for {@link LernsaxInteractions} especially 'Lernpläne', only when
 	 * Lernsax API enabled
 	 */
-	LERNPLAN(3, true),
+	LERNPLAN(3, true, true),
+
+	/**
+	 * The Type for updates about the gourmetta foodplan of the day
+	 */
+	GOURMETTA(4, true, false),
+
+	/**
+	 * The Type the current special offers at the "Kaufland Dresden Striesen West"
+	 */
+	KAUFLAND(5, true, false),
 
 	/**
 	 * Unknown {@link SubscriptionTarget} type. Should never happen and would only
 	 * possibly happen if the K7Bot implemented a new API type and had yet to
 	 * implement channnel-support for it.
 	 */
-	UNKNOWN(-1, false);
+	UNKNOWN(-1, false, false);
 
 	private final boolean needsAPI;
+	private final boolean privileged;
 	private final int id;
 
-	private SubscriptionTarget(int id, boolean needsSpecialAPI) {
+	private SubscriptionTarget(int id, boolean needsSpecialAPI, boolean isprivleged) {
 
 		this.id = id;
 		this.needsAPI = needsSpecialAPI;
+		this.privileged = isprivleged;
 
 	}
 
@@ -57,16 +64,25 @@ public enum SubscriptionTarget {
 	 * @return The id key used by K7Bot for this target type.
 	 */
 	public int getId() {
-		return id;
+		return this.id;
 	}
 
 	/**
 	 * Whether this {@link SubscriptionTarget} needs an enabled API to run
 	 *
-	 * @return Whether or not this needs an enabled API to run.
+	 * @return Whetherthis needs an enabled API to run.
 	 */
 	public boolean needsApi() {
-		return needsAPI;
+		return this.needsAPI;
+	}
+	
+	/**
+	 * Whether this {@link SubscriptionTarget} needs special rights which are given by the bot owner - e.g. access to Vplans
+	 * 
+	 * @return Whether this needs special rights from the Admin
+	 */
+	public boolean isprivileged() {
+		return this.privileged;
 	}
 
 	/**

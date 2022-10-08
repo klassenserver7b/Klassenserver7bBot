@@ -19,16 +19,18 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import core.GLA;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
+import de.k7bot.subscriptions.SubscriptionManager;
 import de.k7bot.commands.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
-import de.k7bot.music.PlayerManager;
+import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.timed.Skyblocknews;
-import de.k7bot.timed.VplanNEW_XML;
 import de.k7bot.util.commands.StatsCategoryCommand;
+import de.k7bot.util.internalapis.LernsaxInteractions;
+import de.k7bot.util.internalapis.VplanNEW_XML;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,6 +49,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
+
 import javax.security.auth.login.LoginException;
 
 import org.kohsuke.github.GitHub;
@@ -65,44 +68,47 @@ import net.hypixel.api.apache.ApacheHttpClient;
 
 public class Klassenserver7bbot {
 	public static Klassenserver7bbot INSTANCE;
-	public static JsonObject teacherslist;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 
-	public HashMap<Long, String> prefixl = new HashMap<>();
-	public ShardManager shardMan;
-	public AudioPlayerManager audioPlayerManager;
-	public PlayerManager playerManager;
+	private ShardManager shardmgr;
+	private CommandManager cmdmgr;
+	private SubscriptionManager submgr;
+	private SystemNotificationChannelHolder syschannels;
+	private SlashCommandManager slashmgr;
+	private HypixelCommandManager hypmgr;
 
-	public Thread loop;
-	public Thread shutdownT;
+	private HashMap<Long, String> prefixl = new HashMap<>();
 
-	public boolean vplanenabled = false;
+	private AudioPlayerManager audioPlayerManager;
+	private AudioPlayerUtil playerutil;
 
-	public boolean imShutdown = false;
-	public boolean exit = false;
-	public boolean hasstarted = false;
-	public boolean indev;
-
-	public boolean minlock = false;
-	public int sec = 60;
-	public int min = 0;
+	private Thread loop;
+	private Thread shutdownT;
 
 	private GitHub github;
 	private HypixelAPI API;
+	private VplanNEW_XML vplan;
+	private LernsaxInteractions lernsax;
+	private LyricsClient lyricsapi;
+	private GLA lyricsapiold;
+
 	private Long ownerId;
 	private String vplanpw;
 	private Integer schoolID;
-	private CommandManager cmdMan;
-	private HypixelCommandManager hypMan;
-	private SlashCommandManager slashMan;
-	private LyricsClient lyricsapi;
-	private GLA lyricsapiold;
-	private SystemNotificationChannelHolder syschannels;
-	private VplanNEW_XML vplan;
+	private JsonObject teacherslist;
 
 	private boolean hypixelapienabled = false;
 	private boolean githubapienabled = false;
+
+	private boolean minlock = false;
+	private int sec = 60;
+	private int min = 0;
+	private boolean vplanenabled = false;
+	private boolean blockevents = false;
+	private boolean exit = false;
+	private boolean hasstarted = false;
+	private boolean indev;
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
@@ -141,6 +147,8 @@ public class Klassenserver7bbot {
 		loadTeacherList();
 		LiteSQL.connect();
 
+		SQLManager.onCreate();
+
 		String token = prop.getProperty("token");
 
 		String canaryToken;
@@ -163,6 +171,16 @@ public class Klassenserver7bbot {
 		if ((this.vplanpw = prop.getProperty("vplanpw")) != null && prop.getProperty("schoolID") != null) {
 			this.schoolID = Integer.valueOf(prop.getProperty("schoolID"));
 			this.vplanenabled = true;
+		}
+		
+		this.lernsax = new LernsaxInteractions();
+		String lsaxemail;
+		String lsaxtoken;
+		String lsaxappid;
+		
+		if((lsaxemail = prop.getProperty("lsaxemail"))!=null && (lsaxtoken = prop.getProperty("lsaxtoken"))!=null && (lsaxappid = prop.getProperty("lsaxappid"))!=null){
+		
+		lernsax.connect(lsaxemail, lsaxtoken, lsaxappid);
 		}
 
 		String shards;
@@ -215,10 +233,10 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
-		builder.addEventListeners(new ChartsAutocomplete());
+		builder.addEventListeners(new SlashCommandAutocomplete());
 		builder.addEventListeners(new ButtonListener());
 
-		this.shardMan = builder.build();
+		this.shardmgr = builder.build();
 	}
 
 	public void initializeApis(String hypixelToken, String githubtoken) {
@@ -244,20 +262,21 @@ public class Klassenserver7bbot {
 
 	public void initializeObjects() {
 
-		this.lyricsapi = new LyricsClient();
-		this.lyricsapiold = new GLA();
-		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
-		this.hypMan = new HypixelCommandManager();
+		this.cmdmgr = new CommandManager(hypixelapienabled, githubapienabled);
+		this.hypmgr = new HypixelCommandManager();
+		this.slashmgr = new SlashCommandManager();
+
+		this.submgr = new SubscriptionManager();
 
 		this.syschannels = new SystemNotificationChannelHolder();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
-		this.playerManager = new PlayerManager();
+		this.playerutil = new AudioPlayerUtil();
 
-		this.slashMan = new SlashCommandManager();
 		this.vplan = new VplanNEW_XML();
 
-		SQLManager.onCreate();
+		this.lyricsapi = new LyricsClient();
+		this.lyricsapiold = new GLA();
 
 		HelpCommand.updateCategoryList();
 
@@ -284,7 +303,7 @@ public class Klassenserver7bbot {
 	public void awaitReady() {
 
 		logger.info("Awaiting jda ready");
-		shardMan.getShards().forEach(jda -> {
+		shardmgr.getShards().forEach(jda -> {
 
 			try {
 				logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
@@ -312,7 +331,7 @@ public class Klassenserver7bbot {
 			try {
 				while ((line = reader.readLine()) != null) {
 					if (line.equalsIgnoreCase("exit")) {
-						this.imShutdown = true;
+						this.blockevents = true;
 						this.exit = true;
 
 						onShutdown();
@@ -350,7 +369,7 @@ public class Klassenserver7bbot {
 
 	public void onShutdown() {
 		logger.info("Bot is shutting down!");
-		this.imShutdown = true;
+		this.blockevents = true;
 
 		if (PlayCommand.conv.converter != null) {
 			PlayCommand.conv.converter.interrupt();
@@ -359,18 +378,23 @@ public class Klassenserver7bbot {
 		if (this.loop != null) {
 			this.loop.interrupt();
 		}
-		if (this.shardMan != null) {
+		if (this.shardmgr != null) {
 
 			this.API.shutdown();
+			this.lernsax.disconnect();
 			StatsCategoryCommand.onShutdown(indev);
-			this.shardMan.setStatus(OnlineStatus.OFFLINE);
+			this.shardmgr.setStatus(OnlineStatus.OFFLINE);
 			logger.info("Bot offline");
-			this.shardMan.shutdown();
+			this.shardmgr.shutdown();
 			LiteSQL.disconnect();
 			this.shutdownT.interrupt();
 		} else {
 			logger.info("ShardMan was null!");
 		}
+	}
+
+	public void stopLoop() {
+		this.loop.interrupt();
 	}
 
 	public void onsecond() {
@@ -382,8 +406,10 @@ public class Klassenserver7bbot {
 				this.getsyschannell().checkSysChannelList();
 
 				if (this.vplanenabled) {
-					vplan.sendVplanMessage(false, "10b", null);
+					vplan.VplanNotify("10b");
 				}
+
+				lernsax.sendLernsaxEmbeds(lernsax.checkForLernplanMessages());
 				Skyblocknews.onEventCheck();
 
 				if ((!this.hasstarted)) {
@@ -394,7 +420,7 @@ public class Klassenserver7bbot {
 
 				int i = rand.nextInt(this.status.length);
 
-				this.shardMan.getShards().forEach(jda -> {
+				this.shardmgr.getShards().forEach(jda -> {
 					jda.getPresence().setActivity(Activity.listening(this.status[i]));
 				});
 
@@ -438,7 +464,7 @@ public class Klassenserver7bbot {
 			e.printStackTrace();
 		}
 
-		this.shardMan.getGuilds().forEach(gu -> {
+		this.shardmgr.getGuilds().forEach(gu -> {
 
 			Long id = gu.getIdLong();
 
@@ -495,7 +521,7 @@ public class Klassenserver7bbot {
 
 			} catch (IOException e1) {
 
-				logger.error(e1.getMessage(),e1);
+				logger.error(e1.getMessage(), e1);
 
 			}
 
@@ -503,15 +529,15 @@ public class Klassenserver7bbot {
 	}
 
 	public CommandManager getCmdMan() {
-		return this.cmdMan;
+		return this.cmdmgr;
 	}
 
 	public HypixelCommandManager gethypMan() {
-		return this.hypMan;
+		return this.hypmgr;
 	}
 
 	public SlashCommandManager getslashMan() {
-		return this.slashMan;
+		return this.slashmgr;
 	}
 
 	public GitHub getGitapi() {
@@ -546,7 +572,51 @@ public class Klassenserver7bbot {
 		return this.vplanpw;
 	}
 
+	public boolean isInExit() {
+		return this.exit;
+	}
+
 	public int getSchoolID() {
 		return this.schoolID;
+	}
+
+	public boolean isEventBlocked() {
+		return this.blockevents;
+	}
+
+	public boolean isDevMode() {
+		return this.indev;
+	}
+
+	public HashMap<Long, String> getPrefixList() {
+		return this.prefixl;
+	}
+
+	public ShardManager getShardManager() {
+		return this.shardmgr;
+	}
+
+	public AudioPlayerUtil getPlayerUtil() {
+		return this.playerutil;
+	}
+
+	public AudioPlayerManager getAudioPlayerManager() {
+		return this.audioPlayerManager;
+	}
+
+	public SubscriptionManager getSubscriptionManager() {
+		return this.submgr;
+	}
+
+	public JsonObject getTeacherList() {
+		return this.teacherslist;
+	}
+
+	public void setexit(boolean inexit) {
+		this.exit = inexit;
+	}
+
+	public void setEventBlocking(boolean inshutdown) {
+		this.blockevents = inshutdown;
 	}
 }

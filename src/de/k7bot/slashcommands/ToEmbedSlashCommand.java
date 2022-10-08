@@ -2,6 +2,8 @@ package de.k7bot.slashcommands;
 
 import java.time.OffsetDateTime;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.Color;
 
 import de.k7bot.commands.types.SlashCommand;
@@ -10,7 +12,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ToEmbedSlashCommand implements SlashCommand {
 
@@ -35,7 +40,7 @@ public class ToEmbedSlashCommand implements SlashCommand {
 
 				String colortxt;
 				colortxt = coloropt.getAsString();
-				
+
 				if (!colortxt.startsWith("#")) {
 					colortxt = "#" + colortxt;
 				}
@@ -52,6 +57,14 @@ public class ToEmbedSlashCommand implements SlashCommand {
 			PermissionError.onPermissionError(event.getMember(), event.getChannel().asTextChannel());
 		}
 
+	}
+
+	@Override
+	public @NotNull SlashCommandData getCommandData() {
+		return Commands.slash("toembed", "Erstellt einen Embed mit den gegebenen Parametern")
+				.addOption(OptionType.STRING, "title", "Welchen Titel soll der Embed haben?", true)
+				.addOption(OptionType.STRING, "description", "Welchen Inhalt soll der Embed haben?", true)
+				.addOption(OptionType.STRING, "color", "Die Farbe des Embeds als hexadezimale Zahl");
 	}
 
 }

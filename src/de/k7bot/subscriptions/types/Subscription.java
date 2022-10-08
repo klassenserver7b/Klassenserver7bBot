@@ -10,6 +10,7 @@ public class Subscription {
 	private final SubscriptionTarget target;
 	private final SubscriptionDeliveryType type;
 	private final Long targetdcid;
+	private final Long id;
 
 	/**
 	 * 
@@ -20,19 +21,15 @@ public class Subscription {
 	 *                   {@link Subscription}.
 	 * 
 	 * @param targetDcId The {@link Long Id} of the target-channel given by discord.
+	 * 
+	 * @param id         The id of the Subscription if already known
 	 */
-	public Subscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long targetdiscordid) {
+	public Subscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long targetdiscordid, Long id) {
 		this.target = target;
 		this.type = type;
 		this.targetdcid = targetdiscordid;
+		this.id = id;
 	}
-
-	/**
-	 * 
-	 */
-	public void deliverSubscriptionMessage() {
-
-	};
 
 	/**
 	 * 
@@ -46,7 +43,7 @@ public class Subscription {
 	 * 
 	 * @return The {@link SubscriptionDeliveryType} of the {@link Subscription}
 	 */
-	public SubscriptionDeliveryType getType() {
+	public SubscriptionDeliveryType getDeliveryType() {
 		return this.type;
 	}
 
@@ -58,4 +55,11 @@ public class Subscription {
 		return this.targetdcid;
 	}
 
+	/**
+	 * 
+	 * @return The uniwue Id of this subscription
+	 */
+	public Long getId() {
+		return this.id;
+	}
 }

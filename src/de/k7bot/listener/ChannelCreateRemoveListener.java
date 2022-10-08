@@ -19,7 +19,7 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 	@Override
 	public void onChannelCreate(@Nonnull ChannelCreateEvent event) {
 		Klassenserver7bbot.INSTANCE.getMainLogger().debug("ChannelCreateEvent");
-		if (!Klassenserver7bbot.INSTANCE.imShutdown) {
+		if (!Klassenserver7bbot.INSTANCE.isEventBlocked()) {
 			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();
@@ -39,7 +39,7 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 	@Override
 	public void onChannelDelete(@Nonnull ChannelDeleteEvent event) {
 		Klassenserver7bbot.INSTANCE.getMainLogger().debug("ChannelRemoveEvent");
-		if (!Klassenserver7bbot.INSTANCE.imShutdown) {
+		if (!Klassenserver7bbot.INSTANCE.isEventBlocked()) {
 			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();

@@ -149,7 +149,7 @@ public class CommandManager {
 			this.commands.put("hypixel", new DisabledAPI());
 		}
 
-		if (Klassenserver7bbot.INSTANCE.indev) {
+		if (Klassenserver7bbot.INSTANCE.isDevMode()) {
 			this.commands.put("test", new TestCommand());
 			this.commands.put("vtest", new VTestCommand());
 		}
