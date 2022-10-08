@@ -83,11 +83,8 @@ public class VplanNEW_XML {
 
 		if (d != null) {
 
-			if (Klassenserver7bbot.INSTANCE.isDevMode()) {
-			} else {
 				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
 						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
-			}
 		}
 	}
 
@@ -122,7 +119,7 @@ public class VplanNEW_XML {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
+			embbuild.setTitle("Es gibt einen neuen Stundenplan fï¿½r "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
@@ -153,7 +150,7 @@ public class VplanNEW_XML {
 			}
 
 			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+			embbuild.setDescription("**ï¿½nderungen**\n" + tablemess.build());
 
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);
