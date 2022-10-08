@@ -54,7 +54,7 @@ public class LiteSQL {
 			PreparedStatement p = conn.prepareStatement(sqlpattern);
 
 			for (int i = 0; i < parameters.length; i++) {
-				p.setObject(i + 1, sqlpattern);
+				p.setObject(i + 1, parameters[i]);
 			}
 
 			p.executeUpdate();
@@ -77,7 +77,7 @@ public class LiteSQL {
 			PreparedStatement p = conn.prepareStatement(sqlpattern);
 
 			for (int i = 0; i < parameters.length; i++) {
-				p.setObject(i + 1, sqlpattern);
+				p.setObject(i + 1, parameters[i]);
 			}
 
 			return p.executeQuery();
