@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.timed;
+package de.k7bot.util.internalapis;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -37,11 +37,13 @@ import com.google.gson.JsonObject;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  * @author felix
@@ -55,11 +57,45 @@ public class VplanNEW_XML {
 	 * 
 	 * @param force
 	 * @param klasse
+	 * @param channel
+	 * 
+	 * @since 1.15.0
+	 */
+	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
+
+		MessageCreateData d = getVplanMessage(force, klasse);
+
+		if (d != null) {
+			channel.sendMessage(d).queue();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param klasse
+	 * 
+	 * @since 1.15.0
+	 */
+	public void VplanNotify(String klasse) {
+
+		MessageCreateData d = getVplanMessage(false, klasse);
+
+		if (d != null) {
+			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+		}
+	}
+
+	/**
+	 * 
+	 * @param force
+	 * @param klasse
 	 * @param chan
 	 * 
-	 * since 1.14.0
+	 * @since 1.14.0
 	 */
-	public void sendVplanMessage(boolean force, String klasse, GuildChannel chan) {
+	private MessageCreateData getVplanMessage(boolean force, String klasse) {
 
 		OffsetDateTime d = checkdate();
 		Document doc = read(d);
@@ -72,26 +108,13 @@ public class VplanNEW_XML {
 
 		if (sendApproved) {
 
-			TextChannel channel;
-
-			if ((channel = (TextChannel) chan) == null) {
-
-				if (Klassenserver7bbot.INSTANCE.indev) {
-					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L)
-							.getTextChannelById(920777920681738390L);
-				} else {
-					channel = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L)
-							.getTextChannelById(918904387739459645L);
-				}
-			}
-
 			String info = "";
 			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 			}
-			
+
 			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
-					+ Klassenserver7bbot.INSTANCE.indev);
+					+ Klassenserver7bbot.INSTANCE.isDevMode());
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
@@ -140,11 +163,17 @@ public class VplanNEW_XML {
 			}
 
 			embbuild.setColor(Color.decode("#038aff"));
-			channel.sendMessageEmbeds(embbuild.build()).queue();
 
-			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.toString().hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.getTextContent().hashCode());
+
+			MessageCreateBuilder builder = new MessageCreateBuilder();
+			builder.setEmbeds(embbuild.build());
+
+			return builder.build();
 
 		}
+
+		return null;
 
 	}
 
@@ -173,7 +202,7 @@ public class VplanNEW_XML {
 			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
 
 			if (teacher != null && !teacher.equalsIgnoreCase("")) {
-				JsonElement teachelem = Klassenserver7bbot.teacherslist.get(teacher);
+				JsonElement teachelem = Klassenserver7bbot.INSTANCE.getTeacherList().get(teacher);
 
 				if (teachelem != null) {
 
@@ -239,7 +268,7 @@ public class VplanNEW_XML {
 			boolean synced = synchronizePlanDB(plan);
 
 			if (classPlan != null) {
-				int planhash = classPlan.toString().hashCode();
+				int planhash = classPlan.getTextContent().hashCode();
 
 				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext");
 				try {
@@ -265,8 +294,8 @@ public class VplanNEW_XML {
 						}
 					} else {
 
-						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate + "', "
-								+ planhash + ")");
+						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate
+								+ "', " + planhash + ")");
 					}
 
 				} catch (SQLException e) {

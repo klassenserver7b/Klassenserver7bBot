@@ -8,7 +8,7 @@ public class Dechemaxx{
 
 	public static void notifymessage() {
 		
-		Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L);
+		Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(779024287733776454L);
 		TextChannel channel = guild.getTextChannelById(908780877104959508L);
 		String mess = "LEUTE DER DECHEMAXX STEHT AN";
 		

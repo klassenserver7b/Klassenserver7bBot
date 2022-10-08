@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class WhitelistSlashCommand implements SlashCommand {
@@ -49,7 +53,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES('" + gamename + "', '"
 				+ realname + "', '" + dcname + "', " + dcid + ", 3);");
 
-		Guild g = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(701341683325075477L);
+		Guild g = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(701341683325075477L);
 
 		if (g != null) {
 			TextChannel requestChannel = g.getTextChannelById(1016819796190445758L);
@@ -73,6 +77,14 @@ public class WhitelistSlashCommand implements SlashCommand {
 						+ "\n**DIscord-ID: **" + dcid)
 				.queue();
 
+	}
+
+	@Override
+	public @NotNull SlashCommandData getCommandData() {
+		return Commands.slash("whitelistadd", "Fragt die Hinzufügung zur Whitelist an.")
+				.addOption(OptionType.STRING, "ingamename", "Dein Spielername in Minecraft", true)
+				.addOption(OptionType.STRING, "realname",
+						"Der Name mit dem du im Talk etc. angesprochen werden willst.", true);
 	}
 
 }

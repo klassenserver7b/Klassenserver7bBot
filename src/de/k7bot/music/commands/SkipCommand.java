@@ -41,7 +41,7 @@ public class SkipCommand implements ServerCommand {
 
 		String[] args = message.getContentDisplay().split(" ");
 		long guildid = channel.getGuild().getIdLong();
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(guildid);
 		Queue queue = controller.getQueue();
 		AudioTrack lastTrack = controller.getPlayer().getPlayingTrack();
 		onskip = true;

@@ -24,10 +24,12 @@ public class TimeoutCommand implements ServerCommand {
 		List<Member> ment = message.getMentions().getMembers();
 		String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
 		String grund = "";
-		
-		for(int i = 2; i<args.length; i++) {
-			grund = grund + args[i];
+
+		for (int i = 2; i < args.length; i++) {
+			grund += args[i];
 		}
+
+		grund = grund.trim();
 
 		try {
 
@@ -84,7 +86,7 @@ public class TimeoutCommand implements ServerCommand {
 				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
 				builder.setFooter("");
 				builder.setDescription("**Case: **" + grund + "\n");
-				
+
 				u.getUser().openPrivateChannel().queue((ch) -> {
 					ch.sendMessageEmbeds(builder.build()).queue();
 				});

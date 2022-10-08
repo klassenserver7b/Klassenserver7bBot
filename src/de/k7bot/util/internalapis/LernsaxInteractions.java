@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.util.internalapis;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -10,28 +10,39 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;
 import de.konsl.webweaverapi.model.messages.MessageType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
+ * Used to interact with the LernsaxAPI <br>
+ * Provides methods to:<br>
+ * - {@link LernsaxInteractions#connect(String, String, String) login}<br>
+ * - {@link LernsaxInteractions#checkForLernplanMessages() check for new
+ * "Learning Plans"} <br>
+ * - {@link LernsaxInteractions#disconnect() disconnect}
  * 
  * @author Felix
  *
  */
-public class LernsaxInteractions {
+public class LernsaxInteractions{
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	/**
+	 * Used to connect to the LernsaxAPI via.
 	 * 
-	 * @param lsaxemail
-	 * @param token
-	 * @param applicationID
+	 * @param lsaxemail     The email of your Lernsax account
+	 * @param token         The token for this application
+	 * @param applicationID The Id of this application
 	 */
 	public void connect(String lsaxemail, String token, String applicationID) {
 
@@ -42,18 +53,21 @@ public class LernsaxInteractions {
 	}
 
 	/**
-	 * 
+	 * Disconnects this client from the API
 	 */
 	public void disconnect() {
 		client.logout();
 	}
 
 	/**
+	 * Checks if there are any new "Lernplaene" -> "LearningPlans"<br>
+	 * Should only be used in connection with
+	 * {@link LernsaxInteractions#sendLernsaxEmbeds(List)}
 	 * 
-	 * @return
+	 * @return A List of all new LearningPlans (empty if there are none)
 	 * @throws SQLException
 	 */
-	public List<Message> checkForLernplanMessages() throws SQLException {
+	public List<Message> checkForLernplanMessages() {
 
 		List<Message> messages;
 
@@ -61,8 +75,12 @@ public class LernsaxInteractions {
 
 		String currentMessageID = null;
 
-		if (set.next()) {
-			currentMessageID = set.getString("LernplanId");
+		try {
+			if (set.next()) {
+				currentMessageID = set.getString("LernplanId");
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
 		}
 
 		if (currentMessageID == null) {
@@ -73,8 +91,11 @@ public class LernsaxInteractions {
 			messages = client.getMessagesScope().getMessages(Integer.parseInt(currentMessageID));
 			if (messages.size() > 0)
 				messages = messages.stream().skip(1).toList();
-			LiteSQL.onUpdate(
-					"UPDATE lernsaxinteractions SET LernplanId='" + messages.get(messages.size() - 1).getId() + "';");
+
+			if (messages.size() > 0) {
+				LiteSQL.onUpdate("UPDATE lernsaxinteractions SET LernplanId='"
+						+ messages.get(messages.size() - 1).getId() + "';");
+			}
 		}
 
 		if (messages.size() <= 0) {
@@ -87,10 +108,19 @@ public class LernsaxInteractions {
 	}
 
 	/**
+	 * Sends the given List of "lerplanmessages" obtained by
+	 * {@link LernsaxInteractions#checkForLernplanMessages()} to every "Lernsax"
+	 * subscribing channel
 	 * 
-	 * @param lernplanmessages
+	 * @param lernplanmessages The List obtained by
+	 *                         {@link LernsaxInteractions#checkForLernplanMessages()}
 	 */
 	public void sendLernsaxEmbeds(List<Message> lernplanmessages) {
+
+		if (lernplanmessages == null) {
+			log.warn("Illegal lernplanmessages list provided - List is null");
+			return;
+		}
 
 		if (lernplanmessages.size() > 0) {
 
@@ -115,9 +145,13 @@ public class LernsaxInteractions {
 
 			});
 
-//			for (MessageEmbed e : embeds) {
-//
-//			}
+			for (MessageEmbed e : embeds) {
+
+				MessageCreateData data = new MessageCreateBuilder().setEmbeds(e).build();
+
+				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
+			}
 
 		}
 

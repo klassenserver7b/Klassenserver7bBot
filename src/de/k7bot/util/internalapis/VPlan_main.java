@@ -1,4 +1,4 @@
-package de.k7bot.timed;
+package de.k7bot.util.internalapis;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -27,17 +27,19 @@ import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  * 
  * @author felix
- * @Deprecated use {@link de.k7bot.timed.VplanNEW_XML VplanNEW_XML instead}
+ * @Deprecated use {@link de.k7bot.util.internalapis.VplanNEW_XML VplanNEW_XML instead}
  */
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_main {
@@ -48,28 +50,50 @@ public class VPlan_main {
 	public VPlan_main(String pw) {
 		vplanpw = pw;
 	}
+	
+	/**
+	 * 
+	 * @param force
+	 * @param klasse
+	 * @param channel
+	 * 
+	 * @since 1.15.0
+	 */
+	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
+
+		MessageCreateData d = getVplanMessage();
+
+		if (d != null) {
+			channel.sendMessage(d).queue();
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param klasse
+	 * 
+	 * @since 1.15.0
+	 */
+	public void VplanNotify(String klasse) {
+
+		MessageCreateData d = getVplanMessage();
+
+		if (d != null) {
+			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+		}
+	}
 
 	/**
 	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
 	 */
 	@DeprecatedSince(value = "1.14.0")
-	public void sendvplanMessage() {
+	private MessageCreateData getVplanMessage() {
 
 		JsonObject plan = getPlan();
 
 		List<JsonObject> fien = finalplancheck(plan);
-		Guild guild;
-		TextChannel channel;
-
-		if (!Klassenserver7bbot.INSTANCE.indev) {
-			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(779024287733776454L);
-
-			channel = guild.getTextChannelById(918904387739459645L);
-
-		} else {
-			guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(850697874147770368L);
-			channel = guild.getTextChannelById(920777920681738390L);
-		}
 
 		if (fien != null) {
 
@@ -79,17 +103,17 @@ public class VPlan_main {
 
 			if (log != null) {
 				log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
-						+ Klassenserver7bbot.INSTANCE.indev);
+						+ Klassenserver7bbot.INSTANCE.isDevMode());
 			}
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Vertretungsplan fÃ¼r "
+			embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "
 					+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
 
 			if (fien.isEmpty()) {
 
-				embbuild.setTitle("**KEINE Ã„NDERUNGEN ðŸ˜­**");
+				embbuild.setTitle("**KEINE ÄNDERUNGEN :sob:**");
 
 				if (!(info.equalsIgnoreCase(""))) {
 
@@ -136,7 +160,7 @@ public class VPlan_main {
 						JsonElement elem = entry.get("teacher");
 
 						if (elem != null) {
-							JsonElement teachelem = Klassenserver7bbot.teacherslist.get(elem.getAsString()
+							JsonElement teachelem = Klassenserver7bbot.INSTANCE.getTeacherList().get(elem.getAsString()
 									.replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
 
 							if (teachelem != null) {
@@ -186,7 +210,7 @@ public class VPlan_main {
 				});
 
 				tablemess.automaticLineBreaks(4);
-				embbuild.setDescription("**Ã„nderungen**\n" + tablemess.build());
+				embbuild.setDescription("**Änderungen**\n" + tablemess.build());
 
 				if (!(info.equalsIgnoreCase(""))) {
 
@@ -199,11 +223,13 @@ public class VPlan_main {
 			embbuild.setColor(Color.decode("#038aff"));
 			embbuild.setFooter("Stand vom " + OffsetDateTime.now());
 
-			channel.sendMessageEmbeds(embbuild.build()).queue();
-
 			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + fien.hashCode());
+			
+			return new MessageCreateBuilder().setEmbeds(embbuild.build()).build();
 
 		}
+		
+		return null;
 	}
 
 	/**

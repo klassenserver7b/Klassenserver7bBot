@@ -24,14 +24,12 @@ public class RestartCommand implements ServerCommand {
 
 				try {
 
-					Klassenserver7bbot.INSTANCE.playerManager.controller.values().forEach(contr -> {
-						contr.getPlayer().stopTrack();
-					});
+					Klassenserver7bbot.INSTANCE.getPlayerUtil().stopAllTracks();
 
-					Klassenserver7bbot.INSTANCE.loop.interrupt();
+					Klassenserver7bbot.INSTANCE.stopLoop();
 					SQLManager.onCreate();
 
-					Klassenserver7bbot.INSTANCE.shardMan.restart(Integer.parseInt(args[1]));
+					Klassenserver7bbot.INSTANCE.getShardManager().restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
 
 					Klassenserver7bbot.INSTANCE.runLoop();
@@ -41,7 +39,7 @@ public class RestartCommand implements ServerCommand {
 				}
 
 			} else {
-				Klassenserver7bbot.INSTANCE.shardMan.restart();
+				Klassenserver7bbot.INSTANCE.getShardManager().restart();
 				log.info("Restarting all Shards");
 			}
 

@@ -42,7 +42,7 @@ public class SeekCommand implements ServerCommand {
 			return;
 		}
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(m.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(m.getGuild().getIdLong());
 		int pos = Integer.valueOf(args[1]);
 		controller.seek(pos * 1000);
 

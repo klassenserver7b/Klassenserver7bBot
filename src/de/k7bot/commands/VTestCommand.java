@@ -1,11 +1,13 @@
 package de.k7bot.commands;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.timed.VplanNEW_XML;
 import de.k7bot.util.SyntaxError;
+import de.k7bot.util.internalapis.VplanNEW_XML;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 public class VTestCommand implements ServerCommand {
 
@@ -25,8 +27,13 @@ public class VTestCommand implements ServerCommand {
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length > 1 && !message.getMentions().getChannels().isEmpty()) {
-			new VplanNEW_XML().sendVplanMessage(true, args[1], message.getMentions().getChannels().get(0));
-		}else {
+
+			GuildChannel chan = message.getMentions().getChannels().get(0);
+
+			if (chan.getType() != ChannelType.TEXT) {
+				new VplanNEW_XML().sendVplanToChannel(true, args[1], (TextChannel) chan);
+			}
+		} else {
 			SyntaxError.oncmdSyntaxError(channel, "vtest [klasse] #channel", m);
 		}
 

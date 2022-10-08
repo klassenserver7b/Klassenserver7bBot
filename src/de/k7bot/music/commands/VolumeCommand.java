@@ -45,7 +45,7 @@ public class VolumeCommand implements ServerCommand {
 				if (volume > 0) {
 					if (volume <= 100) {
 						Guild guild = channel.getGuild();
-						MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+						MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
 								.getController(guild.getIdLong());
 						AudioPlayer player = controller.getPlayer();
 						player.setVolume(volume);
@@ -66,7 +66,7 @@ public class VolumeCommand implements ServerCommand {
 				} else {
 					channel.sendMessage(
 							"Brudi was willst den du? Wenn du nix hören willst dann lefte doch den channel oder gebe `"
-									+ Klassenserver7bbot.INSTANCE.prefixl.get(channel.getGuild().getIdLong())
+									+ Klassenserver7bbot.INSTANCE.getPrefixList().get(channel.getGuild().getIdLong())
 									+ "stop ` ein :rage:")
 							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 				}

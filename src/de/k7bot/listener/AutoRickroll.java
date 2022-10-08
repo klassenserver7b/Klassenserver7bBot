@@ -18,10 +18,10 @@ public class AutoRickroll extends ListenerAdapter {
 		if (event.getGuild().getIdLong() == 701341683325075477L && event.getMember().getIdLong() != 846296603139506187L
 				&& Math.random() >= 0.95D) {
 			AudioChannel vc = event.getChannelJoined();
-			MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+			MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
 			AudioManager manager = vc.getGuild().getAudioManager();
-			AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
+			AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.getAudioPlayerManager();
 			AudioPlayer player = controller.getPlayer();
 			Queue queue = controller.getQueue();
 

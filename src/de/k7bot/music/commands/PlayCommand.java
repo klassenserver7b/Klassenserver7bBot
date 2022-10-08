@@ -48,9 +48,9 @@ public class PlayCommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
 		AudioManager manager = vc.getGuild().getAudioManager();
-		AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.audioPlayerManager;
+		AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.getAudioPlayerManager();
 		AudioPlayer player = controller.getPlayer();
 		Queue queue = controller.getQueue();
 

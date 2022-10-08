@@ -39,7 +39,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 				MusicUtil.updateChannel(channel);
 				if (args.length > 1) {
 					Guild guild = channel.getGuild();
-					MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+					MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
 							.getController(guild.getIdLong());
 					AudioPlayer player = controller.getPlayer();
 					player.setVolume(volume);

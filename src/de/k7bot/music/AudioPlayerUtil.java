@@ -3,8 +3,8 @@ package de.k7bot.music;
 import de.k7bot.Klassenserver7bbot;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerManager {
-	public ConcurrentHashMap<Long, MusicController> controller = new ConcurrentHashMap<>();
+public class AudioPlayerUtil {
+	private ConcurrentHashMap<Long, MusicController> controller = new ConcurrentHashMap<>();
 
 	public MusicController getController(long guildid) {
 		MusicController mc = null;
@@ -13,7 +13,7 @@ public class PlayerManager {
 			mc = this.controller.get(Long.valueOf(guildid));
 		} else {
 
-			mc = new MusicController(Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildid));
+			mc = new MusicController(Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid));
 
 			this.controller.put(Long.valueOf(guildid), mc);
 		}
@@ -28,5 +28,11 @@ public class PlayerManager {
 			}
 		}
 		return -1L;
+	}
+	
+	public void stopAllTracks() {
+		controller.values().forEach(contr -> {
+			contr.getPlayer().stopTrack();
+		});
 	}
 }

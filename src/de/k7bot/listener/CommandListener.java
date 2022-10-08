@@ -24,7 +24,7 @@ public class CommandListener extends ListenerAdapter {
 	
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		if (!Klassenserver7bbot.INSTANCE.exit) {
+		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
 			String message = event.getMessage().getContentStripped();
 			Klassenserver7bbot.INSTANCE.checkpreflist();
 			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
@@ -32,7 +32,7 @@ public class CommandListener extends ListenerAdapter {
 			switch (event.getChannelType()) {
 			case TEXT: {
 				try {
-					String prefix = Klassenserver7bbot.INSTANCE.prefixl.get(event.getGuild().getIdLong()).toLowerCase();
+					String prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(event.getGuild().getIdLong()).toLowerCase();
 					guildMessageRecieved(event, message, prefix);
 				} catch (IllegalStateException e) {
 					log.error(e.getMessage(), e);
@@ -105,7 +105,7 @@ public class CommandListener extends ListenerAdapter {
 
 	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
 
-		if (!Klassenserver7bbot.INSTANCE.exit) {
+		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
 			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES('" + command + "', "
 					+ guild.getIdLong() + ", " + time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")) + ")");
 		}

@@ -34,7 +34,7 @@ public class Lyricsoldcommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 		if (player.getPlayingTrack() != null) {
 			GLA lapi = Klassenserver7bbot.INSTANCE.getLyricsAPIold();

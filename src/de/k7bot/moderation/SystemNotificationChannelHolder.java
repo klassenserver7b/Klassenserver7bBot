@@ -25,7 +25,7 @@ public class SystemNotificationChannelHolder {
 	 */
 	public void checkSysChannelList() {
 
-		Klassenserver7bbot.INSTANCE.shardMan.getGuilds().forEach(gu -> {
+		Klassenserver7bbot.INSTANCE.getShardManager().getGuilds().forEach(gu -> {
 
 			if (!this.systemchannellist.containsKey(gu)) {
 				this.systemchannellist.put(gu, gu.getSystemChannel());
@@ -41,7 +41,7 @@ public class SystemNotificationChannelHolder {
 			if (set != null) {
 				while (set.next()) {
 
-					Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(set.getLong("guildId"));
+					Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(set.getLong("guildId"));
 
 					if (guild != null) {
 
@@ -81,7 +81,7 @@ public class SystemNotificationChannelHolder {
 			e.printStackTrace();
 		}
 
-		List<Guild> listedguilds = Klassenserver7bbot.INSTANCE.shardMan.getGuilds();
+		List<Guild> listedguilds = Klassenserver7bbot.INSTANCE.getShardManager().getGuilds();
 		KeySetView<Guild, TextChannel> alreadylisted = systemchannellist.keySet();
 
 		listedguilds.forEach(guild -> {
@@ -145,7 +145,7 @@ public class SystemNotificationChannelHolder {
 	@Nullable
 	public TextChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
-		Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildId);
+		Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildId);
 
 		return systemchannellist.get(guild);
 	}

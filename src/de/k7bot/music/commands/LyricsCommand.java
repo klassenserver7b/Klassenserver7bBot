@@ -33,7 +33,7 @@ public class LyricsCommand implements ServerCommand {
 		
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-				MusicController controller = Klassenserver7bbot.INSTANCE.playerManager
+				MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
 						.getController(vc.getGuild().getIdLong());
 				AudioPlayer player = controller.getPlayer();
 				
