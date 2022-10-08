@@ -53,8 +53,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
-						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+						songname, songauthor, controller.getGuild().getIdLong(), datetime);
 
 				return true;
 
@@ -75,8 +75,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
-						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+						songname, songauthor, controller.getGuild().getIdLong(), datetime);
 
 				this.queuelist = this.looplist;
 				return true;
@@ -94,8 +94,8 @@ public class Queue {
 					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 				}
 
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
-						+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+						songname, songauthor, controller.getGuild().getIdLong(), datetime);
 
 				return true;
 
@@ -114,8 +114,8 @@ public class Queue {
 				songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 			}
 
-			LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES('" + songname
-					+ "', '" + songauthor + "', " + controller.getGuild().getIdLong() + ", " + datetime + ")");
+			LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+					songname, songauthor, controller.getGuild().getIdLong(), datetime);
 		}
 		return false;
 	}
@@ -129,7 +129,7 @@ public class Queue {
 			next(track);
 		}
 	}
-	
+
 	public void setplaynext(AudioTrack track) {
 		this.queuelist.add(0, track);
 		if (this.controller.getPlayer().getPlayingTrack() == null) {

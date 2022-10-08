@@ -29,11 +29,11 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	}
 
 	public void trackLoaded(AudioTrack track) {
-		
+
 		Queue queue = this.controller.getQueue();
 		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
 		long datetime = Long.parseLong(datetimestring);
-		
+
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a single track");
 		addtoqueue(queue, track);
 
@@ -44,19 +44,19 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		if (!title.containsauthor()) {
 			songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
 		}
-		
-		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
-				.setTimestamp(LocalDateTime.now()).setTitle("1 track added to queue");
+
+		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(LocalDateTime.now())
+				.setTitle("1 track added to queue");
 
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
-		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES('" + songname + "', '"
-				+ songauthor + "', " + datetime + ")");
+		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, timestamp) VALUES(?, ?, ?);", songname,
+				songauthor, datetime);
 
 	}
 
 	public void playlistLoaded(AudioPlaylist playlist) {
-		
+
 		Queue queue = this.controller.getQueue();
 
 		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a playlist");
@@ -102,15 +102,15 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 			noMatches();
 		}
 	}
-	
+
 	private void addtoqueue(Queue queue, AudioTrack track) {
-		
-		if(setasnext) {
+
+		if (setasnext) {
 			queue.setplaynext(track);
-		}else {
+		} else {
 			queue.addTracktoQueue(track);
 		}
-		
+
 	}
 
 	public void noMatches() {

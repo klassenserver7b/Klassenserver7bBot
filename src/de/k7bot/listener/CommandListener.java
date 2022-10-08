@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class CommandListener extends ListenerAdapter {
 	Logger log = LoggerFactory.getLogger(this.getClass());
-	
+
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
@@ -32,7 +32,8 @@ public class CommandListener extends ListenerAdapter {
 			switch (event.getChannelType()) {
 			case TEXT: {
 				try {
-					String prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(event.getGuild().getIdLong()).toLowerCase();
+					String prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(event.getGuild().getIdLong())
+							.toLowerCase();
 					guildMessageRecieved(event, message, prefix);
 				} catch (IllegalStateException e) {
 					log.error(e.getMessage(), e);
@@ -54,10 +55,10 @@ public class CommandListener extends ListenerAdapter {
 
 	public void privateMessageRecieved(@NotNull MessageReceivedEvent event, Message message) {
 		PrivateChannel channel = event.getChannel().asPrivateChannel();
-		
-		if(message.getContentStripped().startsWith("-help")) {
+
+		if (message.getContentStripped().startsWith("-help")) {
 			HelpCommand help = new HelpCommand();
-			
+
 			help.performCommand(channel, message);
 		}
 	}
@@ -106,8 +107,8 @@ public class CommandListener extends ListenerAdapter {
 	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
 
 		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
-			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES('" + command + "', "
-					+ guild.getIdLong() + ", " + time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")) + ")");
+			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES(?, ?, ?);", command,
+					guild.getIdLong(), time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
 		}
 
 	}

@@ -151,7 +151,7 @@ public class ChartList {
 		HashMap<String, Long> chartslist = new HashMap<>();
 
 		ResultSet set = LiteSQL
-				.onQuery("SELECT * FROM musiclogs" + guildselect + dateselect + " ORDER BY timestamp DESC");
+				.onQuery("SELECT * FROM musiclogs" + guildselect + dateselect + " ORDER BY timestamp DESC;");
 
 		if (set != null) {
 

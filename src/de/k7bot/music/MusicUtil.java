@@ -28,15 +28,15 @@ public class MusicUtil {
 	 */
 	public static void updateChannel(TextChannel channel) {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = " + channel.getGuild().getIdLong()+";");
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", channel.getGuild().getIdLong());
 
 		try {
 			if (set.next()) {
-				LiteSQL.onUpdate("UPDATE musicutil SET channelId = " + channel.getIdLong() + " WHERE guildId = "
-						+ channel.getGuild().getIdLong());
+				LiteSQL.onUpdate("UPDATE musicutil SET channelId = ? WHERE guildId = ?;", channel.getIdLong(),
+						channel.getGuild().getIdLong());
 			} else {
-				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(" + channel.getGuild().getIdLong()
-						+ "," + channel.getIdLong() + ", 10);");
+				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(?, ?, ?);",
+						channel.getGuild().getIdLong(), channel.getIdLong(), 10);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -49,7 +49,7 @@ public class MusicUtil {
 	 * @param builder
 	 */
 	public static void sendEmbed(long guildid, EmbedBuilder builder) {
-		ResultSet set = LiteSQL.onQuery("SELECT channelId FROM musicutil WHERE guildId = " + guildid+";");
+		ResultSet set = LiteSQL.onQuery("SELECT channelId FROM musicutil WHERE guildId = ?", guildid);
 
 		try {
 			if (set.next()) {
@@ -94,20 +94,20 @@ public class MusicUtil {
 
 	public static int isConnectedtoChannel(AudioChannel ac) {
 		AudioManager audioman = ac.getGuild().getAudioManager();
-		
-		if(audioman.getConnectedChannel() == null) {
+
+		if (audioman.getConnectedChannel() == null) {
 			return 2;
 		}
-		
-		if((ac.getIdLong() == audioman.getConnectedChannel().getIdLong())) {
+
+		if ((ac.getIdLong() == audioman.getConnectedChannel().getIdLong())) {
 			return 1;
-		}else {
+		} else {
 			return 0;
 		}
 	}
-	
+
 	public static boolean checkConditions(TextChannel channel, Member m) {
-		
+
 		if (!MusicUtil.membHasVcConnection(m)) {
 			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
 					TimeUnit.SECONDS);
@@ -128,7 +128,7 @@ public class MusicUtil {
 			return false;
 		}
 		}
-		
+
 		return true;
 	}
 }

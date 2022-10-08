@@ -64,7 +64,7 @@ public class TrackScheduler extends AudioEventAdapter {
 							.openStream();
 					builder.setImage("attachment://thumbnail.png");
 					ResultSet set = LiteSQL
-							.onQuery("SELECT * FROM musicutil WHERE guildId = " + guildid);
+							.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", guildid);
 
 					try {
 						if (set.next()) {

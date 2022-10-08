@@ -34,7 +34,7 @@ public class HA3MembersCommand implements SlashCommand {
 
 		InteractionHook hook = event.deferReply(true).complete();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users");
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users;");
 
 		TableMessage mess = new TableMessage();
 		mess.addHeadline("Name", "DC Name", "InGame Name");
@@ -54,7 +54,7 @@ public class HA3MembersCommand implements SlashCommand {
 
 	private boolean isHA3Member(User u) {
 
-		ResultSet set = LiteSQL.onQuery("SELECT dcId FROM ha3users");
+		ResultSet set = LiteSQL.onQuery("SELECT dcId FROM ha3users;");
 
 		try {
 			while (set.next()) {

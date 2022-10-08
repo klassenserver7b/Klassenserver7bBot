@@ -55,9 +55,8 @@ public class SystemNotificationChannelHolder {
 								this.systemchannellist.put(guild, channel);
 							} else {
 								this.systemchannellist.put(guild, guild.getSystemChannel());
-								LiteSQL.onUpdate(
-										"UPDATE botutil SET syschannelId=" + guild.getSystemChannel().getIdLong()
-												+ " WHERE guildId=" + set.getLong("guildId")+";");
+								LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;",
+										guild.getSystemChannel().getIdLong(), set.getLong("guildId"));
 							}
 
 						}
@@ -68,11 +67,11 @@ public class SystemNotificationChannelHolder {
 			this.systemchannellist.keySet().forEach(key -> {
 
 				if (dblist.contains(key)) {
-					LiteSQL.onUpdate("UPDATE botutil SET syschannelId=" + this.systemchannellist.get(key).getIdLong()
-							+ " WHERE guildId=" + key.getIdLong()+";");
+					LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?",
+							this.systemchannellist.get(key).getIdLong(), key.getIdLong());
 				} else {
-					LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + key.getIdLong() + ", "
-							+ this.systemchannellist.get(key).getIdLong() + ");");
+					LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);", key.getIdLong(),
+							this.systemchannellist.get(key).getIdLong());
 				}
 
 			});
@@ -103,22 +102,22 @@ public class SystemNotificationChannelHolder {
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
 	 */
 	public void insertChannel(TextChannel channel) {
-		
+
 		checkSysChannelList();
 		Guild guild = channel.getGuild();
 
 		if (systemchannellist.containsKey(guild)) {
 
 			systemchannellist.replace(guild, channel);
-			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = " + channel.getIdLong() + " WHERE guildId = "
-					+ guild.getIdLong()+";");
+			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;", channel.getIdLong(),
+					guild.getIdLong());
 
 		} else {
 
 			systemchannellist.put(guild, channel);
-			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(" + guild.getIdLong() + ", "
-					+ channel.getIdLong() + ");");
-			
+			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);", guild.getIdLong(),
+					channel.getIdLong());
+
 		}
 
 	}

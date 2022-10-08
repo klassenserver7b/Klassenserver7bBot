@@ -28,7 +28,7 @@ public class KickCommand implements ServerCommand {
 			for (int i = 2; i < args.length; i++) {
 				grund += args[i] + " ";
 			}
-			
+
 			grund = grund.trim();
 
 			channel.sendTyping().queue();
@@ -92,10 +92,9 @@ public class KickCommand implements ServerCommand {
 
 			String action = "kick";
 			LiteSQL.onUpdate(
-					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
-							+ channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
-							+ ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action
-							+ "', '" + grund + "', '" + OffsetDateTime.now() + "')");
+					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
+					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}

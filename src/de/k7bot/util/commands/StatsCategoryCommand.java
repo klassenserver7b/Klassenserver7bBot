@@ -24,8 +24,8 @@ public class StatsCategoryCommand implements ServerCommand {
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
 			Guild guild = channel.getGuild();
-			ResultSet set = LiteSQL
-					.onQuery("SELECT * FROM statschannels WHERE guildId = " + channel.getGuild().getIdLong());
+			ResultSet set = LiteSQL.onQuery("SELECT * FROM statschannels WHERE guildId = ?;",
+					channel.getGuild().getIdLong());
 
 			try {
 				if (!set.next()) {
@@ -33,8 +33,8 @@ public class StatsCategoryCommand implements ServerCommand {
 					Category cat = guild.createCategory("botstatus").complete();
 					cat.getManager().setPosition(0);
 					long catid = cat.getIdLong();
-					LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(" + guild.getIdLong() + ", "
-							+ catid + ")");
+					LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(?, ?);", guild.getIdLong(),
+							catid);
 
 					fillCategory(cat, Klassenserver7bbot.INSTANCE.isDevMode());
 
@@ -86,8 +86,8 @@ public class StatsCategoryCommand implements ServerCommand {
 	public static void onStartup(boolean devmode) {
 		Klassenserver7bbot.INSTANCE.setEventBlocking(true);
 		Klassenserver7bbot.INSTANCE.getShardManager().getGuilds().forEach(guild -> {
-			ResultSet set = LiteSQL
-					.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
+			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
+					guild.getIdLong());
 
 			try {
 				if (set.next()) {
@@ -119,8 +119,8 @@ public class StatsCategoryCommand implements ServerCommand {
 
 	public static void onShutdown(boolean devmode) {
 		Klassenserver7bbot.INSTANCE.getShardManager().getGuilds().forEach(guild -> {
-			ResultSet set = LiteSQL
-					.onQuery("SELECT categoryId FROM statschannels WHERE guildId = " + guild.getIdLong());
+			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
+					guild.getIdLong());
 			try {
 				if (set.next()) {
 					long catid = set.getLong("categoryId");

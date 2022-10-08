@@ -27,7 +27,7 @@ public class Skyblocknews {
 			List<TextChannel> chans = new ArrayList<>();
 
 			ResultSet set = LiteSQL.onQuery(
-					"SELECT hypnewstime.datum, hypixelnewschannels.channelId, hypixelnewschannels.guildId FROM hypnewstime, hypixelnewschannels");
+					"SELECT hypnewstime.datum, hypixelnewschannels.channelId, hypixelnewschannels.guildId FROM hypnewstime, hypixelnewschannels;");
 
 			try {
 				while (set.next()) {
@@ -53,7 +53,7 @@ public class Skyblocknews {
 							arr.forEach(json -> {
 								if (json.getAsJsonObject().get("text").getAsString().equalsIgnoreCase(str)) {
 									chan.sendMessage(json.getAsJsonObject().get("link").getAsString()).queue();
-									LiteSQL.onUpdate("INSERT INTO hypnewstime(datum) VALUES('" + str + "')");
+									LiteSQL.onUpdate("INSERT INTO hypnewstime(datum) VALUES(?);", str);
 								}
 							});
 

@@ -83,10 +83,9 @@ public class StopTimeoutCommand implements ServerCommand {
 
 			String action = "stoptimeout";
 			LiteSQL.onUpdate(
-					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
-							+ channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
-							+ ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action
-							+ "', 'null', '" + OffsetDateTime.now() + "')");
+					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
+					requester.getEffectiveName(), action, "null", OffsetDateTime.now());
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}

@@ -32,9 +32,9 @@ public class ModLogsCommand implements ServerCommand {
 
 				long guildid = channel.getGuild().getIdLong();
 				long reqid = memb.get(0).getIdLong();
-				ResultSet set = LiteSQL
-						.onQuery("SELECT memberName, action, reason, date FROM modlogs  WHERE guildId = " + guildid
-								+ " AND requesterId = " + reqid);
+				ResultSet set = LiteSQL.onQuery(
+						"SELECT memberName, action, reason, date FROM modlogs  WHERE guildId = ? AND requesterId = ?",
+						guildid, reqid);
 
 				try {
 					ArrayList<String> membName = new ArrayList<>();
