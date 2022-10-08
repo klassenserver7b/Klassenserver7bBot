@@ -20,7 +20,7 @@ public class ShutdownCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Fährt den Bot herunter.\n - kann nur vom Bot Owner ausgeührt werden!";
+		String help = "FÃ¤hrt den Bot herunter.\n - kann nur vom Bot Owner ausgefÃ¼hrt werden!";
 		return help;
 	}
 

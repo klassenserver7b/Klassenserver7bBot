@@ -81,7 +81,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("whitelistadd", "Fragt die Hinzufügung zur Whitelist an.")
+		return Commands.slash("whitelistadd", "Fragt die HinzufÃ¼gung zur Whitelist an.")
 				.addOption(OptionType.STRING, "ingamename", "Dein Spielername in Minecraft", true)
 				.addOption(OptionType.STRING, "realname",
 						"Der Name mit dem du im Talk etc. angesprochen werden willst.", true);

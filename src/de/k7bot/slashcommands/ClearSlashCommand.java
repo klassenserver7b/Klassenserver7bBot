@@ -32,7 +32,7 @@ public class ClearSlashCommand implements SlashCommand {
 			amount = (int) amountOption.getAsLong();
 
 			if (amount > 200) {
-				hook.sendMessage("Aufgrund von Zugriffslimitierungen, kann ich nicht mehr als 200 Nachrichten löschen!")
+				hook.sendMessage("Aufgrund von Zugriffslimitierungen, kann ich nicht mehr als 200 Nachrichten lÃ¶schen!")
 						.queue();
 			} else {
 
@@ -61,7 +61,7 @@ public class ClearSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("clear", "Löscht die Ausgewühlte Anzahl an Nachrichten.").addOptions(
-				new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelöscht werden?", true));
+		return Commands.slash("clear", "LÃ¶scht die ausgewÃ¤hlte Anzahl an Nachrichten.").addOptions(
+				new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelÃ¶scht werden?", true));
 	}
 }

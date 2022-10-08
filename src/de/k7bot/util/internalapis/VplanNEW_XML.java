@@ -82,7 +82,6 @@ public class VplanNEW_XML {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-
 				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
 						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
@@ -119,7 +118,7 @@ public class VplanNEW_XML {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan f�r "
+			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
@@ -150,7 +149,7 @@ public class VplanNEW_XML {
 			}
 
 			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**�nderungen**\n" + tablemess.build());
+			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
 
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);

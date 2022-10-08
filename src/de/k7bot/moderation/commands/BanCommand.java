@@ -49,7 +49,7 @@ public class BanCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
+		return "Bannt den ausgewÃ¤hlten Nutzer vom Server und Ã¼bermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgefÃ¼hrt werden!\n - z.B. [prefix]ban [@USER] [reason]";
 	}
 
 	@Override

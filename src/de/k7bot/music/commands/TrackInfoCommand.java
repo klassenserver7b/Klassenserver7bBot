@@ -40,7 +40,7 @@ public class TrackInfoCommand implements ServerCommand {
 			AudioTrackInfo info = track.getInfo();
 			builder.setTimestamp(OffsetDateTime.now());
 			builder.setFooter("Requested by @" + m.getEffectiveName());
-			builder.setTitle("Es läuft: " + info.title);
+			builder.setTitle("Es lÃ¤uft: " + info.title);
 			builder.addField("URL: ", info.uri, false);
 			builder.addField("Autor: ", info.author, false);
 			long sec = track.getPosition() / 1000L;
@@ -53,7 +53,7 @@ public class TrackInfoCommand implements ServerCommand {
 			long stunden = minuten / 60L;
 			minuten %= 60L;
 			sekunden %= 60L;
-			builder.addField("Länge: ",
+			builder.addField("LÃ¤nge: ",
 					info.isStream ? "LiveStream"
 							: (String.valueOf((h > 0L) ? (String.valueOf(h) + "h ") : "")
 									+ ((min > 0L) ? (String.valueOf(min) + "min ") : "") + sec + "s" + " / "

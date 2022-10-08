@@ -23,7 +23,7 @@ public class SkipCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Überspringt den aktuellen Song.";
+		String help = "Ãœberspringt den aktuellen Song.";
 		return help;
 	}
 

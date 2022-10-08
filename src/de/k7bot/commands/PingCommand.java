@@ -17,7 +17,7 @@ public class PingCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Gibt den aktuellen Ping des Bots zurück.";
+		String help = "Gibt den aktuellen Ping des Bots zurÃ¼ck.";
 		return help;
 	}
 

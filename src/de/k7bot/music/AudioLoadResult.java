@@ -65,7 +65,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with ytsearch:");
 
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugef�gt
+				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;
@@ -75,7 +75,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with scsearch:");
 
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-				// Queue hinzugef�gt
+				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
 				addtoqueue(queue, track);
 				return;

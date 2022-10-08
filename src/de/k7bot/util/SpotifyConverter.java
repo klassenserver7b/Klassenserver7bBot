@@ -111,7 +111,7 @@ public class SpotifyConverter {
 
 		List<String> searchquery = new ArrayList<>();
 
-		// Dreigeteiltes Abrufen der SongData für entweder Anzahl <=100 (verwendet nur
+		// Dreigeteiltes Abrufen der SongData fÃ¼r entweder Anzahl <=100 (verwendet nur
 		// erste Query); Anzahl % 100 == 0 (verwendet nur die ersten 2 Querys) und
 		// Anzahl > 100 && !(Anzahl%100==0) (Verwendet alle 3 querys)
 		try {
@@ -155,7 +155,7 @@ public class SpotifyConverter {
 			}
 
 			/*
-			 * Wenn for ausgeführt wurde d.h. mehr als 100 playlist items und nicht alles
+			 * Wenn for ausgefÃ¼hrt wurde d.h. mehr als 100 playlist items und nicht alles
 			 * mit for abgedeckt d.h. z.B. 410 Items -> nach for erst 400 abgerufen -> Abruf
 			 * der letzten 10 Items
 			 */

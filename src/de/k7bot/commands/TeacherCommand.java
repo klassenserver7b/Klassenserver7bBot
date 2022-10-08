@@ -29,7 +29,7 @@ public class TeacherCommand implements ServerCommand {
 			builder.setFooter("requested by @" + m.getEffectiveName());
 			builder.setTimestamp(OffsetDateTime.now());
 
-			strbuild.append("**Kürzel**: " + args[1]);
+			strbuild.append("**KÃ¼rzel**: " + args[1]);
 			strbuild.append("\n");
 			strbuild.append("**Name: **");
 
@@ -58,14 +58,14 @@ public class TeacherCommand implements ServerCommand {
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(channel, "teacher [Lehrerkürzel]", m);
+			SyntaxError.oncmdSyntaxError(channel, "teacher [LehrerkÃ¼rzel]", m);
 
 		}
 	}
 
 	@Override
 	public String gethelp() {
-		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählen Lehrer an. \n - z.B. [prefix]teacher [Leherkürzel]";
+		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewÃ¤hlten Lehrer an. \n - z.B. [prefix]teacher [LeherkÃ¼rzel]";
 
 		return help;
 	}

@@ -41,7 +41,7 @@ public class TrackScheduler extends AudioEventAdapter {
 			builder.setColor(Color.decode("#00e640"));
 			AudioTrackInfo info = track.getInfo();
 			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(" Jetzt l‰uft: " + info.title);
+			builder.setDescription(" Jetzt l√§uft: " + info.title);
 
 			long sekunden = info.length / 1000L;
 			long minuten = sekunden / 60L;

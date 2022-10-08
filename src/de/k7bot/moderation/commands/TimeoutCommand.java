@@ -116,7 +116,7 @@ public class TimeoutCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
+		String help = "timeoutet den angegeben Nutzer fÃ¼r den AusgewÃ¤hlten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgefÃ¼hrt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
 
 		return help;
 	}

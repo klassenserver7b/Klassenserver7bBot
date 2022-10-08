@@ -63,7 +63,7 @@ public class ClearCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
+		return "LÃ¶scht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
 	}
 
 	@Override

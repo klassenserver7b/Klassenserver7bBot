@@ -21,7 +21,7 @@ public class VolumeCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
+		String help = "Legt das Volume fÃ¼r den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
 		return help;
 	}
 
@@ -55,17 +55,17 @@ public class VolumeCommand implements ServerCommand {
 						builder.setFooter("Requested by @" + m.getEffectiveName());
 						builder.setTimestamp(OffsetDateTime.now());
 						builder.setTitle("Volume was set to " + volume);
-						channel.sendMessageEmbeds(builder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0])
-								.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+						channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L,
+								TimeUnit.SECONDS);
 					} else {
 
 						channel.sendMessage(
-								"Brudi was willst denn du? Wenn du taub werden willst oder übersteuerte Musik hören willst dann mach es aber lass mich in Ruhe :rage:")
+								"Brudi was willst denn du? Wenn du taub werden willst oder Ã¼bersteuerte Musik hÃ¶ren willst dann mach es aber lass mich in Ruhe :rage:")
 								.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 					}
 				} else {
 					channel.sendMessage(
-							"Brudi was willst den du? Wenn du nix hören willst dann lefte doch den channel oder gebe `"
+							"Brudi was willst den du? Wenn du nix hÃ¶ren willst dann lefte doch den channel oder gebe `"
 									+ Klassenserver7bbot.INSTANCE.getPrefixList().get(channel.getGuild().getIdLong())
 									+ "stop ` ein :rage:")
 							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
