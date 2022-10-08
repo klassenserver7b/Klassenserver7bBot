@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class VolumeCommand implements ServerCommand {
-	
+
 	@Override
 	public String gethelp() {
 		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
@@ -30,13 +30,13 @@ public class VolumeCommand implements ServerCommand {
 		String category = "Musik";
 		return category;
 	}
-	
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
-		
+
 		String[] args = message.getContentDisplay().split(" ");
 		try {
 			MusicUtil.updateChannel(channel);
@@ -49,8 +49,8 @@ public class VolumeCommand implements ServerCommand {
 								.getController(guild.getIdLong());
 						AudioPlayer player = controller.getPlayer();
 						player.setVolume(volume);
-						LiteSQL.onUpdate("UPDATE musicutil SET volume = " + volume
-								+ " WHERE guildId = " + channel.getGuild().getIdLong());
+						LiteSQL.onUpdate("UPDATE musicutil SET volume = ? WHERE guildId = ?;", volume,
+								channel.getGuild().getIdLong());
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setFooter("Requested by @" + m.getEffectiveName());
 						builder.setTimestamp(OffsetDateTime.now());

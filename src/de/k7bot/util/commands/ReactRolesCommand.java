@@ -40,17 +40,17 @@ public class ReactRolesCommand implements ServerCommand {
 							tc.addReactionById(MessageId, emote).queue();
 
 							LiteSQL.onUpdate(
-									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
-											+ ", '" + emote.getIdLong() + "', " + role.getIdLong() + ")");
+									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES(?, ?, ?, ?, ?);",
+									channel.getGuild().getIdLong(), tc.getIdLong(), MessageId, emote.getIdLong(),
+									role.getIdLong());
 						} else {
 							String utfemote = args[3];
 							tc.addReactionById(MessageId, Emoji.fromUnicode(utfemote)).queue();
 
 							LiteSQL.onUpdate(
-									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-											+ channel.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId
-											+ ", '" + utfemote + "', " + role.getIdLong() + ")");
+									"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES(?, ?, ?, ?, ?);",
+									channel.getGuild().getIdLong(), tc.getIdLong(), MessageId, utfemote,
+									role.getIdLong());
 						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();

@@ -28,7 +28,6 @@ public class PlayCommand implements ServerCommand {
 	public static boolean party = false;
 
 	public static final SpotifyConverter conv = new SpotifyConverter();
-	
 
 	@Override
 	public String gethelp() {
@@ -48,7 +47,8 @@ public class PlayCommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
+				.getController(vc.getGuild().getIdLong());
 		AudioManager manager = vc.getGuild().getAudioManager();
 		AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.getAudioPlayerManager();
 		AudioPlayer player = controller.getPlayer();
@@ -56,8 +56,10 @@ public class PlayCommand implements ServerCommand {
 
 		if (player.getPlayingTrack() != null && vc.getIdLong() != manager.getConnectedChannel().getIdLong()) {
 
-			channel.sendMessage("The Bot is already playng a song.\nPlease join the channel the bot is playing in. -> Channel: "+manager.getConnectedChannel().getName() +"\n"+ m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			channel.sendMessage(
+					"The Bot is already playng a song.\nPlease join the channel the bot is playing in. -> Channel: "
+							+ manager.getConnectedChannel().getName() + "\n" + m.getAsMention())
+					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 			return;
 
 		}
@@ -72,8 +74,8 @@ public class PlayCommand implements ServerCommand {
 
 			StringBuilder strBuilder = new StringBuilder();
 
-			ResultSet set = LiteSQL
-					.onQuery("SELECT volume FROM musicutil WHERE guildId = " + channel.getGuild().getIdLong());
+			ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;",
+					channel.getGuild().getIdLong());
 
 			try {
 				if (set.next()) {
@@ -81,13 +83,13 @@ public class PlayCommand implements ServerCommand {
 					if (volume != 0) {
 						player.setVolume(volume);
 					} else {
-						LiteSQL.onUpdate(
-								"UPDATE musicutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
+						LiteSQL.onUpdate("UPDATE musicutil SET volume = 10 WHERE guildId = ?;",
+								channel.getGuild().getIdLong());
 						player.setVolume(10);
 					}
 				} else {
-					LiteSQL.onUpdate(
-							"UPDATE musicutil SET volume = 10 WHERE guildId = " + channel.getGuild().getIdLong());
+					LiteSQL.onUpdate("UPDATE musicutil SET volume = 10 WHERE guildId = ?;",
+							channel.getGuild().getIdLong());
 					player.setVolume(10);
 				}
 			} catch (SQLException e) {

@@ -35,7 +35,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 
 		InteractionHook hook = event.deferReply(true).complete();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users WHERE dcId=" + dcid);
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM ha3users WHERE dcId = ?;", dcid);
 
 		try {
 			if (set.next()) {
@@ -50,8 +50,8 @@ public class WhitelistSlashCommand implements SlashCommand {
 			log.error(e.getMessage(), e);
 		}
 
-		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES('" + gamename + "', '"
-				+ realname + "', '" + dcname + "', " + dcid + ", 3);");
+		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES(?, ?, ?, ?, ?);",
+				gamename, realname, dcname, dcid, 3);
 
 		Guild g = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(701341683325075477L);
 

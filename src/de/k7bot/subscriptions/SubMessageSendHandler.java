@@ -65,7 +65,7 @@ public class SubMessageSendHandler {
 	}
 
 	private void sendPrivateMessage(Subscription s, MessageCreateData data) {
-		
+
 		Long chanid = s.getTargetDiscordId();
 
 		PrivateChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getPrivateChannelById(chanid);
@@ -82,7 +82,7 @@ public class SubMessageSendHandler {
 	}
 
 	private void sendNewsMessage(Subscription s, MessageCreateData data) {
-		
+
 		Long chanid = s.getTargetDiscordId();
 
 		NewsChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getNewsChannelById(chanid);
@@ -99,7 +99,11 @@ public class SubMessageSendHandler {
 	}
 
 	private void sendCanaryMessage(Subscription s, MessageCreateData data) {
-		
+
+		if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+			return;
+		}
+
 		Long chanid = s.getTargetDiscordId();
 
 		TextChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getTextChannelById(chanid);

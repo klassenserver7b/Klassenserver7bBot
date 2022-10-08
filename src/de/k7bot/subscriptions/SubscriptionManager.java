@@ -89,8 +89,8 @@ public class SubscriptionManager {
 
 			sublist.add(sub);
 
-			LiteSQL.onUpdate("INSERT INTO subscriptions(type,target,targetDcId,subscriptionId) VALUES(" + sub.getDeliveryType().getId()
-					+ ", " + sub.getTarget().getId() + ", " + sub.getTargetDiscordId() + ", " + subid + ");");
+			LiteSQL.onUpdate("INSERT INTO subscriptions(type, target, targetDcId, subscriptionId) VALUES(?, ?, ?, ?);",
+					sub.getDeliveryType().getId(), sub.getTarget().getId(), sub.getTargetDiscordId(), subid);
 
 			return true;
 
@@ -104,7 +104,7 @@ public class SubscriptionManager {
 
 	public boolean removeSubscription(Long subscriptionid) {
 
-		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = " + subscriptionid);
+		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = ?", subscriptionid);
 		refreshList();
 
 		return false;
@@ -112,7 +112,7 @@ public class SubscriptionManager {
 
 	public void removeSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
 		Long subid = calculateSubId(type, target, deliverytargetid);
-		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = " + subid);
+		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = ?", subid);
 		refreshList();
 	}
 
@@ -122,7 +122,7 @@ public class SubscriptionManager {
 	 */
 	private void refreshList() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions");
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;");
 
 		try {
 			if (set != null) {

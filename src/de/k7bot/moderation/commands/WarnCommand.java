@@ -27,8 +27,8 @@ public class WarnCommand implements ServerCommand {
 			if (!ment.isEmpty()) {
 				String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
 				String grund = "";
-				
-				for(int i = 1; i<args.length; i++) {
+
+				for (int i = 1; i < args.length; i++) {
 					grund = grund + args[i];
 				}
 
@@ -91,10 +91,9 @@ public class WarnCommand implements ServerCommand {
 			String action = "warn";
 
 			LiteSQL.onUpdate(
-					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
-							+ channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
-							+ ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action
-							+ "', '" + grund + "', '" + OffsetDateTime.now() + "')");
+					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
+					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}

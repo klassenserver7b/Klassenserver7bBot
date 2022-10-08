@@ -19,14 +19,14 @@ public class PrefixCommand implements ServerCommand {
 
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 			String[] args = message.getContentDisplay().split(" ");
-			
+
 			if (args.length > 1) {
-				
+
 				Klassenserver7bbot.INSTANCE.checkpreflist();
-				
+
 				Klassenserver7bbot.INSTANCE.getPrefixList().put(channel.getGuild().getIdLong(), args[1]);
-				LiteSQL.onUpdate("UPDATE botutil SET prefix = '" + args[1]
-						+ "' WHERE guildId = " + channel.getGuild().getIdLong());
+				LiteSQL.onUpdate("UPDATE botutil SET prefix = ? WHERE guildId = ?;", args[1],
+						channel.getGuild().getIdLong());
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setFooter("Requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());

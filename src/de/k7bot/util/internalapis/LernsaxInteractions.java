@@ -33,7 +33,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author Felix
  *
  */
-public class LernsaxInteractions{
+public class LernsaxInteractions {
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -71,7 +71,7 @@ public class LernsaxInteractions{
 
 		List<Message> messages;
 
-		ResultSet set = LiteSQL.onQuery("Select LernplanId from lernsaxinteractions");
+		ResultSet set = LiteSQL.onQuery("Select LernplanId from lernsaxinteractions;");
 
 		String currentMessageID = null;
 
@@ -85,16 +85,16 @@ public class LernsaxInteractions{
 
 		if (currentMessageID == null) {
 			messages = client.getMessagesScope().getMessages();
-			LiteSQL.onUpdate("INSERT INTO lernsaxinteractions(LernplanId) VALUES('"
-					+ messages.get(messages.size() - 1).getId() + "');");
+			LiteSQL.onUpdate("INSERT INTO lernsaxinteractions(LernplanId) VALUES(?);",
+					messages.get(messages.size() - 1).getId());
 		} else {
 			messages = client.getMessagesScope().getMessages(Integer.parseInt(currentMessageID));
 			if (messages.size() > 0)
 				messages = messages.stream().skip(1).toList();
 
 			if (messages.size() > 0) {
-				LiteSQL.onUpdate("UPDATE lernsaxinteractions SET LernplanId='"
-						+ messages.get(messages.size() - 1).getId() + "';");
+				LiteSQL.onUpdate("UPDATE lernsaxinteractions SET LernplanId=?;",
+						messages.get(messages.size() - 1).getId());
 			}
 		}
 

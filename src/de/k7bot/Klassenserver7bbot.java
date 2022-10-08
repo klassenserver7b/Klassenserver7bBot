@@ -172,15 +172,16 @@ public class Klassenserver7bbot {
 			this.schoolID = Integer.valueOf(prop.getProperty("schoolID"));
 			this.vplanenabled = true;
 		}
-		
+
 		this.lernsax = new LernsaxInteractions();
 		String lsaxemail;
 		String lsaxtoken;
 		String lsaxappid;
-		
-		if((lsaxemail = prop.getProperty("lsaxemail"))!=null && (lsaxtoken = prop.getProperty("lsaxtoken"))!=null && (lsaxappid = prop.getProperty("lsaxappid"))!=null){
-		
-		lernsax.connect(lsaxemail, lsaxtoken, lsaxappid);
+
+		if ((lsaxemail = prop.getProperty("lsaxemail")) != null && (lsaxtoken = prop.getProperty("lsaxtoken")) != null
+				&& (lsaxappid = prop.getProperty("lsaxappid")) != null) {
+
+			lernsax.connect(lsaxemail, lsaxtoken, lsaxappid);
 		}
 
 		String shards;
@@ -453,7 +454,7 @@ public class Klassenserver7bbot {
 					this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
 
 					if (set.getString("prefix") == null) {
-						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
+						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId= ? ",set.getLong("guildId"));
 					}
 
 				}
@@ -470,7 +471,7 @@ public class Klassenserver7bbot {
 
 			if (!this.prefixl.containsKey(id)) {
 				this.prefixl.put(id, "-");
-				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
+				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(?,?)", id, "-");
 			}
 
 		});

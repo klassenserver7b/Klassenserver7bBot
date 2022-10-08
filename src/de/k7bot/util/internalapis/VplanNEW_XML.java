@@ -82,8 +82,12 @@ public class VplanNEW_XML {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+
+			if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+			} else {
+				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+			}
 		}
 	}
 
@@ -164,7 +168,7 @@ public class VplanNEW_XML {
 
 			embbuild.setColor(Color.decode("#038aff"));
 
-			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = " + classPlan.getTextContent().hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", classPlan.getTextContent().hashCode());
 
 			MessageCreateBuilder builder = new MessageCreateBuilder();
 			builder.setEmbeds(embbuild.build());
@@ -270,7 +274,7 @@ public class VplanNEW_XML {
 			if (classPlan != null) {
 				int planhash = classPlan.getTextContent().hashCode();
 
-				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext");
+				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;");
 				try {
 					if (set.next()) {
 
@@ -285,7 +289,7 @@ public class VplanNEW_XML {
 
 						if (dbhash != planhash || synced) {
 
-							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '" + onlinedate + "'");
+							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", onlinedate);
 							return true;
 
 						} else {
@@ -294,8 +298,8 @@ public class VplanNEW_XML {
 						}
 					} else {
 
-						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES('" + onlinedate
-								+ "', " + planhash + ")");
+						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", onlinedate,
+								planhash);
 					}
 
 				} catch (SQLException e) {
@@ -357,7 +361,7 @@ public class VplanNEW_XML {
 			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
 
 			try {
-				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext");
+				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;");
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");
@@ -367,12 +371,12 @@ public class VplanNEW_XML {
 
 					LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext");
+					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;");
 
 					if (old.next()) {
-						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = '" + old.getString("zieldatum")
-								+ "', classeintraege = '" + old.getInt("classeintraege") + "'");
-						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = ''");
+						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
+								old.getString("zieldatum"), old.getInt("classeintraege"));
+						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
 					}
 					return true;
 				} else {

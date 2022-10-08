@@ -22,9 +22,9 @@ public class ReactionListener extends ListenerAdapter {
 			long messageid = event.getMessageIdLong();
 
 			EmojiUnion emote = event.getEmoji();
-			ResultSet set = LiteSQL
-					.onQuery("SELECT roleId FROM reactroles WHERE guildId = " + guildid + " AND channelId = "
-							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote.getName() + "'");
+			ResultSet set = LiteSQL.onQuery(
+					"SELECT roleId FROM reactroles WHERE guildId = ? AND channelId = ? AND messageId = ? AND emote = ?;",
+					guildid, channelid, messageid, emote.getName());
 			try {
 				if (set.next()) {
 					long rollenid = set.getLong("roleId");
@@ -48,9 +48,9 @@ public class ReactionListener extends ListenerAdapter {
 
 			EmojiUnion emote = event.getEmoji();
 
-			ResultSet set = LiteSQL
-					.onQuery("SELECT roleId FROM reactroles WHERE guildId = " + guildid + " AND channelId = "
-							+ channelid + " AND messageId = " + messageid + " AND emote = '" + emote.getName() + "'");
+			ResultSet set = LiteSQL.onQuery(
+					"SELECT roleId FROM reactroles WHERE guildId = ? AND channelId = ? AND messageId = ? AND emote = ?;",
+					guildid, channelid, messageid, emote.getName());
 			try {
 				if (set.next()) {
 					long rollenid = set.getLong("roleId");

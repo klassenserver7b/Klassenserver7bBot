@@ -20,7 +20,7 @@ public class HypixelNewsChannelCommand implements HypixelCommand {
 			TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
 			long chanId = chan.getIdLong();
 			Long guildId = chan.getGuild().getIdLong();
-			ResultSet set = LiteSQL.onQuery("select guildId from hypixelnewschannels");
+			ResultSet set = LiteSQL.onQuery("select guildId from hypixelnewschannels;");
 			List<Long> guilds = new ArrayList<>();
 
 			try {
@@ -29,12 +29,12 @@ public class HypixelNewsChannelCommand implements HypixelCommand {
 				}
 
 				if (guilds.contains(guildId)) {
-					LiteSQL.onUpdate(
-							"UPDATE hypixelnewschannels SET channelId = " + chanId + " WHERE guildId = " + guildId);
+					LiteSQL.onUpdate("UPDATE hypixelnewschannels SET channelId = ? WHERE guildId = ?;", chanId,
+							guildId);
 					channel.sendMessage("Newschannel was sucsessfully updated to " + chan.getAsMention()).queue();
 				} else {
-					LiteSQL.onUpdate("INSERT INTO hypixelnewschannels(guildId, channelId) VALUES(" + guildId + ", "
-							+ chanId + ")");
+					LiteSQL.onUpdate("INSERT INTO hypixelnewschannels(guildId, channelId) VALUES(?, ?);", guildId,
+							chanId);
 					channel.sendMessage("Newschannel was sucsessful set to " + chan.getAsMention()).queue();
 				}
 

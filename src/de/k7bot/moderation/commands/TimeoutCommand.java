@@ -100,10 +100,9 @@ public class TimeoutCommand implements ServerCommand {
 
 			String action = "timeout";
 			LiteSQL.onUpdate(
-					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES("
-							+ channel.getGuild().getIdLong() + ", " + u.getIdLong() + ", " + requester.getIdLong()
-							+ ", '" + u.getEffectiveName() + "', '" + requester.getEffectiveName() + "', '" + action
-							+ "', '" + grund + "', '" + OffsetDateTime.now() + "')");
+					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
+					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
 		} catch (HierarchyException e) {
 
 			PermissionError.onPermissionError(requester, channel);

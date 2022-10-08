@@ -45,17 +45,17 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 				tc.addReactionById(MessageId, emote).queue();
 
-				LiteSQL.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '" + emote.getId()
-						+ "', " + role.getIdLong() + ")");
+				LiteSQL.onUpdate(
+						"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES(?, ?, ?, ?, ?);",
+						tc.getGuild().getIdLong(), tc.getIdLong(), MessageId, emote.getId(), role.getIdLong());
 
 			} catch (NumberFormatException e) {
 
 				tc.addReactionById(MessageId, Emoji.fromUnicode(emoteop.getAsString())).queue();
 
-				LiteSQL.onUpdate("INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES("
-						+ tc.getGuild().getIdLong() + ", " + tc.getIdLong() + ", " + MessageId + ", '"
-						+ emoteop.getAsString() + "', " + role.getIdLong() + ")");
+				LiteSQL.onUpdate(
+						"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid) VALUES(?, ?, ?, ?, ?);",
+						tc.getGuild().getIdLong(), tc.getIdLong(), MessageId, emoteop.getAsString(), role.getIdLong());
 
 			}
 
