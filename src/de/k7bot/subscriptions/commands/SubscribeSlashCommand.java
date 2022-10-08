@@ -148,7 +148,6 @@ public class SubscribeSlashCommand implements SlashCommand {
 				.addOption(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
 				.addOptions(new OptionData(OptionType.STRING, "target",
 						"The target the subscription should check for updates").addChoices(choices));
-		;
 
 		SubcommandData privatechannelsub = new SubcommandData("privatechannel",
 				"Use this if you want to recieve your messages in a private-Channel")
