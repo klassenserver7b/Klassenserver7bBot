@@ -13,7 +13,7 @@ public class SkipForwardCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spult zur um die gew‰hlte Anzahl an Sekunden vor.\n - z.B. [prefix]forward [time in seconds]";
+		return "Spult zur um die gew√§hlte Anzahl an Sekunden vor.\n - z.B. [prefix]forward [time in seconds]";
 	}
 
 	@Override

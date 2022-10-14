@@ -51,7 +51,7 @@ public class RestartCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgefÃ¼hrt werden!";
 		return help;
 	}
 

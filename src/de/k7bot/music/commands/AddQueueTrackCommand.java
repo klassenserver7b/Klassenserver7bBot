@@ -32,7 +32,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie der aktuellen Queue hinzu.\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
+		return "LÃ¤dt den/die ausgewÃ¤hlte/-n Track / Livestream / Playlist und fÃ¼gt ihn/sie der aktuellen Queue hinzu.\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
 	}
 
 	@Override

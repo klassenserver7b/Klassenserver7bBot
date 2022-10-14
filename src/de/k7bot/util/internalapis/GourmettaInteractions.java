@@ -10,12 +10,10 @@ package de.k7bot.util.internalapis;
 public class GourmettaInteractions{
 
 	public void connect(String user, String token, String identifyer) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	public void disconnect() {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -42,6 +42,7 @@ public class SubscriptionManager {
 	 * @param data   The message which schould be send to all subscribers
 	 */
 	public void provideSubscriptionNotification(SubscriptionTarget target, MessageCreateData data) {
+		
 		sublist.forEach(s -> {
 
 			if (s.getTarget() == target) {

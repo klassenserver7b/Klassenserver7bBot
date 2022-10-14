@@ -49,7 +49,7 @@ public class KickCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Kickt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. kick @K7Bot [reason]";
+		return "Kickt den ausgewÃ¤hlten Nutzer vom Server und Ã¼bermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgefÃ¼hrt werden!\n - z.B. kick @K7Bot [reason]";
 	}
 
 	@Override

@@ -115,7 +115,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 			}
 
 			/*
-			 * Wenn for ausgeführt wurde d.h. mehr als 100 playlist items und nicht alles
+			 * Wenn for ausgefÃ¼hrt wurde d.h. mehr als 100 playlist items und nicht alles
 			 * mit for abgedeckt d.h. z.B. 410 Items -> nach for erst 400 abgerufen -> Abruf
 			 * der letzten 10 Items
 			 */

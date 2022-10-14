@@ -104,7 +104,7 @@ public class Lyricsoldcommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Siehe lyrics! - Unterstützt nur Genius als Lyrics-Provider (findet weniger als der Haupt-command), besitzt aber ein Embed-icon und bessere Lyrics-Gliederung (in z.B. Chorus, pre-Chorus, Strophe, etc.)";
+		String help = "Siehe lyrics! - UnterstÃ¼tzt nur Genius als Lyrics-Provider (findet weniger als der Haupt-command), besitzt aber ein Embed-icon und bessere Lyrics-Gliederung (in z.B. Chorus, pre-Chorus, Strophe, etc.)";
 		return help;
 	}
 

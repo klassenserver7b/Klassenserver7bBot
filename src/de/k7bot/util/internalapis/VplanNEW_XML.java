@@ -82,12 +82,8 @@ public class VplanNEW_XML {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-
-			if (Klassenserver7bbot.INSTANCE.isDevMode()) {
-			} else {
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
-						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
-			}
+			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
 	}
 
@@ -111,7 +107,7 @@ public class VplanNEW_XML {
 		}
 
 		if (sendApproved) {
-
+			
 			String info = "";
 			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
@@ -122,7 +118,7 @@ public class VplanNEW_XML {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
+			embbuild.setTitle("Es gibt einen neuen Stundenplan fÃ¼r "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
 			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
@@ -153,7 +149,7 @@ public class VplanNEW_XML {
 			}
 
 			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+			embbuild.setDescription("**Ã„nderungen**\n" + tablemess.build());
 
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);
@@ -265,6 +261,8 @@ public class VplanNEW_XML {
 	 * @since 1.14.0
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
+		
+		log.warn("PLAN DB CHECK");
 
 		Integer dbhash = null;
 
@@ -362,8 +360,8 @@ public class VplanNEW_XML {
 
 			try {
 				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;");
-				if (next.next()) {
 
+				if (next.next()) {
 					dbdate = next.getString("zieldatum");
 				}
 
@@ -379,6 +377,7 @@ public class VplanNEW_XML {
 						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
 					}
 					return true;
+
 				} else {
 					return false;
 				}

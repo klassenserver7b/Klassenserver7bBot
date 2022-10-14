@@ -101,7 +101,7 @@ public class WarnCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Verwarnt den angegebenen Nutzer und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]warn @K7Bot [reason]";
+		String help = "Verwarnt den angegebenen Nutzer und Ã¼bermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgefÃ¼hrt werden!\n - z.B. [prefix]warn @K7Bot [reason]";
 
 		return help;
 	}

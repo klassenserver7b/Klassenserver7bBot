@@ -69,10 +69,10 @@ public class ReactRolesSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("reactrole", "Erstellt eine Reactionrole mit den übermittelten Parametern")
+		return Commands.slash("reactrole", "Erstellt eine Reactionrole mit den Ã¼bermittelten Parametern")
 				.addOption(OptionType.CHANNEL, "channel", "Der Channel in dem die Message ist", true)
 				.addOption(OptionType.STRING, "messageid",
-						"Die MessageId der Message an die die Reaction angefügt werden soll", true)
+						"Die MessageId der Message an die die Reaction angefÃ¼gt werden soll", true)
 				.addOption(OptionType.STRING, "emoteid-oder-utfemote",
 						"Die EmoteId des Emotes bzw. das UTF8 Emoji auf das die Rolle registriert werden soll", true)
 				.addOption(OptionType.ROLE, "role",

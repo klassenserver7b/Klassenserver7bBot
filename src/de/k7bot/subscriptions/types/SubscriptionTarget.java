@@ -24,7 +24,7 @@ public enum SubscriptionTarget {
 	BOT_NEWS(2, false, false),
 
 	/**
-	 * The Type for {@link LernsaxInteractions} especially 'Lernpl‰ne', only when
+	 * The Type for {@link LernsaxInteractions} especially 'Lernpl√§ne', only when
 	 * Lernsax API enabled
 	 */
 	LERNPLAN(3, true, true),

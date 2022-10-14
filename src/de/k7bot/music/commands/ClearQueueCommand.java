@@ -27,7 +27,7 @@ public class ClearQueueCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Löscht die aktuelle Queuelist.";
+		String help = "LÃ¶scht die aktuelle Queuelist.";
 		return help;
 	}
 

@@ -41,7 +41,7 @@ public class StopTimeoutCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
+		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgefÃ¼hrt werden!\n - z.B. [prefix]stoptimeout @member";
 	}
 
 	@Override

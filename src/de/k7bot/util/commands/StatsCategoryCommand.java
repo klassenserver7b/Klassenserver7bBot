@@ -73,8 +73,6 @@ public class StatsCategoryCommand implements ServerCommand {
 	public static void fillCategory(Category cat, boolean devmode) {
 		if (!devmode) {
 			cat.createVoiceChannel("🟢 Bot Online").complete();
-		} else {
-			cat.createVoiceChannel("🟠 Canary online").complete();
 		}
 
 		cat.getManager()
@@ -98,12 +96,6 @@ public class StatsCategoryCommand implements ServerCommand {
 						cat.getChannels().forEach(chan -> {
 							chan.delete().complete();
 
-						});
-					} else {
-						cat.getChannels().forEach(chan -> {
-							if (chan.getName().equalsIgnoreCase("🟠  Canary online")) {
-								chan.delete().complete();
-							}
 						});
 					}
 					fillCategory(cat, devmode);
@@ -131,12 +123,6 @@ public class StatsCategoryCommand implements ServerCommand {
 							chan.delete().complete();
 						});
 						cat.createVoiceChannel("🔴 Bot offline").complete();
-					} else {
-						cat.getChannels().forEach(chan -> {
-							if (chan.getName().equalsIgnoreCase("🟠  Canary online")) {
-								chan.delete().complete();
-							}
-						});
 					}
 				}
 			} catch (SQLException e) {

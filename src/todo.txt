@@ -1,12 +1,12 @@
 Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
-Interface für alle SubscriptionAPIS -> Klassenserver7bbot fürt nur bei einem manager checkforUpdates aus -> Interface besitzt methode checkUpdates()
+Interface fÃ¼r alle SubscriptionAPIS -> Klassenserver7bbot fÃ¼rt nur bei einem manager checkforUpdates aus -> Interface besitzt methode checkUpdates()
 
-Equalizer für Music -> Mehr Profile
+Equalizer fÃ¼r Music -> Mehr Profile
 
 Mehr Interactions auf SlashCommands und Buttons umstellen
 
-bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+bot music charts fÃ¼r z.B. letzte woche/monat/jahr (vllt. spï¿½ter mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
 
 Mehrere player per guild (music)
@@ -16,8 +16,6 @@ YT-Api
 Language per Guild - German and English Version
 
 GitHub-API
-
-nen neues Game
 
 Generell:
 

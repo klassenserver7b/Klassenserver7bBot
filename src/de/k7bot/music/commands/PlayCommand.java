@@ -31,7 +31,7 @@ public class PlayCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spielt den/die ausgew‰hlte/-n Track / Livestream / Playlist.\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
+		return "Spielt den/die ausgew√§hlte/-n Track / Livestream / Playlist.\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
 	}
 
 	@Override

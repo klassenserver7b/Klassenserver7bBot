@@ -20,7 +20,7 @@ public class SeekCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Spult zur gew‰hlten Position im Song vor.\n - z.B. [prefix]seek [position in seconds]";
+		return "Spult zur gew√§hlten Position im Song vor.\n - z.B. [prefix]seek [position in seconds]";
 	}
 
 	@Override

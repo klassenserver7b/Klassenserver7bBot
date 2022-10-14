@@ -80,7 +80,7 @@ public class MemberLogsCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
+		return "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgefÃ¼hrt werden!\n - z.B. [prefix]modlogs @member";
 	}
 
 	@Override

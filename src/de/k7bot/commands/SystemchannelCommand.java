@@ -13,7 +13,7 @@ public class SystemchannelCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Ändert den Channel für Systembenachrichtigungen (z.B. Einladungslink Logs oder gelöschte Nachrichten Logs) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new syschannel]";
+		return "Ã„ndert den Channel fÃ¼r Systembenachrichtigungen (z.B. Einladungslink Logs oder gelÃ¶schte Nachrichten Logs) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server verwalten' ausgefÃ¼hrt werden!\n - z.B. [prefix]syschannel [@new syschannel]";
 	}
 
 	@Override

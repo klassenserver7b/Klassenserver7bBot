@@ -90,12 +90,12 @@ public class HelpCommand implements ServerCommand {
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
 							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+							+ "[TEXT] stellt benÃ¶tigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
 					false);
 		} else {
 			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmäßig mit `-`\r\n" + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+					"Bot-Befehle beginnen standardmaÃŸig mit `-`\r\n" + "[TEXT] stellt benÃ¶tigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
 					false);
 		}
@@ -141,7 +141,7 @@ public class HelpCommand implements ServerCommand {
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
 							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+							+ "[TEXT] stellt benÃ¶tigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
 					false);
 
@@ -149,7 +149,7 @@ public class HelpCommand implements ServerCommand {
 
 			prefix = "-";
 			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmäßig mit `-`\r\n" + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+					"Bot-Befehle beginnen standardmÃ¤ÃŸig mit `-`\r\n" + "[TEXT] stellt benÃ¶tigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
 					false);
 		}

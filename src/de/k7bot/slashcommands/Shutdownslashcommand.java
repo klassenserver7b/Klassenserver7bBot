@@ -42,7 +42,7 @@ public class Shutdownslashcommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("shutdown", "führt den Bot herunter");
+		return Commands.slash("shutdown", "fÃ¤hrt den Bot herunter");
 	}
 
 }

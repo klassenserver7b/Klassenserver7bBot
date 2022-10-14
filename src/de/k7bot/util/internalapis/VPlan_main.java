@@ -109,12 +109,12 @@ public class VPlan_main {
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
-			embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "
+			embbuild.setTitle("Es gibt einen neuen Vertretungsplan fÃ¼r "
 					+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
 
 			if (fien.isEmpty()) {
 
-				embbuild.setTitle("**KEINE ÄNDERUNGEN :sob:**");
+				embbuild.setTitle("**KEINE Ã„NDERUNGEN :sob:**");
 
 				if (!(info.equalsIgnoreCase(""))) {
 
@@ -211,7 +211,7 @@ public class VPlan_main {
 				});
 
 				tablemess.automaticLineBreaks(4);
-				embbuild.setDescription("**Änderungen**\n" + tablemess.build());
+				embbuild.setDescription("**Ã„nderungen**\n" + tablemess.build());
 
 				if (!(info.equalsIgnoreCase(""))) {
 

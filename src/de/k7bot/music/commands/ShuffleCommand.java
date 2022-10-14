@@ -16,7 +16,7 @@ public class ShuffleCommand implements ServerCommand {
 	
 	@Override
 	public String gethelp() {
-		String help = "Spielt die aktuelle Playlist in zuf‰lliger Reihenfolge.";
+		String help = "Spielt die aktuelle Playlist in zuf√§lliger Reihenfolge.";
 		return help;
 	}
 

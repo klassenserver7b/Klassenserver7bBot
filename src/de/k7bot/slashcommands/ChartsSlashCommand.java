@@ -227,11 +227,11 @@ public class ChartsSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("charts", "Liefert die Bot-Music Charts für die gewühlten Parameter")
+		return Commands.slash("charts", "Liefert die Bot-Music Charts fÃ¼r die gewÃ¤hlten Parameter")
 				.addOption(OptionType.BOOLEAN, "guild",
-						"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
+						"true wenn nur die charts fÃ¼r die aktuelle guild angefordert werden sollen")
 				.addOption(OptionType.INTEGER, "time",
-						"REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
+						"REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berÃ¼cksichtigen")
 				.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"", false,
 						true);
 	}

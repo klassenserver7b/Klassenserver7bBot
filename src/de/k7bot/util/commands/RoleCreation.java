@@ -92,7 +92,7 @@ public class RoleCreation implements ServerCommand {
 	
 	@Override
 	public String gethelp() {
-		String help = "Erstellt eine Rolle mit dem gewählten Namen und ggf. der gewählten Farbe.\n - kann nur von Mitgliedern mit der Berechtigung 'Manage-Roles' ausgeführt werden!\n - z.B. [prefix]createrole [test] <#ffffff>";
+		String help = "Erstellt eine Rolle mit dem gewÃ¤hlten Namen und ggf. der gewÃ¤hlten Farbe.\n - kann nur von Mitgliedern mit der Berechtigung 'Manage-Roles' ausgefÃ¼hrt werden!\n - z.B. [prefix]createrole [test] <#ffffff>";
 		return help;
 	}
 

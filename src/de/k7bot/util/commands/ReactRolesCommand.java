@@ -67,7 +67,7 @@ public class ReactRolesCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Erstellt eine Reactionrole f�r die ausgew�hlte Nachricht mit dem ausgew�hlten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
+		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
 		return help;
 	}
 

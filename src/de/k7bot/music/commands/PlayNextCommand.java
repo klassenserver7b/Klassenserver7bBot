@@ -32,7 +32,7 @@ public class PlayNextCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "L‰dt den/die ausgew‰hlte/-n Track / Livestream / Playlist und f¸gt ihn/sie als n‰chsten in die Queue ein.\n - z.B. [prefix]playnext [url / YouTube Suchbegriff]";
+		return "L√§dt den/die ausgew√§hlte/-n Track / Livestream / Playlist und f√ºgt ihn/sie als n√§chste/-n in die Queue ein.\n - z.B. [prefix]playnext [url / YouTube Suchbegriff]";
 	}
 
 	@Override

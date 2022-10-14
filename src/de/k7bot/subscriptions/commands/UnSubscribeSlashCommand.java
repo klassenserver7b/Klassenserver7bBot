@@ -18,7 +18,6 @@ public class UnSubscribeSlashCommand implements SlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
-		// TODO Auto-generated method stub
 
 	}
 
