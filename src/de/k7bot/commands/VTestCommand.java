@@ -30,7 +30,7 @@ public class VTestCommand implements ServerCommand {
 
 			GuildChannel chan = message.getMentions().getChannels().get(0);
 
-			if (chan.getType() != ChannelType.TEXT) {
+			if (chan.getType() == ChannelType.TEXT) {
 				new VplanNEW_XML().sendVplanToChannel(true, args[1], (TextChannel) chan);
 			}
 		} else {

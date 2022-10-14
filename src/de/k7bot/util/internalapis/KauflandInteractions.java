@@ -27,7 +27,7 @@ import com.google.gson.JsonParser;
  * @author Felix
  *
  */
-public class KauflandInteractioms {
+public class KauflandInteractions {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
 
@@ -40,7 +40,7 @@ public class KauflandInteractioms {
 		if ((json = loadJson()) != null) {
 
 			JsonArray arr = JsonParser.parseString(json).getAsJsonArray();
-			
+
 			arr.forEach(elem -> {
 
 				elem.getAsJsonObject().get("categories").getAsJsonArray().forEach(cat -> {

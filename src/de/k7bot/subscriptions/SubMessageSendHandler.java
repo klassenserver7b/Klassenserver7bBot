@@ -20,7 +20,12 @@ public class SubMessageSendHandler {
 
 	public void provideSubscriptionMessage(Subscription s, MessageCreateData d) {
 
-		switch (s.getDeliveryType()) {
+		SubscriptionDeliveryType type = s.getDeliveryType();
+		if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+			type = SubscriptionDeliveryType.CANARY;
+		}
+
+		switch (type) {
 
 		case TEXT_CHANNEL: {
 			sendTextChannelMessage(s, d);
@@ -101,6 +106,10 @@ public class SubMessageSendHandler {
 	private void sendCanaryMessage(Subscription s, MessageCreateData data) {
 
 		if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+			return;
+		}
+
+		if (s.getDeliveryType() != SubscriptionDeliveryType.CANARY) {
 			return;
 		}
 

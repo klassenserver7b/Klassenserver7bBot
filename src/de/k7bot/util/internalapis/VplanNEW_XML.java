@@ -82,8 +82,8 @@ public class VplanNEW_XML {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
-						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
 	}
 
@@ -107,7 +107,7 @@ public class VplanNEW_XML {
 		}
 
 		if (sendApproved) {
-
+			
 			String info = "";
 			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
@@ -261,6 +261,8 @@ public class VplanNEW_XML {
 	 * @since 1.14.0
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
+		
+		log.warn("PLAN DB CHECK");
 
 		Integer dbhash = null;
 
@@ -358,8 +360,8 @@ public class VplanNEW_XML {
 
 			try {
 				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;");
-				if (next.next()) {
 
+				if (next.next()) {
 					dbdate = next.getString("zieldatum");
 				}
 
@@ -375,6 +377,7 @@ public class VplanNEW_XML {
 						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
 					}
 					return true;
+
 				} else {
 					return false;
 				}
