@@ -4,9 +4,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.utilities.SongDataStripper;
+import de.k7bot.music.utilities.SongTitle;
 import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.SongDataStripper;
-import de.k7bot.util.SongTitle;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

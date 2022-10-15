@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.util.embedtables;
 
 import java.util.ArrayList;
 import java.util.Arrays;

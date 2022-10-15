@@ -1,9 +1,9 @@
 package de.k7bot.util.commands;
 
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.PermissionError;
-import de.k7bot.util.SyntaxError;
 
 import java.util.List;
 import net.dv8tion.jda.api.Permission;

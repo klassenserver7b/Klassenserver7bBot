@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +27,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,8 +41,9 @@ import com.google.gson.JsonObject;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.Cell;
-import de.k7bot.util.TableMessage;
+import de.k7bot.util.embedtables.Cell;
+import de.k7bot.util.embedtables.TableMessage;
+import de.k7bot.util.internalapis.types.InternalAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -49,9 +53,28 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author felix
  * @since 1.14.0
  */
-public class VplanNEW_XML {
+public class VplanNEW_XML implements InternalAPI {
 
-	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	private List<String> klassen;
+
+	public VplanNEW_XML() {
+		klassen = new ArrayList<>();
+	}
+
+	public VplanNEW_XML(String... klassen) {
+		this.klassen = new ArrayList<>();
+
+		for (String klasse : klassen) {
+			this.klassen.add(klasse);
+		}
+	}
+
+	public void registerKlassen(String... klassen) {
+		for (String klasse : klassen) {
+			this.klassen.add(klasse);
+		}
+	}
 
 	/**
 	 * 
@@ -67,6 +90,20 @@ public class VplanNEW_XML {
 
 		if (d != null) {
 			channel.sendMessage(d).queue();
+		}
+
+	}
+
+	/**
+	 *
+	 */
+	@Override
+	public void checkforUpdates() {
+
+		for (String klasse : klassen) {
+
+			VplanNotify(klasse);
+
 		}
 
 	}
@@ -107,7 +144,7 @@ public class VplanNEW_XML {
 		}
 
 		if (sendApproved) {
-			
+
 			String info = "";
 			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
@@ -261,7 +298,7 @@ public class VplanNEW_XML {
 	 * @since 1.14.0
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
-		
+
 		log.warn("PLAN DB CHECK");
 
 		Integer dbhash = null;
@@ -449,15 +486,15 @@ public class VplanNEW_XML {
 	private String getVplanXML(OffsetDateTime date) {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
-				new UsernamePasswordCredentials("schueler", Klassenserver7bbot.INSTANCE.getVplanPW()));
+		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443), new UsernamePasswordCredentials(
+				"schueler", Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("vplanpw")));
 
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
 
 			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
-					+ Klassenserver7bbot.INSTANCE.getSchoolID() + "/wplan/wdatenk/WPlanKl_"
-					+ date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
+					+ Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("schoolID")
+					+ "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 
 			if (response.getStatusLine().getStatusCode() == 200) {
@@ -481,6 +518,15 @@ public class VplanNEW_XML {
 		}
 
 		return null;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void shutdown() {
+		klassen.clear();
+
 	}
 
 }

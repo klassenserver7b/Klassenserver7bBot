@@ -8,9 +8,9 @@ import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.MusicUtil;
 import de.k7bot.music.Queue;
-import de.k7bot.util.SpotifyConverter;
+import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.music.utilities.SpotifyConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.util.errorhandler;
 
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;

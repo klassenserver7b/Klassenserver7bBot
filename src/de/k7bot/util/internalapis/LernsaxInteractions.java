@@ -11,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.manage.PropertiesManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
+import de.k7bot.util.internalapis.types.InternalAPI;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;
@@ -33,9 +35,24 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author Felix
  *
  */
-public class LernsaxInteractions {
+public class LernsaxInteractions implements InternalAPI {
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+
+	/**
+	 * Used to connect to the LernsaxAPI via the credentials given in the configfile
+	 */
+	public void connect() {
+
+		PropertiesManager propMgr = Klassenserver7bbot.INSTANCE.getPropertiesManager();
+
+		this.client = new WebWeaverClient();
+		Credentials cred = new Credentials(propMgr.getProperty("lsaxemail"), propMgr.getProperty("lsaxtoken"),
+				propMgr.getProperty("lsaxappid"));
+
+		client.login(cred);
+
+	}
 
 	/**
 	 * Used to connect to the LernsaxAPI via.
@@ -48,6 +65,7 @@ public class LernsaxInteractions {
 
 		this.client = new WebWeaverClient();
 		Credentials cred = new Credentials(lsaxemail, token, applicationID);
+
 		client.login(cred);
 
 	}
@@ -60,6 +78,24 @@ public class LernsaxInteractions {
 	}
 
 	/**
+	 * 
+	 */
+	@Override
+	public void checkforUpdates() {
+
+		if (client == null) {
+			connect();
+		}
+
+		List<Message> messages = checkForLernplanMessages();
+
+		if (!messages.isEmpty()) {
+			sendLernsaxEmbeds(messages);
+		}
+
+	}
+
+	/**
 	 * Checks if there are any new "Lernplaene" -> "LearningPlans"<br>
 	 * Should only be used in connection with
 	 * {@link LernsaxInteractions#sendLernsaxEmbeds(List)}
@@ -67,7 +103,7 @@ public class LernsaxInteractions {
 	 * @return A List of all new LearningPlans (empty if there are none)
 	 * @throws SQLException
 	 */
-	public List<Message> checkForLernplanMessages() {
+	private List<Message> checkForLernplanMessages() {
 
 		List<Message> messages;
 
@@ -154,6 +190,15 @@ public class LernsaxInteractions {
 			}
 
 		}
+
+	}
+
+	/**
+	 * Used to shutdown the lernsaxAPI
+	 */
+	@Override
+	public void shutdown() {
+		disconnect();
 
 	}
 

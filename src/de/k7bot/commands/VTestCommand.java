@@ -1,7 +1,7 @@
 package de.k7bot.commands;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.util.internalapis.VplanNEW_XML;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

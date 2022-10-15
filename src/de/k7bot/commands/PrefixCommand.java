@@ -2,9 +2,9 @@ package de.k7bot.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.PermissionError;
-import de.k7bot.util.SyntaxError;
 
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;

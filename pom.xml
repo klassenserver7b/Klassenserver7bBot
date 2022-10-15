@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DiscordBot</groupId>
 	<artifactId>DiscordBot</artifactId>
-	<version>1.15.1-RC.2</version>
+	<version>1.15.1-RC.6</version>
 	<packaging>jar</packaging>
 
 	<build>
@@ -108,6 +108,12 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.15.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.LowLevelSubmarine</groupId>

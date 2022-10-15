@@ -1,11 +1,11 @@
 package de.k7bot.slashcommands;
 
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.PermissionError;
 
 import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.util.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;

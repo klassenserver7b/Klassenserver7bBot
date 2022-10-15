@@ -3,9 +3,9 @@ package de.k7bot.music.commands;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.MusicUtil;
 import de.k7bot.music.Queue;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.errorhandler.SyntaxError;
 
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;

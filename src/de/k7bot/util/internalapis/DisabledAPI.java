@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.util.internalapis;
 
 import de.k7bot.commands.types.ServerCommand;
 import java.awt.Color;

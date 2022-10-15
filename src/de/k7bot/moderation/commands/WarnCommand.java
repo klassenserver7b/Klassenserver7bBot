@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.PermissionError;
-import de.k7bot.util.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
