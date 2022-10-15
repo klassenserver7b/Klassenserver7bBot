@@ -145,7 +145,9 @@ public class GourmettaInteractions implements InternalAPI {
 				if (dbday != provideday) {
 
 					MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
-					providePlanMessage(data);
+					if (data != null) {
+						providePlanMessage(data);
+					}
 
 					LiteSQL.onUpdate("UPDATE gourmettaInteractions SET lastday=?", provideday);
 				}
@@ -179,6 +181,10 @@ public class GourmettaInteractions implements InternalAPI {
 	 *         {@link GourmettaInteractions#providePlanMessage(MessageCreateData)}
 	 */
 	private MessageCreateData buildMessage(JsonArray stripedDayMeals, OffsetDateTime provideDay) {
+
+		if (stripedDayMeals == null || stripedDayMeals.isEmpty()) {
+			return null;
+		}
 
 		MessageCreateBuilder builder = new MessageCreateBuilder();
 		EmbedBuilder embbuild = new EmbedBuilder();
@@ -233,6 +239,10 @@ public class GourmettaInteractions implements InternalAPI {
 		}
 
 		JsonArray meals = getMealsforDayofWeek(DayOfWeek.of(getNextDay().getDayOfWeek().getValue()));
+
+		if (meals == null || meals.isEmpty()) {
+			return null;
+		}
 
 		JsonArray ret = new JsonArray();
 
