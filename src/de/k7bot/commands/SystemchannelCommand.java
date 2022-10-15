@@ -3,7 +3,7 @@ package de.k7bot.commands;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

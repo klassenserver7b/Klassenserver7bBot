@@ -3,7 +3,7 @@ package de.k7bot.util.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.PermissionError;
+import de.k7bot.util.errorhandler.PermissionError;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;

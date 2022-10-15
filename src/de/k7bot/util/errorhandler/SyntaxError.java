@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.util.errorhandler;
 
 import de.k7bot.Klassenserver7bbot;
 import java.util.concurrent.TimeUnit;

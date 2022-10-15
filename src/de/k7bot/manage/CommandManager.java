@@ -44,7 +44,6 @@ import de.k7bot.music.commands.TrackInfoCommand;
 import de.k7bot.music.commands.UebersteuerungAdmin;
 import de.k7bot.music.commands.UnLoopCommand;
 import de.k7bot.music.commands.VolumeCommand;
-import de.k7bot.util.DisabledAPI;
 import de.k7bot.util.commands.ClearCommand;
 import de.k7bot.util.commands.DanceInterpreterJsonGenerateCommand;
 import de.k7bot.util.commands.EveryoneCommand;
@@ -52,6 +51,7 @@ import de.k7bot.util.commands.MessagetoEmbedCommand;
 import de.k7bot.util.commands.ReactRolesCommand;
 import de.k7bot.util.commands.RoleCreation;
 import de.k7bot.util.commands.StatsCategoryCommand;
+import de.k7bot.util.internalapis.DisabledAPI;
 import de.k7bot.util.commands.AddReactionCommand;
 
 import java.util.LinkedHashMap;
@@ -79,7 +79,7 @@ public class CommandManager {
 	 * @param gitenable <br>
 	 *                  Should the GitHubAPI be enabled
 	 */
-	public CommandManager(Boolean hypenable, Boolean gitenable) {
+	public CommandManager() {
 		this.commands = new LinkedHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
@@ -142,8 +142,8 @@ public class CommandManager {
 		this.commands.put("teacher", new TeacherCommand());
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
 		this.commands.put("eq", new EqualizerCommand());
-		
-		if (hypenable) {
+
+		if (Klassenserver7bbot.INSTANCE.getPropertiesManager().getEnabledApis().get("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());

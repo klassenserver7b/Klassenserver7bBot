@@ -6,7 +6,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.MusicUtil;
+import de.k7bot.music.utilities.MusicUtil;
+
 import java.time.OffsetDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;

@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.hc.core5.http.ParseException;
 
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

@@ -1,4 +1,4 @@
-package de.k7bot.util;
+package de.k7bot.music.utilities;
 
 import com.vdurmont.emoji.EmojiParser;
 

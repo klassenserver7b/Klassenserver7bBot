@@ -23,11 +23,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import de.k7bot.util.internalapis.types.InternalAPI;
+
 /**
  * @author Felix
  *
  */
-public class KauflandInteractions {
+public class KauflandInteractions implements InternalAPI{
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
 
@@ -95,6 +97,19 @@ public class KauflandInteractions {
 		}
 		return null;
 
+	}
+
+
+	@Override
+	public void checkforUpdates() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

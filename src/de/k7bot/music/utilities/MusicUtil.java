@@ -1,4 +1,4 @@
-package de.k7bot.music;
+package de.k7bot.music.utilities;
 
 import de.k7bot.Klassenserver7bbot;
 

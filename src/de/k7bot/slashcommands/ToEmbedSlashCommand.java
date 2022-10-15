@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.util.PermissionError;
+import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;

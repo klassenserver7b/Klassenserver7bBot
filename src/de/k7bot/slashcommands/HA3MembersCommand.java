@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.embedtables.TableMessage;
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;

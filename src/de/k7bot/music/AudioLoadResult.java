@@ -8,8 +8,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.util.SongDataStripper;
-import de.k7bot.util.SongTitle;
+import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.music.utilities.SongDataStripper;
+import de.k7bot.music.utilities.SongTitle;
 
 import java.awt.Color;
 import java.time.LocalDateTime;

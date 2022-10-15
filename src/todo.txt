@@ -1,6 +1,6 @@
-Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
+API Manager mit enable API methode und ENUM für API Types
 
-Interface für alle SubscriptionAPIS -> Klassenserver7bbot fürt nur bei einem manager checkforUpdates aus -> Interface besitzt methode checkUpdates()
+Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
 Equalizer für Music -> Mehr Profile
 

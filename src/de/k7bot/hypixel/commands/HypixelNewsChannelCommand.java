@@ -1,8 +1,8 @@
 package de.k7bot.hypixel.commands;
 
 import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.SyntaxError;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

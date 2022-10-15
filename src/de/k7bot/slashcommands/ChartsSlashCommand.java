@@ -19,8 +19,8 @@ import java.util.Map.Entry;
 
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.music.ChartList;
-import de.k7bot.util.Cell;
-import de.k7bot.util.TableMessage;
+import de.k7bot.util.embedtables.Cell;
+import de.k7bot.util.embedtables.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.InteractionHook;

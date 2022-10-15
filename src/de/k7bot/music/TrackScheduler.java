@@ -10,6 +10,8 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.music.commands.PlayCommand;
 import de.k7bot.music.commands.SkipCommand;
+import de.k7bot.music.utilities.MusicUtil;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;

@@ -3,7 +3,7 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;

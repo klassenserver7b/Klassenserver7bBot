@@ -2,7 +2,7 @@
 package de.k7bot.sql;
 
 public class SQLManager {
-	
+
 	public static void onCreate() {
 
 		LiteSQL.onUpdate(
@@ -24,12 +24,6 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS botutil(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, syschannelId INTEGER, prefix STRING);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS hypixelnewschannels(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, guildId INTEGER, channelId INTEGER);");
-
-		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS hypnewstime(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, datum STRING);");
-
-		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS vplancurrent(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, zieldatum STRING, classeintraege INTEGER);");
 
 		LiteSQL.onUpdate(
@@ -46,7 +40,10 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lernplanId STRING);");
-		
+
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS gourmettaInteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lastday LONG);");
+
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER, subscriptionId INTEGER);");
 	}
