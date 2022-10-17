@@ -20,14 +20,14 @@ import core.GLA;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
-import de.k7bot.commands.HelpCommand;
+import de.k7bot.commands.common.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.moderation.SystemNotificationChannelHolder;
 import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.util.commands.StatsCategoryCommand;
+import de.k7bot.music.commands.common.PlayCommand;
+import de.k7bot.util.commands.common.StatsCategoryCommand;
 import de.k7bot.util.internalapis.InternalAPIManager;
 
 import java.io.BufferedReader;
@@ -113,7 +113,7 @@ public class Klassenserver7bbot {
 
 		initializeBot();
 		checkpreflist();
-		awaitReady();
+		awaitJDAReady();
 
 		Shutdown();
 		runLoop();
@@ -249,7 +249,7 @@ public class Klassenserver7bbot {
 
 	}
 
-	public void awaitReady() {
+	public void awaitJDAReady() {
 
 		logger.info("Awaiting jda ready");
 		shardMgr.getShards().forEach(jda -> {

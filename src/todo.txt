@@ -1,5 +1,3 @@
-API Manager mit enable API methode und ENUM für API Types
-
 Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
 Equalizer für Music -> Mehr Profile

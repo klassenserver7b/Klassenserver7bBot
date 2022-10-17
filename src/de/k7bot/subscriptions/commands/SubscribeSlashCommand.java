@@ -15,6 +15,7 @@ import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -145,14 +146,14 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 		SubcommandData textchannelsub = new SubcommandData("textchannel",
 				"Use this if you want to recieve your messages in a Text-Channel")
-				.addOption(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
+				.addOptions(new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to").setRequired(true).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS))
 				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices));
+						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
 		SubcommandData privatechannelsub = new SubcommandData("privatechannel",
 				"Use this if you want to recieve your messages in a private-Channel")
 				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices));
+						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
 		return Commands.slash("subscribe", "Addes a subscription for the given type in the given channel.")
 				.addSubcommands(textchannelsub, privatechannelsub)
