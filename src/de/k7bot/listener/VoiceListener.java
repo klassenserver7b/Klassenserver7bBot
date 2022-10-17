@@ -14,25 +14,31 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VoiceListener extends ListenerAdapter {
 	public List<Long> tempchannels = new ArrayList<>();
 
-	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-		onJoin(event.getChannelJoined(), event.getEntity());
-	}
+	@Override
+	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
 
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-		onLeave(event.getChannelLeft());
-	}
+		AudioChannelUnion oldchan = event.getChannelLeft();
+		AudioChannelUnion newchan = event.getChannelJoined();
 
-	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-		onLeave(event.getChannelLeft());
-		onJoin(event.getChannelJoined(), event.getEntity());
+		if (oldchan == null) {
+			onJoin(newchan, event.getMember());
+			return;
+		}
+		if (newchan == null) {
+			onLeave(newchan);
+			return;
+		}
+
+		onLeave(oldchan);
+		onJoin(newchan, event.getMember());
+
 	}
 
 	public void onJoin(AudioChannel audioChannel, Member member) {
