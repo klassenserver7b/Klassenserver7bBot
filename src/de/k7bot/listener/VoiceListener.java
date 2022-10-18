@@ -32,7 +32,7 @@ public class VoiceListener extends ListenerAdapter {
 			return;
 		}
 		if (newchan == null) {
-			onLeave(newchan);
+			onLeave(oldchan);
 			return;
 		}
 
