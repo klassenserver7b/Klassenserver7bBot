@@ -22,7 +22,7 @@ public class MusicController {
 
 	public MusicController(Guild guild) {
 		this.guild = guild;
-		this.player = Klassenserver7bbot.INSTANCE.getAudioPlayerManager().createPlayer();
+		this.player = Klassenserver7bbot.getInstance().getAudioPlayerManager().createPlayer();
 		this.queue = new Queue(this);
 
 		this.guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(this.player));

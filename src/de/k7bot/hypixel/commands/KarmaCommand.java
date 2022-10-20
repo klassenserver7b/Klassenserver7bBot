@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class KarmaCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		UUID id = null;
 

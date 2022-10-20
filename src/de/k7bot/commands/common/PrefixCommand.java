@@ -22,9 +22,9 @@ public class PrefixCommand implements ServerCommand {
 
 			if (args.length > 1) {
 
-				Klassenserver7bbot.INSTANCE.checkpreflist();
+				Klassenserver7bbot.getInstance().checkpreflist();
 
-				Klassenserver7bbot.INSTANCE.getPrefixList().put(channel.getGuild().getIdLong(), args[1]);
+				Klassenserver7bbot.getInstance().getPrefixList().put(channel.getGuild().getIdLong(), args[1]);
 				LiteSQL.onUpdate("UPDATE botutil SET prefix = ? WHERE guildId = ?;", args[1],
 						channel.getGuild().getIdLong());
 				EmbedBuilder builder = new EmbedBuilder();

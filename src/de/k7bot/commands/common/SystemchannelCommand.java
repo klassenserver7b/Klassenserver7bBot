@@ -2,7 +2,7 @@ package de.k7bot.commands.common;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.moderation.SystemNotificationChannelHolder;
+import de.k7bot.manage.SystemNotificationChannelManager;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -30,7 +30,7 @@ public class SystemchannelCommand implements ServerCommand {
 				
 				TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
 				
-				SystemNotificationChannelHolder sys = Klassenserver7bbot.INSTANCE.getsyschannell();				
+				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getsyschannell();				
 				sys.insertChannel(chan);
 				
 				channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();

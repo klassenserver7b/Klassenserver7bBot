@@ -18,7 +18,7 @@ public class ClearQueueCommand implements ServerCommand {
 		}
 		
 		long guildid = channel.getGuild().getIdLong();
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(guildid);
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		MusicUtil.updateChannel(channel);
 		Queue queue = controller.getQueue();
 		queue.clearQueue();

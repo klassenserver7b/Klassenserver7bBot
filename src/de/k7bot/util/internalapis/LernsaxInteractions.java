@@ -44,7 +44,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 */
 	public void connect() {
 
-		PropertiesManager propMgr = Klassenserver7bbot.INSTANCE.getPropertiesManager();
+		PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
 
 		this.client = new WebWeaverClient();
 		Credentials cred = new Credentials(propMgr.getProperty("lsaxemail"), propMgr.getProperty("lsaxtoken"),
@@ -185,7 +185,7 @@ public class LernsaxInteractions implements InternalAPI {
 
 				MessageCreateData data = new MessageCreateBuilder().setEmbeds(e).build();
 
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+				Klassenserver7bbot.getInstance().getSubscriptionManager()
 						.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
 			}
 

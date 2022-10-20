@@ -45,7 +45,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_main {
 
-	private final Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+	private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
 	private String vplanpw;
 
 	public VPlan_main(String pw) {
@@ -81,7 +81,7 @@ public class VPlan_main {
 		MessageCreateData d = getVplanMessage();
 
 		if (d != null) {
-			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+			Klassenserver7bbot.getInstance().getSubscriptionManager()
 					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
 	}
@@ -104,7 +104,7 @@ public class VPlan_main {
 
 			if (log != null) {
 				log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
-						+ Klassenserver7bbot.INSTANCE.isDevMode());
+						+ Klassenserver7bbot.getInstance().isDevMode());
 			}
 
 			EmbedBuilder embbuild = new EmbedBuilder();
@@ -161,7 +161,7 @@ public class VPlan_main {
 						JsonElement elem = entry.get("teacher");
 
 						if (elem != null) {
-							JsonElement teachelem = Klassenserver7bbot.INSTANCE.getTeacherList().get(elem.getAsString()
+							JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList().get(elem.getAsString()
 									.replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
 
 							if (teachelem != null) {

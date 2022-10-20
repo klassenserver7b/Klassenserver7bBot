@@ -47,7 +47,7 @@ public class ClearSlashCommand implements SlashCommand {
 			builder.setTimestamp(OffsetDateTime.now());
 			builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
 					+ event.getChannel().asTextChannel().getName());
-			TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
+			TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
 
 			if (system != null) {
 				system.sendMessageEmbeds(builder.build()).queue();

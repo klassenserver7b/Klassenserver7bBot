@@ -143,13 +143,13 @@ public class CommandManager {
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
 		this.commands.put("eq", new EqualizerCommand());
 
-		if (Klassenserver7bbot.INSTANCE.getPropertiesManager().getEnabledApis().get("hypixel")) {
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().getEnabledApis().get("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());
 		}
 
-		if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+		if (Klassenserver7bbot.getInstance().isDevMode()) {
 			this.commands.put("test", new TestCommand());
 			this.commands.put("vtest", new VTestCommand());
 		}

@@ -35,7 +35,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
 		long datetime = Long.parseLong(datetimestring);
 
-		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a single track");
+		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a single track");
 		addtoqueue(queue, track);
 
 		SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
@@ -60,10 +60,10 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 		Queue queue = this.controller.getQueue();
 
-		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult loaded a playlist");
+		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a playlist");
 		if (!playlist.getTracks().isEmpty()) {
 			if (this.uri.startsWith("ytsearch: ")) {
-				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with ytsearch:");
+				Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with ytsearch:");
 
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
@@ -73,7 +73,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 			}
 
 			if (this.uri.startsWith("scsearch: ")) {
-				Klassenserver7bbot.INSTANCE.getMainLogger().debug("url starts with scsearch:");
+				Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with scsearch:");
 
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
@@ -115,14 +115,14 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	}
 
 	public void noMatches() {
-		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult couldn't find a matching audio track");
+		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult couldn't find a matching audio track");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
 				.setDescription("Couldn't find the Song you Searched for! :sob:");
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 
 	public void loadFailed(FriendlyException exception) {
-		Klassenserver7bbot.INSTANCE.getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
+		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
 				.setDescription(exception.getMessage());
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);

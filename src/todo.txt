@@ -1,11 +1,5 @@
 BotUtil fixen -> Prefix immer aus DB lesen (keine HashMap im RAM)
-selbes für systemnotificationChannel
 
-commandlog in DB warum guildID = null?
-
-modlogs Reason mit Leerzeichen
-
-SlashCommands mit Argumenten ins Logfile
 SlashCommands in CommandsLog DB speichern
 
 Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)

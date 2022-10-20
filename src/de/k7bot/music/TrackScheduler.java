@@ -37,8 +37,8 @@ public class TrackScheduler extends AudioEventAdapter {
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
 		if (!SkipCommand.onskip) {
 
-			long guildid = Klassenserver7bbot.INSTANCE.getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
-			Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid);
+			long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
+			Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.decode("#00e640"));
 			AudioTrackInfo info = track.getInfo();
@@ -94,9 +94,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 
-		long guildid = Klassenserver7bbot.INSTANCE.getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
-		Guild guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid);
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(guildid);
+		long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
+		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		Queue queue = controller.getQueue();
 		AudioManager manager = null;
 		if (guild != null) {

@@ -249,7 +249,7 @@ public class SpotifyConverter {
 
 			AudioPlayerManager manager = new DefaultAudioPlayerManager();
 			manager.registerSourceManager(new YoutubeAudioSourceManager());
-			Queue queue = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong()).getQueue();
+			Queue queue = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getQueue();
 
 			AudioLoadResultHandler handler = new AudioLoadResultHandler() {
 

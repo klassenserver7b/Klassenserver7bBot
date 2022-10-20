@@ -72,7 +72,7 @@ public class BanCommand implements ServerCommand {
 
 		builder.setDescription(strBuilder);
 
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(channel.getGuild());
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
 
 		try {
 			u.ban(7, TimeUnit.DAYS).reason(grund).queue();

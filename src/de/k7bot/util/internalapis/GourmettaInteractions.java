@@ -68,8 +68,8 @@ public class GourmettaInteractions implements InternalAPI {
 	 */
 	public void login() {
 
-		String username = Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("gourmettauserid");
-		String password = Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("gourmettapassword");
+		String username = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettauserid");
+		String password = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettapassword");
 
 		if (username == null || password == null || username.isBlank() || password.isBlank()) {
 			return;
@@ -223,7 +223,7 @@ public class GourmettaInteractions implements InternalAPI {
 	 *             {@link GourmettaInteractions#buildMessage(JsonArray)}
 	 */
 	private void providePlanMessage(MessageCreateData data) {
-		Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+		Klassenserver7bbot.getInstance().getSubscriptionManager()
 				.provideSubscriptionNotification(SubscriptionTarget.GOURMETTA, data);
 	}
 

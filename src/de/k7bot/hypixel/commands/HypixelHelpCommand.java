@@ -14,8 +14,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class HypixelHelpCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		
-		ConcurrentHashMap<String, HypixelCommand> commands = (Klassenserver7bbot.INSTANCE.gethypMan()).commands;
-		ConcurrentHashMap<String, String> help = (Klassenserver7bbot.INSTANCE.gethypMan()).help;
+		ConcurrentHashMap<String, HypixelCommand> commands = (Klassenserver7bbot.getInstance().gethypMan()).commands;
+		ConcurrentHashMap<String, String> help = (Klassenserver7bbot.getInstance().gethypMan()).help;
 
 		StringBuilder strbuild = new StringBuilder();
 		commands.forEachKey(0L, comm -> {
@@ -26,7 +26,7 @@ public class HypixelHelpCommand implements HypixelCommand {
 		EmbedBuilder messbuild = new EmbedBuilder();
 
 		messbuild.setDescription("Hypixel-Befehle auf diesem Server starten mit `"
-				+ Klassenserver7bbot.INSTANCE.getPrefixList().get(channel.getGuild().getIdLong()) + "Hypixel []`\n"
+				+ Klassenserver7bbot.getInstance().getPrefixList().get(channel.getGuild().getIdLong()) + "Hypixel []`\n"
 				+ "z.B. `-Hypixel help` \n\n" + "**Hilfe zu den Hypixel Commands:**\n\n" + strbuild.toString().trim());
 		messbuild.setAuthor("Klassenserver 7b ", null,
 				"https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Help-browser.svg/48px-Help-browser.svg.png");

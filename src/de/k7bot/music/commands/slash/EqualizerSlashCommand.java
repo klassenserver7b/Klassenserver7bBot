@@ -43,7 +43,7 @@ public class EqualizerSlashCommand implements SlashCommand {
 		}
 
 		BotEqualizer eq = BotEqualizer.getEQ(
-				Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
+				Klassenserver7bbot.getInstance().getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
 

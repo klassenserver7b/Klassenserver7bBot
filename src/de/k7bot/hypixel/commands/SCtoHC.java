@@ -17,7 +17,7 @@ public class SCtoHC implements ServerCommand {
 
 			if (args.length > 0) {
 
-				if (!Klassenserver7bbot.INSTANCE.gethypMan().performHypixel(args[0], m, channel, message))
+				if (!Klassenserver7bbot.getInstance().gethypMan().performHypixel(args[0], m, channel, message))
 					((Message) channel.sendMessage("`unbekannter Hypixel - Command` - Hilfe: '-Hypixel help'")
 							.complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
 			}

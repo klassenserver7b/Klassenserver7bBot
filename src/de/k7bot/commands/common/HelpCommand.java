@@ -89,7 +89,7 @@ public class HelpCommand implements ServerCommand {
 		if (guild != null) {
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
+							+ Klassenserver7bbot.getInstance().getPrefixList().get(guild.getIdLong()) + "`\r\n"
 							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
 					false);
@@ -126,7 +126,7 @@ public class HelpCommand implements ServerCommand {
 	 */
 	public MessageEmbed generateHelpforCategory(String category, Guild guild) {
 
-		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
+		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).commands;
 		List<Entry<String, ServerCommand>> searchresults = new ArrayList<>();
 
 		int limitmultiplicator = 1;
@@ -137,10 +137,10 @@ public class HelpCommand implements ServerCommand {
 
 		if (guild != null) {
 
-			prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong());
+			prefix = Klassenserver7bbot.getInstance().getPrefixList().get(guild.getIdLong());
 			ret.addField("**General**",
 					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.INSTANCE.getPrefixList().get(guild.getIdLong()) + "`\r\n"
+							+ Klassenserver7bbot.getInstance().getPrefixList().get(guild.getIdLong()) + "`\r\n"
 							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
 					false);
@@ -223,7 +223,7 @@ public class HelpCommand implements ServerCommand {
 	 * Updates the List of used Categories by checking all Commands
 	 */
 	public static void updateCategoryList() {
-		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.INSTANCE.getCmdMan()).commands;
+		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).commands;
 
 		commands.values().forEach(command -> {
 

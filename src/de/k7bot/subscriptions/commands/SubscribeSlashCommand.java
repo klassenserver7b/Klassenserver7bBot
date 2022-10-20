@@ -59,7 +59,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 			throw new IllegalArgumentException("Unexpected value: " + event.getOption("target").getAsString());
 		};
 
-		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.INSTANCE.getOwnerId()) {
+		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
 					.setTimestamp(OffsetDateTime.now())
 					.setDescription(
@@ -72,7 +72,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 			try {
 
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager().createSubscription(
+				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(
 						SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
 						event.getUser().openPrivateChannel().complete().getIdLong());
 
@@ -96,7 +96,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 			GuildChannelUnion union = event.getOption("channel").getAsChannel();
 			SubscriptionDeliveryType delivery;
 
-			if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+			if (!Klassenserver7bbot.getInstance().isDevMode()) {
 				switch (union.getType()) {
 
 				case TEXT: {
@@ -121,7 +121,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 			if (delivery != SubscriptionDeliveryType.UNKNOWN) {
 
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager().createSubscription(delivery, target,
+				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
 						union.getIdLong());
 				hook.sendMessageEmbeds(
 						new EmbedBuilder().setColor(Color.decode("#00ff00")).setTimestamp(OffsetDateTime.now())

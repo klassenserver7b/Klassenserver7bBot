@@ -16,7 +16,7 @@ public class GithubRepoCommand implements ServerCommand{
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		
-		GitHub ghub = Klassenserver7bbot.INSTANCE.getGitapi();
+		GitHub ghub = Klassenserver7bbot.getInstance().getGitapi();
 		
 		GHRepository dcbot;
 		try {

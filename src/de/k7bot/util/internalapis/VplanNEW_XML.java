@@ -119,7 +119,7 @@ public class VplanNEW_XML implements InternalAPI {
 		MessageCreateData d = getVplanMessage(false, klasse);
 
 		if (d != null) {
-			Klassenserver7bbot.INSTANCE.getSubscriptionManager()
+			Klassenserver7bbot.getInstance().getSubscriptionManager()
 					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
 	}
@@ -151,7 +151,7 @@ public class VplanNEW_XML implements InternalAPI {
 			}
 
 			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
-					+ Klassenserver7bbot.INSTANCE.isDevMode());
+					+ Klassenserver7bbot.getInstance().isDevMode());
 
 			EmbedBuilder embbuild = new EmbedBuilder();
 
@@ -239,7 +239,7 @@ public class VplanNEW_XML implements InternalAPI {
 			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
 
 			if (teacher != null && !teacher.equalsIgnoreCase("")) {
-				JsonElement teachelem = Klassenserver7bbot.INSTANCE.getTeacherList().get(teacher);
+				JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList().get(teacher);
 
 				if (teachelem != null) {
 
@@ -487,13 +487,13 @@ public class VplanNEW_XML implements InternalAPI {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443), new UsernamePasswordCredentials(
-				"schueler", Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("vplanpw")));
+				"schueler", Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw")));
 
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
 
 			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
-					+ Klassenserver7bbot.INSTANCE.getPropertiesManager().getProperty("schoolID")
+					+ Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("schoolID")
 					+ "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 

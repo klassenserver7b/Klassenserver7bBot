@@ -124,7 +124,7 @@ public class Queue {
 		this.queuelist.add(track);
 
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.INSTANCE.getMainLogger()
+			Klassenserver7bbot.getInstance().getMainLogger()
 					.debug("Queue - add Track to Queue: playing track = null -> next(track)");
 			next(track);
 		}
@@ -133,7 +133,7 @@ public class Queue {
 	public void setplaynext(AudioTrack track) {
 		this.queuelist.add(0, track);
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.INSTANCE.getMainLogger()
+			Klassenserver7bbot.getInstance().getMainLogger()
 					.debug("Queue - setNextTrack: playing track = null -> next(track)");
 			next(track);
 		}

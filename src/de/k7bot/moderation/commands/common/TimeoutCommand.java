@@ -62,7 +62,7 @@ public class TimeoutCommand implements ServerCommand {
 		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
 
 		Guild guild = channel.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 		try {
 			u.timeoutFor(Long.parseLong(time), TimeUnit.MINUTES).queue();
@@ -82,7 +82,7 @@ public class TimeoutCommand implements ServerCommand {
 
 			}
 
-			if (requester.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
+			if (requester.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
 				builder.setFooter("");
 				builder.setDescription("**Case: **" + grund + "\n");

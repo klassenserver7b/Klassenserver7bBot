@@ -52,7 +52,7 @@ public class PlayNextCommand implements ServerCommand {
 
 		if (args.length > 1) {
 
-			MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
+			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
 			AudioManager manager = vc.getGuild().getAudioManager();
 			AudioPlayerManager apm = new DefaultAudioPlayerManager();
@@ -72,7 +72,7 @@ public class PlayNextCommand implements ServerCommand {
 						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
 						.setDescription(
 								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.INSTANCE.getPrefixList().get(vc.getGuild().getIdLong())
+										+ Klassenserver7bbot.getInstance().getPrefixList().get(vc.getGuild().getIdLong())
 										+ "play` INSTEAD!")
 						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 
@@ -112,7 +112,7 @@ public class PlayNextCommand implements ServerCommand {
 				url = "ytsearch: " + url;
 			}
 
-			Klassenserver7bbot.INSTANCE.getMainLogger()
+			Klassenserver7bbot.getInstance().getMainLogger()
 					.info("Bot startet searching a track: no current track -> new Track(channelName = " + vc.getName()
 							+ ", url = " + url + ")");
 

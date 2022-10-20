@@ -36,7 +36,7 @@ public class StatsCategoryCommand implements ServerCommand {
 					LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(?, ?);", guild.getIdLong(),
 							catid);
 
-					fillCategory(cat, Klassenserver7bbot.INSTANCE.isDevMode());
+					fillCategory(cat, Klassenserver7bbot.getInstance().isDevMode());
 
 				} else {
 
@@ -46,7 +46,7 @@ public class StatsCategoryCommand implements ServerCommand {
 					cat.getChannels().forEach(chan -> {
 						chan.delete().complete();
 					});
-					fillCategory(guild.getCategoryById(catid), Klassenserver7bbot.INSTANCE.isDevMode());
+					fillCategory(guild.getCategoryById(catid), Klassenserver7bbot.getInstance().isDevMode());
 
 				}
 			} catch (SQLException e) {
@@ -82,8 +82,8 @@ public class StatsCategoryCommand implements ServerCommand {
 	}
 
 	public static void onStartup(boolean devmode) {
-		Klassenserver7bbot.INSTANCE.setEventBlocking(true);
-		Klassenserver7bbot.INSTANCE.getShardManager().getGuilds().forEach(guild -> {
+		Klassenserver7bbot.getInstance().setEventBlocking(true);
+		Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
 			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
 					guild.getIdLong());
 
@@ -106,11 +106,11 @@ public class StatsCategoryCommand implements ServerCommand {
 			}
 
 		});
-		Klassenserver7bbot.INSTANCE.setEventBlocking(false);
+		Klassenserver7bbot.getInstance().setEventBlocking(false);
 	}
 
 	public static void onShutdown(boolean devmode) {
-		Klassenserver7bbot.INSTANCE.getShardManager().getGuilds().forEach(guild -> {
+		Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
 			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
 					guild.getIdLong());
 			try {

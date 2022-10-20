@@ -90,7 +90,7 @@ public class InternalAPIManager {
 	public void initializeApis() {
 
 		log.info("Await API-ready");
-		PropertiesManager propMgr = Klassenserver7bbot.INSTANCE.getPropertiesManager();
+		PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
 
 		if (propMgr.getEnabledApis().get("lernsax")) {
 			registerAPI(new LernsaxInteractions());

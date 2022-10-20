@@ -29,7 +29,7 @@ public class ClearCommand implements ServerCommand {
 
 				onclear(amount, channel);
 
-				TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(channel.getGuild());
+				TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
 
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setColor(16345358);

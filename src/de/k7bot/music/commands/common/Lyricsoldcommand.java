@@ -34,13 +34,13 @@ public class Lyricsoldcommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 		if (player.getPlayingTrack() != null) {
-			GLA lapi = Klassenserver7bbot.INSTANCE.getLyricsAPIold();
+			GLA lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 			SongSearch search = null;
 
-			Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Old-Lyrics Querry: "
+			Klassenserver7bbot.getInstance().getMainLogger().info("Searching Old-Lyrics Querry: "
 					+ SongDataStripper.stripTitle(player.getPlayingTrack().getInfo().title).getTitle());
 			try {
 

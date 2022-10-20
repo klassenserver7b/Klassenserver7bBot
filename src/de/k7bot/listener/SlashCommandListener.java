@@ -16,10 +16,8 @@ public class SlashCommandListener extends ListenerAdapter {
 		if (event.getGuild() == null) {
 			return;
 		}
-
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 		
-		if (!Klassenserver7bbot.INSTANCE.getslashMan().perform(event)) {
+		if (!Klassenserver7bbot.getInstance().getslashMan().perform(event)) {
 			event.getChannel().sendMessage("`unbekannter Slash-Command`").complete().delete()
 					.queueAfter(10L, TimeUnit.SECONDS);
 		}

@@ -72,7 +72,7 @@ public class ClientInfo implements ServerCommand {
 
 		builder.setDescription(strBuilder);
 
-		channel.sendMessageEmbeds(builder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).complete().delete()
+		channel.sendMessageEmbeds(builder.build()).complete().delete()
 				.queueAfter(20L, TimeUnit.SECONDS);
 	}
 }

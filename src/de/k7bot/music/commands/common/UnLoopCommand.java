@@ -44,7 +44,7 @@ public class UnLoopCommand implements ServerCommand {
 
 	public static void unLoop(@Nonnull long guildId) {
 
-		Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(guildId).getQueue().unLoop();
+		Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildId).getQueue().unLoop();
 
 	}
 

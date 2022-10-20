@@ -33,12 +33,12 @@ public class LyricsCommand implements ServerCommand {
 		
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-				MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
+				MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 						.getController(vc.getGuild().getIdLong());
 				AudioPlayer player = controller.getPlayer();
 				
 				if (player.getPlayingTrack() != null) {
-					LyricsClient lapi = Klassenserver7bbot.INSTANCE.getLyricsAPI();
+					LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
 					Lyrics lyrics = null;
 
 					try {
@@ -50,13 +50,13 @@ public class LyricsCommand implements ServerCommand {
 						if (stitle.containsauthor()) {
 
 							lyrics = lapi.getLyrics(title).get();
-							Klassenserver7bbot.INSTANCE.getMainLogger().info("Searching Lyrics Querry: " + title);
+							Klassenserver7bbot.getInstance().getMainLogger().info("Searching Lyrics Querry: " + title);
 
 						} else {
 
 							lyrics = lapi.getLyrics(info.author + " - " + title).get();
 
-							Klassenserver7bbot.INSTANCE.getMainLogger()
+							Klassenserver7bbot.getInstance().getMainLogger()
 									.info("Searching Lyrics Querry: " + info.author + " - " + title);
 
 						}

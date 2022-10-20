@@ -24,7 +24,7 @@ public class TeacherCommand implements ServerCommand {
 			EmbedBuilder builder = new EmbedBuilder();
 			StringBuilder strbuild = new StringBuilder();
 
-			JsonObject teacher = Klassenserver7bbot.INSTANCE.getTeacherList().get(args[1]).getAsJsonObject();
+			JsonObject teacher = Klassenserver7bbot.getInstance().getTeacherList().get(args[1]).getAsJsonObject();
 
 			builder.setFooter("requested by @" + m.getEffectiveName());
 			builder.setTimestamp(OffsetDateTime.now());

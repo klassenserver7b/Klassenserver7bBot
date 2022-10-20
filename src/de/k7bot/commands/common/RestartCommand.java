@@ -16,30 +16,30 @@ public class RestartCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (m.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
-			Logger log = Klassenserver7bbot.INSTANCE.getMainLogger();
+		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+			Logger log = Klassenserver7bbot.getInstance().getMainLogger();
 			String[] args = message.getContentDisplay().split(" ");
 
 			if (args.length > 1) {
 
 				try {
 
-					Klassenserver7bbot.INSTANCE.getPlayerUtil().stopAllTracks();
+					Klassenserver7bbot.getInstance().getPlayerUtil().stopAllTracks();
 
-					Klassenserver7bbot.INSTANCE.stopLoop();
+					Klassenserver7bbot.getInstance().stopLoop();
 					SQLManager.onCreate();
 
-					Klassenserver7bbot.INSTANCE.getShardManager().restart(Integer.parseInt(args[1]));
+					Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
 
-					Klassenserver7bbot.INSTANCE.runLoop();
+					Klassenserver7bbot.getInstance().runLoop();
 
 				} catch (NumberFormatException e) {
 					SyntaxError.oncmdSyntaxError(channel, "restart <shardId>", m);
 				}
 
 			} else {
-				Klassenserver7bbot.INSTANCE.getShardManager().restart();
+				Klassenserver7bbot.getInstance().getShardManager().restart();
 				log.info("Restarting all Shards");
 			}
 

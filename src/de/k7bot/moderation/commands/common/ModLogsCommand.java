@@ -60,7 +60,7 @@ public class ModLogsCommand implements ServerCommand {
 							embed.setDescription("moderator: @" + memb.get(0).getEffectiveName() + "\n" + "action: "
 									+ action.get(j) + "\n" + "user: " + membName.get(j) + "\n" + "reason: "
 									+ reason.get(j) + "\n" + "date: " + date.get(j));
-							channel.sendMessageEmbeds(embed.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0])
+							channel.sendMessageEmbeds(embed.build())
 									.queue();
 						}
 					} else {

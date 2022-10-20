@@ -23,7 +23,7 @@ public class OnlineCommand implements HypixelCommand {
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		StatusReply apiReply = null;
 

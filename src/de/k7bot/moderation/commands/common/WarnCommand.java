@@ -68,7 +68,7 @@ public class WarnCommand implements ServerCommand {
 		builder.setDescription(strBuilder);
 
 		Guild guild = channel.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 		try {
 

@@ -24,7 +24,6 @@ import de.k7bot.commands.common.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
-import de.k7bot.moderation.SystemNotificationChannelHolder;
 import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.commands.common.PlayCommand;
 import de.k7bot.util.commands.common.StatsCategoryCommand;
@@ -60,14 +59,14 @@ import net.hypixel.api.apache.ApacheHttpClient;
 
 public class Klassenserver7bbot {
 
-	public static Klassenserver7bbot INSTANCE;
+	private static Klassenserver7bbot INSTANCE;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 
 	private ShardManager shardMgr;
 	private CommandManager cmdMgr;
 	private SubscriptionManager subMgr;
-	private SystemNotificationChannelHolder syschannels;
+	private SystemNotificationChannelManager syschannels;
 	private SlashCommandManager slashMgr;
 	private HypixelCommandManager hypMgr;
 	private PropertiesManager propMgr;
@@ -99,7 +98,7 @@ public class Klassenserver7bbot {
 
 	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
-	public Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
+	private Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
 		INSTANCE = this;
 		this.indev = indev;
 		this.propMgr = new PropertiesManager();
@@ -203,7 +202,8 @@ public class Klassenserver7bbot {
 		this.subMgr = new SubscriptionManager();
 		this.internalApiMgr = new InternalAPIManager();
 
-		this.syschannels = new SystemNotificationChannelHolder();
+		this.syschannels = new SystemNotificationChannelManager();
+		this.syschannels.initialize();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerutil = new AudioPlayerUtil();
@@ -352,7 +352,6 @@ public class Klassenserver7bbot {
 			if ((this.min % 10 == 0) && !this.minlock) {
 				this.minlock = true;
 				this.checkpreflist();
-				this.getsyschannell().checkSysChannelList();
 
 				internalApiMgr.checkForUpdates();
 
@@ -442,6 +441,28 @@ public class Klassenserver7bbot {
 		}
 	}
 
+	public static Klassenserver7bbot getInstance() {
+
+		if (INSTANCE == null) {
+			try {
+				new Klassenserver7bbot(false);
+			} catch (LoginException | IllegalArgumentException e) {
+				LoggerFactory.getLogger("InstanceManager").error(e.getMessage(), e);
+			}
+		}
+
+		return INSTANCE;
+	}
+
+	public static Klassenserver7bbot getInstance(boolean indev) throws LoginException, IllegalArgumentException {
+
+		if (INSTANCE == null) {
+			new Klassenserver7bbot(indev);
+		}
+
+		return INSTANCE;
+	}
+
 	public CommandManager getCmdMan() {
 		return this.cmdMgr;
 	}
@@ -478,7 +499,7 @@ public class Klassenserver7bbot {
 		return this.hypixelApi;
 	}
 
-	public SystemNotificationChannelHolder getsyschannell() {
+	public SystemNotificationChannelManager getsyschannell() {
 		return syschannels;
 	}
 

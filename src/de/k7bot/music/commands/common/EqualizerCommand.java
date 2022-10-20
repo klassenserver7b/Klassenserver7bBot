@@ -35,7 +35,7 @@ public class EqualizerCommand implements ServerCommand{
 			return;
 		}
 
-		BotEqualizer eq = BotEqualizer.getEQ(Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
+		BotEqualizer eq = BotEqualizer.getEQ(Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
 		eq.setEQMode(Integer.valueOf(args[1]));
 
 	}

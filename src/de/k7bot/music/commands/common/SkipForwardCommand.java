@@ -35,7 +35,7 @@ public class SkipForwardCommand implements ServerCommand {
 			return;
 		}
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(m.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong());
 		int pos = Integer.valueOf(args[1]);
 		controller.forward(pos * 1000);
 

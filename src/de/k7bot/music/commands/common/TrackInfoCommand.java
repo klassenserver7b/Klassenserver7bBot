@@ -31,7 +31,7 @@ public class TrackInfoCommand implements ServerCommand {
 	
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(channel.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 		EmbedBuilder builder = new EmbedBuilder();

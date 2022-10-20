@@ -24,7 +24,7 @@ public class Shutdownslashcommand implements SlashCommand {
 		Member m = event.getMember();
 		TextChannel channel = event.getChannel().asTextChannel();
 
-		if (m.getIdLong() == Klassenserver7bbot.INSTANCE.getOwnerId()) {
+		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 
 			EmbedBuilder build = new EmbedBuilder();
 
@@ -34,8 +34,8 @@ public class Shutdownslashcommand implements SlashCommand {
 
 			event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 
-			Klassenserver7bbot.INSTANCE.setexit(true);
-			Klassenserver7bbot.INSTANCE.onShutdown();
+			Klassenserver7bbot.getInstance().setexit(true);
+			Klassenserver7bbot.getInstance().onShutdown();
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}

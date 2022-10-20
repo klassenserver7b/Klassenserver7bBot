@@ -22,7 +22,7 @@ public class PauseCommand implements ServerCommand {
 		
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil().getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 		MusicUtil.updateChannel(channel);
 		if (!player.isPaused()) {

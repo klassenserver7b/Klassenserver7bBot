@@ -53,7 +53,7 @@ public class WhitelistSlashCommand implements SlashCommand {
 		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES(?, ?, ?, ?, ?);",
 				gamename, realname, dcname, dcid, 3);
 
-		Guild g = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(701341683325075477L);
+		Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(701341683325075477L);
 
 		if (g != null) {
 			TextChannel requestChannel = g.getTextChannelById(1016819796190445758L);

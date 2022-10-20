@@ -47,10 +47,10 @@ public class PlayCommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.INSTANCE.getPlayerUtil()
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
 		AudioManager manager = vc.getGuild().getAudioManager();
-		AudioPlayerManager apm = Klassenserver7bbot.INSTANCE.getAudioPlayerManager();
+		AudioPlayerManager apm = Klassenserver7bbot.getInstance().getAudioPlayerManager();
 		AudioPlayer player = controller.getPlayer();
 		Queue queue = controller.getQueue();
 
@@ -134,7 +134,7 @@ public class PlayCommand implements ServerCommand {
 				queue.clearQueue();
 				manager.openAudioConnection(vc);
 
-				Klassenserver7bbot.INSTANCE.getMainLogger()
+				Klassenserver7bbot.getInstance().getMainLogger()
 						.info("Bot startet searching a track: no current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
 
@@ -150,7 +150,7 @@ public class PlayCommand implements ServerCommand {
 
 				next = true;
 				player.stopTrack();
-				Klassenserver7bbot.INSTANCE.getMainLogger()
+				Klassenserver7bbot.getInstance().getMainLogger()
 						.info("Bot startet searching a track: overwriting current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
 				try {

@@ -7,12 +7,12 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			if (args.length <= 0) {
-				new Klassenserver7bbot(false);
+				Klassenserver7bbot.getInstance(false);
 			} else {
 				if (args[0].equals("--devmode") || args[0].equals("-d")) {
-					new Klassenserver7bbot(true);
+					Klassenserver7bbot.getInstance(true);
 				} else {
-					new Klassenserver7bbot(false);
+					Klassenserver7bbot.getInstance(false);
 				}
 
 			}

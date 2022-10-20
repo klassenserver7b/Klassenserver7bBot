@@ -43,7 +43,7 @@ public class SlashCommandManager {
 		this.commands.put("whitelistadd", new WhitelistSlashCommand());
 		this.commands.put("ha3members", new HA3MembersCommand());
 
-		Klassenserver7bbot.INSTANCE.getShardManager().getShards().forEach(shard -> {
+		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
 			
 			commands.values().forEach(command->{
@@ -63,7 +63,7 @@ public class SlashCommandManager {
 
 			commandlog.info("SlashCommand - see next lines:\n\nMember: " + event.getMember().getEffectiveName()
 					+ " | \nGuild: " + event.getGuild().getName() + " | \nChannel: " + event.getChannel().getName()
-					+ " | \nMessage: " + event.getName() + "\n");
+					+ " | \nMessage: " + event.getCommandString() + "\n");
 
 			cmd.performSlashCommand(event);
 

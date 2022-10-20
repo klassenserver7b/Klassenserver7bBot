@@ -56,7 +56,7 @@ public class MusicUtil {
 			if (set.next()) {
 				long channelid = set.getLong("channelId");
 				Guild guild;
-				if ((guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid)) != null) {
+				if ((guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid)) != null) {
 					TextChannel channel;
 					if ((channel = guild.getTextChannelById(channelid)) != null) {
 						channel.sendMessageEmbeds(builder.build()).queue();
