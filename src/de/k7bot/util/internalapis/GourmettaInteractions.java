@@ -284,7 +284,11 @@ public class GourmettaInteractions implements InternalAPI {
 			return null;
 		}
 
-		JsonObject jsonday = days.get(day.getValue()).getAsJsonObject();
+		if(!(days.size() < day.getValue())) {
+			return null;
+		}
+		
+		JsonObject jsonday = days.get(day.getValue()-1).getAsJsonObject();
 
 		return jsonday.get("orderedMeals").getAsJsonArray();
 	}
