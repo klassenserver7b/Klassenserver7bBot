@@ -66,7 +66,8 @@ public class VolumeCommand implements ServerCommand {
 				} else {
 					channel.sendMessage(
 							"Brudi was willst den du? Wenn du nix hören willst dann lefte doch den channel oder gebe `"
-									+ Klassenserver7bbot.getInstance().getPrefixList().get(channel.getGuild().getIdLong())
+									+ Klassenserver7bbot.getInstance().getPrefixMgr()
+											.getPrefix(channel.getGuild().getIdLong())
 									+ "stop ` ein :rage:")
 							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 				}

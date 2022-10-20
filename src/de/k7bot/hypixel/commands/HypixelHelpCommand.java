@@ -26,7 +26,7 @@ public class HypixelHelpCommand implements HypixelCommand {
 		EmbedBuilder messbuild = new EmbedBuilder();
 
 		messbuild.setDescription("Hypixel-Befehle auf diesem Server starten mit `"
-				+ Klassenserver7bbot.getInstance().getPrefixList().get(channel.getGuild().getIdLong()) + "Hypixel []`\n"
+				+ Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(channel.getGuild().getIdLong()) + "Hypixel []`\n"
 				+ "z.B. `-Hypixel help` \n\n" + "**Hilfe zu den Hypixel Commands:**\n\n" + strbuild.toString().trim());
 		messbuild.setAuthor("Klassenserver 7b ", null,
 				"https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Help-browser.svg/48px-Help-browser.svg.png");

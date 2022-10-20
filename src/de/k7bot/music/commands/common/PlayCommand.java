@@ -27,7 +27,7 @@ public class PlayCommand implements ServerCommand {
 	public static boolean next = false;
 	public static boolean party = false;
 
-	public static final SpotifyConverter conv = new SpotifyConverter();
+	public static final SpotifyConverter conv = new SpotifyConverter();;
 
 	@Override
 	public String gethelp() {

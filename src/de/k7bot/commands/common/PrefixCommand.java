@@ -1,7 +1,6 @@
 package de.k7bot.commands.common;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
 import de.k7bot.commands.types.ServerCommand;
@@ -22,16 +21,13 @@ public class PrefixCommand implements ServerCommand {
 
 			if (args.length > 1) {
 
-				Klassenserver7bbot.getInstance().checkpreflist();
-
-				Klassenserver7bbot.getInstance().getPrefixList().put(channel.getGuild().getIdLong(), args[1]);
-				LiteSQL.onUpdate("UPDATE botutil SET prefix = ? WHERE guildId = ?;", args[1],
-						channel.getGuild().getIdLong());
+				Klassenserver7bbot.getInstance().getPrefixMgr().setPrefix(channel.getGuild().getIdLong(), args[1]);
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setFooter("Requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());
 				builder.setTitle("Prefix was set to \"" + args[1] + "\"");
-				(channel.sendMessageEmbeds(builder.build()).complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
+				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+
 			} else {
 
 				SyntaxError.oncmdSyntaxError(channel, "prefix [String]", m);

@@ -20,25 +20,19 @@ import core.GLA;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
+import de.k7bot.threads.LoopThread;
+import de.k7bot.threads.ShutdownThread;
 import de.k7bot.commands.common.HelpCommand;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.commands.common.PlayCommand;
-import de.k7bot.util.commands.common.StatsCategoryCommand;
 import de.k7bot.util.internalapis.InternalAPIManager;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.security.auth.login.LoginException;
@@ -65,20 +59,23 @@ public class Klassenserver7bbot {
 
 	private ShardManager shardMgr;
 	private CommandManager cmdMgr;
-	private SubscriptionManager subMgr;
+
 	private SystemNotificationChannelManager syschannels;
+	private PrefixManager prefixMgr;
+
+	private SubscriptionManager subMgr;
+
 	private SlashCommandManager slashMgr;
 	private HypixelCommandManager hypMgr;
+
 	private PropertiesManager propMgr;
 	private InternalAPIManager internalApiMgr;
-
-	private HashMap<Long, String> prefixl = new HashMap<>();
 
 	private AudioPlayerManager audioPlayerManager;
 	private AudioPlayerUtil playerutil;
 
-	private Thread loop;
-	private Thread shutdownT;
+	private LoopThread loop;
+	private ShutdownThread shutdownT;
 
 	private GitHub github;
 	private HypixelAPI hypixelApi;
@@ -88,15 +85,9 @@ public class Klassenserver7bbot {
 	private Long ownerId;
 	private JsonObject teacherslist;
 
-	private boolean minlock = false;
-	private int sec = 60;
-	private int min = 0;
 	private boolean blockevents = false;
 	private boolean exit = false;
-	private boolean hasstarted = false;
 	private boolean indev;
-
-	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
 	private Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
 		INSTANCE = this;
@@ -111,10 +102,9 @@ public class Klassenserver7bbot {
 		}
 
 		initializeBot();
-		checkpreflist();
 		awaitJDAReady();
 
-		Shutdown();
+		runShutdown();
 		runLoop();
 	}
 
@@ -199,11 +189,12 @@ public class Klassenserver7bbot {
 		this.hypMgr = new HypixelCommandManager();
 		this.slashMgr = new SlashCommandManager();
 
+		this.prefixMgr = new PrefixManager();
+
 		this.subMgr = new SubscriptionManager();
 		this.internalApiMgr = new InternalAPIManager();
 
 		this.syschannels = new SystemNotificationChannelManager();
-		this.syschannels.initialize();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerutil = new AudioPlayerUtil();
@@ -271,153 +262,16 @@ public class Klassenserver7bbot {
 		}
 	}
 
-	public void Shutdown() {
-		this.shutdownT = new Thread(() -> {
-			String line;
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-			try {
-				while ((line = reader.readLine()) != null) {
-					if (line.equalsIgnoreCase("exit")) {
-						this.blockevents = true;
-						this.exit = true;
-
-						onShutdown();
-						reader.close();
-						break;
-					}
-					System.out.println("Use Exit to Shutdown");
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
-		this.shutdownT.setName("Shutdown");
-		this.shutdownT.start();
+	private void runShutdown() {
+		this.shutdownT = new ShutdownThread();
 	}
 
 	public void runLoop() {
-		this.loop = new Thread(() -> {
-			if (!this.loop.isInterrupted()) {
-				long time = System.currentTimeMillis();
-
-				while (!this.exit) {
-					if (System.currentTimeMillis() >= time + 1000) {
-						time = System.currentTimeMillis();
-
-						onsecond();
-					}
-				}
-			}
-		});
-
-		this.loop.setName("loop");
-		this.loop.start();
-	}
-
-	public void onShutdown() {
-		logger.info("Bot is shutting down!");
-		this.blockevents = true;
-
-		if (PlayCommand.conv.converter != null) {
-			PlayCommand.conv.converter.interrupt();
-		}
-
-		if (this.loop != null) {
-			this.loop.interrupt();
-		}
-		if (this.shardMgr != null) {
-
-			this.hypixelApi.shutdown();
-			internalApiMgr.shutdownAPIs();
-			StatsCategoryCommand.onShutdown(indev);
-			this.shardMgr.setStatus(OnlineStatus.OFFLINE);
-			logger.info("Bot offline");
-			this.shardMgr.shutdown();
-			LiteSQL.disconnect();
-			this.shutdownT.interrupt();
-		} else {
-			logger.info("ShardMan was null!");
-		}
+		this.loop = new LoopThread();
 	}
 
 	public void stopLoop() {
-		this.loop.interrupt();
-	}
-
-	public void onsecond() {
-		if (!this.loop.isInterrupted()) {
-
-			if ((this.min % 10 == 0) && !this.minlock) {
-				this.minlock = true;
-				this.checkpreflist();
-
-				internalApiMgr.checkForUpdates();
-
-				if ((!this.hasstarted)) {
-					StatsCategoryCommand.onStartup(this.indev);
-					this.hasstarted = true;
-				}
-				Random rand = new Random();
-
-				int i = rand.nextInt(this.status.length);
-
-				this.shardMgr.getShards().forEach(jda -> {
-					jda.getPresence().setActivity(Activity.listening(this.status[i]));
-				});
-
-			}
-
-			if (sec <= 0) {
-
-				sec = 60;
-				min++;
-				minlock = false;
-				if (min >= 60) {
-					min = 0;
-
-				}
-			} else {
-				sec--;
-			}
-		}
-	}
-
-	public void checkpreflist() {
-
-		try {
-
-			ResultSet set = LiteSQL.onQuery("SELECT guildId, prefix FROM botutil");
-			if (set != null) {
-
-				while (set.next()) {
-
-					this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
-
-					if (set.getString("prefix") == null) {
-						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId= ? ", set.getLong("guildId"));
-					}
-
-				}
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		this.shardMgr.getGuilds().forEach(gu -> {
-
-			Long id = gu.getIdLong();
-
-			if (!this.prefixl.containsKey(id)) {
-				this.prefixl.put(id, "-");
-				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(?,?)", id, "-");
-			}
-
-		});
-
+		this.loop.stopLoop();
 	}
 
 	public void loadTeacherList() {
@@ -515,10 +369,6 @@ public class Klassenserver7bbot {
 		return this.indev;
 	}
 
-	public HashMap<Long, String> getPrefixList() {
-		return this.prefixl;
-	}
-
 	public ShardManager getShardManager() {
 		return this.shardMgr;
 	}
@@ -545,6 +395,14 @@ public class Klassenserver7bbot {
 
 	public JsonObject getTeacherList() {
 		return this.teacherslist;
+	}
+
+	public PrefixManager getPrefixMgr() {
+		return this.prefixMgr;
+	}
+
+	public ShutdownThread getShutdownThread() {
+		return this.shutdownT;
 	}
 
 	public void setexit(boolean inexit) {

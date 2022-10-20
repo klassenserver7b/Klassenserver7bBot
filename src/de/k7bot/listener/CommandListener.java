@@ -25,13 +25,12 @@ public class CommandListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (!Klassenserver7bbot.getInstance().isInExit()) {
-			String message = event.getMessage().getContentStripped();
-			Klassenserver7bbot.getInstance().checkpreflist();
+			String message = event.getMessage().getContentStripped();	
 
 			switch (event.getChannelType()) {
 			case TEXT: {
 				try {
-					String prefix = Klassenserver7bbot.getInstance().getPrefixList().get(event.getGuild().getIdLong())
+					String prefix = Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(event.getGuild().getIdLong())
 							.toLowerCase();
 					guildMessageRecieved(event, message, prefix);
 				} catch (IllegalStateException e) {

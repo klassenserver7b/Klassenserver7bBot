@@ -73,7 +73,7 @@ public class AddQueueTrackCommand implements ServerCommand {
 						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
 						.setDescription(
 								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.getInstance().getPrefixList().get(vc.getGuild().getIdLong())
+										+ Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(vc.getGuild().getIdLong())
 										+ "play` INSTEAD!")
 						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 

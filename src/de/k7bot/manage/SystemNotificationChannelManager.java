@@ -24,10 +24,10 @@ public class SystemNotificationChannelManager {
 
 		systemchannellist = new ConcurrentHashMap<>();
 		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
-
+		reload();
 	}
 
-	public void initialize() {
+	private void reload() {
 
 		ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;");
 
@@ -71,22 +71,24 @@ public class SystemNotificationChannelManager {
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
 	 */
 	public void insertChannel(TextChannel channel) {
+		
+		reload();
 
 		Guild guild = channel.getGuild();
 
-		systemchannellist.put(guild, channel);
-		
 		if (systemchannellist.containsKey(guild)) {
 
 			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;", channel.getIdLong(),
 					guild.getIdLong());
 
 		} else {
-			
+
 			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);", guild.getIdLong(),
 					channel.getIdLong());
 
 		}
+
+		systemchannellist.put(guild, channel);
 
 	}
 
@@ -125,6 +127,7 @@ public class SystemNotificationChannelManager {
 	 * @return The current HashMap of SystemChannels wich is used by the Bot.
 	 */
 	public ConcurrentHashMap<Guild, TextChannel> getHashMap() {
+		reload();
 		return systemchannellist;
 	}
 }
