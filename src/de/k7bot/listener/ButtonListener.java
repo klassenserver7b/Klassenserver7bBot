@@ -51,7 +51,7 @@ public class ButtonListener extends ListenerAdapter {
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
 		LiteSQL.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId = ?", dcid);
-		User u = Klassenserver7bbot.INSTANCE.getShardManager().getUserById(dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
 
@@ -77,7 +77,7 @@ public class ButtonListener extends ListenerAdapter {
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
 		LiteSQL.onUpdate("UPDATE ha3users SET approved = 0 WHERE dcId = ?", dcid);
-		User u = Klassenserver7bbot.INSTANCE.getShardManager().getUserById(dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
 
@@ -101,7 +101,7 @@ public class ButtonListener extends ListenerAdapter {
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
 		LiteSQL.onUpdate("UPDATE ha3users SET approved = 2 WHERE dcId = ?", dcid);
-		User u = Klassenserver7bbot.INSTANCE.getShardManager().getUserById(dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		event.getMessage().delete().queue();
 

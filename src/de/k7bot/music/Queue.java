@@ -4,8 +4,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.utilities.SongDataStripper;
-import de.k7bot.music.utilities.SongTitle;
+import de.k7bot.music.utilities.SongDataUtils;
+import de.k7bot.music.utilities.SongJson;
 import de.k7bot.sql.LiteSQL;
 
 import java.time.LocalDateTime;
@@ -19,10 +19,14 @@ public class Queue {
 	private List<AudioTrack> looplist;
 	private List<AudioTrack> queuelist;
 	private MusicController controller;
+	private SongJson currentSong;
+	private final SongDataUtils songutils;
 
 	public Queue(MusicController controller) {
 		setController(controller);
 		setQueuelist(new ArrayList<>());
+		this.songutils = new SongDataUtils();
+		this.currentSong = null;
 	}
 
 	public boolean emptyQueueList() {
@@ -30,8 +34,6 @@ public class Queue {
 	}
 
 	public boolean next(AudioTrack currentTrack) {
-		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-		long datetime = Long.parseLong(datetimestring);
 
 		AudioPlayer player = this.controller.getPlayer();
 
@@ -45,16 +47,7 @@ public class Queue {
 
 				player.playTrack(track);
 
-				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
-				String songname = title.getTitle().replaceAll("'", "");
-				String songauthor = "";
-
-				if (!title.containsauthor()) {
-					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
-				}
-
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-						songname, songauthor, controller.getGuild().getIdLong(), datetime);
+				logNewTrack(track);
 
 				return true;
 
@@ -67,16 +60,7 @@ public class Queue {
 				track = this.queuelist.remove(0);
 				player.playTrack(track);
 
-				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
-				String songname = title.getTitle().replaceAll("'", "");
-				String songauthor = "";
-
-				if (!title.containsauthor()) {
-					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
-				}
-
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-						songname, songauthor, controller.getGuild().getIdLong(), datetime);
+				logNewTrack(track);
 
 				this.queuelist = this.looplist;
 				return true;
@@ -86,16 +70,7 @@ public class Queue {
 				track = this.queuelist.remove(0);
 				player.playTrack(track);
 
-				SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
-				String songname = title.getTitle().replaceAll("'", "");
-				String songauthor = "";
-
-				if (!title.containsauthor()) {
-					songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
-				}
-
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-						songname, songauthor, controller.getGuild().getIdLong(), datetime);
+				logNewTrack(track);
 
 				return true;
 
@@ -106,25 +81,29 @@ public class Queue {
 			track = currentTrack.makeClone();
 			player.playTrack(track);
 
-			SongTitle title = SongDataStripper.stripTitle(track.getInfo().title);
-			String songname = title.getTitle().replaceAll("'", "");
-			String songauthor = "";
-
-			if (!title.containsauthor()) {
-				songauthor = SongDataStripper.stripAuthor(track.getInfo().author).replaceAll("'", "");
-			}
-
-			LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-					songname, songauthor, controller.getGuild().getIdLong(), datetime);
+			logNewTrack(track);
 		}
 		return false;
+	}
+
+	public void logNewTrack(AudioTrack track) {
+
+		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+		long datetime = Long.parseLong(datetimestring);
+
+		SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
+		this.currentSong = data;
+
+		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+				data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+
 	}
 
 	public void addTracktoQueue(AudioTrack track) {
 		this.queuelist.add(track);
 
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.INSTANCE.getMainLogger()
+			Klassenserver7bbot.getInstance().getMainLogger()
 					.debug("Queue - add Track to Queue: playing track = null -> next(track)");
 			next(track);
 		}
@@ -133,7 +112,7 @@ public class Queue {
 	public void setplaynext(AudioTrack track) {
 		this.queuelist.add(0, track);
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.INSTANCE.getMainLogger()
+			Klassenserver7bbot.getInstance().getMainLogger()
 					.debug("Queue - setNextTrack: playing track = null -> next(track)");
 			next(track);
 		}
@@ -192,5 +171,9 @@ public class Queue {
 
 	public boolean isLooped() {
 		return islooped;
+	}
+
+	public SongJson getCurrentSongData() {
+		return this.currentSong;
 	}
 }

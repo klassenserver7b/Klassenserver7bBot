@@ -15,6 +15,7 @@ import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -37,28 +38,9 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 		String path = event.getCommandPath();
 
-		SubscriptionTarget target = switch (event.getOption("target").getAsString()) {
+		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
-		case "BOT_NEWS":
-			yield SubscriptionTarget.BOT_NEWS;
-
-		case "LERNPLAN":
-			yield SubscriptionTarget.LERNPLAN;
-
-		case "VPLAN":
-			yield SubscriptionTarget.VPLAN;
-
-		case "GOURMETTA":
-			yield SubscriptionTarget.GOURMETTA;
-
-		case "KAUFLAND":
-			yield SubscriptionTarget.KAUFLAND;
-
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + event.getOption("target").getAsString());
-		};
-
-		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.INSTANCE.getOwnerId()) {
+		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
 					.setTimestamp(OffsetDateTime.now())
 					.setDescription(
@@ -71,7 +53,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 			try {
 
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager().createSubscription(
+				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(
 						SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
 						event.getUser().openPrivateChannel().complete().getIdLong());
 
@@ -95,7 +77,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 			GuildChannelUnion union = event.getOption("channel").getAsChannel();
 			SubscriptionDeliveryType delivery;
 
-			if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+			if (!Klassenserver7bbot.getInstance().isDevMode()) {
 				switch (union.getType()) {
 
 				case TEXT: {
@@ -120,7 +102,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 			if (delivery != SubscriptionDeliveryType.UNKNOWN) {
 
-				Klassenserver7bbot.INSTANCE.getSubscriptionManager().createSubscription(delivery, target,
+				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
 						union.getIdLong());
 				hook.sendMessageEmbeds(
 						new EmbedBuilder().setColor(Color.decode("#00ff00")).setTimestamp(OffsetDateTime.now())
@@ -137,22 +119,29 @@ public class SubscribeSlashCommand implements SlashCommand {
 	public SlashCommandData getCommandData() {
 
 		List<Choice> choices = new ArrayList<>();
-		choices.add(new Choice("Bot News", "BOT_NEWS"));
-		choices.add(new Choice("Lernplan", "LERNPLAN"));
-		choices.add(new Choice("Vertretungsplan", "VPLAN"));
-		choices.add(new Choice("Gourmetta", "GOURMETTA"));
-		choices.add(new Choice("Kaufland", "KAUFLAND"));
+
+		for (SubscriptionTarget t : SubscriptionTarget.values()) {
+
+			if (t == SubscriptionTarget.UNKNOWN) {
+				continue;
+			}
+
+			choices.add(new Choice(t.toString(), t.toString()));
+
+		}
 
 		SubcommandData textchannelsub = new SubcommandData("textchannel",
 				"Use this if you want to recieve your messages in a Text-Channel")
-				.addOption(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
+				.addOptions(
+						new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
+								.setRequired(true).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS))
 				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices));
+						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
 		SubcommandData privatechannelsub = new SubcommandData("privatechannel",
 				"Use this if you want to recieve your messages in a private-Channel")
 				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices));
+						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
 		return Commands.slash("subscribe", "Addes a subscription for the given type in the given channel.")
 				.addSubcommands(textchannelsub, privatechannelsub)

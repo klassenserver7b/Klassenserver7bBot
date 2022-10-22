@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 /**
@@ -55,7 +56,7 @@ public class MusicUtil {
 			if (set.next()) {
 				long channelid = set.getLong("channelId");
 				Guild guild;
-				if ((guild = Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid)) != null) {
+				if ((guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid)) != null) {
 					TextChannel channel;
 					if ((channel = guild.getTextChannelById(channelid)) != null) {
 						channel.sendMessageEmbeds(builder.build()).queue();
@@ -125,6 +126,52 @@ public class MusicUtil {
 		case 2: {
 			channel.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
 					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		}
+
+		return true;
+	}
+
+	public static boolean checkConditions(InteractionHook channel, Member m) {
+
+		if (!MusicUtil.membHasVcConnection(m)) {
+			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
+					TimeUnit.SECONDS);
+			return false;
+		}
+
+		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		switch (MusicUtil.isConnectedtoChannel(vc)) {
+		case 0: {
+			channel.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention()).complete()
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		case 2: {
+			channel.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		}
+
+		return true;
+	}
+
+	public static boolean checkConditions(Member m) {
+
+		if (!MusicUtil.membHasVcConnection(m)) {
+			return false;
+		}
+
+		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		switch (MusicUtil.isConnectedtoChannel(vc)) {
+		case 0: {
+			return false;
+		}
+		case 2: {
 			return false;
 		}
 		}

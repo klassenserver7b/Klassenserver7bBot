@@ -29,7 +29,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 		String name;
 		friends = "";
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		String[] args = message.getContentDisplay().split(" ");
 

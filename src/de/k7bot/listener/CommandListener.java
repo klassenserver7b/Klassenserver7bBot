@@ -2,8 +2,8 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.common.HelpCommand;
 import de.k7bot.sql.LiteSQL;
-import de.k7bot.commands.HelpCommand;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,15 +24,13 @@ public class CommandListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
-			String message = event.getMessage().getContentStripped();
-			Klassenserver7bbot.INSTANCE.checkpreflist();
-			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
+		if (!Klassenserver7bbot.getInstance().isInExit()) {
+			String message = event.getMessage().getContentStripped();	
 
 			switch (event.getChannelType()) {
 			case TEXT: {
 				try {
-					String prefix = Klassenserver7bbot.INSTANCE.getPrefixList().get(event.getGuild().getIdLong())
+					String prefix = Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(event.getGuild().getIdLong())
 							.toLowerCase();
 					guildMessageRecieved(event, message, prefix);
 				} catch (IllegalStateException e) {
@@ -58,7 +56,7 @@ public class CommandListener extends ListenerAdapter {
 
 		if (message.getContentStripped().startsWith("-help")) {
 			HelpCommand help = new HelpCommand();
-
+			inserttoLog("help", LocalDateTime.now(), 0L);
 			help.performCommand(channel, message);
 		}
 	}
@@ -69,7 +67,7 @@ public class CommandListener extends ListenerAdapter {
 
 		if (message.equalsIgnoreCase("-help")) {
 
-			Klassenserver7bbot.INSTANCE.getCmdMan().perform("help", event.getMember(), channel, event.getMessage());
+			Klassenserver7bbot.getInstance().getCmdMan().perform("help", event.getMember(), channel, event.getMessage());
 
 			inserttoLog("help", LocalDateTime.now(), event.getGuild());
 
@@ -86,7 +84,7 @@ public class CommandListener extends ListenerAdapter {
 
 				if (args.length > 0) {
 
-					if (Klassenserver7bbot.INSTANCE.getCmdMan().perform(args[0], event.getMember(), channel,
+					if (Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
 							event.getMessage())) {
 
 						inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild());
@@ -106,9 +104,18 @@ public class CommandListener extends ListenerAdapter {
 
 	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
 
-		if (!Klassenserver7bbot.INSTANCE.isInExit()) {
+		if (!Klassenserver7bbot.getInstance().isInExit()) {
 			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES(?, ?, ?);", command,
 					guild.getIdLong(), time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+		}
+
+	}
+
+	private void inserttoLog(String command, LocalDateTime time, Long guildid) {
+
+		if (!Klassenserver7bbot.getInstance().isInExit()) {
+			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES(?, ?, ?);", command, guildid,
+					time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
 		}
 
 	}

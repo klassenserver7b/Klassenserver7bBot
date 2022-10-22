@@ -21,7 +21,7 @@ public class SubMessageSendHandler {
 	public void provideSubscriptionMessage(Subscription s, MessageCreateData d) {
 
 		SubscriptionDeliveryType type = s.getDeliveryType();
-		if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+		if (Klassenserver7bbot.getInstance().isDevMode()) {
 			type = SubscriptionDeliveryType.CANARY;
 		}
 
@@ -56,7 +56,7 @@ public class SubMessageSendHandler {
 	private void sendTextChannelMessage(Subscription s, MessageCreateData data) {
 		Long chanid = s.getTargetDiscordId();
 
-		TextChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getTextChannelById(chanid);
+		TextChannel ch = Klassenserver7bbot.getInstance().getShardManager().getTextChannelById(chanid);
 
 		if (ch != null) {
 
@@ -73,7 +73,7 @@ public class SubMessageSendHandler {
 
 		Long chanid = s.getTargetDiscordId();
 
-		PrivateChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getPrivateChannelById(chanid);
+		PrivateChannel ch = Klassenserver7bbot.getInstance().getShardManager().getPrivateChannelById(chanid);
 
 		if (ch != null) {
 
@@ -90,7 +90,7 @@ public class SubMessageSendHandler {
 
 		Long chanid = s.getTargetDiscordId();
 
-		NewsChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getNewsChannelById(chanid);
+		NewsChannel ch = Klassenserver7bbot.getInstance().getShardManager().getNewsChannelById(chanid);
 
 		if (ch != null) {
 
@@ -105,7 +105,7 @@ public class SubMessageSendHandler {
 
 	private void sendCanaryMessage(Subscription s, MessageCreateData data) {
 
-		if (!Klassenserver7bbot.INSTANCE.isDevMode()) {
+		if (!Klassenserver7bbot.getInstance().isDevMode()) {
 			return;
 		}
 
@@ -115,7 +115,7 @@ public class SubMessageSendHandler {
 
 		Long chanid = s.getTargetDiscordId();
 
-		TextChannel ch = Klassenserver7bbot.INSTANCE.getShardManager().getTextChannelById(chanid);
+		TextChannel ch = Klassenserver7bbot.getInstance().getShardManager().getTextChannelById(chanid);
 
 		if (ch != null) {
 

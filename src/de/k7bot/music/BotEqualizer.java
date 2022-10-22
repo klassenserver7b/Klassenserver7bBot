@@ -36,7 +36,7 @@ public class BotEqualizer {
 	 * @param p
 	 * @return
 	 */
-	public static BotEqualizer getEQ(AudioPlayer p) {
+	public static BotEqualizer getEQ(AudioPlayer p) {		
 		return new BotEqualizer(p);
 	}
 
@@ -100,6 +100,28 @@ public class BotEqualizer {
 		}
 		}
 
+	}
+	
+	/**
+	 * 
+	 * @param preset
+	 */
+	public void setEQMode(EqualizerPreset preset) {
+		
+		if(preset == EqualizerPreset.OFF) {
+			eqstop();
+			return;
+		}
+		
+		float[] bands = preset.getBands();
+		
+		for (int i = 0; i < bands.length; i++) {
+			eqfac.setGain(i, bands[i]);
+		}
+		
+		eqstart();
+		
+		
 	}
 
 }

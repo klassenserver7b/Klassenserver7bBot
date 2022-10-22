@@ -15,7 +15,7 @@
  {
    public void performHypixelCommand(Member m, TextChannel channel, Message message) { 
      
-     HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+     HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
      
      try {
        CountsReply gescount = api.getCounts().get();

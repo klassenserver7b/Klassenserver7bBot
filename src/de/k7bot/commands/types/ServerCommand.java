@@ -1,5 +1,6 @@
 package de.k7bot.commands.types;
 
+import de.k7bot.HelpCategories;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -19,7 +20,7 @@ public interface ServerCommand {
 	 * 
 	 * @return The Category for the {@link de.k7bot.commands.types.ServerCommand ServerCommand}
 	 */
-	String getcategory();
+	HelpCategories getcategory();
 
 	void performCommand(Member m, TextChannel channel, Message message);
 }

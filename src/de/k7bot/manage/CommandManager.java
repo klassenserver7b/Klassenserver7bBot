@@ -2,57 +2,57 @@
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.ClientInfo;
-import de.k7bot.commands.HelpCommand;
-import de.k7bot.commands.PingCommand;
-import de.k7bot.commands.PrefixCommand;
-import de.k7bot.commands.RestartCommand;
-import de.k7bot.commands.ShutdownCommand;
-import de.k7bot.commands.SystemchannelCommand;
-import de.k7bot.commands.TestCommand;
-import de.k7bot.commands.VTestCommand;
-import de.k7bot.commands.TeacherCommand;
+import de.k7bot.commands.common.ClientInfo;
+import de.k7bot.commands.common.HelpCommand;
+import de.k7bot.commands.common.PingCommand;
+import de.k7bot.commands.common.PrefixCommand;
+import de.k7bot.commands.common.RestartCommand;
+import de.k7bot.commands.common.ShutdownCommand;
+import de.k7bot.commands.common.SystemchannelCommand;
+import de.k7bot.commands.common.TeacherCommand;
+import de.k7bot.commands.common.TestCommand;
+import de.k7bot.commands.common.VTestCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.hypixel.commands.SCtoHC;
-import de.k7bot.moderation.commands.BanCommand;
-import de.k7bot.moderation.commands.MemberLogsCommand;
-import de.k7bot.moderation.commands.MemberdevicesCommand;
-import de.k7bot.moderation.commands.ModLogsCommand;
-import de.k7bot.moderation.commands.StopTimeoutCommand;
-import de.k7bot.moderation.commands.TimeoutCommand;
-import de.k7bot.moderation.commands.WarnCommand;
-import de.k7bot.moderation.commands.KickCommand;
-import de.k7bot.music.commands.AddQueueTrackCommand;
-import de.k7bot.music.commands.ClearQueueCommand;
-import de.k7bot.music.commands.EqualizerCommand;
-import de.k7bot.music.commands.LoopCommand;
-import de.k7bot.music.commands.LyricsCommand;
-import de.k7bot.music.commands.Lyricsoldcommand;
-import de.k7bot.music.commands.OverallChartsCommand;
-import de.k7bot.music.commands.PauseCommand;
-import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.music.commands.PlayNextCommand;
-import de.k7bot.music.commands.QueuelistCommand;
-import de.k7bot.music.commands.ResumeCommand;
-import de.k7bot.music.commands.SeekCommand;
-import de.k7bot.music.commands.ShuffleCommand;
-import de.k7bot.music.commands.SkipBackCommand;
-import de.k7bot.music.commands.SkipCommand;
-import de.k7bot.music.commands.SkipForwardCommand;
-import de.k7bot.music.commands.StopCommand;
-import de.k7bot.music.commands.TrackInfoCommand;
-import de.k7bot.music.commands.UebersteuerungAdmin;
-import de.k7bot.music.commands.UnLoopCommand;
-import de.k7bot.music.commands.VolumeCommand;
-import de.k7bot.util.commands.ClearCommand;
-import de.k7bot.util.commands.DanceInterpreterJsonGenerateCommand;
-import de.k7bot.util.commands.EveryoneCommand;
-import de.k7bot.util.commands.MessagetoEmbedCommand;
-import de.k7bot.util.commands.ReactRolesCommand;
-import de.k7bot.util.commands.RoleCreation;
-import de.k7bot.util.commands.StatsCategoryCommand;
-import de.k7bot.util.internalapis.DisabledAPI;
-import de.k7bot.util.commands.AddReactionCommand;
+import de.k7bot.moderation.commands.common.BanCommand;
+import de.k7bot.moderation.commands.common.KickCommand;
+import de.k7bot.moderation.commands.common.MemberLogsCommand;
+import de.k7bot.moderation.commands.common.MemberdevicesCommand;
+import de.k7bot.moderation.commands.common.ModLogsCommand;
+import de.k7bot.moderation.commands.common.StopTimeoutCommand;
+import de.k7bot.moderation.commands.common.TimeoutCommand;
+import de.k7bot.moderation.commands.common.WarnCommand;
+import de.k7bot.music.commands.common.AddQueueTrackCommand;
+import de.k7bot.music.commands.common.ClearQueueCommand;
+import de.k7bot.music.commands.common.EqualizerCommand;
+import de.k7bot.music.commands.common.LoopCommand;
+import de.k7bot.music.commands.common.LyricsCommand;
+import de.k7bot.music.commands.common.Lyricsoldcommand;
+import de.k7bot.music.commands.common.OverallChartsCommand;
+import de.k7bot.music.commands.common.PauseCommand;
+import de.k7bot.music.commands.common.PlayCommand;
+import de.k7bot.music.commands.common.PlayNextCommand;
+import de.k7bot.music.commands.common.QueuelistCommand;
+import de.k7bot.music.commands.common.ResumeCommand;
+import de.k7bot.music.commands.common.SeekCommand;
+import de.k7bot.music.commands.common.ShuffleCommand;
+import de.k7bot.music.commands.common.SkipBackCommand;
+import de.k7bot.music.commands.common.SkipCommand;
+import de.k7bot.music.commands.common.SkipForwardCommand;
+import de.k7bot.music.commands.common.StopCommand;
+import de.k7bot.music.commands.common.TrackInfoCommand;
+import de.k7bot.music.commands.common.UebersteuerungAdmin;
+import de.k7bot.music.commands.common.UnLoopCommand;
+import de.k7bot.music.commands.common.VolumeCommand;
+import de.k7bot.util.commands.common.AddReactionCommand;
+import de.k7bot.util.commands.common.ClearCommand;
+import de.k7bot.util.commands.common.DanceInterpreterJsonGenerateCommand;
+import de.k7bot.util.commands.common.EveryoneCommand;
+import de.k7bot.util.commands.common.MessagetoEmbedCommand;
+import de.k7bot.util.commands.common.ReactRolesCommand;
+import de.k7bot.util.commands.common.RoleCreation;
+import de.k7bot.util.commands.common.StatsCategoryCommand;
+import de.k7bot.util.customapis.DisabledAPI;
 
 import java.util.LinkedHashMap;
 
@@ -143,13 +143,13 @@ public class CommandManager {
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
 		this.commands.put("eq", new EqualizerCommand());
 
-		if (Klassenserver7bbot.INSTANCE.getPropertiesManager().getEnabledApis().get("hypixel")) {
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());
 		}
 
-		if (Klassenserver7bbot.INSTANCE.isDevMode()) {
+		if (Klassenserver7bbot.getInstance().isDevMode()) {
 			this.commands.put("test", new TestCommand());
 			this.commands.put("vtest", new VTestCommand());
 		}

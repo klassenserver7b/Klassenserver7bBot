@@ -1,4 +1,6 @@
-API Manager mit enable API methode und ENUM für API Types
+HelpSlashCommand mit Kategorie Auswahl
+
+SlashCommands in CommandsLog DB speichern
 
 Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
@@ -6,7 +8,7 @@ Equalizer für Music -> Mehr Profile
 
 Mehr Interactions auf SlashCommands und Buttons umstellen
 
-bot music charts für z.B. letzte woche/monat/jahr (vllt. sp�ter mit automatischer sprache aus silben und richtiger show lul)
+bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
 
 Mehrere player per guild (music)

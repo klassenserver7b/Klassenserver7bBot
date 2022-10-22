@@ -13,7 +13,7 @@ public class AudioPlayerUtil {
 			mc = this.controller.get(Long.valueOf(guildid));
 		} else {
 
-			mc = new MusicController(Klassenserver7bbot.INSTANCE.getShardManager().getGuildById(guildid));
+			mc = new MusicController(Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid));
 
 			this.controller.put(Long.valueOf(guildid), mc);
 		}
