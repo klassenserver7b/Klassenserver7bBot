@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.hc.core5.http.ParseException;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,7 +22,7 @@ import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
-public class SpotifyPlaylitsMoveCommand implements ServerCommand{
+public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
@@ -29,8 +30,8 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand{
 	}
 
 	@Override
-	public String getcategory() {
-		return null;
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand{
 				.offset(Integer.valueOf(args[3])).build();
 
 		PlaylistTrack[] songs = new PlaylistTrack[0];
-		
+
 		try {
 
 			Paging<PlaylistTrack> tracks = getplaylistitemsrequest.execute();
@@ -89,9 +90,6 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand{
 			e.printStackTrace();
 		}
 
-		
 	}
-	
-	
 
 }

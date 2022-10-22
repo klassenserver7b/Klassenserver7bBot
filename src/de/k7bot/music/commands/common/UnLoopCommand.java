@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.annotation.Nonnull;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.utilities.MusicUtil;
@@ -14,7 +15,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class UnLoopCommand implements ServerCommand {
-	
+
 	@Override
 	public String gethelp() {
 		String help = "entloopt die aktuelle Queuelist";
@@ -22,9 +23,8 @@ public class UnLoopCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override

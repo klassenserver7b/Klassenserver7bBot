@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.manage.SystemNotificationChannelManager;
@@ -13,12 +14,12 @@ public class SystemchannelCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Ändert den Channel für Systembenachrichtigungen (z.B. Einladungslink Logs oder gelöschte Nachrichten Logs) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new syschannel]";
+		return "Ändert den Channel für Systembenachrichtigungen (z.B. Logs für Einladungen oder gelöschte Nachrichten) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server Verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new syschannel]";
 	}
 
 	@Override
-	public String getcategory() {
-		return "Allgemein";
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
 	}
 
 	@Override

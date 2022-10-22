@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,16 +28,14 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  */
 public class HelpCommand implements ServerCommand {
 
-	private static List<String> categories = new ArrayList<>();
-
 	@Override
 	public String gethelp() {
 		return "Shows the Help for the Bot!";
 	}
 
 	@Override
-	public String getcategory() {
-		return "Allgemein";
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
 		}
 	}
-	
+
 	public void performCommand(Member m, TextChannel channel, String mess) {
 		String[] args = mess.split(" ");
 
@@ -69,7 +68,6 @@ public class HelpCommand implements ServerCommand {
 			sendEmbedPrivate(generateHelpOverview(null), channel);
 		}
 	}
-
 
 	/**
 	 * 
@@ -95,7 +93,8 @@ public class HelpCommand implements ServerCommand {
 					false);
 		} else {
 			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmaßig mit `-`\r\n" + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+					"Bot-Befehle beginnen standardmaßig mit `-`\r\n"
+							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
 					false);
 		}
@@ -107,14 +106,18 @@ public class HelpCommand implements ServerCommand {
 		strbuild.append("**Valid categorys are:**");
 		strbuild.append("\r\n");
 
-		categories.forEach(cat -> {
+		for (HelpCategories cat : HelpCategories.values()) {
 
-			strbuild.append("`" + cat + "`");
+			if (cat == HelpCategories.UNKNOWN) {
+				continue;
+			}
+
+			strbuild.append("`" + cat.toString() + "`");
 			strbuild.append("\r\n");
 
-		});
+		}
 
-		ret.addField("",strbuild.toString(), false);
+		ret.addField("", strbuild.toString(), false);
 
 		return ret.build();
 	}
@@ -124,7 +127,7 @@ public class HelpCommand implements ServerCommand {
 	 * @param category
 	 * @return
 	 */
-	public MessageEmbed generateHelpforCategory(String category, Guild guild) {
+	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
 		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).commands;
 		List<Entry<String, ServerCommand>> searchresults = new ArrayList<>();
@@ -134,6 +137,21 @@ public class HelpCommand implements ServerCommand {
 		String prefix;
 
 		EmbedBuilder ret = new EmbedBuilder();
+
+		HelpCategories cat;
+
+		try {
+
+			cat = HelpCategories.valueOf(catstr.trim().toUpperCase());
+
+		} catch (IllegalArgumentException e) {
+
+			ret.setColor(Color.decode("#ff0000"));
+			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
+
+			return ret.build();
+
+		}
 
 		if (guild != null) {
 
@@ -149,91 +167,66 @@ public class HelpCommand implements ServerCommand {
 
 			prefix = "-";
 			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmäßig mit `-`\r\n" + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+					"Bot-Befehle beginnen standardmäßig mit `-`\r\n"
+							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
 							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
 					false);
 		}
 
-		if (categories.contains(category)) {
+		commands.entrySet().forEach(key -> {
+			ServerCommand comm = key.getValue();
 
-			commands.entrySet().forEach(key -> {
-				ServerCommand comm = key.getValue();
+			if (comm.getcategory() != null && comm.getcategory() == cat) {
+				searchresults.add(key);
+			}
+		});
 
-				if (comm.getcategory()!=null && comm.getcategory().equalsIgnoreCase(category)) {
-					searchresults.add(key);
-				}
-			});
+		StringBuilder categoryHelpStr = new StringBuilder();
 
-			StringBuilder categoryHelpStr = new StringBuilder();
+		for (int i = 0; i < searchresults.size(); i++) {
 
-			for (int i = 0; i < searchresults.size(); i++) {
+			Entry<String, ServerCommand> entry = searchresults.get(i);
 
-				Entry<String, ServerCommand> entry = searchresults.get(i);
+			StringBuilder inbuild = new StringBuilder();
 
-				StringBuilder inbuild = new StringBuilder();
+			inbuild.append("\r\n");
+			inbuild.append("`");
+			inbuild.append(prefix);
+			inbuild.append(entry.getKey());
+			inbuild.append("` - ");
+			inbuild.append(entry.getValue().gethelp() + " \r\n");
 
-				inbuild.append("\r\n");
-				inbuild.append("`");
-				inbuild.append(prefix);
-				inbuild.append(entry.getKey());
-				inbuild.append("` - ");
-				inbuild.append(entry.getValue().gethelp()+" \r\n");
+			if (buildlength + inbuild.toString().length()
+					+ 5 >= (1024 * limitmultiplicator + ((limitmultiplicator - 1) * 3))) {
 
-				if (buildlength + inbuild.toString().length() + 5 >= (1024 * limitmultiplicator+((limitmultiplicator-1)*3))) {
+				buildlength = limitmultiplicator * 1024 + inbuild.toString().length();
+				limitmultiplicator++;
+				categoryHelpStr.append("<@>");
+				categoryHelpStr.append(inbuild.toString());
 
-					buildlength = limitmultiplicator * 1024 + inbuild.toString().length();
-					limitmultiplicator++;
-					categoryHelpStr.append("<@>");
-					categoryHelpStr.append(inbuild.toString());
+			} else {
 
-				} else {
-
-					buildlength += inbuild.toString().length();
-					categoryHelpStr.append(inbuild.toString());
-
-				}
+				buildlength += inbuild.toString().length();
+				categoryHelpStr.append(inbuild.toString());
 
 			}
 
-			String[] helpparts = categoryHelpStr.toString().split("<@>");
-
-			for (int i = 0; i < helpparts.length; i++) {
-
-				ret.addField("", helpparts[i], false);
-
-			}
-
-			ret.setTitle("Help for the K7Bot");
-			ret.setTimestamp(OffsetDateTime.now());
-			ret.setColor(Color.decode("#14cdc8"));
-			
-			return ret.build();
-
-		} else {
-
-			ret.setColor(Color.decode("#ff0000"));
-			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
-
-			return ret.build();
 		}
 
-	}
+		String[] helpparts = categoryHelpStr.toString().split("<@>");
 
-	/**
-	 * Updates the List of used Categories by checking all Commands
-	 */
-	public static void updateCategoryList() {
-		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).commands;
+		for (int i = 0; i < helpparts.length; i++) {
 
-		commands.values().forEach(command -> {
+			ret.addField("", helpparts[i], false);
 
-			if (command.getcategory() != null && !categories.contains(command.getcategory())) {
+		}
 
-				categories.add(command.getcategory());
+		ret.setTitle("Help for the K7Bot");
+		ret.setTimestamp(OffsetDateTime.now());
+		ret.setColor(Color.decode("#14cdc8"));
 
-			}
+		return ret.build();
 
-		});
 	}
 
 	/**
@@ -273,8 +266,9 @@ public class HelpCommand implements ServerCommand {
 		}
 
 	}
+
 	private void sendEmbedPrivate(MessageEmbed embed, @NotNull PrivateChannel ch) {
-			ch.sendMessageEmbeds(embed).queue();
+		ch.sendMessageEmbeds(embed).queue();
 
 	}
 

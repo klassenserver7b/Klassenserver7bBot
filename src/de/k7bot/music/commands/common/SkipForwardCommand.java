@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
@@ -17,17 +18,17 @@ public class SkipForwardCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Musik";
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if(!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
-		
+
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
@@ -35,11 +36,11 @@ public class SkipForwardCommand implements ServerCommand {
 			return;
 		}
 
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(m.getGuild().getIdLong());
 		int pos = Integer.valueOf(args[1]);
 		controller.forward(pos * 1000);
 
 	}
-
 
 }

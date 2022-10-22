@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import de.k7bot.util.internalapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.InternalAPI;
 
 /**
  * @author Felix

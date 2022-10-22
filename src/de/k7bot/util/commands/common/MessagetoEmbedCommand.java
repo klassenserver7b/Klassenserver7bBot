@@ -1,5 +1,6 @@
 package de.k7bot.util.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import java.time.OffsetDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -28,7 +29,7 @@ public class MessagetoEmbedCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Tools";
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 }

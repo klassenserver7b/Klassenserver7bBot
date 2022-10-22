@@ -1,5 +1,6 @@
 package de.k7bot.moderation.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -122,8 +123,7 @@ public class TimeoutCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Moderation";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
 	}
 }

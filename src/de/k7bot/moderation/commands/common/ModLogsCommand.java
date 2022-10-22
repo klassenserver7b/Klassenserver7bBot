@@ -3,6 +3,7 @@ package de.k7bot.moderation.commands.common;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 
 import java.sql.ResultSet;
@@ -60,8 +61,7 @@ public class ModLogsCommand implements ServerCommand {
 							embed.setDescription("moderator: @" + memb.get(0).getEffectiveName() + "\n" + "action: "
 									+ action.get(j) + "\n" + "user: " + membName.get(j) + "\n" + "reason: "
 									+ reason.get(j) + "\n" + "date: " + date.get(j));
-							channel.sendMessageEmbeds(embed.build())
-									.queue();
+							channel.sendMessageEmbeds(embed.build()).queue();
 						}
 					} else {
 
@@ -86,7 +86,7 @@ public class ModLogsCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Moderation";
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
 	}
 }

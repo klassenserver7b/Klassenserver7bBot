@@ -52,7 +52,7 @@ import de.k7bot.util.commands.common.MessagetoEmbedCommand;
 import de.k7bot.util.commands.common.ReactRolesCommand;
 import de.k7bot.util.commands.common.RoleCreation;
 import de.k7bot.util.commands.common.StatsCategoryCommand;
-import de.k7bot.util.internalapis.DisabledAPI;
+import de.k7bot.util.customapis.DisabledAPI;
 
 import java.util.LinkedHashMap;
 
@@ -143,7 +143,7 @@ public class CommandManager {
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
 		this.commands.put("eq", new EqualizerCommand());
 
-		if (Klassenserver7bbot.getInstance().getPropertiesManager().getEnabledApis().get("hypixel")) {
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());

@@ -1,4 +1,4 @@
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -14,7 +14,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.internalapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.InternalAPI;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;

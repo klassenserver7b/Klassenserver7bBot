@@ -3,6 +3,7 @@ package de.k7bot.util.commands.common;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 
 import java.util.List;
@@ -72,8 +73,7 @@ public class ReactRolesCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Tools";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 }

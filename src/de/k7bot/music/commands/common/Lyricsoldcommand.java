@@ -2,19 +2,24 @@ package de.k7bot.music.commands.common;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import core.GLA;
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.Queue;
 import de.k7bot.music.utilities.MusicUtil;
-import de.k7bot.music.utilities.SongDataStripper;
-import de.k7bot.music.utilities.SongTitle;
+import de.k7bot.music.utilities.SongJson;
 import genius.SongSearch;
 import genius.SongSearch.Hit;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,6 +30,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class Lyricsoldcommand implements ServerCommand {
 
+	private final Logger log;
+
+	public Lyricsoldcommand() {
+		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -34,29 +45,24 @@ public class Lyricsoldcommand implements ServerCommand {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong());
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(vc.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
+
 		if (player.getPlayingTrack() != null) {
+
 			GLA lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 			SongSearch search = null;
 
-			Klassenserver7bbot.getInstance().getMainLogger().info("Searching Old-Lyrics Querry: "
-					+ SongDataStripper.stripTitle(player.getPlayingTrack().getInfo().title).getTitle());
 			try {
 
-				AudioTrackInfo info = player.getPlayingTrack().getInfo();
-				SongTitle stitle = SongDataStripper.stripTitle(info.title);
-				String title = stitle.getTitle();
+				Queue queue = controller.getQueue();
+				SongJson data = queue.getCurrentSongData();
 
-				if (stitle.containsauthor()) {
+				search = lapi.search(
+						(URLEncoder.encode(data.getTitle() + " " + data.getAuthorString(), StandardCharsets.UTF_8)));
 
-					search = lapi.search(title);
-
-				} else {
-
-					search = lapi.search(info.author + " - " + title);
-
-				}
+				log.info("Searching Old-Lyrics Querry: " + data.getTitle() + " - " + data.getAuthorString());
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -109,9 +115,8 @@ public class Lyricsoldcommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 }

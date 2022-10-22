@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -25,8 +26,7 @@ public class ShutdownCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Tools";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 }

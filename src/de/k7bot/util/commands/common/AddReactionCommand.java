@@ -1,5 +1,6 @@
 package de.k7bot.util.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import java.util.List;
 import net.dv8tion.jda.api.entities.Member;
@@ -30,14 +31,14 @@ public class AddReactionCommand implements ServerCommand {
 			}
 		}
 	}
-	
+
 	@Override
 	public String gethelp() {
 		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #textchannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
 	}
 
 	@Override
-	public String getcategory() {
-		return "Tools";
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 }

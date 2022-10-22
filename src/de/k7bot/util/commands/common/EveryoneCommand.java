@@ -1,5 +1,6 @@
 package de.k7bot.util.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -14,8 +15,7 @@ public class EveryoneCommand implements ServerCommand {
 			builder.append(" " + args[i]);
 		}
 
-		channel.sendMessage(
-						channel.getGuild().getPublicRole().getAsMention() + " " + builder.toString().trim())
+		channel.sendMessage(channel.getGuild().getPublicRole().getAsMention() + " " + builder.toString().trim())
 				.queue();
 	}
 
@@ -25,7 +25,7 @@ public class EveryoneCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Tools";
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
@@ -24,15 +25,15 @@ public class QueuelistCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		MusicController contr = Klassenserver7bbot.getInstance().getPlayerUtil().getController(channel.getGuild().getIdLong());
+		MusicController contr = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(channel.getGuild().getIdLong());
 		Queue queue = contr.getQueue();
 		List<AudioTrack> queuelist = queue.getQueuelist();
 

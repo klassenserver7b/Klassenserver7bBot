@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,8 +14,8 @@ public class TestCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return null;
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
 	}
 
 	@Override

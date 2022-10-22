@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
@@ -10,20 +11,19 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ClearQueueCommand implements ServerCommand {
-	
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		
+
 		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
-		
+
 		long guildid = channel.getGuild().getIdLong();
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		MusicUtil.updateChannel(channel);
 		Queue queue = controller.getQueue();
 		queue.clearQueue();
 	}
-	
 
 	@Override
 	public String gethelp() {
@@ -32,8 +32,7 @@ public class ClearQueueCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 }

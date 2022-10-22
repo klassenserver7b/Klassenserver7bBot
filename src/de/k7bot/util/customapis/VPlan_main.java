@@ -1,4 +1,4 @@
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -39,7 +39,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 /**
  * 
  * @author felix
- * @Deprecated use {@link de.k7bot.util.internalapis.VplanNEW_XML VplanNEW_XML
+ * @Deprecated use {@link de.k7bot.util.customapis.VplanNEW_XML VplanNEW_XML
  *             instead}
  */
 @DeprecatedSince(value = "1.14.0")

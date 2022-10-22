@@ -2,6 +2,8 @@
 package de.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.SyntaxError;
@@ -26,9 +28,8 @@ public class VolumeCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	public void performCommand(Member m, TextChannel channel, Message message) {

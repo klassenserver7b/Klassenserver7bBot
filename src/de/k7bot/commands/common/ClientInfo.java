@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.PermissionError;
 
@@ -38,9 +39,8 @@ public class ClientInfo implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Moderation";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
 	}
 
 	public void onInfo(Member requester, Member u, TextChannel channel) {
@@ -72,7 +72,6 @@ public class ClientInfo implements ServerCommand {
 
 		builder.setDescription(strBuilder);
 
-		channel.sendMessageEmbeds(builder.build()).complete().delete()
-				.queueAfter(20L, TimeUnit.SECONDS);
+		channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 	}
 }

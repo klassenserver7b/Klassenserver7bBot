@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
@@ -89,7 +90,7 @@ public class RoleCreation implements ServerCommand {
 			PermissionError.onPermissionError(m, channel);
 		}
 	}
-	
+
 	@Override
 	public String gethelp() {
 		String help = "Erstellt eine Rolle mit dem gewählten Namen und ggf. der gewählten Farbe.\n - kann nur von Mitgliedern mit der Berechtigung 'Manage-Roles' ausgeführt werden!\n - z.B. [prefix]createrole [test] <#ffffff>";
@@ -97,9 +98,8 @@ public class RoleCreation implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-String category = "Tools";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 
 }

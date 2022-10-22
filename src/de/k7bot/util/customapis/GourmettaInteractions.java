@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -33,7 +33,7 @@ import com.google.gson.JsonParser;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.internalapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.InternalAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;

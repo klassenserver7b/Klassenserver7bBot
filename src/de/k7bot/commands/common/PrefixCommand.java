@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
@@ -39,11 +40,11 @@ public class PrefixCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix] '-'";
+		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix]";
 	}
 
 	@Override
-	public String getcategory() {
-		return "Allgemein";
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
 	}
 }

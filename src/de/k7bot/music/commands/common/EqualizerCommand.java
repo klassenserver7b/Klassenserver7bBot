@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.BotEqualizer;
@@ -9,7 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class EqualizerCommand implements ServerCommand{
+public class EqualizerCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
@@ -17,17 +18,17 @@ public class EqualizerCommand implements ServerCommand{
 	}
 
 	@Override
-	public String getcategory() {
-		return "Musik";
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
-		
-		if(!MusicUtil.checkConditions(channel, m)) {
+
+		if (!MusicUtil.checkConditions(channel, m)) {
 			return;
 		}
-		
+
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
@@ -35,7 +36,8 @@ public class EqualizerCommand implements ServerCommand{
 			return;
 		}
 
-		BotEqualizer eq = BotEqualizer.getEQ(Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
+		BotEqualizer eq = BotEqualizer.getEQ(
+				Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
 		eq.setEQMode(Integer.valueOf(args[1]));
 
 	}

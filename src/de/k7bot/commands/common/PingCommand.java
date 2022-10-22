@@ -1,5 +1,6 @@
 package de.k7bot.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -22,9 +23,8 @@ public class PingCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Allgemein";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
 	}
 
 	public Long getGatewayping(TextChannel channel) {

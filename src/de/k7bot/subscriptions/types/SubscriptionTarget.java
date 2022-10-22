@@ -2,8 +2,8 @@ package de.k7bot.subscriptions.types;
 
 import javax.annotation.Nonnull;
 
-import de.k7bot.util.internalapis.LernsaxInteractions;
-import de.k7bot.util.internalapis.VplanNEW_XML;
+import de.k7bot.util.customapis.LernsaxInteractions;
+import de.k7bot.util.customapis.VplanNEW_XML;
 
 /**
  * 

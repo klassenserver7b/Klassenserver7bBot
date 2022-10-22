@@ -1,5 +1,6 @@
 package de.k7bot.moderation.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -53,8 +54,8 @@ public class BanCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Moderation";
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
 	}
 
 	public void onBan(Member requester, Member u, TextChannel channel, String grund) {

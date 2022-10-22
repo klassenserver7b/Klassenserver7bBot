@@ -15,6 +15,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
@@ -36,8 +37,8 @@ public class PlayNextCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Musik";
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
@@ -72,7 +73,8 @@ public class PlayNextCommand implements ServerCommand {
 						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
 						.setDescription(
 								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(vc.getGuild().getIdLong())
+										+ Klassenserver7bbot.getInstance().getPrefixMgr()
+												.getPrefix(vc.getGuild().getIdLong())
 										+ "play` INSTEAD!")
 						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 

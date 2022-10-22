@@ -1,5 +1,6 @@
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import java.awt.Color;
 import java.time.LocalDateTime;
@@ -17,8 +18,8 @@ public class DisabledAPI implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return null;
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
 	}
 
 	@Override

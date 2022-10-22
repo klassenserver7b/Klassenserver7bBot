@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
@@ -19,7 +20,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SkipCommand implements ServerCommand {
 	public static boolean onskip = false;
-	
 
 	@Override
 	public String gethelp() {
@@ -28,9 +28,8 @@ public class SkipCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Musik";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -45,7 +44,7 @@ public class SkipCommand implements ServerCommand {
 		Queue queue = controller.getQueue();
 		AudioTrack lastTrack = controller.getPlayer().getPlayingTrack();
 		onskip = true;
-		
+
 		if (args.length == 1) {
 			onskip = false;
 			if (queue.next(lastTrack)) {

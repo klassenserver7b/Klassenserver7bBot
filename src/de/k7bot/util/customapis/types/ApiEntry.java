@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.util.internalapis.types;
+package de.k7bot.util.customapis.types;
 
 /**
  * @author Felix

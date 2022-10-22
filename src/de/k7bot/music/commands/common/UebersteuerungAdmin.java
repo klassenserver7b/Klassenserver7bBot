@@ -1,6 +1,8 @@
 package de.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
@@ -17,7 +19,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class UebersteuerungAdmin implements ServerCommand {
-	
+
 	@Override
 	public String gethelp() {
 		String help = null;
@@ -25,14 +27,13 @@ public class UebersteuerungAdmin implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = null;
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
-	
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
-			
+
 			String[] args = message.getContentDisplay().split(" ");
 			try {
 				int volume = Integer.parseInt(args[1]);
@@ -47,8 +48,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 					builder.setFooter("Requested by @" + m.getEffectiveName());
 					builder.setTimestamp(OffsetDateTime.now());
 					builder.setTitle("Volume was set to " + volume);
-					channel.sendMessageEmbeds(builder.build())
-							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+					channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
 				} else {
 					SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
@@ -58,5 +58,5 @@ public class UebersteuerungAdmin implements ServerCommand {
 			}
 		}
 	}
-	
+
 }

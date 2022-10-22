@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 
 import com.google.gson.JsonObject;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.SyntaxError;
@@ -65,15 +66,14 @@ public class TeacherCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Leherkürzel]";
+		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
 
 		return help;
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Allgemein";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
 	}
 
 }

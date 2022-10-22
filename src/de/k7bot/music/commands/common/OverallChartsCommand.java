@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.awt.Color;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.ChartList;
 import de.k7bot.util.Cell;
@@ -29,8 +30,8 @@ public class OverallChartsCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return null;
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -65,9 +66,8 @@ public class StatsCategoryCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Tools";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 
 	public static void fillCategory(Category cat, boolean devmode) {

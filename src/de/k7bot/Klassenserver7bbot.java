@@ -22,12 +22,11 @@ import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
 import de.k7bot.threads.LoopThread;
 import de.k7bot.threads.ShutdownThread;
-import de.k7bot.commands.common.HelpCommand;
+import de.k7bot.util.customapis.InternalAPIManager;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.util.internalapis.InternalAPIManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +96,7 @@ public class Klassenserver7bbot {
 		if (!propMgr.loadProps()) {
 			return;
 		}
-		if (!propMgr.validate()) {
+		if (!propMgr.isBotTokenValid()) {
 			return;
 		}
 
@@ -202,12 +201,12 @@ public class Klassenserver7bbot {
 		this.lyricsapi = new LyricsClient();
 		this.lyricsapiold = new GLA();
 
-		if (propMgr.getEnabledApis().get("hypixel")) {
+		if (propMgr.isApiEnabled("hypixel")) {
 			this.hypixelApi = new HypixelAPI(
 					new ApacheHttpClient(UUID.fromString(propMgr.getProperty("hypixel-api-key"))));
 		}
 
-		if (propMgr.getEnabledApis().get("github")) {
+		if (propMgr.isApiEnabled("github")) {
 			try {
 				new GitHubBuilder();
 				this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
@@ -217,8 +216,6 @@ public class Klassenserver7bbot {
 			}
 
 		}
-
-		HelpCommand.updateCategoryList();
 
 		InitializeMusic(this.audioPlayerManager);
 	}

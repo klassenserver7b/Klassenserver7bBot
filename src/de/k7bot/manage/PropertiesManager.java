@@ -19,7 +19,7 @@ public class PropertiesManager {
 	private HashMap<String, Boolean> apienabled;
 	private Properties prop;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
-	
+
 	public PropertiesManager() {
 		apienabled = new HashMap<>();
 		prop = null;
@@ -66,9 +66,11 @@ public class PropertiesManager {
 
 		this.apienabled.put("kaufland", true);
 
+		this.apienabled.put("discogs", prop.getProperty("discogs-token") != null);
+
 	}
 
-	public boolean validate() {
+	public boolean isBotTokenValid() {
 		String token = prop.getProperty("token");
 
 		if (token != null && !token.isBlank()) {
@@ -104,6 +106,7 @@ public class PropertiesManager {
 			prop.setProperty("lsaxappid", "");
 			prop.setProperty("gourmettauserid", "");
 			prop.setProperty("gourmettapassword", "");
+			prop.setProperty("discogs-token", "");
 
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();
@@ -120,6 +123,10 @@ public class PropertiesManager {
 
 	public Properties getProperties() {
 		return this.prop;
+	}
+
+	public boolean isApiEnabled(String api) {
+		return apienabled.get(api);
 	}
 
 	public HashMap<String, Boolean> getEnabledApis() {

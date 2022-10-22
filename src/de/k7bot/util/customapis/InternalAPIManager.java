@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.util.HashMap;
 
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.manage.PropertiesManager;
-import de.k7bot.util.internalapis.types.ApiEntry;
-import de.k7bot.util.internalapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.ApiEntry;
+import de.k7bot.util.customapis.types.InternalAPI;
 
 /**
  * @author Felix
@@ -92,26 +92,26 @@ public class InternalAPIManager {
 		log.info("Await API-ready");
 		PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
 
-		if (propMgr.getEnabledApis().get("lernsax")) {
+		if (propMgr.isApiEnabled("lernsax")) {
 			registerAPI(new LernsaxInteractions());
 			log.debug("LernsaxAPI initialized");
 		}
 
-		if (propMgr.getEnabledApis().get("vplan")) {
+		if (propMgr.isApiEnabled("vplan")) {
 			registerAPI(new VplanNEW_XML("10b"));
 			log.debug("VplanAPI initialized");
 		}
 
-		if (propMgr.getEnabledApis().get("gourmetta")) {
+		if (propMgr.isApiEnabled("gourmetta")) {
 			registerAPI(new GourmettaInteractions());
 			log.debug("GourmettaAPI initialized");
 		}
 
-		if (propMgr.getEnabledApis().get("kaufland")) {
+		if (propMgr.isApiEnabled("kaufland")) {
 			registerAPI(new KauflandInteractions());
 			log.debug("KauflandAPI initialized");
 		}
-		
+
 		log.info("APIs are initialized");
 	}
 

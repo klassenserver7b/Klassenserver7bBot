@@ -2,6 +2,7 @@ package de.k7bot.commands.common;
 
 import org.slf4j.Logger;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -56,9 +57,8 @@ public class RestartCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Tools";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 
 }

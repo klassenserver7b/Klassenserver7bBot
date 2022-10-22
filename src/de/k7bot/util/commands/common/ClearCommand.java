@@ -1,6 +1,7 @@
 
 package de.k7bot.util.commands.common;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.PermissionError;
@@ -29,14 +30,15 @@ public class ClearCommand implements ServerCommand {
 
 				onclear(amount, channel);
 
-				TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
+				TextChannel system = Klassenserver7bbot.getInstance().getsyschannell()
+						.getSysChannel(channel.getGuild());
 
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setColor(16345358);
 				builder.setFooter("requested by @" + m.getEffectiveName());
 				builder.setTimestamp(OffsetDateTime.now());
 				builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + channel.getName());
-				
+
 				if (system != null) {
 
 					system.sendMessageEmbeds(builder.build()).queue();
@@ -67,8 +69,8 @@ public class ClearCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Tools";
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
 	}
 
 	public static void onclear(int amount, TextChannel chan) {

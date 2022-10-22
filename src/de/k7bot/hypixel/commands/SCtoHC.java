@@ -1,5 +1,6 @@
 package de.k7bot.hypixel.commands;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +32,7 @@ public class SCtoHC implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		String category = "Games";
-		return category;
+	public HelpCategories getcategory() {
+		return HelpCategories.GAMES;
 	}
 }

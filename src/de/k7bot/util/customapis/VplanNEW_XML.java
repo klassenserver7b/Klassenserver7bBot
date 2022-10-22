@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.k7bot.util.internalapis;
+package de.k7bot.util.customapis;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -43,7 +43,7 @@ import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
-import de.k7bot.util.internalapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.InternalAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;

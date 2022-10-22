@@ -3,6 +3,7 @@ package de.k7bot.music.commands.common;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
@@ -35,8 +36,8 @@ public class PlayCommand implements ServerCommand {
 	}
 
 	@Override
-	public String getcategory() {
-		return "Musik";
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	public void performCommand(Member m, TextChannel channel, Message message) {

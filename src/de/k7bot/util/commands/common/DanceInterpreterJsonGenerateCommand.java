@@ -24,6 +24,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
@@ -41,7 +42,7 @@ import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest
  * @author Felix
  *
  */
-public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
+public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 	private String accessToken;
 	private Long isoexpiration;
 	private String clientId;
@@ -53,28 +54,27 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 	}
 
 	@Override
-	public String getcategory() {
-		return null;
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
 	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
-		
+
 		if (args.length < 2) {
 
 			SyntaxError.oncmdSyntaxError(channel, "DILoad [quell id]", m);
 			return;
 
 		}
-		
+
 		checkAccessToken();
 		final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId("0971d").setAccessToken(accessToken).build();
 		List<Track> tracklist = new ArrayList<>();
 
-		GetPlaylistsItemsRequest getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1])
-				.build();
+		GetPlaylistsItemsRequest getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1]).build();
 
 		try {
 
@@ -100,8 +100,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 				int offset = 100 * i;
 
 				// Definieren der neuen API Request
-				getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1]).limit(100)
-						.offset(offset).build();
+				getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1]).limit(100).offset(offset).build();
 
 				// Laden der Items und in YTquery list packen
 				Paging<PlaylistTrack> pagedplaylisttracks = getplaylistitemsrequest.execute();
@@ -123,8 +122,8 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 			if (times >= 1 && (playlisttracks.getTotal() % 100) != 0) {
 				// Definieren der neuen API Request
 				int limit = playlisttracks.getTotal() % 100;
-				getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1]).limit(limit)
-						.offset(times * 100).build();
+				getplaylistitemsrequest = spotifyapi.getPlaylistsItems(args[1]).limit(limit).offset(times * 100)
+						.build();
 
 				// Laden der Items und in YTquery list packen
 				playlisttracks = getplaylistitemsrequest.execute();
@@ -141,7 +140,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		JsonObject main = new JsonObject();
 		JsonArray songs = new JsonArray();
 
@@ -163,23 +162,23 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand{
 				f.createNewFile();
 			}
 
-
 			String jsonstring = Files.readString(f.toPath());
 
 			JsonElement json = JsonParser.parseString(jsonstring);
-			
+
 			if (json != null && !jsonstring.isBlank() && !jsonstring.isEmpty()) {
-				
+
 				JsonArray arr = json.getAsJsonObject().get("Songs").getAsJsonArray();
-				
-				for(JsonElement obj : songs) {
+
+				for (JsonElement obj : songs) {
 					arr.add(obj);
 				}
 				songs = arr;
 			}
 
 			main.add("Songs", songs);
-			BufferedWriter stream = Files.newBufferedWriter(f.toPath(), StandardCharsets.UTF_8,StandardOpenOption.TRUNCATE_EXISTING);
+			BufferedWriter stream = Files.newBufferedWriter(f.toPath(), StandardCharsets.UTF_8,
+					StandardOpenOption.TRUNCATE_EXISTING);
 
 			stream.write(main.toString());
 
