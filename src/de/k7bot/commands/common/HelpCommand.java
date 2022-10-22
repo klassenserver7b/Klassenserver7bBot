@@ -108,7 +108,7 @@ public class HelpCommand implements ServerCommand {
 
 		for (HelpCategories cat : HelpCategories.values()) {
 
-			if (cat == HelpCategories.UNKNOWN) {
+			if (cat == HelpCategories.UNKNOWN || cat == HelpCategories.OVERVIEW) {
 				continue;
 			}
 

@@ -62,9 +62,7 @@ public class DiscogsAPI {
 
 	private JsonObject getSongJson(String searchquery) {
 
-		if (!this.isApiEnabled()) {
-			return null;
-		}
+		assert this.isApiEnabled() == true;
 
 		JsonObject master = getMasterJson(searchquery);
 
@@ -100,9 +98,7 @@ public class DiscogsAPI {
 
 	private JsonObject getMasterJson(String searchquery) {
 
-		if (!this.isApiEnabled()) {
-			return null;
-		}
+		assert this.isApiEnabled() == true;
 
 		JsonObject queryresults = getQueryResults(searchquery);
 
@@ -163,9 +159,7 @@ public class DiscogsAPI {
 
 	private JsonObject getQueryResults(String searchquery) {
 
-		if (!this.isApiEnabled()) {
-			return null;
-		}
+		assert this.isApiEnabled() == true;
 
 		final CloseableHttpClient httpclient = HttpClients.createDefault();
 

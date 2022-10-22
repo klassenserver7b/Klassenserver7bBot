@@ -15,31 +15,36 @@ public enum HelpCategories {
 	 * 
 	 */
 	UNKNOWN(-1),
+	
+	/**
+	 * 
+	 */
+	OVERVIEW(0),
 
 	/**
 	 * 
 	 */
-	ALLGEMEIN(0),
+	ALLGEMEIN(1),
 
 	/**
 	 * 
 	 */
-	TOOLS(1),
+	TOOLS(2),
 
 	/**
 	 * 
 	 */
-	MODERATION(2),
+	MODERATION(3),
 
 	/**
 	 * 
 	 */
-	MUSIK(3),
+	MUSIK(4),
 
 	/**
 	 * 
 	 */
-	GAMES(4);
+	GAMES(5);
 
 	private final int id;
 
