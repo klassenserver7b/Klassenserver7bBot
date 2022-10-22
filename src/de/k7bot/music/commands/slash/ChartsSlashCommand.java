@@ -27,7 +27,9 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ChartsSlashCommand implements SlashCommand {
@@ -70,23 +72,15 @@ public class ChartsSlashCommand implements SlashCommand {
 
 					Long time = timeopt.getAsLong();
 
-					switch (timeunitopt.getAsString().toLowerCase()) {
-					case "days": {
-						sheduledcharts = chartlist.getcharts(guild, time, ChronoUnit.DAYS);
-						break;
-					}
-					case "months": {
-						sheduledcharts = chartlist.getcharts(guild, time, ChronoUnit.MONTHS);
-						break;
-					}
-					case "years": {
-						sheduledcharts = chartlist.getcharts(guild, time, ChronoUnit.YEARS);
-						break;
-					}
-					default:
+					try {
+						ChronoUnit u = ChronoUnit.valueOf(timeunitopt.getAsString().toLowerCase());
+
+						sheduledcharts = chartlist.getcharts(guild, time, u);
+
+					} catch (Exception e) {
 						hook.sendMessage("Using the option \"time\" requires a valid TimeUnit").queue();
-						break;
 					}
+
 				}
 
 			} else {
@@ -101,22 +95,13 @@ public class ChartsSlashCommand implements SlashCommand {
 
 					Long time = timeopt.getAsLong();
 
-					switch (timeunitopt.getAsString().toLowerCase()) {
-					case "days": {
-						sheduledcharts = chartlist.getcharts(time, ChronoUnit.DAYS);
-						break;
-					}
-					case "months": {
-						sheduledcharts = chartlist.getcharts(time, ChronoUnit.MONTHS);
-						break;
-					}
-					case "years": {
-						sheduledcharts = chartlist.getcharts(time, ChronoUnit.YEARS);
-						break;
-					}
-					default:
+					try {
+						ChronoUnit u = ChronoUnit.valueOf(timeunitopt.getAsString().toLowerCase());
+
+						sheduledcharts = chartlist.getcharts(time, u);
+
+					} catch (Exception e) {
 						hook.sendMessage("Using the option \"time\" requires a valid TimeUnit").queue();
-						break;
 					}
 				}
 			} else {
@@ -227,13 +212,23 @@ public class ChartsSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
+
+		List<Choice> choices = new ArrayList<>();
+		for (ChronoUnit t : ChronoUnit.values()) {
+
+			if (t == ChronoUnit.YEARS || t == ChronoUnit.MONTHS || t == ChronoUnit.DAYS || t == ChronoUnit.WEEKS) {
+				choices.add(new Choice(t.toString(), t.toString()));
+			}
+
+		}
+
 		return Commands.slash("charts", "Liefert die Bot-Music Charts für die gewählten Parameter")
 				.addOption(OptionType.BOOLEAN, "guild",
 						"true wenn nur die charts für die aktuelle guild angefordert werden sollen")
 				.addOption(OptionType.INTEGER, "time",
 						"REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
-				.addOption(OptionType.STRING, "timeunit", "Erlaubte TimeUnits: \"DAYS\", \"MONTHS\", \"YEARS\"", false,
-						true);
+				.addOptions(new OptionData(OptionType.STRING, "timeunit", "see choices").addChoices(choices))
+				.setGuildOnly(true);
 	}
 
 }

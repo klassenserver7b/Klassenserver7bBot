@@ -176,7 +176,6 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
-		builder.addEventListeners(new SlashCommandAutocomplete());
 		builder.addEventListeners(new ButtonListener());
 
 		this.shardMgr = builder.build();
