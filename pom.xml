@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DiscordBot</groupId>
 	<artifactId>DiscordBot</artifactId>
-	<version>1.15.3-RC.2</version>
+	<version>1.15.3-RC.3</version>
 	<packaging>jar</packaging>
 
 	<build>

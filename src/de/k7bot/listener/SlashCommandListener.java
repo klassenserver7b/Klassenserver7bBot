@@ -13,10 +13,6 @@ public class SlashCommandListener extends ListenerAdapter {
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		
-		if (event.getGuild() == null) {
-			return;
-		}
-		
 		if (!Klassenserver7bbot.getInstance().getslashMan().perform(event)) {
 			event.getChannel().sendMessage("`unbekannter Slash-Command`").complete().delete()
 					.queueAfter(10L, TimeUnit.SECONDS);

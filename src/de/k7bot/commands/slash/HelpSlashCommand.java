@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -28,17 +29,17 @@ public class HelpSlashCommand implements SlashCommand {
 
 		InteractionHook hook = event.deferReply(true).complete();
 
-		hook.sendMessage("** look into your DM's **" + event.getMember().getAsMention()
-				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)");
+		hook.sendMessage("** look into your DM's **" + event.getUser().getAsMention()
+				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)").queue();;
 
-		String catopt = event.getOption("category").getAsString();
+		OptionMapping catopt = event.getOption("category");
 
 		MessageEmbed embed;
 
-		if (catopt.equalsIgnoreCase(HelpCategories.OVERVIEW.toString())) {
+		if (catopt == null || catopt.getAsString().equalsIgnoreCase(HelpCategories.OVERVIEW.toString())) {
 			embed = help.generateHelpOverview(event.getGuild());
 		} else {
-			embed = help.generateHelpforCategory(catopt, event.getGuild());
+			embed = help.generateHelpforCategory(catopt.getAsString(), event.getGuild());
 		}
 
 		PrivateChannel ch = event.getUser().openPrivateChannel().complete();
@@ -64,7 +65,7 @@ public class HelpSlashCommand implements SlashCommand {
 
 		for (HelpCategories c : HelpCategories.values()) {
 
-			if (c == HelpCategories.UNKNOWN || c == HelpCategories.OVERVIEW) {
+			if (c == HelpCategories.UNKNOWN) {
 				continue;
 			}
 

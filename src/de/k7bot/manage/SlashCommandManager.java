@@ -45,15 +45,15 @@ public class SlashCommandManager {
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
-			
-			commands.values().forEach(command->{
-				
+
+			commands.values().forEach(command -> {
+
 				commup.addCommands(command.getCommandData());
-				
+
 			});
-			
+
 			commup.complete();
-			
+
 		});
 	}
 
@@ -61,9 +61,14 @@ public class SlashCommandManager {
 		SlashCommand cmd;
 		if ((cmd = this.commands.get(event.getName().toLowerCase())) != null) {
 
-			commandlog.info("SlashCommand - see next lines:\n\nMember: " + event.getMember().getEffectiveName()
-					+ " | \nGuild: " + event.getGuild().getName() + " | \nChannel: " + event.getChannel().getName()
-					+ " | \nMessage: " + event.getCommandString() + "\n");
+			String guild = "PRIVATE";
+			if (event.getGuild() != null) {
+				guild = event.getGuild().getName();
+			}
+
+			commandlog.info("SlashCommand - see next lines:\n\nUser: " + event.getUser().getName() + " | \nGuild: "
+					+ guild + " | \nChannel: " + event.getChannel().getName() + " | \nMessage: "
+					+ event.getCommandString() + "\n");
 
 			cmd.performSlashCommand(event);
 

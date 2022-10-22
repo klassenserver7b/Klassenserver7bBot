@@ -1,6 +1,7 @@
 
 package de.k7bot.util.commands.slash;
 
+import java.awt.Color;
 import java.time.OffsetDateTime;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import de.k7bot.util.commands.common.ClearCommand;
 import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -34,10 +36,16 @@ public class ClearSlashCommand implements SlashCommand {
 			if (amount > 200) {
 				hook.sendMessage("Aufgrund von Zugriffslimitierungen, kann ich nicht mehr als 200 Nachrichten löschen!")
 						.queue();
-			} else {
-
-				ClearCommand.onclear(amount - 1, event.getChannel().asTextChannel());
+				return;
 			}
+
+			if (event.getChannel().getType() != ChannelType.TEXT) {
+				hook.sendMessageEmbeds(new EmbedBuilder().setDescription("Can't do this in this channel!")
+						.setTimestamp(OffsetDateTime.now()).setColor(Color.decode("#ff0000")).build()).queue();
+				return;
+			}
+
+			ClearCommand.onclear(amount - 1, event.getChannel().asTextChannel());
 
 			hook.sendMessage(amount + " messages deleted.").queue();
 
@@ -62,6 +70,7 @@ public class ClearSlashCommand implements SlashCommand {
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
 		return Commands.slash("clear", "Löscht die ausgewählte Anzahl an Nachrichten.").addOptions(
-				new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelöscht werden?", true));
+				new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelöscht werden?", true))
+				.setGuildOnly(true);
 	}
 }
