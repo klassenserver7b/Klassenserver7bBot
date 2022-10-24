@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
@@ -14,19 +16,27 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class GithubRepoCommand implements ServerCommand {
 
+	private final Logger log;
+
+	public GithubRepoCommand() {
+		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		GitHub ghub = Klassenserver7bbot.getInstance().getGitapi();
 
-		GHRepository dcbot;
 		try {
 
-			dcbot = ghub.getRepositoryById(408473810);
+			GHRepository dcbot = ghub.getRepository("klassenserver7b/Klassenserver7bBot");
+
 			channel.sendMessage("The last Bot update was at the: " + dcbot.getUpdatedAt()).queue();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 		}
 
 	}
@@ -38,7 +48,7 @@ public class GithubRepoCommand implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
+		return HelpCategories.UNKNOWN;
 	}
 
 }

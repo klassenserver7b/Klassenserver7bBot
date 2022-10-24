@@ -43,6 +43,9 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS gourmettaInteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lastday LONG);");
+		
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS githubinteractions(id INTEGER NOT NUlL PRIMARY KEY AUTOINCREMENT, lastcommit STRING);");
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER, subscriptionId INTEGER);");

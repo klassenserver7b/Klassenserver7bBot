@@ -28,7 +28,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+		return HelpCategories.UNKNOWN;
 	}
 
 	public void performCommand(Member m, TextChannel channel, Message message) {

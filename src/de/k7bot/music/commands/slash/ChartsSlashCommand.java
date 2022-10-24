@@ -73,7 +73,8 @@ public class ChartsSlashCommand implements SlashCommand {
 					Long time = timeopt.getAsLong();
 
 					try {
-						ChronoUnit u = ChronoUnit.valueOf(timeunitopt.getAsString().toLowerCase());
+						
+						ChronoUnit u = ChronoUnit.valueOf(timeunitopt.getAsString());
 
 						sheduledcharts = chartlist.getcharts(guild, time, u);
 
@@ -122,6 +123,7 @@ public class ChartsSlashCommand implements SlashCommand {
 		orderedcharts.sort(Map.Entry.comparingByValue());
 
 		TableMessage table = new TableMessage();
+		table.automaticLineBreaks(1);
 		TableMessage countingtable = new TableMessage();
 
 		table.addHeadline("Songname", "Author", "Times played");

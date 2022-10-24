@@ -3,6 +3,7 @@ package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.common.ClientInfo;
+import de.k7bot.commands.common.GithubRepoCommand;
 import de.k7bot.commands.common.HelpCommand;
 import de.k7bot.commands.common.PingCommand;
 import de.k7bot.commands.common.PrefixCommand;
@@ -147,6 +148,12 @@ public class CommandManager {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());
+		}
+		
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("github")) {
+			this.commands.put("repo", new GithubRepoCommand());
+		} else {
+			this.commands.put("repo", new DisabledAPI());
 		}
 
 		if (Klassenserver7bbot.getInstance().isDevMode()) {

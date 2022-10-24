@@ -45,6 +45,7 @@ public class OverallChartsCommand implements ServerCommand {
 		orderedcharts.sort(Map.Entry.comparingByValue());
 
 		TableMessage table = new TableMessage();
+		table.automaticLineBreaks(1);
 		TableMessage countingtable = new TableMessage();
 
 		table.addHeadline("Songname", "Author", "Times played");

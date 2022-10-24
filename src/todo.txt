@@ -1,5 +1,3 @@
-HelpSlashCommand mit Kategorie Auswahl
-
 SlashCommands in CommandsLog DB speichern
 
 Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)

@@ -111,6 +111,11 @@ public class InternalAPIManager {
 			registerAPI(new KauflandInteractions());
 			log.debug("KauflandAPI initialized");
 		}
+		
+		if (propMgr.isApiEnabled("github")) {
+			registerAPI(new GitHubAPI());
+			log.debug("GitHubAPI initialized");
+		}
 
 		log.info("APIs are initialized");
 	}
