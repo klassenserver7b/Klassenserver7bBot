@@ -1,12 +1,14 @@
 package de.k7bot.music.utilities;
 
 import de.k7bot.Klassenserver7bbot;
-
+import de.k7bot.music.MusicController;
 import de.k7bot.sql.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
+
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -107,10 +109,10 @@ public class MusicUtil {
 		}
 	}
 
-	public static boolean checkConditions(TextChannel channel, Member m) {
+	public static boolean checkConditions(TextChannel c, Member m) {
 
 		if (!MusicUtil.membHasVcConnection(m)) {
-			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
+			c.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
 					TimeUnit.SECONDS);
 			return false;
 		}
@@ -119,18 +121,41 @@ public class MusicUtil {
 
 		switch (MusicUtil.isConnectedtoChannel(vc)) {
 		case 0: {
-			channel.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention()).complete()
+			c.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention()).complete()
 					.delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
 		case 2: {
-			channel.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
 					.delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
 		}
 
 		return true;
+	}
+	
+	public static boolean isPlayingSong(TextChannel c, Member m) {
+		
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(c.getGuild().getIdLong());
+		
+		if(controller == null) {
+			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+			.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		
+		AudioPlayer player = controller.getPlayer();
+		
+		if(player.getPlayingTrack() == null) {
+			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+			.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		
+		return true;
+		
 	}
 
 	public static boolean checkConditions(InteractionHook channel, Member m) {

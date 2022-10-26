@@ -197,7 +197,7 @@ public class Klassenserver7bbot {
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerutil = new AudioPlayerUtil();
 
-		this.lyricsapi = new LyricsClient();
+		this.lyricsapi = new LyricsClient("Genius");
 		this.lyricsapiold = new GLA();
 
 		if (propMgr.isApiEnabled("hypixel")) {

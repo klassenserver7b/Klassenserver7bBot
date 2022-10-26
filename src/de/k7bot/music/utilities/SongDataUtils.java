@@ -176,10 +176,10 @@ public class SongDataUtils {
 		log.info("Parsing Online");
 		String newtitle = title;
 
-		if (titleContainsAuthor(title)) {
+		if (!titleContainsAuthor(title)) {
 			newtitle += " " + channel;
 		}
-
+		
 		try {
 
 			SongJson json = api.getFilteredSongJson(newtitle);
@@ -191,6 +191,7 @@ public class SongDataUtils {
 				
 			}
 
+			log.info("Successfully Parsed");
 			return json;
 
 		} catch (IllegalArgumentException e) {
@@ -231,8 +232,10 @@ public class SongDataUtils {
 		try {
 			SongJson json = SongJson.ofUnvalidated(parts[1], parts[0], "0",
 					"https://www.discogs.com/de/search/?q=" + parts[1] + "+" + parts[0], "");
+			log.info("Successfully Parsed");
 			return json;
 		} catch (IllegalArgumentException e) {
+			log.info("Couldn't Parse");
 			return null;
 		}
 
@@ -242,8 +245,10 @@ public class SongDataUtils {
 		try {
 			SongJson json = SongJson.ofUnvalidated(title, channel, "0",
 					"https://www.discogs.com/de/search/?q=" + title + "+" + channel, "");
+			log.info("Successfully Parsed");
 			return json;
 		} catch (IllegalArgumentException e) {
+			log.info("Couldn't Parse");
 			return null;
 		}
 

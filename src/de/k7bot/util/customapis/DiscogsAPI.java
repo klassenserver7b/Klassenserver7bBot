@@ -64,16 +64,14 @@ public class DiscogsAPI {
 
 		assert this.isApiEnabled() == true;
 
-		JsonObject master = getMasterJson(searchquery);
+		String res_url = getMasterJson(searchquery);
 
-		if (master == null) {
+		if (res_url == null) {
 			return null;
 		}
 
-		String releaseurl = master.get("main_release_url").getAsString();
-
 		final CloseableHttpClient httpclient = HttpClients.createDefault();
-		final HttpGet httpget = new HttpGet(releaseurl);
+		final HttpGet httpget = new HttpGet(res_url);
 
 		try {
 
@@ -96,7 +94,7 @@ public class DiscogsAPI {
 		return null;
 	}
 
-	private JsonObject getMasterJson(String searchquery) {
+	private String getMasterJson(String searchquery) {
 
 		assert this.isApiEnabled() == true;
 
@@ -111,47 +109,13 @@ public class DiscogsAPI {
 		if (results.size() < 1) {
 			return null;
 		}
-
-		JsonElement masterjsonurl = results.get(0).getAsJsonObject().get("master_url");
-
-		if (masterjsonurl.isJsonNull()) {
-
-			JsonObject obj = new JsonObject();
-			obj.addProperty("iscustom", true);
-
-			JsonElement urljson = results.get(0).getAsJsonObject().get("resource_url");
-
-			if (urljson.isJsonNull()) {
-				return null;
+		
+		for(int i = 0; i<results.size(); i++) {
+			
+			if(results.get(i).getAsJsonObject().get("type").getAsString().equalsIgnoreCase("release")) {
+				return results.get(i).getAsJsonObject().get("resource_url").getAsString();
 			}
-
-			obj.addProperty("main_release_url", urljson.getAsString());
-
-			return obj;
-
-		}
-
-		String masterurl = masterjsonurl.getAsString();
-
-		final CloseableHttpClient httpclient = HttpClients.createDefault();
-		final HttpGet httpget = new HttpGet(masterurl);
-
-		try {
-
-			final CloseableHttpResponse response = httpclient.execute(httpget);
-
-			if (response.getStatusLine().getStatusCode() != 200) {
-				log.warn("Invalid response from api.dicogs.com");
-				return null;
-			}
-
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
-			httpclient.close();
-
-			return elem.getAsJsonObject();
-
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			
 		}
 
 		return null;
