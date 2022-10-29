@@ -96,141 +96,164 @@ public class VPlan_main {
 
 		List<JsonObject> fien = finalplancheck(plan);
 
-		if (fien != null) {
+		if (fien == null) {
+			return null;
+		}
 
-			String info = plan.get("info").toString();
+		if (log != null) {
+			log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
+					+ Klassenserver7bbot.getInstance().isDevMode());
+		}
 
-			info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
+		EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
 
-			if (log != null) {
-				log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
-						+ Klassenserver7bbot.getInstance().isDevMode());
-			}
+		if (!fien.isEmpty()) {
 
-			EmbedBuilder embbuild = new EmbedBuilder();
+			TableMessage tablemess = buildMessage(fien);
 
-			embbuild.setTitle("Es gibt einen neuen Vertretungsplan für "
-					+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
-
-			if (fien.isEmpty()) {
-
-				embbuild.setTitle("**KEINE ÄNDERUNGEN :sob:**");
-
-				if (!(info.equalsIgnoreCase(""))) {
-
-					embbuild.addField("Sonstige Infos", info, false);
-
-				}
-
-			} else {
-
-				TableMessage tablemess = new TableMessage();
-				tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
-
-				fien.forEach(entry -> {
-
-					JsonArray changes = entry.get("changed").getAsJsonArray();
-					boolean subjectchange = false;
-					boolean teacherchange = false;
-					boolean roomchange = false;
-
-					if (changes.size() != 0) {
-
-						if (changes.toString().contains("subject")) {
-							subjectchange = true;
-						}
-						if (changes.toString().contains("teacher")) {
-							teacherchange = true;
-						}
-						if (changes.toString().contains("room")) {
-							roomchange = true;
-						}
-
-					}
-
-					tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
-
-					if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
-
-						Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
-								(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-						Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
-								(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-						StringBuilder strbuild = new StringBuilder();
-						JsonElement elem = entry.get("teacher");
-
-						if (elem != null) {
-							JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList().get(elem.getAsString()
-									.replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
-
-							if (teachelem != null) {
-
-								JsonObject teach = teachelem.getAsJsonObject();
-
-								String gender = teach.get("gender").getAsString();
-								if (gender.equalsIgnoreCase("female")) {
-									strbuild.append("Frau ");
-								} else if (gender.equalsIgnoreCase("male")) {
-									strbuild.append("Herr ");
-								}
-
-								if (teach.get("is_doctor").getAsBoolean()) {
-
-									strbuild.append("Dr. ");
-
-								}
-
-								strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-
-							}
-						}
-
-						teacher.setLinkTitle(strbuild.toString().trim());
-						teacher.setLinkURL("https://manos-dresden.de/lehrer");
-
-						Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
-								(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-
-						tablemess.addRow(subject, teacher, room);
-
-					} else {
-
-						tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
-
-					}
-
-					if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
-
-						tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
-
-					} else {
-						tablemess.addCell("   ");
-					}
-
-				});
-
-				tablemess.automaticLineBreaks(4);
-				embbuild.setDescription("**Änderungen**\n" + tablemess.build());
-
-				if (!(info.equalsIgnoreCase(""))) {
-
-					embbuild.addField("Sonstige Infos", info, false);
-
-				}
-
-			}
-
-			embbuild.setColor(Color.decode("#038aff"));
-			embbuild.setFooter("Stand vom " + OffsetDateTime.now());
-
-			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", fien.hashCode());
-
-			return new MessageCreateBuilder().setEmbeds(embbuild.build()).build();
+			builder.setDescription("**Änderungen**\n" + tablemess.build());
 
 		}
 
-		return null;
+		LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", fien.hashCode());
+
+		return new MessageCreateBuilder().setEmbeds(builder.build()).build();
+
+	}
+
+	private TableMessage buildMessage(List<JsonObject> fien) {
+
+		TableMessage tablemess = new TableMessage();
+		tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
+
+		for (JsonObject entry : fien) {
+
+			tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
+
+			if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
+
+				tablemess = appendSubject(tablemess, entry);
+
+			} else {
+
+				tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+
+			}
+
+			if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
+
+				tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
+
+			} else {
+				tablemess.addCell("   ");
+			}
+
+		}
+
+		tablemess.automaticLineBreaks(4);
+
+		return tablemess;
+
+	}
+
+	private TableMessage appendSubject(TableMessage mess, JsonObject entry) {
+
+		JsonArray changes = entry.get("changed").getAsJsonArray();
+		boolean subjectchange = false;
+		boolean teacherchange = false;
+		boolean roomchange = false;
+
+		if (changes.size() != 0) {
+
+			if (changes.toString().contains("subject")) {
+				subjectchange = true;
+			}
+			if (changes.toString().contains("teacher")) {
+				teacherchange = true;
+			}
+			if (changes.toString().contains("room")) {
+				roomchange = true;
+			}
+
+		}
+
+		Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
+				(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+		Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
+				(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+		StringBuilder strbuild = new StringBuilder();
+		JsonElement elem = entry.get("teacher");
+
+		if (elem != null) {
+			JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList()
+					.get(elem.getAsString().replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+
+			if (teachelem != null) {
+
+				JsonObject teach = teachelem.getAsJsonObject();
+
+				String gender = teach.get("gender").getAsString();
+				if (gender.equalsIgnoreCase("female")) {
+					strbuild.append("Frau ");
+				} else if (gender.equalsIgnoreCase("male")) {
+					strbuild.append("Herr ");
+				}
+
+				if (teach.get("is_doctor").getAsBoolean()) {
+
+					strbuild.append("Dr. ");
+
+				}
+
+				strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+
+			}
+		}
+
+		teacher.setLinkTitle(strbuild.toString().trim());
+		teacher.setLinkURL("https://manos-dresden.de/lehrer");
+
+		Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
+				(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+
+		mess.addRow(subject, teacher, room);
+
+		return mess;
+
+	}
+
+	private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
+
+		EmbedBuilder builder = new EmbedBuilder();
+
+		String info = plan.get("info").toString();
+
+		info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
+
+		builder.setTitle("Es gibt einen neuen Vertretungsplan für "
+				+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
+
+		if (fienempty) {
+			builder.setTitle("**KEINE ÄNDERUNGEN :sob:**");
+
+			if (!(info.equalsIgnoreCase(""))) {
+
+				builder.addField("Sonstige Infos", info, false);
+
+			}
+		}
+
+		builder.setColor(Color.decode("#038aff"));
+		builder.setFooter("Stand vom " + OffsetDateTime.now());
+
+		if (!(info.equalsIgnoreCase(""))) {
+
+			builder.addField("Sonstige Infos", info, false);
+
+		}
+
+		return builder;
 	}
 
 	/**
@@ -285,7 +308,7 @@ public class VPlan_main {
 					}
 
 				} catch (SQLException e) {
-					log.error(e.getMessage(),e);
+					log.error(e.getMessage(), e);
 				}
 				return finalentries;
 
@@ -335,7 +358,7 @@ public class VPlan_main {
 					return true;
 				}
 			} catch (SQLException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 			}
 		}
 		return false;
@@ -388,7 +411,7 @@ public class VPlan_main {
 			}
 
 		} catch (IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 			return null;
 		}
 

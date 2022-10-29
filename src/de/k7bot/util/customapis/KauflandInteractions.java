@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.api.client.util.Charsets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.k7bot.util.customapis.types.InternalAPI;
@@ -29,33 +30,33 @@ import de.k7bot.util.customapis.types.InternalAPI;
  * @author Felix
  *
  */
-public class KauflandInteractions implements InternalAPI{
+public class KauflandInteractions implements InternalAPI {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	public List<JsonElement> getOffers() {
+	public List<JsonObject> getOffers() {
 
-		ArrayList<JsonElement> offers = new ArrayList<>();
+		ArrayList<JsonObject> offers = new ArrayList<>();
 
-		String json;
+		String json = loadJson();
 
-		if ((json = loadJson()) != null) {
+		if (json == null) {
+			return null;
+		}
 
-			JsonArray arr = JsonParser.parseString(json).getAsJsonArray();
+		JsonArray arr = JsonParser.parseString(json).getAsJsonArray();
 
-			arr.forEach(elem -> {
+		for (JsonElement elem : arr) {
 
-				elem.getAsJsonObject().get("categories").getAsJsonArray().forEach(cat -> {
+			for (JsonElement cat : elem.getAsJsonObject().get("categories").getAsJsonArray()) {
 
-					cat.getAsJsonObject().get("offers").getAsJsonArray().forEach(offer -> {
+				for (JsonElement offer : cat.getAsJsonObject().get("offers").getAsJsonArray()) {
 
-						offers.add(offer.getAsJsonObject());
+					offers.add(offer.getAsJsonObject());
 
-					});
+				}
 
-				});
-
-			});
+			}
 
 		}
 
@@ -93,23 +94,21 @@ public class KauflandInteractions implements InternalAPI{
 
 		IOException e) {
 			log.error("KauflandAPI IO Exception - please check your connection");
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		return null;
 
 	}
 
-
 	@Override
 	public void checkforUpdates() {
-		// TODO Auto-generated method stub
-		
+		List<JsonObject> offs = getOffers();
+		offs.clear();
 	}
 
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub
-		
+		log.debug("Kaufland shutdown");
 	}
 
 }

@@ -101,6 +101,11 @@ public class MusicUtil {
 		}
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public static boolean membHasVcConnection(Member m) {
 
 		GuildVoiceState state;
@@ -112,6 +117,11 @@ public class MusicUtil {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public static AudioChannel getMembVcConnection(Member m) {
 
 		GuildVoiceState state;
@@ -124,6 +134,11 @@ public class MusicUtil {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param ac
+	 * @return
+	 */
 	public static int isConnectedtoChannel(AudioChannel ac) {
 		AudioManager audioman = ac.getGuild().getAudioManager();
 
@@ -138,6 +153,12 @@ public class MusicUtil {
 		}
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @param m
+	 * @return
+	 */
 	public static boolean checkConditions(TextChannel c, Member m) {
 
 		if (!MusicUtil.membHasVcConnection(m)) {
@@ -164,29 +185,12 @@ public class MusicUtil {
 		return true;
 	}
 
-	public static boolean isPlayingSong(TextChannel c, Member m) {
-
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(c.getGuild().getIdLong());
-
-		if (controller == null) {
-			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
-			return false;
-		}
-
-		AudioPlayer player = controller.getPlayer();
-
-		if (player.getPlayingTrack() == null) {
-			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
-			return false;
-		}
-
-		return true;
-
-	}
-
+	/**
+	 * 
+	 * @param channel
+	 * @param m
+	 * @return
+	 */
 	public static boolean checkConditions(InteractionHook channel, Member m) {
 
 		if (!MusicUtil.membHasVcConnection(m)) {
@@ -213,6 +217,11 @@ public class MusicUtil {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public static boolean checkConditions(Member m) {
 
 		if (!MusicUtil.membHasVcConnection(m)) {
@@ -231,5 +240,34 @@ public class MusicUtil {
 		}
 
 		return true;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param m
+	 * @return
+	 */
+	public static boolean isPlayingSong(TextChannel c, Member m) {
+
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(c.getGuild().getIdLong());
+
+		if (controller == null) {
+			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+
+		AudioPlayer player = controller.getPlayer();
+
+		if (player.getPlayingTrack() == null) {
+			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+
+		return true;
+
 	}
 }
