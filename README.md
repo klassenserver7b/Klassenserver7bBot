@@ -14,7 +14,7 @@
 
 1. (Download/Use [Java 17](https://www.azul.com/downloads/?version=java-17-lts&package=jdk))
 2. Use Maven Compiler and the submitted pom.xml to compile the complete `DIRECTORY/src/de/k7bot` directory.
-3. The current "Main"-Class is `Klassenserver7bbot` - In a further release this will change to `Main`
+3. The current "Main"-Class is `Main`
 
 ## Support
 
