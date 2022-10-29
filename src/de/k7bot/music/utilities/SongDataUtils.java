@@ -179,16 +179,16 @@ public class SongDataUtils {
 		if (!titleContainsAuthor(title)) {
 			newtitle += " " + channel;
 		}
-		
+
 		try {
 
 			SongJson json = api.getFilteredSongJson(newtitle);
 
 			if (json == null) {
-				
+
 				log.warn("Online Parse Error - Parsing Offline");
 				return parseOffline(title, channel);
-				
+
 			}
 
 			log.info("Successfully Parsed");
@@ -204,11 +204,7 @@ public class SongDataUtils {
 
 		String[] parts = title.split(" - ");
 
-		if (parts.length >= 1) {
-			return true;
-		} else {
-			return false;
-		}
+		return (parts.length >= 1);
 
 	}
 

@@ -30,7 +30,8 @@ public class HelpSlashCommand implements SlashCommand {
 		InteractionHook hook = event.deferReply(true).complete();
 
 		hook.sendMessage("** look into your DM's **" + event.getUser().getAsMention()
-				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)").queue();;
+				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)")
+				.queue();
 
 		OptionMapping catopt = event.getOption("category");
 

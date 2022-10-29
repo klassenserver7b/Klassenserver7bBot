@@ -94,7 +94,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 
 		}
 	}
-	
+
 	private void sendInvalidIdEmbed(InteractionHook hook) {
 		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
 				.setDescription("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
@@ -141,7 +141,6 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 			}
 
 			event.replyChoices(choices).queue();
-			;
 
 		}
 
@@ -188,7 +187,6 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 
 		try {
 			while (set.next()) {
-				;
 
 				subs.put(set.getLong("subscriptionId"), set.getLong("target"));
 
