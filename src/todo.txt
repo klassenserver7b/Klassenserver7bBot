@@ -1,12 +1,12 @@
-Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
+SlashCommands in CommandsLog DB speichern
 
-unique Id für jede Subscription
+Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
-Equalizer für Music -> Mehr Profile
+Equalizer fÃ¼r Music -> Mehr Profile
 
 Mehr Interactions auf SlashCommands und Buttons umstellen
 
-bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+bot music charts fÃ¼r z.B. letzte woche/monat/jahr (vllt. spÃ¤ter mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
 
 Mehrere player per guild (music)
@@ -16,8 +16,6 @@ YT-Api
 Language per Guild - German and English Version
 
 GitHub-API
-
-nen neues Game
 
 Generell:
 

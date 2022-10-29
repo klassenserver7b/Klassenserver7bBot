@@ -37,10 +37,10 @@ public class HypixelCommandManager {
 
 		this.help.put("help", "Zeigt diese Hilfe an.");
 		this.help.put("playercount", "Zeigt die Aktuelle Spieleranzahl auf Hypixel.");
-		this.help.put("pc", "Alias für playercount.");
+		this.help.put("pc", "Alias fÃ¼r playercount.");
 		this.help.put("watchdog", "Zeigt die aktuellen Staff und Watchdog Statistiken.");
 		this.help.put("rank",
-				"Gibt den höchsten Rang des Spielers auf Hypixel zurück (VIP/VIP+/MVP/MVP+/MVP++).\n- z.B. "
+				"Gibt den hÃ¶chsten Rang des Spielers auf Hypixel zurÃ¼ck (VIP/VIP+/MVP/MVP+/MVP++).\n- z.B. "
 						+ "[prefix]" + "hypixel rank [playername]");
 		this.help.put("newschannel", "Setzt den Newschannel auf den angegebenen channel.\n- z.B. "
 				+ "[prefix]" + "hypixel newschannel #channel");

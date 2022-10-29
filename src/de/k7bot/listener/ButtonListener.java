@@ -21,8 +21,6 @@ import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 public class ButtonListener extends ListenerAdapter {
 	public final Logger log = LoggerFactory.getLogger("HA3Buttons");
-	
-	
 
 	@Override
 	public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
@@ -52,8 +50,8 @@ public class ButtonListener extends ListenerAdapter {
 		event.getButton();
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		LiteSQL.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId=" + dcid);
-		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved=1 WHERE dcId = ?", dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
 
@@ -78,8 +76,8 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		LiteSQL.onUpdate("UPDATE ha3users SET approved=0 WHERE dcId=" + dcid);
-		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved = 0 WHERE dcId = ?", dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		PrivateChannel pvtch = u.openPrivateChannel().complete();
 
@@ -102,8 +100,8 @@ public class ButtonListener extends ListenerAdapter {
 		MessageEmbed emb = event.getMessage().getEmbeds().get(0);
 		Long dcid = Long.parseLong(emb.getFooter().getText());
 
-		LiteSQL.onUpdate("UPDATE ha3users SET approved=2 WHERE dcId=" + dcid);
-		User u = Klassenserver7bbot.INSTANCE.shardMan.getUserById(dcid);
+		LiteSQL.onUpdate("UPDATE ha3users SET approved = 2 WHERE dcId = ?", dcid);
+		User u = Klassenserver7bbot.getInstance().getShardManager().getUserById(dcid);
 
 		event.getMessage().delete().queue();
 
