@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hc.core5.http.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
@@ -23,6 +25,8 @@ import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistReques
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 public class SpotifyPlaylitsMoveCommand implements ServerCommand {
+	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public String gethelp() {
@@ -64,7 +68,7 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 			songs = tracks.getItems();
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 
 		for (int i = 0; i < songs.length - 1; i++) {
@@ -87,7 +91,7 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 					.setTimestamp(LocalDateTime.now()).setDescription("Copied " + songs.length + " songs").build())
 					.queue();
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 
 	}

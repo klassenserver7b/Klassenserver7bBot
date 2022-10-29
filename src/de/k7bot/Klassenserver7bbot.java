@@ -136,8 +136,8 @@ public class Klassenserver7bbot {
 		try {
 			buildBot(token, canaryToken, shardc);
 		} catch (LoginException | IllegalArgumentException e) {
-			this.logger.error("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
-			e.printStackTrace();
+			logger.warn("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
+			logger.error(e.getMessage(), e);
 		}
 
 		propMgr.checkAPIProps();
@@ -247,7 +247,7 @@ public class Klassenserver7bbot {
 			} catch (InterruptedException e) {
 				logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
 						+ jda.getSelfUser().getName());
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 		});

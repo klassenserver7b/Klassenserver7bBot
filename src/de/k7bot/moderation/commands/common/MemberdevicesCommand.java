@@ -38,6 +38,7 @@ public class MemberdevicesCommand implements ServerCommand {
 			u.getActiveClients().forEach(c -> {
 
 				strbuild.append(c.name());
+				strbuild.append("\n");
 
 			});
 

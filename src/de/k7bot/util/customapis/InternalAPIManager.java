@@ -20,7 +20,7 @@ import de.k7bot.util.customapis.types.InternalAPI;
 public class InternalAPIManager {
 
 	HashMap<String, ApiEntry> apis;
-	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 

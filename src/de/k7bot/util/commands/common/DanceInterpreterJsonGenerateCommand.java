@@ -138,7 +138,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 			}
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 
 		JsonObject main = new JsonObject();
@@ -185,7 +185,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 			stream.close();
 
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error(e1.getMessage(),e1);
 		}
 
 	}
@@ -221,7 +221,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 
 		}

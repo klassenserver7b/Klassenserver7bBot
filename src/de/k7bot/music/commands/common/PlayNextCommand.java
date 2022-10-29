@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
@@ -30,6 +33,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class PlayNextCommand implements ServerCommand {
+	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public String gethelp() {
@@ -50,6 +55,8 @@ public class PlayNextCommand implements ServerCommand {
 		}
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+		
+		MusicUtil.updateChannel(channel);
 
 		if (args.length > 1) {
 
@@ -121,7 +128,7 @@ public class PlayNextCommand implements ServerCommand {
 			try {
 				apm.loadItem(url, new AudioLoadResult(controller, url, true)).get();
 			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 
 		} else {

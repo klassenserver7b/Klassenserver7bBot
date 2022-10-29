@@ -29,7 +29,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 public class SubscribeSlashCommand implements SlashCommand {
 
-	Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {

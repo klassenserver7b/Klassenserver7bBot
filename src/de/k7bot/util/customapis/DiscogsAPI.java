@@ -34,7 +34,7 @@ public class DiscogsAPI {
 
 	public DiscogsAPI() {
 
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 
 	}
 

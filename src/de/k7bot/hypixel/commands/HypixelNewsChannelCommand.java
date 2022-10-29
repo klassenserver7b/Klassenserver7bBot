@@ -8,11 +8,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class HypixelNewsChannelCommand implements HypixelCommand {
+	
+	private final Logger log;
+	
+	public HypixelNewsChannelCommand() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
+	
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
 		if (!message.getMentions().getChannels(TextChannel.class).isEmpty()) {
@@ -39,7 +50,7 @@ public class HypixelNewsChannelCommand implements HypixelCommand {
 				}
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 		} else {
 

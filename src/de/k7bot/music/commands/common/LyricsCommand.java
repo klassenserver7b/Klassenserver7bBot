@@ -33,7 +33,7 @@ public class LyricsCommand implements ServerCommand {
 	private final Logger log;
 
 	public LyricsCommand() {
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	@Override

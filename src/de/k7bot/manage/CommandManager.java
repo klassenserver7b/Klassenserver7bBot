@@ -11,7 +11,7 @@ import de.k7bot.hypixel.commands.SCtoHC;
 import de.k7bot.util.customapis.DisabledAPI;
 
 import java.util.LinkedHashMap;
-
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,19 +91,19 @@ public class CommandManager {
 		this.commands.put("back", new SkipBackCommand());
 		this.commands.put("lyrics", new LyricsCommand());
 		this.commands.put("charts", new OverallChartsCommand());
+		this.commands.put("eq", new EqualizerCommand());
 
 		// Private
 		this.commands.put("uvolume", new UebersteuerungAdmin());
 		this.commands.put("teacher", new TeacherCommand());
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
-		this.commands.put("eq", new EqualizerCommand());
 
 		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());
 		}
-		
+
 		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("github")) {
 			this.commands.put("repo", new GithubRepoCommand());
 		} else {
@@ -137,5 +137,28 @@ public class CommandManager {
 			return true;
 		}
 		return false;
+	}
+
+	public String getNearestCommand(String str) {
+
+		LevenshteinDistance levdis = LevenshteinDistance.getDefaultInstance();
+		String comm = "";
+		int l = Integer.MAX_VALUE;
+
+		for (String s : commands.keySet()) {
+
+			Integer distance = levdis.apply(s, str);
+
+			if (distance < l) {
+
+				l = distance;
+				comm = s;
+
+			}
+
+		}
+
+		return comm;
+
 	}
 }

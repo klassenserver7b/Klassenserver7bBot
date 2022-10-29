@@ -285,7 +285,7 @@ public class VPlan_main {
 					}
 
 				} catch (SQLException e) {
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
 				return finalentries;
 
@@ -335,7 +335,7 @@ public class VPlan_main {
 					return true;
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 		}
 		return false;
@@ -388,7 +388,7 @@ public class VPlan_main {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 			return null;
 		}
 

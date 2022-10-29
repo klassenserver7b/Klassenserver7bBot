@@ -2,7 +2,12 @@ package de.k7bot;
 
 import javax.security.auth.login.LoginException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main {
+	
+	private static final Logger log = LoggerFactory.getLogger(Main.class);
 
 	public static void main(String[] args) {
 		try {
@@ -18,7 +23,7 @@ public class Main {
 			}
 
 		} catch (LoginException | IllegalArgumentException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 	}
 	

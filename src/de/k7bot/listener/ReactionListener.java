@@ -5,6 +5,10 @@ import de.k7bot.sql.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,6 +19,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 
 public class ReactionListener extends ListenerAdapter {
+
+	private final Logger log;
+
+	public ReactionListener() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
+
 	public void onMessageReactionAdd(MessageReactionAddEvent event) {
 		if (event.getChannelType() == ChannelType.TEXT && !event.getUser().isBot()) {
 			long guildid = event.getGuild().getIdLong();
@@ -35,7 +46,7 @@ public class ReactionListener extends ListenerAdapter {
 				}
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -62,7 +73,7 @@ public class ReactionListener extends ListenerAdapter {
 					guildmanager.removeRoleFromMember(memb, guildmanager.getRoleById(rollenid)).queue();
 				}
 			} catch (SQLException | IllegalArgumentException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

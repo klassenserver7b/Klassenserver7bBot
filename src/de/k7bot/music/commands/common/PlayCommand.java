@@ -8,15 +8,19 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
+import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
+import de.k7bot.music.TrackScheduler;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.SpotifyConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
@@ -25,10 +29,16 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class PlayCommand implements ServerCommand {
-	public static boolean next = false;
 	public static boolean party = false;
+	private final Logger log;
+	private final SpotifyConverter conv;
 
-	public static final SpotifyConverter conv = new SpotifyConverter();;
+	public PlayCommand() {
+
+		this.log = LoggerFactory.getLogger(this.getClass());
+		conv = new SpotifyConverter();
+
+	}
 
 	@Override
 	public String gethelp() {
@@ -67,68 +77,29 @@ public class PlayCommand implements ServerCommand {
 
 		String[] args = message.getContentDisplay().split(" ");
 
+		MusicUtil.updateChannel(channel);
+		String url = "";
+
 		if (args.length > 1) {
 
 			queue.unLoop();
 
-			MusicUtil.updateChannel(channel);
+			setVolume(player, channel.getGuild().getIdLong());
 
 			StringBuilder strBuilder = new StringBuilder();
-
-			ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;",
-					channel.getGuild().getIdLong());
-
-			try {
-				if (set.next()) {
-					int volume = set.getInt("volume");
-					if (volume != 0) {
-						player.setVolume(volume);
-					} else {
-						LiteSQL.onUpdate("UPDATE musicutil SET volume = 10 WHERE guildId = ?;",
-								channel.getGuild().getIdLong());
-						player.setVolume(10);
-					}
-				} else {
-					LiteSQL.onUpdate("UPDATE musicutil SET volume = 10 WHERE guildId = ?;",
-							channel.getGuild().getIdLong());
-					player.setVolume(10);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 
 			for (int i = 1; i < args.length; i++) {
 				strBuilder.append(args[i]);
 				strBuilder.append(" ");
 			}
 
-			String url = strBuilder.toString().trim();
+			url = strBuilder.toString().trim();
 
-			if (url.equalsIgnoreCase("party")) {
-
-				url = "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F";
-				party = true;
-
-			} else if (url.startsWith("https://open.spotify.com/playlist/")) {
-
-				queue.clearQueue();
-				manager.openAudioConnection(vc);
-
-				Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
-				channel.sendTyping().queue();
-
-				url = url.replaceAll("https://open.spotify.com/playlist/", "");
-				conv.convertPlaylist(url, load, vc);
-
+			if (checkSpotify(url, queue, manager, channel, vc)) {
 				return;
-
-			} else if (url.startsWith("lf: ")) {
-
-				url = url.substring(4);
-
-			} else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
-				url = "ytsearch: " + url;
 			}
+
+			url = formatQuerry(url);
 
 			if (player.getPlayingTrack() == null) {
 
@@ -139,44 +110,96 @@ public class PlayCommand implements ServerCommand {
 						.info("Bot startet searching a track: no current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
 
-				try {
-					apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-
 			} else {
 
 				queue.clearQueue();
 
-				next = true;
+				TrackScheduler.next = true;
 				player.stopTrack();
 				Klassenserver7bbot.getInstance().getMainLogger()
 						.info("Bot startet searching a track: overwriting current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
-				try {
-					apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
-				player.setPaused(false);
-				next = false;
+				TrackScheduler.next = false;
 			}
 
 		} else {
+
 			if (!queue.emptyQueueList()) {
 				queue.clearQueue();
 			}
 
 			manager.openAudioConnection(vc);
 
-			MusicUtil.updateChannel(channel);
-
-			String url = "D:\\Felix\\Desktop\\Bot\\audio.mp4";
+			url = "D:\\Felix\\Desktop\\Bot\\audio.mp4";
 			player.stopTrack();
-			apm.loadItem(url, new AudioLoadResult(controller, url, false));
-			player.setPaused(false);
 
+		}
+
+		apm.loadItem(url, new AudioLoadResult(controller, url, false));
+		player.setPaused(false);
+
+	}
+
+	private String formatQuerry(String q) {
+
+		String url = q;
+
+		if (url.equalsIgnoreCase("party")) {
+
+			url = "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F";
+			party = true;
+
+		} else if (url.startsWith("lf: ")) {
+
+			url = url.substring(4);
+
+		} else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
+			url = "ytsearch: " + url;
+		}
+
+		return url;
+	}
+
+	private boolean checkSpotify(String url, Queue queue, AudioManager manager, TextChannel channel, AudioChannel vc) {
+
+		if (!url.startsWith("https://open.spotify.com/playlist/")) {
+			return false;
+		}
+
+		queue.clearQueue();
+		manager.openAudioConnection(vc);
+
+		Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
+		channel.sendTyping().queue();
+
+		url = url.replaceAll("https://open.spotify.com/playlist/", "");
+		conv.convertPlaylist(url, load, vc);
+
+		return true;
+
+	}
+
+	private void setVolume(AudioPlayer player, Long guildId) {
+
+		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId);
+
+		try {
+			if (set.next()) {
+				int volume = set.getInt("volume");
+				if (volume != 0) {
+					player.setVolume(volume);
+				} else {
+					LiteSQL.onUpdate("UPDATE musicutil SET volume = ? WHERE guildId = ?;",
+							AudioPlayerUtil.STANDARDVOLUME, guildId);
+					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
+				}
+			} else {
+				LiteSQL.onUpdate("INSERT INTO musicutil(volume, guildId) VALUES(?,?);", AudioPlayerUtil.STANDARDVOLUME,
+						guildId);
+				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
 		}
 
 	}

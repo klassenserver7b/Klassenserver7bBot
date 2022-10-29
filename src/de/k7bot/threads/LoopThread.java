@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.commands.common.StatsCategoryCommand;
+import de.k7bot.util.StatsCategorieUtil;
 import net.dv8tion.jda.api.entities.Activity;
 
 /**
@@ -27,7 +27,7 @@ public class LoopThread implements Runnable {
 	private String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
 
 	public LoopThread() {
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 		t = new Thread(this, "Loop");
 		t.start();
 	}
@@ -62,7 +62,7 @@ public class LoopThread implements Runnable {
 				instance.getInternalAPIManager().checkForUpdates();
 
 				if ((!this.hasstarted)) {
-					StatsCategoryCommand.onStartup(instance.isDevMode());
+					StatsCategorieUtil.onStartup(instance.isDevMode());
 					this.hasstarted = true;
 				}
 				Random rand = new Random();

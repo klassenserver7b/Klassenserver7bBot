@@ -4,7 +4,10 @@ import de.k7bot.Klassenserver7bbot;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AudioPlayerUtil {
+	
 	private ConcurrentHashMap<Long, MusicController> controller = new ConcurrentHashMap<>();
+	
+	public static final int STANDARDVOLUME = 10;
 
 	public MusicController getController(long guildid) {
 		MusicController mc = null;

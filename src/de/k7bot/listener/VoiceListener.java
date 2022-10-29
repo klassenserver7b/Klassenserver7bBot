@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -20,6 +23,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VoiceListener extends ListenerAdapter {
 	public List<Long> tempchannels = new ArrayList<>();
+
+	private final Logger log;
+
+	public VoiceListener() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
 
 	@Override
 	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
@@ -74,7 +83,7 @@ public class VoiceListener extends ListenerAdapter {
 
 			} catch (SQLException e) {
 
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

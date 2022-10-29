@@ -23,7 +23,7 @@ public class SystemNotificationChannelManager {
 	public SystemNotificationChannelManager() {
 
 		systemchannellist = new ConcurrentHashMap<>();
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 		reload();
 	}
 
@@ -71,7 +71,7 @@ public class SystemNotificationChannelManager {
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
 	 */
 	public void insertChannel(TextChannel channel) {
-		
+
 		reload();
 
 		Guild guild = channel.getGuild();
@@ -100,6 +100,10 @@ public class SystemNotificationChannelManager {
 	 */
 	@Nullable
 	public TextChannel getSysChannel(@Nonnull Guild guild) {
+
+		if (systemchannellist.get(guild) == null) {
+			return guild.getSystemChannel();
+		}
 
 		return systemchannellist.get(guild);
 	}

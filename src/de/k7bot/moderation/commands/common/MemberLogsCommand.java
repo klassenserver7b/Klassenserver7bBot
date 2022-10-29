@@ -13,6 +13,10 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -21,6 +25,9 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class MemberLogsCommand implements ServerCommand {
+
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.KICK_MEMBERS)) {
@@ -69,7 +76,7 @@ public class MemberLogsCommand implements ServerCommand {
 								TimeUnit.SECONDS);
 					}
 				} catch (SQLException e) {
-					e.printStackTrace();
+					log.error(e.getMessage(), e);
 				}
 			} else {
 				SyntaxError.oncmdSyntaxError(channel, "memberlogs [@user]", m);

@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.commands.common.PlayCommand;
+import de.k7bot.music.utilities.SpotifyConverter;
 import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.commands.common.StatsCategoryCommand;
+import de.k7bot.util.StatsCategorieUtil;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
@@ -27,7 +27,7 @@ public class ShutdownThread implements Runnable {
 	private final Logger log;
 
 	public ShutdownThread() {
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 		t = new Thread(this, this.getClass().getCanonicalName());
 		t.start();
 	}
@@ -51,7 +51,7 @@ public class ShutdownThread implements Runnable {
 				System.out.println("Use Exit to Shutdown");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 		}
 
 	}
@@ -62,10 +62,7 @@ public class ShutdownThread implements Runnable {
 		Klassenserver7bbot instance = Klassenserver7bbot.getInstance();
 
 		instance.setEventBlocking(true);
-
-		if (PlayCommand.conv.converter != null) {
-			PlayCommand.conv.converter.interrupt();
-		}
+		SpotifyConverter.interrupt();
 
 		instance.stopLoop();
 		ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
@@ -75,7 +72,7 @@ public class ShutdownThread implements Runnable {
 			instance.getHypixelAPI().shutdown();
 			instance.getInternalAPIManager().shutdownAPIs();
 
-			StatsCategoryCommand.onShutdown(instance.isDevMode());
+			StatsCategorieUtil.onShutdown(instance.isDevMode());
 
 			shardMgr.setStatus(OnlineStatus.OFFLINE);
 

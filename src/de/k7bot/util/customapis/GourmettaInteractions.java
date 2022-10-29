@@ -50,7 +50,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	boolean apienabled;
 
-	Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 

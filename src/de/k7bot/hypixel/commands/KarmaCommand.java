@@ -17,7 +17,17 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KarmaCommand implements HypixelCommand {
+	
+	private final Logger log;
+
+	public KarmaCommand() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
+	
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
@@ -46,7 +56,7 @@ public class KarmaCommand implements HypixelCommand {
 				id = MojangAPI.getUUID(name);
 			} catch (APIException | InvalidPlayerException | IOException e1) {
 
-				e1.printStackTrace();
+				log.error(e1.getMessage(),e1);
 			}
 
 			if (id != null) {
@@ -60,7 +70,7 @@ public class KarmaCommand implements HypixelCommand {
 				} catch (InterruptedException e) {
 
 					System.err.println("Oh no, the player fetch thread was interrupted!");
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
 			} else {
 				channel.sendMessage(name + " is not a valid username " + m.getAsMention())

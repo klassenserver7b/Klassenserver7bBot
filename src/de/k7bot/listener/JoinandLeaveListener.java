@@ -33,8 +33,11 @@ public class JoinandLeaveListener extends ListenerAdapter {
 	}
 
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+		
 		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		
 		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
+		
 		User usr = event.getUser();
 		EmbedBuilder embbuild = new EmbedBuilder();
 		embbuild.setTimestamp(OffsetDateTime.now());

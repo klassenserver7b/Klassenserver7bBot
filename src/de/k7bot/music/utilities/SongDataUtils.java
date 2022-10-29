@@ -14,12 +14,12 @@ public class SongDataUtils {
 
 	public SongDataUtils() {
 		api = new DiscogsAPI();
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public SongDataUtils(DiscogsAPI api) {
 		this.api = api;
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public String stripSongTitle(String title) {

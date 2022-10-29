@@ -31,7 +31,7 @@ import de.k7bot.util.customapis.types.InternalAPI;
  */
 public class KauflandInteractions implements InternalAPI{
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public List<JsonElement> getOffers() {
 
@@ -93,7 +93,7 @@ public class KauflandInteractions implements InternalAPI{
 
 		IOException e) {
 			log.error("KauflandAPI IO Exception - please check your connection");
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 		return null;
 

@@ -25,7 +25,7 @@ public class PrefixManager {
 
 	public PrefixManager() {
 		this.prefixl = new HashMap<>();
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 
 		reload();
 	}

@@ -8,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
-import de.k7bot.util.commands.common.ClearCommand;
+import de.k7bot.util.MessageClearUtil;
 import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -45,7 +46,7 @@ public class ClearSlashCommand implements SlashCommand {
 				return;
 			}
 
-			ClearCommand.onclear(amount - 1, event.getChannel().asTextChannel());
+			MessageClearUtil.onclear(amount - 1, event.getChannel().asTextChannel());
 
 			hook.sendMessage(amount + " messages deleted.").queue();
 
@@ -69,8 +70,11 @@ public class ClearSlashCommand implements SlashCommand {
 
 	@Override
 	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("clear", "Löscht die ausgewählte Anzahl an Nachrichten.").addOptions(
-				new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelöscht werden?", true))
-				.setGuildOnly(true);
+		return Commands.slash("clear", "Löscht die ausgewählte Anzahl an Nachrichten.")
+				.addOptions(
+						new OptionData(OptionType.INTEGER, "amount", "Wie viele Nachrichten sollen gelöscht werden?")
+								.setRequired(true))
+				.setGuildOnly(true)
+				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
 	}
 }

@@ -55,7 +55,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  */
 public class VplanNEW_XML implements InternalAPI {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private List<String> klassen;
 
 	public VplanNEW_XML() {
@@ -338,7 +338,7 @@ public class VplanNEW_XML implements InternalAPI {
 					}
 
 				} catch (SQLException e) {
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
 				return true;
 
@@ -419,7 +419,7 @@ public class VplanNEW_XML implements InternalAPI {
 					return false;
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 		}
 		return false;
@@ -472,7 +472,7 @@ public class VplanNEW_XML implements InternalAPI {
 			}
 
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 		return null;
 	}
@@ -514,7 +514,7 @@ public class VplanNEW_XML implements InternalAPI {
 
 		} catch (IOException e) {
 			log.error("Vplan IO Exception - please check your connection");
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 
 		return null;

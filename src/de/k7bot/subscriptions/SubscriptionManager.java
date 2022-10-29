@@ -105,7 +105,7 @@ public class SubscriptionManager {
 
 	public boolean removeSubscription(Long subscriptionid) {
 
-		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = ?", subscriptionid);
+		LiteSQL.onUpdate("DELETE FROM subscriptions WHERE subscriptionId = ?", subscriptionid);
 		refreshList();
 
 		return false;
@@ -113,7 +113,7 @@ public class SubscriptionManager {
 
 	public void removeSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
 		Long subid = calculateSubId(type, target, deliverytargetid);
-		LiteSQL.onUpdate("REMOVE FROM subscriptions WHERE subscriptionId = ?", subid);
+		LiteSQL.onUpdate("DELETE FROM subscriptions WHERE subscriptionId = ?", subid);
 		refreshList();
 	}
 

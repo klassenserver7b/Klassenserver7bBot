@@ -4,20 +4,20 @@ package de.k7bot.util.commands.common;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.MessageClearUtil;
 import de.k7bot.util.errorhandler.PermissionError;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class ClearCommand implements ServerCommand {
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(channel, Permission.MESSAGE_MANAGE)) {
@@ -28,7 +28,7 @@ public class ClearCommand implements ServerCommand {
 
 				int amount = Integer.parseInt(args[1]);
 
-				onclear(amount, channel);
+				MessageClearUtil.onclear(amount, channel);
 
 				TextChannel system = Klassenserver7bbot.getInstance().getsyschannell()
 						.getSysChannel(channel.getGuild());
@@ -71,31 +71,5 @@ public class ClearCommand implements ServerCommand {
 	@Override
 	public HelpCategories getcategory() {
 		return HelpCategories.TOOLS;
-	}
-
-	public static void onclear(int amount, TextChannel chan) {
-		try {
-
-			chan.purgeMessages(get(chan, amount));
-
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static List<Message> get(MessageChannel channel, int amount) {
-		List<Message> messages = new ArrayList<>();
-		int i = 0;
-
-		for (Message message : channel.getIterableHistory().cache(false)) {
-			if (!message.isPinned()) {
-				messages.add(message);
-			}
-
-			if (i++ >= amount) {
-				break;
-			}
-		}
-		return messages;
 	}
 }

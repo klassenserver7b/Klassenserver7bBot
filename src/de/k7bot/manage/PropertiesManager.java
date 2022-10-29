@@ -18,7 +18,7 @@ public class PropertiesManager {
 
 	private HashMap<String, Boolean> apienabled;
 	private Properties prop;
-	private final Logger log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public PropertiesManager() {
 		apienabled = new HashMap<>();
@@ -112,7 +112,7 @@ public class PropertiesManager {
 			stream.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 
 	}

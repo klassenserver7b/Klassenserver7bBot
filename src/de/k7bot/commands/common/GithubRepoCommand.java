@@ -19,7 +19,7 @@ public class GithubRepoCommand implements ServerCommand {
 	private final Logger log;
 
 	public GithubRepoCommand() {
-		log = LoggerFactory.getLogger(this.getClass().getCanonicalName());
+		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	@Override

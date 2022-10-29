@@ -35,14 +35,12 @@ public class TeacherCommand implements ServerCommand {
 			strbuild.append("**Name: **");
 
 			switch (teacher.get("gender").getAsString()) {
-			case "female": {
+			case "female" -> {
 				strbuild.append("Frau ");
 			}
-			case "male": {
+			case "male" -> {
 				strbuild.append("Herr ");
 			}
-			default:
-
 			}
 
 			if (teacher.get("is_doctor").getAsBoolean()) {
@@ -73,7 +71,7 @@ public class TeacherCommand implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
+		return HelpCategories.UNKNOWN;
 	}
 
 }

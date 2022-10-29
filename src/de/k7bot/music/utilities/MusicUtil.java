@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,6 +28,9 @@ import net.dv8tion.jda.api.managers.AudioManager;
  *
  */
 public class MusicUtil {
+
+	private static final Logger log = LoggerFactory.getLogger(MusicUtil.class);
+
 	/**
 	 * 
 	 * @param channel
@@ -42,7 +48,30 @@ public class MusicUtil {
 						channel.getGuild().getIdLong(), channel.getIdLong(), 10);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * 
+	 * @param channel
+	 */
+	public static void updateChannel(InteractionHook hook) {
+
+		TextChannel channel = (TextChannel) hook.getInteraction().getMessageChannel();
+
+		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", channel.getGuild().getIdLong());
+
+		try {
+			if (set.next()) {
+				LiteSQL.onUpdate("UPDATE musicutil SET channelId = ? WHERE guildId = ?;", channel.getIdLong(),
+						channel.getGuild().getIdLong());
+			} else {
+				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(?, ?, ?);",
+						channel.getGuild().getIdLong(), channel.getIdLong(), 10);
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
 		}
 	}
 
@@ -68,7 +97,7 @@ public class MusicUtil {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 		}
 	}
 
@@ -134,28 +163,28 @@ public class MusicUtil {
 
 		return true;
 	}
-	
+
 	public static boolean isPlayingSong(TextChannel c, Member m) {
-		
+
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(c.getGuild().getIdLong());
-		
-		if(controller == null) {
+
+		if (controller == null) {
 			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-			.delete().queueAfter(10L, TimeUnit.SECONDS);
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
-		
+
 		AudioPlayer player = controller.getPlayer();
-		
-		if(player.getPlayingTrack() == null) {
+
+		if (player.getPlayingTrack() == null) {
 			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-			.delete().queueAfter(10L, TimeUnit.SECONDS);
+					.delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
-		
+
 		return true;
-		
+
 	}
 
 	public static boolean checkConditions(InteractionHook channel, Member m) {

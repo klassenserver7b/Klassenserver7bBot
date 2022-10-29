@@ -7,6 +7,10 @@ import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
 
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,6 +20,9 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ReactRolesCommand implements ServerCommand {
+
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
@@ -54,7 +61,7 @@ public class ReactRolesCommand implements ServerCommand {
 									role.getIdLong());
 						}
 					} catch (NumberFormatException e) {
-						e.printStackTrace();
+						log.error(e.getMessage(), e);
 					}
 				}
 			} else {

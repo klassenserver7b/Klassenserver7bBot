@@ -44,8 +44,14 @@ public class SpotifyConverter {
 	private String accessToken;
 	private Long isoexpiration;
 	private String clientId;
-	public Thread converter;
+	public static Thread converter;
 	private Logger logger = LoggerFactory.getLogger("SpotifyConverter");
+
+	public static void interrupt() {
+		if (converter != null) {
+			converter.interrupt();
+		}
+	}
 
 	public void checkAccessToken() {
 
@@ -74,7 +80,7 @@ public class SpotifyConverter {
 					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 		}
@@ -91,13 +97,13 @@ public class SpotifyConverter {
 	public void convertPlaylist(String playlistId, Message load, AudioChannel vc) {
 		checkAccessToken();
 
-		this.converter = new Thread(() -> {
+		converter = new Thread(() -> {
 
 			loadSpotifyData(playlistId, load, vc);
 
 		});
-		this.converter.setName("SpotifyConversionThread");
-		this.converter.start();
+		converter.setName("SpotifyConversionThread");
+		converter.start();
 		return;
 	}
 
@@ -180,7 +186,7 @@ public class SpotifyConverter {
 			}
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		logger.info("started Ytsearch");
@@ -232,7 +238,8 @@ public class SpotifyConverter {
 	 * };
 	 * 
 	 * try { manager.loadItem("ytsearch: " + trackinfo, handler).get(); } catch
-	 * (InterruptedException | ExecutionException e) { e.printStackTrace(); }
+	 * (InterruptedException | ExecutionException e) {
+	 * logger.error(e.getMessage(),e); }
 	 * 
 	 * }); }
 	 * 
@@ -249,7 +256,8 @@ public class SpotifyConverter {
 
 			AudioPlayerManager manager = new DefaultAudioPlayerManager();
 			manager.registerSourceManager(new YoutubeAudioSourceManager());
-			Queue queue = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getQueue();
+			Queue queue = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong())
+					.getQueue();
 
 			AudioLoadResultHandler handler = new AudioLoadResultHandler() {
 
@@ -289,7 +297,7 @@ public class SpotifyConverter {
 				try {
 					manager.loadItem("ytsearch: " + trackinfo, handler).get();
 				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 
 			});
