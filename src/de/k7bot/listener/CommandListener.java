@@ -113,8 +113,15 @@ public class CommandListener extends ListenerAdapter {
 
 		String nearestComm = Klassenserver7bbot.getInstance().getCmdMan().getNearestCommand(command);
 
-		chan.sendMessage("`unbekannter Command - '" + command + "'` -> Meintest du `" + nearestComm + "`?").complete()
-				.delete().queueAfter(15L, TimeUnit.SECONDS);
+		String shortcommand = command;
+
+		if (shortcommand.length() >= 100) {
+			shortcommand = shortcommand.substring(0, 99);
+			shortcommand += "...";
+		}
+
+		chan.sendMessage("`unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
+				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
 	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
