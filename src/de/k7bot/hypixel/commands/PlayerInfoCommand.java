@@ -3,13 +3,16 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
@@ -25,11 +28,17 @@ public class PlayerInfoCommand implements HypixelCommand {
 	UUID id = null;
 	String friends = "";
 
+	private final Logger log;
+
+	public PlayerInfoCommand() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
+
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
 		friends = "";
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		String[] args = message.getContentDisplay().split(" ");
 
@@ -70,22 +79,21 @@ public class PlayerInfoCommand implements HypixelCommand {
 					if (friend.getUuidSender().compareTo(this.id) != 0) {
 
 						try {
-							if (!Objects.equals(MojangAPI.getName(this.id), MojangAPI.getName(friend.getUuidSender()))) {
-								this.friends = this.friends
-										+ MojangAPI.getUsername(friend.getUuidSender()) + ", ";
+							if (!Objects.equals(MojangAPI.getName(this.id),
+									MojangAPI.getName(friend.getUuidSender()))) {
+								this.friends = this.friends + MojangAPI.getUsername(friend.getUuidSender()) + ", ";
 							}
 						} catch (APIException | IOException e) {
 
-							e.printStackTrace();
+							log.error(e.getMessage(), e);
 						}
 					} else {
 
 						try {
 
-							this.friends = this.friends
-									+ MojangAPI.getUsername(friend.getUuidReceiver()) + ", ";
+							this.friends = this.friends + MojangAPI.getUsername(friend.getUuidReceiver()) + ", ";
 						} catch (APIException | IOException e) {
-							e.printStackTrace();
+							log.error(e.getMessage(), e);
 						}
 					}
 				});
@@ -124,7 +132,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			} catch (InterruptedException e) {
 				System.err.println("Oh no, the player fetch thread was interrupted!");
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 				Thread.currentThread().interrupt();
 
 			}

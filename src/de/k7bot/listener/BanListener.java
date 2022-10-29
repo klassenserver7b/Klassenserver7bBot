@@ -14,9 +14,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class BanListener extends ListenerAdapter {
 	public void onGuildBan(GuildBanEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 		Guild guild = event.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 		User user = event.getUser();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setTimestamp(OffsetDateTime.now());
@@ -29,9 +28,8 @@ public class BanListener extends ListenerAdapter {
 	}
 
 	public void onGuildUnban(GuildUnbanEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
 		Guild guild = event.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 		User user = event.getUser();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setTimestamp(OffsetDateTime.now());

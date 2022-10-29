@@ -2,60 +2,16 @@
 package de.k7bot.manage;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.ClientInfo;
-import de.k7bot.commands.HelpCommand;
-import de.k7bot.commands.PingCommand;
-import de.k7bot.commands.PrefixCommand;
-import de.k7bot.commands.RestartCommand;
-import de.k7bot.commands.ShutdownCommand;
-import de.k7bot.commands.SystemchannelCommand;
-import de.k7bot.commands.TestCommand;
-import de.k7bot.commands.VTestCommand;
-import de.k7bot.commands.TeacherCommand;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.commands.common.*;
+import de.k7bot.moderation.commands.common.*;
+import de.k7bot.music.commands.common.*;
+import de.k7bot.util.commands.common.*;
 import de.k7bot.hypixel.commands.SCtoHC;
-import de.k7bot.moderation.commands.BanCommand;
-import de.k7bot.moderation.commands.MemberLogsCommand;
-import de.k7bot.moderation.commands.MemberdevicesCommand;
-import de.k7bot.moderation.commands.ModLogsCommand;
-import de.k7bot.moderation.commands.StopTimeoutCommand;
-import de.k7bot.moderation.commands.TimeoutCommand;
-import de.k7bot.moderation.commands.WarnCommand;
-import de.k7bot.moderation.commands.kickCommand;
-import de.k7bot.music.commands.AddQueueTrackCommand;
-import de.k7bot.music.commands.ClearQueueCommand;
-import de.k7bot.music.commands.EqualizerCommand;
-import de.k7bot.music.commands.LoopCommand;
-import de.k7bot.music.commands.LyricsCommand;
-import de.k7bot.music.commands.Lyricsoldcommand;
-import de.k7bot.music.commands.OverallChartsCommand;
-import de.k7bot.music.commands.PauseCommand;
-import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.music.commands.PlayNextCommand;
-import de.k7bot.music.commands.QueuelistCommand;
-import de.k7bot.music.commands.ResumeCommand;
-import de.k7bot.music.commands.SeekCommand;
-import de.k7bot.music.commands.ShuffleCommand;
-import de.k7bot.music.commands.SkipBackCommand;
-import de.k7bot.music.commands.SkipCommand;
-import de.k7bot.music.commands.SkipForwardCommand;
-import de.k7bot.music.commands.StopCommand;
-import de.k7bot.music.commands.TrackInfoCommand;
-import de.k7bot.music.commands.UebersteuerungAdmin;
-import de.k7bot.music.commands.UnLoopCommand;
-import de.k7bot.music.commands.VolumeCommand;
-import de.k7bot.util.DisabledAPI;
-import de.k7bot.util.commands.ClearCommand;
-import de.k7bot.util.commands.DanceInterpreterJsonGenerateCommand;
-import de.k7bot.util.commands.EveryoneCommand;
-import de.k7bot.util.commands.MessagetoEmbedCommand;
-import de.k7bot.util.commands.ReactRolesCommand;
-import de.k7bot.util.commands.RoleCreation;
-import de.k7bot.util.commands.StatsCategoryCommand;
-import de.k7bot.util.commands.addReactionCommand;
+import de.k7bot.util.customapis.DisabledAPI;
 
 import java.util.LinkedHashMap;
-
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +35,7 @@ public class CommandManager {
 	 * @param gitenable <br>
 	 *                  Should the GitHubAPI be enabled
 	 */
-	public CommandManager(Boolean hypenable, Boolean gitenable) {
+	public CommandManager() {
 		this.commands = new LinkedHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
@@ -95,7 +51,7 @@ public class CommandManager {
 		this.commands.put("clear", new ClearCommand());
 		this.commands.put("reactrole", new ReactRolesCommand());
 		this.commands.put("createrole", new RoleCreation());
-		this.commands.put("react", new addReactionCommand());
+		this.commands.put("react", new AddReactionCommand());
 		this.commands.put("toembed", new MessagetoEmbedCommand());
 		this.commands.put("memberinfo", new ClientInfo());
 		this.commands.put("onlinedevices", new MemberdevicesCommand());
@@ -104,7 +60,7 @@ public class CommandManager {
 
 		// Moderation Commands
 		this.commands.put("warn", new WarnCommand());
-		this.commands.put("kick", new kickCommand());
+		this.commands.put("kick", new KickCommand());
 		this.commands.put("ban", new BanCommand());
 		this.commands.put("modlogs", new ModLogsCommand());
 		this.commands.put("memberlogs", new MemberLogsCommand());
@@ -134,22 +90,27 @@ public class CommandManager {
 		this.commands.put("forward", new SkipForwardCommand());
 		this.commands.put("back", new SkipBackCommand());
 		this.commands.put("lyrics", new LyricsCommand());
-		this.commands.put("lyricsold", new Lyricsoldcommand());
 		this.commands.put("charts", new OverallChartsCommand());
+		this.commands.put("eq", new EqualizerCommand());
 
 		// Private
 		this.commands.put("uvolume", new UebersteuerungAdmin());
 		this.commands.put("teacher", new TeacherCommand());
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
-		this.commands.put("eq", new EqualizerCommand());
-		
-		if (hypenable) {
+
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
 		} else {
 			this.commands.put("hypixel", new DisabledAPI());
 		}
 
-		if (Klassenserver7bbot.INSTANCE.indev) {
+		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("github")) {
+			this.commands.put("repo", new GithubRepoCommand());
+		} else {
+			this.commands.put("repo", new DisabledAPI());
+		}
+
+		if (Klassenserver7bbot.getInstance().isDevMode()) {
 			this.commands.put("test", new TestCommand());
 			this.commands.put("vtest", new VTestCommand());
 		}
@@ -176,5 +137,28 @@ public class CommandManager {
 			return true;
 		}
 		return false;
+	}
+
+	public String getNearestCommand(String str) {
+
+		LevenshteinDistance levdis = LevenshteinDistance.getDefaultInstance();
+		String comm = "";
+		int l = Integer.MAX_VALUE;
+
+		for (String s : commands.keySet()) {
+
+			Integer distance = levdis.apply(s, str);
+
+			if (distance < l) {
+
+				l = distance;
+				comm = s;
+
+			}
+
+		}
+
+		return comm;
+
 	}
 }

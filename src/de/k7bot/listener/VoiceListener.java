@@ -2,37 +2,52 @@
 package de.k7bot.listener;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
+import de.k7bot.sql.LiteSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VoiceListener extends ListenerAdapter {
 	public List<Long> tempchannels = new ArrayList<>();
 
-	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-		onJoin(event.getChannelJoined(), event.getEntity());
+	private final Logger log;
+
+	public VoiceListener() {
+		log = LoggerFactory.getLogger(this.getClass());
 	}
 
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-		onLeave(event.getChannelLeft());
-	}
+	@Override
+	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
 
-	public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-		onLeave(event.getChannelLeft());
-		onJoin(event.getChannelJoined(), event.getEntity());
+		AudioChannelUnion oldchan = event.getChannelLeft();
+		AudioChannelUnion newchan = event.getChannelJoined();
+
+		if (oldchan == null) {
+			onJoin(newchan, event.getMember());
+			return;
+		}
+		if (newchan == null) {
+			onLeave(oldchan);
+			return;
+		}
+
+		onLeave(oldchan);
+		onJoin(newchan, event.getMember());
+
 	}
 
 	public void onJoin(AudioChannel audioChannel, Member member) {
@@ -43,8 +58,8 @@ public class VoiceListener extends ListenerAdapter {
 			vc.getManager().setUserLimit(voice.getUserLimit()).queue();
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
-			LiteSQL.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(" + vc.getIdLong() + ")");
-			Klassenserver7bbot.INSTANCE.getMainLogger().info("Created custom VoiceChannel for Member: "
+			LiteSQL.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(?);", vc.getIdLong());
+			Klassenserver7bbot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: "
 					+ member.getEffectiveName() + " with the following Channel-ID: " + vc.getIdLong());
 		}
 	}
@@ -52,7 +67,7 @@ public class VoiceListener extends ListenerAdapter {
 	public void onLeave(AudioChannel audioChannel) {
 		if (audioChannel.getMembers().size() <= 0) {
 
-			ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs");
+			ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;");
 
 			try {
 				while (set.next()) {
@@ -60,15 +75,15 @@ public class VoiceListener extends ListenerAdapter {
 				}
 				if (this.tempchannels.contains(audioChannel.getIdLong())) {
 					audioChannel.delete().queue();
-					LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = " + audioChannel.getIdLong());
+					LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ?;", audioChannel.getIdLong());
 					this.tempchannels.clear();
-					Klassenserver7bbot.INSTANCE.getMainLogger().info("Removed custom VoiceChannel with the Name: "
+					Klassenserver7bbot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: "
 							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
 				}
 
 			} catch (SQLException e) {
 
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

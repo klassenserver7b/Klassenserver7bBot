@@ -13,8 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class JoinandLeaveListener extends ListenerAdapter {
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
 		TextChannel def = event.getGuild().getDefaultChannel().asTextChannel();
 		String guildname = event.getGuild().getName();
 		Member memb = event.getGuild().getMember(event.getUser());
@@ -34,9 +33,11 @@ public class JoinandLeaveListener extends ListenerAdapter {
 	}
 
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(event.getGuild());
+		
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		
 		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
+		
 		User usr = event.getUser();
 		EmbedBuilder embbuild = new EmbedBuilder();
 		embbuild.setTimestamp(OffsetDateTime.now());

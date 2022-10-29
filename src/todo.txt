@@ -1,24 +1,21 @@
-BotUtil Fixen!
+SlashCommands in CommandsLog DB speichern
 
-Alle Music Commands auf MusicUtil checks umstellen
+Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
 
-Interface für Info subsciptions -> z.B. Lernpläne, Vplan, HypixelInfo, BotNews
-->Konsl fragen bzw. Datenbank !getrennt von Botutil!
+Equalizer fÃ¼r Music -> Mehr Profile
 
-bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+Mehr Interactions auf SlashCommands und Buttons umstellen
+
+bot music charts fÃ¼r z.B. letzte woche/monat/jahr (vllt. spÃ¤ter mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
-
-Equalizer für Music -> Mehr Profile
 
 Mehrere player per guild (music)
 
 YT-Api
 
-Language per channel
+Language per Guild - German and English Version
 
 GitHub-API
-
-nen neues Game
 
 Generell:
 

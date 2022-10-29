@@ -7,9 +7,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.SQL.LiteSQL;
-import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.music.commands.SkipCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.music.commands.common.SkipCommand;
+import de.k7bot.music.utilities.MusicUtil;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,10 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -24,6 +29,13 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 public class TrackScheduler extends AudioEventAdapter {
+
+	private final Logger log;
+	public static boolean next = false;
+
+	public TrackScheduler() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
 
 	public void onPlayerPause(AudioPlayer player) {
 	}
@@ -35,13 +47,13 @@ public class TrackScheduler extends AudioEventAdapter {
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
 		if (!SkipCommand.onskip) {
 
-			long guildid = Klassenserver7bbot.INSTANCE.playerManager.getGuildbyPlayerHash(player.hashCode());
-			Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildid);
+			long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
+			Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.decode("#00e640"));
 			AudioTrackInfo info = track.getInfo();
 			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(" Jetzt läuft: " + info.title);
+			builder.setDescription(" Jetzt lÃ¤uft: " + info.title);
 
 			long sekunden = info.length / 1000L;
 			long minuten = sekunden / 60L;
@@ -53,8 +65,8 @@ public class TrackScheduler extends AudioEventAdapter {
 			builder.addField(info.author, "[" + info.title + "](" + url + ")", false);
 			builder.addField("length: ",
 					info.isStream ? "LiveStream"
-							: (((stunden > 0L) ? (stunden + "h ") : "")
-									+ ((minuten > 0L) ? (minuten + "min ") : "") + sekunden + "s"),
+							: (((stunden > 0L) ? (stunden + "h ") : "") + ((minuten > 0L) ? (minuten + "min ") : "")
+									+ sekunden + "s"),
 					true);
 			if (url.startsWith("https://www.youtube.com/watch?v=")) {
 				String videoId = url.replace("https://www.youtube.com/watch?v=", "").trim();
@@ -63,8 +75,7 @@ public class TrackScheduler extends AudioEventAdapter {
 					InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg"))
 							.openStream();
 					builder.setImage("attachment://thumbnail.png");
-					ResultSet set = LiteSQL
-							.onQuery("SELECT * FROM musicchannel WHERE guildId = " + guildid);
+					ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", guildid);
 
 					try {
 						if (set.next()) {
@@ -73,16 +84,17 @@ public class TrackScheduler extends AudioEventAdapter {
 							TextChannel channel;
 							if (guild != null && (channel = guild.getTextChannelById(channelid)) != null) {
 								channel.sendTyping().queue();
-								channel.sendFiles(FileUpload.fromData(file, "thumbnail.jpg")).setEmbeds(builder.build()).queue();
+								channel.sendFiles(FileUpload.fromData(file, "thumbnail.jpg")).setEmbeds(builder.build())
+										.queue();
 							}
 
 						}
 					} catch (SQLException e) {
-						e.printStackTrace();
+						log.error(e.getMessage(), e);
 					}
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error(e.getMessage(), e);
 				}
 			} else {
 				MusicUtil.sendEmbed(guildid, builder);
@@ -92,9 +104,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 
-		long guildid = Klassenserver7bbot.INSTANCE.playerManager.getGuildbyPlayerHash(player.hashCode());
-		Guild guild = Klassenserver7bbot.INSTANCE.shardMan.getGuildById(guildid);
-		MusicController controller = Klassenserver7bbot.INSTANCE.playerManager.getController(guildid);
+		long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
+		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		Queue queue = controller.getQueue();
 		AudioManager manager = null;
 		if (guild != null) {
@@ -111,7 +123,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		} else {
 
-			if (queue.emptyQueueList() && !PlayCommand.next) {
+			if (queue.emptyQueueList() && !next) {
 
 				player.stopTrack();
 				manager.closeAudioConnection();

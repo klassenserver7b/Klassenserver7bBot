@@ -17,36 +17,23 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
-import de.k7bot.SQL.LiteSQL;
-import de.k7bot.SQL.SQLManager;
-import de.k7bot.commands.HelpCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.sql.SQLManager;
+import de.k7bot.subscriptions.SubscriptionManager;
+import de.k7bot.threads.LoopThread;
+import de.k7bot.threads.ShutdownThread;
+import de.k7bot.util.customapis.InternalAPIManager;
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
-import de.k7bot.moderation.SystemNotificationChannelHolder;
-import de.k7bot.music.PlayerManager;
-import de.k7bot.music.commands.PlayCommand;
-import de.k7bot.timed.Skyblocknews;
-import de.k7bot.timed.VplanNEW_XML;
-import de.k7bot.util.commands.StatsCategoryCommand;
+import de.k7bot.music.AudioPlayerUtil;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Random;
 import java.util.UUID;
+
 import javax.security.auth.login.LoginException;
 
 import org.kohsuke.github.GitHub;
@@ -64,130 +51,104 @@ import net.hypixel.api.HypixelAPI;
 import net.hypixel.api.apache.ApacheHttpClient;
 
 public class Klassenserver7bbot {
-	public static Klassenserver7bbot INSTANCE;
-	public static JsonObject teacherslist;
+
+	private static Klassenserver7bbot INSTANCE;
 
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 
-	public HashMap<Long, String> prefixl = new HashMap<>();
-	public ShardManager shardMan;
-	public AudioPlayerManager audioPlayerManager;
-	public PlayerManager playerManager;
+	private ShardManager shardMgr;
+	private CommandManager cmdMgr;
 
-	public Thread loop;
-	public Thread shutdownT;
+	private SystemNotificationChannelManager syschannels;
+	private PrefixManager prefixMgr;
 
-	public boolean vplanenabled = false;
+	private SubscriptionManager subMgr;
 
-	public boolean imShutdown = false;
-	public boolean exit = false;
-	public boolean hasstarted = false;
-	public boolean indev;
+	private SlashCommandManager slashMgr;
+	private HypixelCommandManager hypMgr;
 
-	public boolean minlock = false;
-	public int sec = 60;
-	public int min = 0;
+	private PropertiesManager propMgr;
+	private InternalAPIManager internalApiMgr;
+
+	private AudioPlayerManager audioPlayerManager;
+	private AudioPlayerUtil playerutil;
+
+	private LoopThread loop;
+	private ShutdownThread shutdownT;
 
 	private GitHub github;
-	private HypixelAPI API;
-	private Long ownerId;
-	private String vplanpw;
-	private Integer schoolID;
-	private CommandManager cmdMan;
-	private HypixelCommandManager hypMan;
-	private SlashCommandManager slashMan;
+	private HypixelAPI hypixelApi;
 	private LyricsClient lyricsapi;
 	private GLA lyricsapiold;
-	private SystemNotificationChannelHolder syschannels;
-	private VplanNEW_XML vplan;
 
-	private boolean hypixelapienabled = false;
-	private boolean githubapienabled = false;
+	private Long ownerId;
+	private JsonObject teacherslist;
 
-	String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
+	private boolean blockevents = false;
+	private boolean exit = false;
+	private boolean indev;
 
-	public Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
+	private Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
 		INSTANCE = this;
 		this.indev = indev;
+		this.propMgr = new PropertiesManager();
 
-		Properties prop = new Properties();
-		FileInputStream in;
-
-		try {
-			in = new FileInputStream("resources/bot.properties");
-			prop.load(in);
-			in.close();
-		} catch (IOException e) {
-
-			logger.error("No valid config File found! generating a new one");
-			File f = new File("resources/bot.properties");
-
-			if (!f.exists()) {
-				generateConfigFile(f);
-			}
-
+		if (!propMgr.loadProps()) {
+			return;
+		}
+		if (!propMgr.isBotTokenValid()) {
+			return;
 		}
 
-		initialize(prop);
-		checkpreflist();
-		awaitReady();
+		initializeBot();
+		awaitJDAReady();
 
-		Shutdown();
-		Skyblocknews.onEventCheck();
+		runShutdown();
 		runLoop();
 	}
 
-	public boolean initialize(Properties prop) {
+	private boolean initializeBot() {
+
 		loadTeacherList();
 		LiteSQL.connect();
 
-		String token = prop.getProperty("token");
+		SQLManager.onCreate();
+
+		String token = propMgr.getProperty("token");
 
 		String canaryToken;
-		if ((canaryToken = prop.getProperty("canary-token")) == null) {
+		if ((canaryToken = propMgr.getProperty("canary-token")) == null) {
 			this.indev = false;
-		}
-
-		String hypixelToken;
-		if ((hypixelToken = prop.getProperty("hypixel-api-key")) != null) {
-			this.hypixelapienabled = true;
-		}
-
-		String githubtoken;
-		if ((githubtoken = prop.getProperty("github-oauth-token")) != null) {
-			this.githubapienabled = true;
-		}
-
-		this.ownerId = Long.valueOf(prop.getProperty("ownerId"));
-
-		if ((this.vplanpw = prop.getProperty("vplanpw")) != null && prop.getProperty("schoolID") != null) {
-			this.schoolID = Integer.valueOf(prop.getProperty("schoolID"));
-			this.vplanenabled = true;
 		}
 
 		String shards;
 		int shardc;
 
-		if ((shards = prop.getProperty("shardCount")) != null && !shards.equalsIgnoreCase("")) {
+		if ((shards = propMgr.getProperty("shardCount")) != null && !shards.equalsIgnoreCase("")) {
 			shardc = Integer.valueOf(shards);
 		} else {
 			shardc = -1;
 			this.logger.info("Empty Shard-Count Config");
 		}
 
+		this.ownerId = Long.valueOf(propMgr.getProperty("ownerId"));
+
 		try {
 			buildBot(token, canaryToken, shardc);
 		} catch (LoginException | IllegalArgumentException e) {
-			this.logger.error("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
-			e.printStackTrace();
+			logger.warn("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
+			logger.error(e.getMessage(), e);
 		}
 
+		propMgr.checkAPIProps();
 		initializeObjects();
-		initializeApis(hypixelToken, githubtoken);
+		internalApiMgr.initializeApis();
+
 		return true;
 	}
 
-	public void buildBot(String token, String canaryToken, int shardc) throws LoginException, IllegalArgumentException {
+	private void buildBot(String token, String canaryToken, int shardc)
+			throws LoginException, IllegalArgumentException {
 
 		DefaultShardManagerBuilder builder;
 
@@ -215,51 +176,45 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
-		builder.addEventListeners(new ChartsAutocomplete());
 		builder.addEventListeners(new ButtonListener());
 
-		this.shardMan = builder.build();
+		this.shardMgr = builder.build();
 	}
 
-	public void initializeApis(String hypixelToken, String githubtoken) {
+	private void initializeObjects() {
 
-		if (this.hypixelapienabled) {
+		this.cmdMgr = new CommandManager();
+		this.hypMgr = new HypixelCommandManager();
+		this.slashMgr = new SlashCommandManager();
 
-			String key = System.getProperty("apiKey", hypixelToken);
-			this.API = new HypixelAPI(new ApacheHttpClient(UUID.fromString(key)));
+		this.prefixMgr = new PrefixManager();
 
+		this.subMgr = new SubscriptionManager();
+		this.internalApiMgr = new InternalAPIManager();
+
+		this.syschannels = new SystemNotificationChannelManager();
+
+		this.audioPlayerManager = new DefaultAudioPlayerManager();
+		this.playerutil = new AudioPlayerUtil();
+
+		this.lyricsapi = new LyricsClient("Genius");
+		this.lyricsapiold = new GLA();
+
+		if (propMgr.isApiEnabled("hypixel")) {
+			this.hypixelApi = new HypixelAPI(
+					new ApacheHttpClient(UUID.fromString(propMgr.getProperty("hypixel-api-key"))));
 		}
 
-		if (this.githubapienabled) {
-
+		if (propMgr.isApiEnabled("github")) {
 			try {
 				new GitHubBuilder();
-				this.github = new GitHubBuilder().withOAuthToken(githubtoken).build();
+				this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
 			} catch (IOException e) {
-				this.logger.error("couldn't start GitHub-API");
+				propMgr.getEnabledApis().put("github", false);
+				this.logger.error("couldn't start GitHub-Api");
 			}
 
 		}
-	}
-
-	public void initializeObjects() {
-
-		this.lyricsapi = new LyricsClient();
-		this.lyricsapiold = new GLA();
-		this.cmdMan = new CommandManager(hypixelapienabled, githubapienabled);
-		this.hypMan = new HypixelCommandManager();
-
-		this.syschannels = new SystemNotificationChannelHolder();
-
-		this.audioPlayerManager = new DefaultAudioPlayerManager();
-		this.playerManager = new PlayerManager();
-
-		this.slashMan = new SlashCommandManager();
-		this.vplan = new VplanNEW_XML();
-
-		SQLManager.onCreate();
-
-		HelpCommand.updateCategoryList();
 
 		InitializeMusic(this.audioPlayerManager);
 	}
@@ -281,10 +236,10 @@ public class Klassenserver7bbot {
 
 	}
 
-	public void awaitReady() {
+	public void awaitJDAReady() {
 
 		logger.info("Awaiting jda ready");
-		shardMan.getShards().forEach(jda -> {
+		shardMgr.getShards().forEach(jda -> {
 
 			try {
 				logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
@@ -292,7 +247,7 @@ public class Klassenserver7bbot {
 			} catch (InterruptedException e) {
 				logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
 						+ jda.getSelfUser().getName());
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 		});
@@ -303,184 +258,16 @@ public class Klassenserver7bbot {
 		}
 	}
 
-	public void Shutdown() {
-		this.shutdownT = new Thread(() -> {
-			String line;
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-			try {
-				while ((line = reader.readLine()) != null) {
-					if (line.equalsIgnoreCase("exit")) {
-						this.imShutdown = true;
-						this.exit = true;
-
-						onShutdown();
-						reader.close();
-						break;
-					}
-					System.out.println("Use Exit to Shutdown");
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
-		this.shutdownT.setName("Shutdown");
-		this.shutdownT.start();
+	private void runShutdown() {
+		this.shutdownT = new ShutdownThread();
 	}
 
 	public void runLoop() {
-		this.loop = new Thread(() -> {
-			if (!this.loop.isInterrupted()) {
-				long time = System.currentTimeMillis();
-
-				while (!this.exit) {
-					if (System.currentTimeMillis() >= time + 1000) {
-						time = System.currentTimeMillis();
-
-						onsecond();
-					}
-				}
-			}
-		});
-
-		this.loop.setName("loop");
-		this.loop.start();
+		this.loop = new LoopThread();
 	}
 
-	public void onShutdown() {
-		logger.info("Bot is shutting down!");
-		this.imShutdown = true;
-
-		if (PlayCommand.conv.converter != null) {
-			PlayCommand.conv.converter.interrupt();
-		}
-
-		if (this.loop != null) {
-			this.loop.interrupt();
-		}
-		if (this.shardMan != null) {
-
-			this.API.shutdown();
-			StatsCategoryCommand.onShutdown(indev);
-			this.shardMan.setStatus(OnlineStatus.OFFLINE);
-			logger.info("Bot offline");
-			this.shardMan.shutdown();
-			LiteSQL.disconnect();
-			this.shutdownT.interrupt();
-		} else {
-			logger.info("ShardMan was null!");
-		}
-	}
-
-	public void onsecond() {
-		if (!this.loop.isInterrupted()) {
-
-			if ((this.min % 10 == 0) && !this.minlock) {
-				this.minlock = true;
-				this.checkpreflist();
-				this.getsyschannell().checkSysChannelList();
-
-				if (this.vplanenabled) {
-					vplan.sendVplanMessage(false, "10b", null);
-				}
-				Skyblocknews.onEventCheck();
-
-				if ((!this.hasstarted)) {
-					StatsCategoryCommand.onStartup(this.indev);
-					this.hasstarted = true;
-				}
-				Random rand = new Random();
-
-				int i = rand.nextInt(this.status.length);
-
-				this.shardMan.getShards().forEach(jda -> {
-					jda.getPresence().setActivity(Activity.listening(this.status[i]));
-				});
-
-			}
-
-			if (sec <= 0) {
-
-				sec = 60;
-				min++;
-				minlock = false;
-				if (min >= 60) {
-					min = 0;
-
-				}
-			} else {
-				sec--;
-			}
-		}
-	}
-
-	public void checkpreflist() {
-
-		try {
-
-			ResultSet set = LiteSQL.onQuery("SELECT guildId, prefix FROM botutil");
-			if (set != null) {
-
-				while (set.next()) {
-
-					if (!this.prefixl.containsKey(set.getLong("guildId"))) {
-						this.prefixl.put(set.getLong("guildId"), set.getString("prefix"));
-					}
-
-					if (set.getString("prefix") == null) {
-						LiteSQL.onUpdate("UPDATE botutil SET prefix='-' WHERE guildId=" + set.getLong("guildId"));
-					}
-
-				}
-
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		this.shardMan.getGuilds().forEach(gu -> {
-
-			Long id = gu.getIdLong();
-
-			if (!this.prefixl.containsKey(id)) {
-				this.prefixl.put(id, "-");
-				LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(" + id + ", '-')");
-			}
-
-		});
-
-	}
-
-	public void generateConfigFile(File f) {
-
-		try {
-			f.createNewFile();
-
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/config.properties"),
-					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
-
-			Properties prop = new Properties();
-
-			prop.setProperty("token", "");
-			prop.setProperty("canary-token", "");
-			prop.setProperty("hypixel-api-key", "");
-			prop.setProperty("github-oauth-token", "");
-			prop.setProperty("ownerId", "");
-			prop.setProperty("shardCount", "");
-			prop.setProperty("vplanpw", "");
-			prop.setProperty("schoolID", "");
-			prop.setProperty("lsaxemail", "");
-			prop.setProperty("lsaxtoken", "");
-
-			prop.store(stream, "Bot-Configfile\n 'token' is required!");
-			stream.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+	public void stopLoop() {
+		this.loop.stopLoop();
 	}
 
 	public void loadTeacherList() {
@@ -490,30 +277,52 @@ public class Klassenserver7bbot {
 
 			try {
 
-				String jsonstring = Files.readString(Path.of(file.getPath()));
+				String jsonstring = Files.readString(file.toPath());
 
 				JsonElement json = JsonParser.parseString(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
 			} catch (IOException e1) {
 
-				e1.printStackTrace();
+				logger.error(e1.getMessage(), e1);
 
 			}
 
 		}
 	}
 
+	public static Klassenserver7bbot getInstance() {
+
+		if (INSTANCE == null) {
+			try {
+				new Klassenserver7bbot(false);
+			} catch (LoginException | IllegalArgumentException e) {
+				LoggerFactory.getLogger("InstanceManager").error(e.getMessage(), e);
+			}
+		}
+
+		return INSTANCE;
+	}
+
+	public static Klassenserver7bbot getInstance(boolean indev) throws LoginException, IllegalArgumentException {
+
+		if (INSTANCE == null) {
+			new Klassenserver7bbot(indev);
+		}
+
+		return INSTANCE;
+	}
+
 	public CommandManager getCmdMan() {
-		return this.cmdMan;
+		return this.cmdMgr;
 	}
 
 	public HypixelCommandManager gethypMan() {
-		return this.hypMan;
+		return this.hypMgr;
 	}
 
 	public SlashCommandManager getslashMan() {
-		return this.slashMan;
+		return this.slashMgr;
 	}
 
 	public GitHub getGitapi() {
@@ -537,18 +346,66 @@ public class Klassenserver7bbot {
 	}
 
 	public HypixelAPI getHypixelAPI() {
-		return this.API;
+		return this.hypixelApi;
 	}
 
-	public SystemNotificationChannelHolder getsyschannell() {
+	public SystemNotificationChannelManager getsyschannell() {
 		return syschannels;
 	}
 
-	public String getVplanPW() {
-		return this.vplanpw;
+	public boolean isInExit() {
+		return this.exit;
 	}
 
-	public int getSchoolID() {
-		return this.schoolID;
+	public boolean isEventBlocked() {
+		return this.blockevents;
+	}
+
+	public boolean isDevMode() {
+		return this.indev;
+	}
+
+	public ShardManager getShardManager() {
+		return this.shardMgr;
+	}
+
+	public AudioPlayerUtil getPlayerUtil() {
+		return this.playerutil;
+	}
+
+	public AudioPlayerManager getAudioPlayerManager() {
+		return this.audioPlayerManager;
+	}
+
+	public SubscriptionManager getSubscriptionManager() {
+		return this.subMgr;
+	}
+
+	public PropertiesManager getPropertiesManager() {
+		return this.propMgr;
+	}
+
+	public InternalAPIManager getInternalAPIManager() {
+		return this.internalApiMgr;
+	}
+
+	public JsonObject getTeacherList() {
+		return this.teacherslist;
+	}
+
+	public PrefixManager getPrefixMgr() {
+		return this.prefixMgr;
+	}
+
+	public ShutdownThread getShutdownThread() {
+		return this.shutdownT;
+	}
+
+	public void setexit(boolean inexit) {
+		this.exit = inexit;
+	}
+
+	public void setEventBlocking(boolean inshutdown) {
+		this.blockevents = inshutdown;
 	}
 }

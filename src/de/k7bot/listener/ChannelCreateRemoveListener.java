@@ -18,12 +18,11 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 
 	@Override
 	public void onChannelCreate(@Nonnull ChannelCreateEvent event) {
-		Klassenserver7bbot.INSTANCE.getMainLogger().debug("ChannelCreateEvent");
-		if (!Klassenserver7bbot.INSTANCE.imShutdown) {
-			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
+		Klassenserver7bbot.getInstance().getMainLogger().debug("ChannelCreateEvent");
+		if (!Klassenserver7bbot.getInstance().isEventBlocked()) {
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();
-			TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+			TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setTimestamp(OffsetDateTime.now());
@@ -38,12 +37,11 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 
 	@Override
 	public void onChannelDelete(@Nonnull ChannelDeleteEvent event) {
-		Klassenserver7bbot.INSTANCE.getMainLogger().debug("ChannelRemoveEvent");
-		if (!Klassenserver7bbot.INSTANCE.imShutdown) {
-			Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
+		Klassenserver7bbot.getInstance().getMainLogger().debug("ChannelRemoveEvent");
+		if (!Klassenserver7bbot.getInstance().isEventBlocked()) {
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();
-			TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+			TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setTimestamp(OffsetDateTime.now());

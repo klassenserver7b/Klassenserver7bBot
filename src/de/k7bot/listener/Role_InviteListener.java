@@ -18,10 +18,9 @@ public class Role_InviteListener extends ListenerAdapter {
 	String gen = "";
 
 	public void onRoleCreate(RoleCreateEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
-		
+
 		Guild guild = event.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 		Role rolle = event.getRole();
 
 		rolle.getPermissions().forEach(perm -> this.gen = String.valueOf(this.gen) + perm.getName() + ", ");
@@ -38,10 +37,9 @@ public class Role_InviteListener extends ListenerAdapter {
 	}
 
 	public void onRoleDelete(RoleDeleteEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
-		
+
 		Guild guild = event.getGuild();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 		Role rolle = event.getRole();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setTimestamp(OffsetDateTime.now());
@@ -53,11 +51,10 @@ public class Role_InviteListener extends ListenerAdapter {
 	}
 
 	public void onGuildInviteCreate(GuildInviteCreateEvent event) {
-		Klassenserver7bbot.INSTANCE.getsyschannell().checkSysChannelList();
-		
+
 		Guild guild = event.getGuild();
 		GuildChannel channel = event.getChannel();
-		TextChannel system = Klassenserver7bbot.INSTANCE.getsyschannell().getSysChannel(guild);
+		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 		Invite inv = event.getInvite();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setTimestamp(OffsetDateTime.now());

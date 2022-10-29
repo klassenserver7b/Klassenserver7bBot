@@ -3,12 +3,15 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
@@ -20,10 +23,17 @@ import net.hypixel.api.HypixelAPI;
 import net.hypixel.api.reply.StatusReply;
 
 public class OnlineCommand implements HypixelCommand {
+
+	private final Logger log;
+
+	public OnlineCommand() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
+
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
 
-		HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		StatusReply apiReply = null;
 
@@ -43,9 +53,11 @@ public class OnlineCommand implements HypixelCommand {
 				try {
 					id = MojangAPI.getUUID(name);
 				} catch (APIException | IOException e1) {
-					e1.printStackTrace();
+					log.error(e1.getMessage(), e1);
 				} catch (InvalidPlayerException e) {
-					channel.sendMessage("**This is NOT a valid playername**! Please check if you spelled it correct! You have entered the following name: \""+name+"\"")
+					channel.sendMessage(
+							"**This is NOT a valid playername**! Please check if you spelled it correct! You have entered the following name: \""
+									+ name + "\"")
 							.complete().delete().queueAfter(15, TimeUnit.SECONDS);
 				}
 
@@ -55,7 +67,7 @@ public class OnlineCommand implements HypixelCommand {
 						apiReply = api.getStatus(id).get();
 					} catch (InterruptedException | ExecutionException e) {
 
-						e.printStackTrace();
+						log.error(e.getMessage(), e);
 					}
 
 					channel.sendTyping().queue();
@@ -80,7 +92,7 @@ public class OnlineCommand implements HypixelCommand {
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(channel,"hypixel online [playername]", m);
+			SyntaxError.oncmdSyntaxError(channel, "hypixel online [playername]", m);
 
 		}
 

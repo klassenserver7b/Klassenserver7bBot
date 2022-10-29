@@ -2,12 +2,15 @@ package de.k7bot.hypixel.commands;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.SyntaxError;
+import de.k7bot.util.errorhandler.SyntaxError;
 
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
@@ -17,59 +20,63 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.hypixel.api.HypixelAPI;
 
+public class HypixelRankCommand implements HypixelCommand {
 
-public class HypixelRankCommand
-        implements HypixelCommand {
-    public void performHypixelCommand(Member m, TextChannel channel, Message message) {
-    	
-        HypixelAPI api = Klassenserver7bbot.INSTANCE.getHypixelAPI();
+	private final Logger log;
 
-        UUID id = null;
+	public HypixelRankCommand() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
 
-        String[] args = message.getContentDisplay().split(" ");
+	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
-        if (args.length >= 3) {
-            String name;
-            if (args.length > 3) {
+		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
-                StringBuilder builder = new StringBuilder();
-                for (int i = 2; i <= args.length; i++) {
-                    builder.append(" " + args[i]);
-                }
-                name = builder.toString().trim();
-            } else {
+		UUID id = null;
 
-                name = args[2];
-            }
+		String[] args = message.getContentDisplay().split(" ");
 
+		if (args.length >= 3) {
+			String name;
+			if (args.length > 3) {
 
-            try {
-                id = MojangAPI.getUUID(name);
-            } catch (APIException | InvalidPlayerException | IOException e1) {
+				StringBuilder builder = new StringBuilder();
+				for (int i = 2; i <= args.length; i++) {
+					builder.append(" " + args[i]);
+				}
+				name = builder.toString().trim();
+			} else {
 
-                e1.printStackTrace();
-            }
+				name = args[2];
+			}
 
+			try {
+				id = MojangAPI.getUUID(name);
+			} catch (APIException | InvalidPlayerException | IOException e1) {
 
-            if (id != null) {
-                channel.sendTyping().queue();
-                try {
+				log.error(e1.getMessage(), e1);
+			}
 
-                    channel.sendMessage("The highest Rank of " + name + " is: " + api.getPlayerByUuid(id).get().getPlayer().getHighestRank()).queue();
-                } catch (ExecutionException e) {
-                    System.err.println("Oh no, our API request failed!");
-                    e.getCause().printStackTrace();
-                } catch (InterruptedException e) {
+			if (id != null) {
+				channel.sendTyping().queue();
+				try {
 
-                    System.err.println("Oh no, the player fetch thread was interrupted!");
-                    e.printStackTrace();
-                }
-            } else {
-                channel.sendMessage(name + " is not a valid username " + m.getAsMention()).complete().delete()
-                        .queueAfter(10L, TimeUnit.SECONDS);
-            }
-        } else {
-            SyntaxError.oncmdSyntaxError(channel, "hypixel rank [playername]", m);
-        }
-    }
+					channel.sendMessage("The highest Rank of " + name + " is: "
+							+ api.getPlayerByUuid(id).get().getPlayer().getHighestRank()).queue();
+				} catch (ExecutionException e) {
+					System.err.println("Oh no, our API request failed!");
+					e.getCause().printStackTrace();
+				} catch (InterruptedException e) {
+
+					System.err.println("Oh no, the player fetch thread was interrupted!");
+					log.error(e.getMessage(), e);
+				}
+			} else {
+				channel.sendMessage(name + " is not a valid username " + m.getAsMention()).complete().delete()
+						.queueAfter(10L, TimeUnit.SECONDS);
+			}
+		} else {
+			SyntaxError.oncmdSyntaxError(channel, "hypixel rank [playername]", m);
+		}
+	}
 }

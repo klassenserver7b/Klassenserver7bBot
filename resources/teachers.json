@@ -471,7 +471,7 @@
 	"ScI": {
         "is_doctor": false,
         "gender": "male",
-        "full_name": "I. Schirmer",
+		"full_name": "I. Schirmer",
         "subjects": [
             "RE"
         ]
