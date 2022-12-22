@@ -18,8 +18,6 @@
 
 ## Support
 
-**The `friendly exceptions` and `Error on Trackloading` are not my fault and are also listed in the Lavaplayer Issuses**
-
 ### You can contact me via
 
 - This [GitHub-Repo](https://github.com/klassenserver7b/Klassenserver7bBot/) and my [GitHub Account](https://github.com/klassenserver7b/)
