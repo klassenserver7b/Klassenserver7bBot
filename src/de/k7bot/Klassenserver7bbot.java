@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
-import core.GLA;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
@@ -19,6 +18,7 @@ import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.music.AudioPlayerUtil;
+import de.k7bot.music.utilities.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 
 import java.io.File;
@@ -72,7 +72,7 @@ public class Klassenserver7bbot {
 	private GitHub github;
 	private HypixelAPI hypixelApi;
 	private LyricsClient lyricsapi;
-	private GLA lyricsapiold;
+	private GLAWrapper lyricsapiold;
 
 	private Long ownerId;
 	private JsonObject teacherslist;
@@ -187,7 +187,8 @@ public class Klassenserver7bbot {
 		this.playerutil = new AudioPlayerUtil();
 
 		this.lyricsapi = new LyricsClient("Genius");
-		this.lyricsapiold = new GLA();
+		//this.lyricsapiold = new GLA();
+		this.lyricsapiold = new GLAWrapper();
 
 		if (propMgr.isApiEnabled("hypixel")) {
 			this.hypixelApi = new HypixelAPI(
@@ -329,7 +330,7 @@ public class Klassenserver7bbot {
 		return this.lyricsapi;
 	}
 
-	public GLA getLyricsAPIold() {
+	public GLAWrapper getLyricsAPIold() {
 		return this.lyricsapiold;
 	}
 

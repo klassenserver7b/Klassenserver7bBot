@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 
-import core.GLA;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
+import de.k7bot.music.utilities.GLAWrapper;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.SongJson;
 import genius.SongSearch;
@@ -138,7 +138,7 @@ public class LyricsCommand implements ServerCommand {
 
 	private SongSearch getGeniusLyrics(String query) throws IOException {
 
-		GLA lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
+		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
 		return lapi.search(query);
 

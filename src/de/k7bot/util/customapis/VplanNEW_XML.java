@@ -268,9 +268,10 @@ public class VplanNEW_XML implements InternalAPI {
 			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
 
 			if (teacher != null && !teacher.equalsIgnoreCase("")) {
-				JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList().get(teacher);
+				JsonObject teachobj = Klassenserver7bbot.getInstance().getTeacherList();
+				JsonElement teachelem;
 
-				if (teachelem != null) {
+				if (teachobj != null && (teachelem = teachobj.get(teacher)) != null) {
 
 					JsonObject teach = teachelem.getAsJsonObject();
 
