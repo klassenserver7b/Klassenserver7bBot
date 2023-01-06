@@ -16,6 +16,7 @@ import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.customapis.types.InternalAPI;
 import de.konsl.webweaverapi.WebWeaverClient;
+import de.konsl.webweaverapi.WebWeaverException;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;
 import de.konsl.webweaverapi.model.messages.MessageType;
@@ -105,7 +106,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 */
 	private List<Message> checkForLernplanMessages() {
 
-		List<Message> messages;
+		List<Message> messages = new ArrayList<>();
 
 		ResultSet set = LiteSQL.onQuery("Select LernplanId from lernsaxinteractions;");
 
@@ -120,17 +121,30 @@ public class LernsaxInteractions implements InternalAPI {
 		}
 
 		if (currentMessageID == null) {
-			messages = client.getMessagesScope().getMessages();
-			LiteSQL.onUpdate("INSERT INTO lernsaxinteractions(LernplanId) VALUES(?);",
-					messages.get(messages.size() - 1).getId());
-		} else {
-			messages = client.getMessagesScope().getMessages(Integer.parseInt(currentMessageID));
-			if (messages.size() > 0)
-				messages = messages.stream().skip(1).toList();
 
-			if (messages.size() > 0) {
-				LiteSQL.onUpdate("UPDATE lernsaxinteractions SET LernplanId=?;",
+			try {
+				messages = client.getMessagesScope().getMessages();
+
+				LiteSQL.onUpdate("INSERT INTO lernsaxinteractions(LernplanId) VALUES(?);",
 						messages.get(messages.size() - 1).getId());
+			} catch (WebWeaverException e) {
+				log.error(e.getMessage(), e);
+			}
+
+		} else {
+			try {
+				messages = client.getMessagesScope().getMessages(Integer.parseInt(currentMessageID));
+
+				if (messages.size() > 0)
+					messages = messages.stream().skip(1).toList();
+
+				if (messages.size() > 0) {
+					LiteSQL.onUpdate("UPDATE lernsaxinteractions SET LernplanId=?;",
+							messages.get(messages.size() - 1).getId());
+				}
+			} catch (NumberFormatException | WebWeaverException e) {
+				// TODO Auto-generated catch block
+				log.error(e.getMessage(), e);
 			}
 		}
 

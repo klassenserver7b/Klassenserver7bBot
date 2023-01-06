@@ -69,8 +69,11 @@ public class SystemNotificationChannelManager {
 	 * @param channel <br>
 	 *                The {@link net.dv8tion.jda.api.entities.TextChannel
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
-	 */
-	public void insertChannel(TextChannel channel) {
+	 
+ 
+ 
+ 
+ */ 	public void insertChannel(TextChannel channel) {
 
 		reload();
 
@@ -97,8 +100,11 @@ public class SystemNotificationChannelManager {
 	 *              The {@link Guild} for which you want the SystemChannel.
 	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
-	 */
-	@Nullable
+	 
+ 
+ 
+ 
+ */ 	@Nullable
 	public TextChannel getSysChannel(@Nonnull Guild guild) {
 
 		if (systemchannellist.get(guild) == null) {
@@ -114,8 +120,11 @@ public class SystemNotificationChannelManager {
 	 *                SystemChannel.
 	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
-	 */
-	@Nullable
+	 
+ 
+ 
+ 
+ */ 	@Nullable
 	public TextChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
 		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
@@ -129,6 +138,9 @@ public class SystemNotificationChannelManager {
 	 * {@link SystemNotificationChannelManager#getSysChannel()}
 	 * 
 	 * @return The current HashMap of SystemChannels wich is used by the Bot.
+	 * 
+	 * 
+	 * 
 	 */
 	public ConcurrentHashMap<Guild, TextChannel> getHashMap() {
 		reload();
