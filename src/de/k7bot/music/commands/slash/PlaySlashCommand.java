@@ -24,14 +24,12 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.TrackScheduler;
 import de.k7bot.music.utilities.MusicUtil;
-import de.k7bot.music.utilities.SpotifyConverter;
+import de.k7bot.music.utilities.PredefinedMusicPlaylists;
 import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.PredefinedMusicPlaylists;
 import de.k7bot.util.SupportedPlayQueries;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -46,7 +44,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class PlaySlashCommand implements SlashCommand {
@@ -107,20 +105,20 @@ public class PlaySlashCommand implements SlashCommand {
 
 		setVolume(player, event.getGuild().getIdLong());
 
-		switch (event.getCommandPath()) {
+		switch (event.getFullCommandName()) {
 
-		case "play/predefined" -> {
+		case "play predefined" -> {
 
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
 					.setDescription("Started playing "
 							+ PredefinedMusicPlaylists.fromId(event.getOption("playlist").getAsInt()).toString())
 					.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
-			playPredefinedPlaylist(PredefinedMusicPlaylists.fromId(event.getOption("playlist").getAsInt()), vc, queue,
-					apm, controller);
+			playPredefinedPlaylist(PredefinedMusicPlaylists.fromId(event.getOption("playlist").getAsInt()), hook, vc,
+					queue, apm, controller);
 
 		}
-		case "play/queried" -> {
+		case "play queried" -> {
 
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
 					.setDescription("Started playing " + event.getOption("url").getAsString()).build()).complete()
@@ -143,8 +141,8 @@ public class PlaySlashCommand implements SlashCommand {
 	 * @param apm
 	 * @param controller
 	 */
-	private void playPredefinedPlaylist(PredefinedMusicPlaylists playlist, AudioChannel channel, Queue queue,
-			AudioPlayerManager apm, MusicController controller) {
+	private void playPredefinedPlaylist(PredefinedMusicPlaylists playlist, InteractionHook hook, AudioChannel channel,
+			Queue queue, AudioPlayerManager apm, MusicController controller) {
 
 		try {
 			log.info("Bot startet searching a track: -> new Track(channelName = " + channel.getName() + ", playlist = "
@@ -170,14 +168,6 @@ public class PlaySlashCommand implements SlashCommand {
 
 		log.info("Bot startet searching a track -> new Track(channelName = " + channel.getName() + ", type = "
 				+ querytype.toString() + ", url = " + query + ")");
-
-		if (querytype == SupportedPlayQueries.SpotifyPlaylist) {
-
-			Message load = hook.sendMessage("Loading Spotify Tracks...").complete();
-
-			String url = query.replaceAll("https://open.spotify.com/playlist/", "");
-			new SpotifyConverter().convertPlaylist(url, load, channel);
-		}
 
 		String suffix = querytype.getSearchSuffix();
 		String url = suffix + " " + query;

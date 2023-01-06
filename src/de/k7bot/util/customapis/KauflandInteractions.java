@@ -27,7 +27,7 @@ import com.google.gson.JsonParser;
 import de.k7bot.util.customapis.types.InternalAPI;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class KauflandInteractions implements InternalAPI {
@@ -72,7 +72,7 @@ public class KauflandInteractions implements InternalAPI {
 
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(null).build()) {
 
-			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/");
+			final HttpGet httpget = new HttpGet("https://app.kaufland.net/data/api/v5/offers/DE3940");
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 
 			if (response.getStatusLine().getStatusCode() == 200) {
@@ -103,7 +103,10 @@ public class KauflandInteractions implements InternalAPI {
 	@Override
 	public void checkforUpdates() {
 		List<JsonObject> offs = getOffers();
-		offs.clear();
+
+		if (offs != null) {
+			offs.clear();
+		}
 	}
 
 	@Override

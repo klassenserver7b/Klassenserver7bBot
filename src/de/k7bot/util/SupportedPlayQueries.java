@@ -5,10 +5,8 @@ package de.k7bot.util;
 
 import javax.annotation.Nonnull;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public enum SupportedPlayQueries {
@@ -17,7 +15,7 @@ public enum SupportedPlayQueries {
 
 	YouTubeSearch(1, "ytsearch:"),
 
-	SpotifyPlaylist(2, ""),
+	SpotifyUrl(2, ""),
 
 	LocalFile(3, ""),
 

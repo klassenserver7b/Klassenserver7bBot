@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class GitHubAPI implements InternalAPI {

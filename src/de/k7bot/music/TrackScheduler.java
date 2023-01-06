@@ -1,32 +1,43 @@
 
 package de.k7bot.music;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
 import de.k7bot.music.commands.common.SkipCommand;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.music.utilities.SongJson;
+import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
+import org.apache.hc.core5.http.ParseException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.utils.FileUpload;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.Image;
+import se.michaelthelin.spotify.model_objects.specification.Track;
 
 public class TrackScheduler extends AudioEventAdapter {
 
@@ -45,15 +56,29 @@ public class TrackScheduler extends AudioEventAdapter {
 	}
 
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
+
 		if (!SkipCommand.onskip) {
 
 			long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
-			Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setColor(Color.decode("#00e640"));
+
+			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
+			Queue queue = controller.getQueue();
+
 			AudioTrackInfo info = track.getInfo();
+
+			SongJson jsinfo = null;
+			if (track instanceof YoutubeAudioTrack) {
+				jsinfo = queue.getCurrentSongData();
+			}
+
+			EmbedBuilder builder = new EmbedBuilder();
+
+			String author = (jsinfo == null ? info.author : jsinfo.getAuthorString());
+			String title = (jsinfo == null ? info.title : jsinfo.getTitle());
+
+			builder.setColor(Color.decode("#00e640"));
 			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(" Jetzt läuft: " + info.title);
+			builder.setDescription(" Jetzt läuft: " + title);
 
 			long sekunden = info.length / 1000L;
 			long minuten = sekunden / 60L;
@@ -62,43 +87,21 @@ public class TrackScheduler extends AudioEventAdapter {
 			sekunden %= 60L;
 
 			String url = info.uri;
-			builder.addField(info.author, "[" + info.title + "](" + url + ")", false);
-			builder.addField("length: ",
+			builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
+			builder.addField("Länge: ",
 					info.isStream ? "LiveStream"
 							: (((stunden > 0L) ? (stunden + "h ") : "") + ((minuten > 0L) ? (minuten + "min ") : "")
 									+ sekunden + "s"),
 					true);
-			if (url.startsWith("https://www.youtube.com/watch?v=")) {
-				String videoId = url.replace("https://www.youtube.com/watch?v=", "").trim();
 
-				try {
-					InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg"))
-							.openStream();
-					builder.setImage("attachment://thumbnail.png");
-					ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", guildid);
+			FileUpload up = setIcons(track);
 
-					try {
-						if (set.next()) {
-
-							long channelid = set.getLong("channelId");
-							TextChannel channel;
-							if (guild != null && (channel = guild.getTextChannelById(channelid)) != null) {
-								channel.sendTyping().queue();
-								channel.sendFiles(FileUpload.fromData(file, "thumbnail.jpg")).setEmbeds(builder.build())
-										.queue();
-							}
-
-						}
-					} catch (SQLException e) {
-						log.error(e.getMessage(), e);
-					}
-
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
-			} else {
+			if (up == null) {
 				MusicUtil.sendEmbed(guildid, builder);
+			} else {
+				MusicUtil.sendEmbed(guildid, builder, up);
 			}
+
 		}
 	}
 
@@ -115,15 +118,16 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		if (endReason.mayStartNext) {
 
-			if (queue.next(track)) {
+			if (queue.next(track) || player.getPlayingTrack() != null) {
 				return;
 			}
+
 			player.stopTrack();
 			manager.closeAudioConnection();
 
 		} else {
 
-			if (queue.emptyQueueList() && !next) {
+			if (queue.emptyQueueList() && !next && !queue.isLooped()) {
 
 				player.stopTrack();
 				manager.closeAudioConnection();
@@ -132,5 +136,87 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		}
 
+	}
+
+	private FileUpload setIcons(AudioTrack track) {
+
+		if (track instanceof YoutubeAudioTrack) {
+			return loadYT(track.getIdentifier());
+		}
+
+		if (track instanceof SpotifyAudioTrack) {
+			return loadSpotify(track.getIdentifier());
+		}
+		return null;
+
+	}
+
+	private FileUpload loadSpotify(String songid) {
+
+		final CloseableHttpClient client = HttpClients.createSystem();
+		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
+
+		try {
+
+			final CloseableHttpResponse response = client.execute(httpget);
+
+			if (response.getStatusLine().getStatusCode() != 200) {
+				return null;
+
+			}
+
+			JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+
+			String token = resp.get("accessToken").getAsString();
+
+			SpotifyApi api = SpotifyApi.builder().setAccessToken(token).build();
+
+			Track t = api.getTrack(songid).build().execute();
+
+			Image[] images = t.getAlbum().getImages();
+
+			Image img = images[0];
+
+			for (Image imgs : images) {
+				if (imgs.getHeight() > img.getHeight()) {
+					img = imgs;
+				}
+			}
+
+			InputStream file = (new URL(img.getUrl())).openStream();
+			return FileUpload.fromData(file, "thumbnail.jpg");
+
+		} catch (IOException | ParseException | SpotifyWebApiException e) {
+			log.error(e.getMessage(), e);
+			return null;
+		}
+
+	}
+
+	private FileUpload loadYT(String videoId) {
+
+		try {
+
+			InputStream file;
+
+			try {
+
+				file = (new URL("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg")).openStream();
+
+			} catch (Exception ex) {
+
+				log.warn("No maxresdefault.jpg available");
+
+				file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg")).openStream();
+
+			}
+
+			return FileUpload.fromData(file, "thumbnail.jpg");
+
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+
+		return null;
 	}
 }

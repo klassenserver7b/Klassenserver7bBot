@@ -10,12 +10,14 @@ import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.music.commands.slash.ChartsSlashCommand;
 import de.k7bot.music.commands.slash.EqualizerSlashCommand;
 import de.k7bot.music.commands.slash.PlaySlashCommand;
+import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
 import de.k7bot.util.commands.slash.ClearSlashCommand;
 import de.k7bot.util.commands.slash.ReactRolesSlashCommand;
 import de.k7bot.util.commands.slash.ToEmbedSlashCommand;
 
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -73,6 +75,12 @@ public class SlashCommandManager {
 			commandlog.info("SlashCommand - see next lines:\n\nUser: " + event.getUser().getName() + " | \nGuild: "
 					+ guild + " | \nChannel: " + event.getChannel().getName() + " | \nMessage: "
 					+ event.getCommandString() + "\n");
+
+			LiteSQL.onUpdate(
+					"INSERT INTO slashcommandlog (command, guildId, timestamp, commandstring) VALUES (?, ?, ?, ?)",
+					event.getName(), ((event.getGuild()!= null) ? event.getGuild().getIdLong() : 0),
+					event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
+					event.getCommandString());
 
 			cmd.performSlashCommand(event);
 

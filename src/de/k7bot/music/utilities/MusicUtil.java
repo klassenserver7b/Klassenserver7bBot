@@ -21,10 +21,11 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class MusicUtil {
@@ -91,6 +92,33 @@ public class MusicUtil {
 					TextChannel channel;
 					if ((channel = guild.getTextChannelById(channelid)) != null) {
 						channel.sendMessageEmbeds(builder.build()).queue();
+					}
+				}
+
+			}
+
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * 
+	 * @param guildid
+	 * @param builder
+	 */
+	public static void sendEmbed(long guildid, EmbedBuilder builder, FileUpload upload) {
+		ResultSet set = LiteSQL.onQuery("SELECT channelId FROM musicutil WHERE guildId = ?", guildid);
+
+		try {
+			if (set.next()) {
+				long channelid = set.getLong("channelId");
+				Guild guild;
+				if ((guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid)) != null) {
+					TextChannel channel;
+					if ((channel = guild.getTextChannelById(channelid)) != null) {
+						builder.setImage("attachment://thumbnail.png");
+						channel.sendFiles(upload).setEmbeds(builder.build()).queue();
 					}
 				}
 

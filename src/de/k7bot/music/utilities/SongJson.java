@@ -5,17 +5,17 @@ package de.k7bot.music.utilities;
 
 import java.io.IOException;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class SongJson {
@@ -98,24 +98,36 @@ public class SongJson {
 			return false;
 		}
 
-		final CloseableHttpClient httpclient = HttpClients.createDefault();
+		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
-		try {
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
 
-			final CloseableHttpResponse response = httpclient.execute(httpget);
+			if (response.getCode() == 200) {
 
-			if (response.getStatusLine().getStatusCode() == 200) {
+				response.close();
 				httpclient.close();
+
 				this.isDiscogsValidated = true;
 				return true;
 			}
+
+			response.close();
 			httpclient.close();
+
 			this.isDiscogsValidated = false;
 			return false;
 
 		} catch (IOException e) {
+
 			this.isDiscogsValidated = false;
+
+			try {
+				httpclient.close();
+			} catch (IOException e1) {
+				// do smth
+			}
+
 			return false;
 		}
 
@@ -240,7 +252,7 @@ public class SongJson {
 
 		String authors = b.toString();
 		authors = authors.trim();
-		authors = authors.substring(0, authors.length() - 2);
+		authors = authors.substring(0, authors.length() - 1);
 
 		return authors;
 	}

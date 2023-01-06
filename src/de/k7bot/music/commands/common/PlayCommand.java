@@ -2,6 +2,7 @@ package de.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
@@ -13,7 +14,6 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.TrackScheduler;
 import de.k7bot.music.utilities.MusicUtil;
-import de.k7bot.music.utilities.SpotifyConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,12 +31,12 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class PlayCommand implements ServerCommand {
 	public static boolean party = false;
 	private final Logger log;
-	private final SpotifyConverter conv;
+	// private final SpotifyConverter conv;
 
 	public PlayCommand() {
 
 		this.log = LoggerFactory.getLogger(this.getClass());
-		conv = new SpotifyConverter();
+		// conv = new SpotifyConverter();
 
 	}
 
@@ -65,7 +65,8 @@ public class PlayCommand implements ServerCommand {
 		AudioPlayer player = controller.getPlayer();
 		Queue queue = controller.getQueue();
 
-		if (player.getPlayingTrack() != null && vc.getIdLong() != manager.getConnectedChannel().getIdLong()) {
+		if (player.getPlayingTrack() != null && manager.getConnectedChannel() != null
+				&& vc.getIdLong() != manager.getConnectedChannel().getIdLong()) {
 
 			channel.sendMessage(
 					"The Bot is already playng a song.\nPlease join the channel the bot is playing in. -> Channel: "
@@ -94,10 +95,6 @@ public class PlayCommand implements ServerCommand {
 			}
 
 			url = strBuilder.toString().trim();
-
-			if (checkSpotify(url, queue, manager, channel, vc)) {
-				return;
-			}
 
 			url = formatQuerry(url);
 
@@ -130,14 +127,32 @@ public class PlayCommand implements ServerCommand {
 
 			manager.openAudioConnection(vc);
 
-			url = "D:\\Felix\\Desktop\\Bot\\audio.mp4";
+			url = "audio.mp4";
 			player.stopTrack();
 
 		}
 
-		apm.loadItem(url, new AudioLoadResult(controller, url, false));
+		AudioLoadResult ares = new AudioLoadResult(controller, url, false);
+		for (int i = 0; i < 5; i++) {
+			if (tryLoad(url, ares, apm)) {
+				log.debug("Track successfully submitted to ASM");
+				break;
+			} else {
+				log.info("FriendlyException while loading Track - Retrying");
+			}
+		}
+
 		player.setPaused(false);
 
+	}
+
+	private boolean tryLoad(String identifyer, AudioLoadResult ares, AudioPlayerManager apm) {
+		try {
+			apm.loadItem(identifyer, ares);
+			return true;
+		} catch (FriendlyException e) {
+			return false;
+		}
 	}
 
 	private String formatQuerry(String q) {
@@ -158,25 +173,6 @@ public class PlayCommand implements ServerCommand {
 		}
 
 		return url;
-	}
-
-	private boolean checkSpotify(String url, Queue queue, AudioManager manager, TextChannel channel, AudioChannel vc) {
-
-		if (!url.startsWith("https://open.spotify.com/playlist/")) {
-			return false;
-		}
-
-		queue.clearQueue();
-		manager.openAudioConnection(vc);
-
-		Message load = channel.sendMessage("Loading Spotify Tracks...").complete();
-		channel.sendTyping().queue();
-
-		url = url.replaceAll("https://open.spotify.com/playlist/", "");
-		conv.convertPlaylist(url, load, vc);
-
-		return true;
-
 	}
 
 	private void setVolume(AudioPlayer player, Long guildId) {

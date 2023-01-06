@@ -14,7 +14,7 @@ import de.k7bot.util.customapis.types.ApiEntry;
 import de.k7bot.util.customapis.types.InternalAPI;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class InternalAPIManager {

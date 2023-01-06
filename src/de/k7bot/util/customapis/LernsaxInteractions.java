@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * "Learning Plans"} <br>
  * - {@link LernsaxInteractions#disconnect() disconnect}
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class LernsaxInteractions implements InternalAPI {

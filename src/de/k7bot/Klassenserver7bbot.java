@@ -7,14 +7,6 @@ import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import core.GLA;
 import de.k7bot.sql.LiteSQL;
@@ -27,6 +19,7 @@ import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.music.AudioPlayerUtil;
+import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -183,10 +176,6 @@ public class Klassenserver7bbot {
 
 	private void initializeObjects() {
 
-		this.cmdMgr = new CommandManager();
-		this.hypMgr = new HypixelCommandManager();
-		this.slashMgr = new SlashCommandManager();
-
 		this.prefixMgr = new PrefixManager();
 
 		this.subMgr = new SubscriptionManager();
@@ -216,23 +205,30 @@ public class Klassenserver7bbot {
 
 		}
 
+		this.cmdMgr = new CommandManager();
+		this.hypMgr = new HypixelCommandManager();
+		this.slashMgr = new SlashCommandManager();
+
 		InitializeMusic(this.audioPlayerManager);
 	}
 
 	public void InitializeMusic(AudioPlayerManager manager) {
 
-		AudioSourceManagers.registerRemoteSources(manager);
-		AudioSourceManagers.registerLocalSource(manager);
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
 
-		manager.registerSourceManager(new YoutubeAudioSourceManager());
-		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-		manager.registerSourceManager(new BandcampAudioSourceManager());
-		manager.registerSourceManager(new VimeoAudioSourceManager());
-		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-		manager.registerSourceManager(new BeamAudioSourceManager());
-		manager.registerSourceManager(new HttpAudioSourceManager());
-		manager.registerSourceManager(new LocalAudioSourceManager());
+		manager.registerSourceManager(new SpotifyAudioSourceManager());
+
+//		manager.registerSourceManager(new YoutubeAudioSourceManager());
+//		manager.registerSourceManager(new LocalAudioSourceManager());
+//		manager.registerSourceManager(new HttpAudioSourceManager());
+//		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+//		manager.registerSourceManager(new BandcampAudioSourceManager());
+//		manager.registerSourceManager(new VimeoAudioSourceManager());
+//		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
+//		manager.registerSourceManager(new BeamAudioSourceManager());
+
+		AudioSourceManagers.registerRemoteSources(manager);
+		AudioSourceManagers.registerLocalSource(manager);
 
 	}
 

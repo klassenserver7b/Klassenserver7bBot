@@ -10,11 +10,13 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.music.utilities.SongDataUtils;
+import de.k7bot.music.utilities.SongJson;
 import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class ChartList {
-	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -164,7 +166,13 @@ public class ChartList {
 
 				while (set.next()) {
 
-					String songhead = set.getString("songname") + "%%SPLITTER%%" + set.getString("songauthor");
+					String title = set.getString("songname");
+
+					String author = set.getString("songauthor");
+
+					SongJson js = new SongDataUtils().parseYtTitle(title, author);
+
+					String songhead = js.getAuthorString() + " - " + js.getTitle();
 
 					if (chartslist.containsKey(songhead)) {
 						chartslist.put(songhead, chartslist.get(songhead) + 1);
@@ -177,7 +185,7 @@ public class ChartList {
 				return chartslist;
 
 			} catch (SQLException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 				return null;
 			}
 
