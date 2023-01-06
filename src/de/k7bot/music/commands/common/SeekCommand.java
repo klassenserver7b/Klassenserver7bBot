@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class SeekCommand implements ServerCommand {

@@ -1,21 +1,23 @@
 /**
  * 
  */
-package de.k7bot.util;
+package de.k7bot.music.utilities;
 
 import javax.annotation.Nonnull;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public enum PredefinedMusicPlaylists {
 
 	Party(1, "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F"),
 
+	ServerMix(2, "https://open.spotify.com/playlist/3QyqgTHQLvEVKEqRbSCLbV"),
+
 	YTCharts(0, "https://music.youtube.com/playlist?list=PL0sHkSjKd2rpxgOMD-vlUlIDqvQ5ChYJh"),
 
-	Nightcore(2, "https://www.youtube.com/playlist?list=PLAzC6gV-_NVM6uLLprtddVl4My07_CHtL");
+	Nightcore(3, "https://www.youtube.com/playlist?list=PLAzC6gV-_NVM6uLLprtddVl4My07_CHtL");
 
 	private final int id;
 	private final String url;

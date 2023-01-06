@@ -23,9 +23,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
- * @author felix
+ * @author Felix
  *
  */
+
 public class HelpCommand implements ServerCommand {
 
 	@Override
@@ -73,6 +74,8 @@ public class HelpCommand implements ServerCommand {
 	 * 
 	 * @param guild
 	 * @return
+	 * 
+	 * 
 	 */
 	public MessageEmbed generateHelpOverview(Guild guild) {
 
@@ -126,6 +129,8 @@ public class HelpCommand implements ServerCommand {
 	 * 
 	 * @param category
 	 * @return
+	 * 
+	 * 
 	 */
 	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
@@ -239,6 +244,8 @@ public class HelpCommand implements ServerCommand {
 	 *              {@link net.dv8tion.jda.api.entities.User User}
 	 * @param tc    The {@link TextChannel} in which the reference to the DM and the
 	 *              error messages are to be sent.
+	 * 
+	 * 
 	 */
 	private void sendEmbedPrivate(MessageEmbed embed, Member m, TextChannel tc) {
 

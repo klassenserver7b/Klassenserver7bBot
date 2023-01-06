@@ -6,7 +6,7 @@ package de.k7bot;
 import javax.annotation.Nonnull;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public enum HelpCategories {

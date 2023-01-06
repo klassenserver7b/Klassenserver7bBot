@@ -40,7 +40,7 @@ public class ChartsSlashCommand implements SlashCommand {
 		OptionMapping timeopt = event.getOption("time");
 		OptionMapping timeunitopt = event.getOption("timeunit");
 		OptionMapping guildopt = event.getOption("guild");
-
+		
 		HashMap<String, Long> charts = provideOptionselectedCharts(timeopt, timeunitopt, guildopt, event.getGuild(),
 				hook);
 

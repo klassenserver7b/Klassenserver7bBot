@@ -7,7 +7,7 @@ import de.k7bot.util.customapis.VplanNEW_XML;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public enum SubscriptionTarget {

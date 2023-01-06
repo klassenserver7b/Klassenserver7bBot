@@ -1,4 +1,4 @@
-package de.k7bot.music.utilities;
+package de.k7bot.music.utilities.spotify;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.hc.core5.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,6 +31,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.Queue;
+import de.k7bot.music.utilities.MusicUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Message;
@@ -39,78 +42,135 @@ import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
+/**
+ * 
+ * @author Felix
+ * @deprecated
+ * @hidden
+ * 
+ */
 public class SpotifyConverter {
 
-	private String accessToken;
+	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
+	private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+
+	private String acctkn;
 	private Long isoexpiration;
 	private String clientId;
 	public static Thread converter;
 	private Logger logger = LoggerFactory.getLogger("SpotifyConverter");
 
+	/**
+	 * @deprecated
+	 */
 	public static void interrupt() {
 		if (converter != null) {
 			converter.interrupt();
 		}
 	}
 
-	public void checkAccessToken() {
+	/**
+	 * @deprecated
+	 * @return
+	 */
+	public String checkAccessToken() {
 
-		if (accessToken == null || accessToken.equalsIgnoreCase("") || clientId == null
-				|| (isoexpiration != null && isoexpiration <= new Date().getTime())) {
-
-			final CloseableHttpClient client = HttpClients.createDefault();
-			final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
-			try {
-
-				final CloseableHttpResponse response = client.execute(httpget);
-
-				if (response.getStatusLine().getStatusCode() == 200) {
-
-					JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity()))
-							.getAsJsonObject();
-
-					String token = resp.get("accessToken").getAsString();
-					if (token != null && !token.equalsIgnoreCase("")) {
-						accessToken = token;
-						isoexpiration = resp.get("accessTokenExpirationTimestampMs").getAsLong();
-						clientId = resp.get("clientId").getAsString();
-					}
-
-				} else {
-					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
-				}
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-
+		if (isoexpiration == null) {
+			return retrieveToken();
 		}
+
+		if (isoexpiration <= new Date().getTime()) {
+			return retrieveToken();
+		}
+		return this.acctkn;
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 */
+	private String retrieveToken() {
+
+		final CloseableHttpClient client = HttpClients.createSystem();
+		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
+		try {
+
+			final CloseableHttpResponse response = client.execute(httpget);
+
+			if (response.getStatusLine().getStatusCode() == 200) {
+
+				JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+
+				String token = resp.get("accessToken").getAsString();
+				if (token != null && !token.equalsIgnoreCase("")) {
+					isoexpiration = resp.get("accessTokenExpirationTimestampMs").getAsLong();
+					clientId = resp.get("clientId").getAsString();
+					this.acctkn = token;
+					return token;
+				}
+
+			} else {
+				logger.debug("Couldn't request a new AccessToken -> bad statuscode");
+			}
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return acctkn;
+	}
+
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public String getAccessToken() {
 
-		checkAccessToken();
 		logger.debug("Spotify-Accesstoken refresh requested");
-		return accessToken;
+		return checkAccessToken();
 
 	}
 
+	/**
+	 * @deprecated
+	 * @param playlistId
+	 * @param load
+	 * @param vc
+	 */
 	public void convertPlaylist(String playlistId, Message load, AudioChannel vc) {
-		checkAccessToken();
+
+		Matcher m = URL_PATTERN.matcher(playlistId);
+
+		final String id;
+
+		if (m.matches()) {
+			id = m.group(3);
+		} else {
+			id = playlistId;
+		}
+
+		String acctkn = checkAccessToken();
 
 		converter = new Thread(() -> {
 
-			loadSpotifyData(playlistId, load, vc);
+			loadSpotifyData(id, acctkn, load, vc);
 
 		});
+
 		converter.setName("SpotifyConversionThread");
 		converter.start();
+
 		return;
 	}
 
-	private void loadSpotifyData(String playlistId, Message mess, AudioChannel vc) {
+	/**
+	 * @deprecated
+	 * @param playlistId
+	 * @param acctkn
+	 * @param mess
+	 * @param vc
+	 */
+	private void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
 		Long delay = System.currentTimeMillis();
-		final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId(clientId).setAccessToken(accessToken)
-				.build();
+		final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId(clientId).setAccessToken(acctkn).build();
 
 		GetPlaylistsItemsRequest getplaylistitemsrequest = spotifyapi.getPlaylistsItems(playlistId).build();
 
@@ -246,6 +306,12 @@ public class SpotifyConverter {
 	 * return yttracks; }
 	 */
 
+	/**
+	 * @deprecated
+	 * @param searchquery
+	 * @param vc
+	 * @return
+	 */
 	private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
 
 		List<AudioTrack> yttracks = new ArrayList<>();
@@ -265,6 +331,7 @@ public class SpotifyConverter {
 				public void trackLoaded(AudioTrack track) {
 					yttracks.add(track);
 					queue.addTracktoQueue(track);
+
 				}
 
 				@Override
@@ -276,6 +343,7 @@ public class SpotifyConverter {
 
 						yttracks.add(tracklist.get(0));
 						queue.addTracktoQueue(tracklist.get(0));
+
 					}
 
 				}

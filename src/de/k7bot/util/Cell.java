@@ -35,8 +35,10 @@ public class Cell {
 	 * Returns the content of this cell.
 	 *
 	 * @return the content data
-	 */
-	public List<String> getContent() {
+	 
+ 
+ 
+ */	public List<String> getContent() {
 		return content;
 	}
 
@@ -46,8 +48,10 @@ public class Cell {
 	 *
 	 * @param index the index of the line to return
 	 * @return the content of the specified line
-	 */
-	public String getLine(int index) {
+	 
+ 
+ 
+ */	public String getLine(int index) {
 		return content.size() <= index ? "" : content.get(index);
 	}
 
@@ -58,8 +62,10 @@ public class Cell {
 	 *
 	 * @param index the index of the line to return
 	 * @return the cell object of the specified line
-	 */
-	public Cell getLineCell(int index) {
+	 
+ 
+ 
+ */	public Cell getLineCell(int index) {
 		return content.size() <= index ? Cell.of("")
 				: Cell.of(content.get(index), linkURL, linkTitle, isBold, isUnderlined, isStrikethrough, isItalic);
 	}
@@ -68,8 +74,10 @@ public class Cell {
 	 * Sets the content of this cell.
 	 *
 	 * @param content the content data
-	 */
-	public void setContent(List<String> content) {
+	 
+ 
+ 
+ */	public void setContent(List<String> content) {
 		this.content = content == null || content.size() == 0 ? new ArrayList<>(List.of("")) : new ArrayList<>(content);
 	}
 
@@ -77,8 +85,10 @@ public class Cell {
 	 * Returns the total width of this cell, in characters.
 	 *
 	 * @return the width of this cell
-	 */
-	public int getWidth() {
+	 
+ 
+ 
+ */	public int getWidth() {
 		int width = 0;
 		for (String line : content)
 			if (width < line.length())
@@ -90,8 +100,10 @@ public class Cell {
 	 * Returns the total height of this cell, in lines.
 	 *
 	 * @return the height of this cell
-	 */
-	public int getHeight() {
+	 
+ 
+ 
+ */	public int getHeight() {
 		return content.size();
 	}
 
@@ -99,8 +111,10 @@ public class Cell {
 	 * Returns whether this cell is a link.
 	 *
 	 * @return whether the cell is a link
-	 */
-	public boolean hasLink() {
+	 
+ 
+ 
+ */	public boolean hasLink() {
 		return getLinkURL() != null;
 	}
 
@@ -109,8 +123,10 @@ public class Cell {
 	 * if this cell isn't a link.
 	 *
 	 * @return the link url
-	 */
-	public String getLinkURL() {
+	 
+ 
+ 
+ */	public String getLinkURL() {
 		return linkURL;
 	}
 
@@ -120,8 +136,10 @@ public class Cell {
 	 * mark this cell as not being a link.
 	 *
 	 * @param linkURL the link url
-	 */
-	public void setLinkURL(String linkURL) {
+	 
+ 
+ 
+ */	public void setLinkURL(String linkURL) {
 		this.linkURL = linkURL;
 	}
 
@@ -129,8 +147,10 @@ public class Cell {
 	 * Returns whether this cell has a link tooltip.
 	 *
 	 * @return whether this cell has a link tooltip
-	 */
-	public boolean hasLinkTitle() {
+	 
+ 
+ 
+ */	public boolean hasLinkTitle() {
 		return getLinkTitle() != null;
 	}
 
@@ -139,8 +159,10 @@ public class Cell {
 	 * null if this cell doesn't have a link tooltip.
 	 *
 	 * @return the link tooltip
-	 */
-	public String getLinkTitle() {
+	 
+ 
+ 
+ */	public String getLinkTitle() {
 		return linkTitle;
 	}
 
@@ -150,8 +172,10 @@ public class Cell {
 	 * to null will mark this cell as not having a link tooltip.
 	 *
 	 * @param linkTitle the link tooltip
-	 */
-	public void setLinkTitle(String linkTitle) {
+	 
+ 
+ 
+ */	public void setLinkTitle(String linkTitle) {
 		this.linkTitle = linkTitle;
 	}
 
@@ -159,8 +183,10 @@ public class Cell {
 	 * Returns whether the content of this cell is bold.
 	 *
 	 * @return whether the content of this cell is bold
-	 */
-	public boolean isBold() {
+	 
+ 
+ 
+ */	public boolean isBold() {
 		return isBold;
 	}
 
@@ -168,8 +194,10 @@ public class Cell {
 	 * Specifies whether the content of this cell should be bold.
 	 *
 	 * @param bold whether the content of this cell should be bold
-	 */
-	public void setBold(boolean bold) {
+	 
+ 
+ 
+ */	public void setBold(boolean bold) {
 		isBold = bold;
 	}
 
@@ -177,8 +205,10 @@ public class Cell {
 	 * Returns whether the content of this cell is underlined.
 	 *
 	 * @return whether the content of this cell is underlined
-	 */
-	public boolean isUnderlined() {
+	 
+ 
+ 
+ */	public boolean isUnderlined() {
 		return isUnderlined;
 	}
 
@@ -186,8 +216,10 @@ public class Cell {
 	 * Specifies whether the content of this cell should be underlined.
 	 *
 	 * @param underlined whether the content of this cell should be underlined
-	 */
-	public void setUnderlined(boolean underlined) {
+	 
+ 
+ 
+ */	public void setUnderlined(boolean underlined) {
 		isUnderlined = underlined;
 	}
 
@@ -195,8 +227,10 @@ public class Cell {
 	 * Returns whether the content of this cell is strikethrough.
 	 *
 	 * @return whether the content of this cell is strikethrough
-	 */
-	public boolean isStrikethrough() {
+	 
+ 
+ 
+ */	public boolean isStrikethrough() {
 		return isStrikethrough;
 	}
 
@@ -204,8 +238,10 @@ public class Cell {
 	 * Specifies whether the content of this cell should be strikethrough.
 	 *
 	 * @param strikethrough whether the content of this cell should be strikethrough
-	 */
-	public void setStrikethrough(boolean strikethrough) {
+	 
+ 
+ 
+ */	public void setStrikethrough(boolean strikethrough) {
 		isStrikethrough = strikethrough;
 	}
 
@@ -213,8 +249,10 @@ public class Cell {
 	 * Returns whether the content of this cell is italic.
 	 *
 	 * @return whether the content of this cell is italic
-	 */
-	public boolean isItalic() {
+	 
+ 
+ 
+ */	public boolean isItalic() {
 		return isItalic;
 	}
 
@@ -222,8 +260,10 @@ public class Cell {
 	 * Specifies whether the content of this cell should be italic.
 	 *
 	 * @param italic whether the content of this cell should be italic
-	 */
-	public void setItalic(boolean italic) {
+	 
+ 
+ 
+ */	public void setItalic(boolean italic) {
 		isItalic = italic;
 	}
 
@@ -232,8 +272,10 @@ public class Cell {
 	 *
 	 * @param content the content
 	 * @return the cell object
-	 */
-	public static Cell of(String content) {
+	 
+ 
+ 
+ */	public static Cell of(String content) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), null, null, false, false, false, false);
 	}
 
@@ -245,8 +287,10 @@ public class Cell {
 	 * @param linkURL   the link url
 	 * @param linkTitle the link title
 	 * @return the cell object
-	 */
-	public static Cell of(String content, String linkURL, String linkTitle) {
+	 
+ 
+ 
+ */	public static Cell of(String content, String linkURL, String linkTitle) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), linkURL, linkTitle, false, false, false,
 				false);
 	}
@@ -261,8 +305,10 @@ public class Cell {
 	 *                        strikethrough
 	 * @param isItalic        whether the content of this cell should be italic
 	 * @return the cell object
-	 */
-	public static Cell of(String content, boolean isBold, boolean isUnderlined, boolean isStrikethrough,
+	 
+ 
+ 
+ */	public static Cell of(String content, boolean isBold, boolean isUnderlined, boolean isStrikethrough,
 			boolean isItalic) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), null, null, isBold, isUnderlined,
 				isStrikethrough, isItalic);
@@ -281,8 +327,10 @@ public class Cell {
 	 *                        strikethrough
 	 * @param isItalic        whether the content of this cell should be italic
 	 * @return the cell object
-	 */
-	public static Cell of(String content, String linkURL, String linkTitle, boolean isBold, boolean isUnderlined,
+	 
+ 
+ 
+ */	public static Cell of(String content, String linkURL, String linkTitle, boolean isBold, boolean isUnderlined,
 			boolean isStrikethrough, boolean isItalic) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), linkURL, linkTitle, isBold, isUnderlined,
 				isStrikethrough, isItalic);
@@ -294,8 +342,10 @@ public class Cell {
 	 * @param content the content
 	 * @param style   the style
 	 * @return the cell object
-	 */
-	public static Cell of(String content, int style) {
+	 
+ 
+ 
+ */	public static Cell of(String content, int style) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), null, null, (style & STYLE_BOLD) != 0,
 				(style & STYLE_UNDERLINED) != 0, (style & STYLE_STRIKETHROUGH) != 0, (style & STYLE_ITALIC) != 0);
 	}
@@ -309,8 +359,10 @@ public class Cell {
 	 * @param linkTitle the link title
 	 * @param style     the style
 	 * @return the cell object
-	 */
-	public static Cell of(String content, String linkURL, String linkTitle, int style) {
+	 
+ 
+ 
+ */	public static Cell of(String content, String linkURL, String linkTitle, int style) {
 		return new Cell(content == null ? null : List.of(content.split("\n")), linkURL, linkTitle,
 				(style & STYLE_BOLD) != 0, (style & STYLE_UNDERLINED) != 0, (style & STYLE_STRIKETHROUGH) != 0,
 				(style & STYLE_ITALIC) != 0);
@@ -321,8 +373,10 @@ public class Cell {
 	 *
 	 * @param content the content
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content) {
+	 
+ 
+ 
+ */	public static Cell of(List<String> content) {
 		return new Cell(content, null, null, false, false, false, false);
 	}
 
@@ -334,8 +388,10 @@ public class Cell {
 	 * @param linkURL   the link url
 	 * @param linkTitle the link title
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content, String linkURL, String linkTitle) {
+	 
+ 
+ 
+ */	public static Cell of(List<String> content, String linkURL, String linkTitle) {
 		return new Cell(content, linkURL, linkTitle, false, false, false, false);
 	}
 
@@ -349,8 +405,10 @@ public class Cell {
 	 *                        strikethrough
 	 * @param isItalic        whether the content of this cell should be italic
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content, boolean isBold, boolean isUnderlined, boolean isStrikethrough,
+	 
+ 
+ 
+ */	public static Cell of(List<String> content, boolean isBold, boolean isUnderlined, boolean isStrikethrough,
 			boolean isItalic) {
 		return new Cell(content, null, null, isBold, isUnderlined, isStrikethrough, isItalic);
 	}
@@ -368,8 +426,10 @@ public class Cell {
 	 *                        strikethrough
 	 * @param isItalic        whether the content of this cell should be italic
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content, String linkURL, String linkTitle, boolean isBold, boolean isUnderlined,
+	 
+ 
+ 
+ */	public static Cell of(List<String> content, String linkURL, String linkTitle, boolean isBold, boolean isUnderlined,
 			boolean isStrikethrough, boolean isItalic) {
 		return new Cell(content, linkURL, linkTitle, isBold, isUnderlined, isStrikethrough, isItalic);
 	}
@@ -380,8 +440,10 @@ public class Cell {
 	 * @param content the content
 	 * @param style   the style
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content, int style) {
+	 
+ 
+ 
+ */	public static Cell of(List<String> content, int style) {
 		return new Cell(content, null, null, (style & STYLE_BOLD) != 0, (style & STYLE_UNDERLINED) != 0,
 				(style & STYLE_STRIKETHROUGH) != 0, (style & STYLE_ITALIC) != 0);
 	}
@@ -395,8 +457,10 @@ public class Cell {
 	 * @param linkTitle the link title
 	 * @param style     the style
 	 * @return the cell object
-	 */
-	public static Cell of(List<String> content, String linkURL, String linkTitle, int style) {
+	 
+ 
+ 
+ */	public static Cell of(List<String> content, String linkURL, String linkTitle, int style) {
 		return new Cell(content, linkURL, linkTitle, (style & STYLE_BOLD) != 0, (style & STYLE_UNDERLINED) != 0,
 				(style & STYLE_STRIKETHROUGH) != 0, (style & STYLE_ITALIC) != 0);
 	}

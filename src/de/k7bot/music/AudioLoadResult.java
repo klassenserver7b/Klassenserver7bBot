@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class AudioLoadResult implements AudioLoadResultHandler {
+
 	private final String uri;
 	private final MusicController controller;
 	private final boolean setasnext;

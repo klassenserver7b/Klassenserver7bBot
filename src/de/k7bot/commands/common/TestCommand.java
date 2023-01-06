@@ -20,5 +20,6 @@ public class TestCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
+
 	}
 }

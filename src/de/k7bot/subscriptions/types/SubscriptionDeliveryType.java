@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public enum SubscriptionDeliveryType {

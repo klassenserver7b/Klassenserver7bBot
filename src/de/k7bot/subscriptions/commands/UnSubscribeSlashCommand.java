@@ -37,7 +37,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCommand {
@@ -111,7 +111,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 	@Override
 	public void onCommandAutoCompleteInteraction(@Nonnull CommandAutoCompleteInteractionEvent event) {
 
-		if (event.getCommandPath().equalsIgnoreCase("unsubscribe")) {
+		if (event.getFullCommandName().equalsIgnoreCase("unsubscribe")) {
 
 			ArrayList<Choice> choices = new ArrayList<>();
 

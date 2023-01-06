@@ -36,6 +36,8 @@ public class Shutdownslashcommand implements SlashCommand {
 
 			Klassenserver7bbot.getInstance().setexit(true);
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
+			return;
+
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}

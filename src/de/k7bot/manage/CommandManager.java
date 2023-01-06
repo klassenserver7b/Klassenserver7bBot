@@ -11,6 +11,7 @@ import de.k7bot.hypixel.commands.SCtoHC;
 import de.k7bot.util.customapis.DisabledAPI;
 
 import java.util.LinkedHashMap;
+
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class CommandManager {
@@ -76,6 +77,7 @@ public class CommandManager {
 		this.commands.put("playnext", new PlayNextCommand());
 		this.commands.put("pn", new PlayNextCommand());
 		this.commands.put("addtoqueue", new AddQueueTrackCommand());
+		this.commands.put("aq", new AddQueueTrackCommand());
 		this.commands.put("skip", new SkipCommand());
 		this.commands.put("volume", new VolumeCommand());
 		this.commands.put("loop", new LoopCommand());
@@ -83,7 +85,9 @@ public class CommandManager {
 		this.commands.put("shuffle", new ShuffleCommand());
 		this.commands.put("random", new ShuffleCommand());
 		this.commands.put("queuelist", new QueuelistCommand());
+		this.commands.put("ql", new QueuelistCommand());
 		this.commands.put("clearqueue", new ClearQueueCommand());
+		this.commands.put("cq", new ClearQueueCommand());
 		this.commands.put("nowplaying", new TrackInfoCommand());
 		this.commands.put("np", new TrackInfoCommand());
 		this.commands.put("seek", new SeekCommand());
@@ -97,6 +101,7 @@ public class CommandManager {
 		this.commands.put("uvolume", new UebersteuerungAdmin());
 		this.commands.put("teacher", new TeacherCommand());
 		this.commands.put("diload", new DanceInterpreterJsonGenerateCommand());
+		this.commands.put("daniel", new DanielCommand());
 
 		if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("hypixel")) {
 			this.commands.put("hypixel", new SCtoHC());
@@ -127,7 +132,9 @@ public class CommandManager {
 	public boolean perform(String command, Member m, TextChannel channel, Message message) {
 		ServerCommand cmd;
 		if ((cmd = this.commands.get(command.toLowerCase())) != null) {
+
 			message.delete().queue();
+
 			commandlog.info(
 					"see next lines:\n\nMember: " + m.getEffectiveName() + " | \nGuild: " + channel.getGuild().getName()
 							+ " | \nChannel: " + channel.getName() + " | \nMessage: " + message.getContentRaw() + "\n");
