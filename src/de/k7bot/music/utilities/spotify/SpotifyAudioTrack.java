@@ -106,9 +106,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 		// DRM Conversion
 		String license = getLicense();
-		if (license == null) {
-
-		}
 
 		File drmconverted = decryptedf;
 

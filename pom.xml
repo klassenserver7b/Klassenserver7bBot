@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>klassenserver7bbot</artifactId>
-	<version>1.16.1-RC.3</version>
+	<version>1.16.1-RC.0</version>
 	<packaging>jar</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

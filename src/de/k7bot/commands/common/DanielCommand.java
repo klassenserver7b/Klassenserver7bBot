@@ -31,13 +31,13 @@ public class DanielCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public HelpCategories getcategory() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

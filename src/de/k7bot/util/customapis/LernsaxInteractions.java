@@ -143,7 +143,6 @@ public class LernsaxInteractions implements InternalAPI {
 							messages.get(messages.size() - 1).getId());
 				}
 			} catch (NumberFormatException | WebWeaverException e) {
-				// TODO Auto-generated catch block
 				log.error(e.getMessage(), e);
 			}
 		}
