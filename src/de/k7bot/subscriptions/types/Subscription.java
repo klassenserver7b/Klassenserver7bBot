@@ -2,7 +2,7 @@ package de.k7bot.subscriptions.types;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class Subscription {

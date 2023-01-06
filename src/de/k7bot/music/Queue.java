@@ -1,6 +1,7 @@
 package de.k7bot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Queue {
 	private boolean islooped = false;
 	private List<AudioTrack> looplist;
@@ -21,12 +25,14 @@ public class Queue {
 	private MusicController controller;
 	private SongJson currentSong;
 	private final SongDataUtils songutils;
+	private final Logger log;
 
 	public Queue(MusicController controller) {
 		setController(controller);
 		setQueuelist(new ArrayList<>());
 		this.songutils = new SongDataUtils();
 		this.currentSong = null;
+		this.log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public boolean emptyQueueList() {
@@ -45,9 +51,8 @@ public class Queue {
 
 			if (track != null) {
 
-				player.playTrack(track);
-
 				logNewTrack(track);
+				player.playTrack(track);
 
 				return true;
 
@@ -57,20 +62,25 @@ public class Queue {
 
 			if (this.islooped) {
 
+				TrackScheduler.next = true;
 				track = this.queuelist.remove(0);
-				player.playTrack(track);
 
 				logNewTrack(track);
+				player.playTrack(track);
 
 				this.queuelist = this.looplist;
+				TrackScheduler.next = false;
 				return true;
 
 			} else {
 
+				TrackScheduler.next = true;
 				track = this.queuelist.remove(0);
-				player.playTrack(track);
 
 				logNewTrack(track);
+				player.playTrack(track);
+
+				TrackScheduler.next = false;
 
 				return true;
 
@@ -88,14 +98,29 @@ public class Queue {
 
 	public void logNewTrack(AudioTrack track) {
 
-		String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-		long datetime = Long.parseLong(datetimestring);
+		try {
 
-		SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
-		this.currentSong = data;
+			String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+			long datetime = Long.parseLong(datetimestring);
 
-		LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-				data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+			if (track instanceof YoutubeAudioTrack) {
+				SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
+				this.currentSong = data;
+
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+						data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+			} else {
+
+				this.currentSong = null;
+
+				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+						track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
+
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 
 	}
 
@@ -171,6 +196,10 @@ public class Queue {
 
 	public boolean isLooped() {
 		return islooped;
+	}
+
+	public SongDataUtils getSongDataUtils() {
+		return songutils;
 	}
 
 	public SongJson getCurrentSongData() {

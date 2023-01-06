@@ -13,36 +13,47 @@ import de.k7bot.util.StatsCategorieUtil;
 import net.dv8tion.jda.api.entities.Activity;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class LoopThread implements Runnable {
 
 	private final Thread t;
 	private final Logger log;
-	private boolean minlock = false;
-	private int sec = 60;
-	private int min = 0;
-	private boolean hasstarted = false;
-	private String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
+	private int min;
+	private boolean hasstarted;
+	private final String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
+	// private final VPlan_main vpold;
 
 	public LoopThread() {
 		log = LoggerFactory.getLogger(this.getClass());
+		min = 0;
+		hasstarted = false;
+
 		t = new Thread(this, "Loop");
+		// vpold = new
+		// VPlan_main(Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vppwold"));
 		t.start();
 	}
 
 	@Override
 	public void run() {
 
-		long time = System.currentTimeMillis();
+		while (!Klassenserver7bbot.getInstance().isInExit() && !t.isInterrupted()) {
 
-		while (!Klassenserver7bbot.getInstance().isInExit()) {
-			if (System.currentTimeMillis() >= time + 1000) {
-				time = System.currentTimeMillis();
+			onrun();
+			try {
+				min += 10;
+				Thread.sleep(600000);
+			} catch (InterruptedException e) {
 
-				onsecond();
+				if (e.getMessage().equalsIgnoreCase("sleep interrupted")) {
+					log.warn("interrupted while sleeping");
+				} else {
+					log.error(e.getMessage(), e);
+				}
 			}
+
 		}
 	}
 
@@ -51,15 +62,15 @@ public class LoopThread implements Runnable {
 		log.info("interrupted");
 	}
 
-	private void onsecond() {
+	private void onrun() {
 		if (!t.isInterrupted()) {
 
-			if ((this.min % 10 == 0) && !this.minlock) {
-				this.minlock = true;
+			if (this.min % 10 == 0) {
 
 				Klassenserver7bbot instance = Klassenserver7bbot.getInstance();
 
 				instance.getInternalAPIManager().checkForUpdates();
+				// vpold.VplanNotify("10b");
 
 				if ((!this.hasstarted)) {
 					StatsCategorieUtil.onStartup(instance.isDevMode());
@@ -73,19 +84,6 @@ public class LoopThread implements Runnable {
 					jda.getPresence().setActivity(Activity.listening(this.status[i]));
 				});
 
-			}
-
-			if (sec <= 0) {
-
-				sec = 60;
-				min++;
-				minlock = false;
-				if (min >= 60) {
-					min = 0;
-
-				}
-			} else {
-				sec--;
 			}
 		}
 	}

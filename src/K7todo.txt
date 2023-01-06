@@ -1,6 +1,5 @@
-SlashCommands in CommandsLog DB speichern
-
-Vplan Vergleich fixen (z.B: mit speichern des Strings statt hash)
+Spotify Stuff
+Invalid Hex codes - warum 00 am Anfang
 
 Equalizer für Music -> Mehr Profile
 

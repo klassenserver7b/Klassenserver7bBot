@@ -245,7 +245,8 @@ public class VPlan_main {
 		}
 
 		builder.setColor(Color.decode("#038aff"));
-		builder.setFooter("Stand vom " + OffsetDateTime.now());
+		builder.setTimestamp(OffsetDateTime.now());
+		builder.setFooter("Stand vom ");
 
 		if (!(info.equalsIgnoreCase(""))) {
 
@@ -375,7 +376,7 @@ public class VPlan_main {
 			JsonArray arr = obj.get("body").getAsJsonArray();
 			arr.forEach(element -> {
 				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
-				if (elem.contains("9b") || elem.equalsIgnoreCase("9a-9c/ Spw") || elem.equalsIgnoreCase("9a-9c")) {
+				if (elem.contains("10b") || elem.equalsIgnoreCase("10a-10c/ Spw") || elem.equalsIgnoreCase("10a-10c")) {
 
 					classentries.add(element.getAsJsonObject());
 

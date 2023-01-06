@@ -17,7 +17,7 @@ import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class SubscriptionManager {
@@ -42,7 +42,11 @@ public class SubscriptionManager {
 	 * @param data   The message which schould be send to all subscribers
 	 */
 	public void provideSubscriptionNotification(SubscriptionTarget target, MessageCreateData data) {
-		
+
+		if (data == null) {
+			return;
+		}
+
 		sublist.forEach(s -> {
 
 			if (s.getTarget() == target) {

@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class MessageClearUtil {

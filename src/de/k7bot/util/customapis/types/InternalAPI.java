@@ -4,7 +4,7 @@
 package de.k7bot.util.customapis.types;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public interface InternalAPI {

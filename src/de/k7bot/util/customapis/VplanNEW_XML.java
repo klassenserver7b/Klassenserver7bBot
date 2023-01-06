@@ -157,7 +157,6 @@ public class VplanNEW_XML implements InternalAPI {
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
-			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
 			TableMessage tablemess = new TableMessage();
 			tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
@@ -188,9 +187,16 @@ public class VplanNEW_XML implements InternalAPI {
 			tablemess.automaticLineBreaks(4);
 			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
 
+			boolean isextraembed = false;
+
 			if (additionalmess.hasData()) {
 				additionalmess.automaticLineBreaks(4);
-				embbuild.addField("", additionalmess.build(), false);
+
+				if (additionalmess.build().length() <= 1020) {
+					embbuild.addField("", additionalmess.build(), false);
+				} else {
+					isextraembed = true;
+				}
 			}
 
 			if (!(info.equalsIgnoreCase(""))) {
@@ -204,7 +210,30 @@ public class VplanNEW_XML implements InternalAPI {
 			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", classPlan.getTextContent().hashCode());
 
 			MessageCreateBuilder builder = new MessageCreateBuilder();
-			builder.setEmbeds(embbuild.build());
+
+			if (isextraembed) {
+
+				embbuild.clearFields();
+				embbuild.setFooter(null);
+				builder.addEmbeds(embbuild.build());
+
+				EmbedBuilder addbuild = new EmbedBuilder();
+
+				addbuild.setDescription(additionalmess.build());
+				addbuild.setColor(Color.decode("#038aff"));
+				addbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
+
+				if (!(info.equalsIgnoreCase(""))) {
+
+					addbuild.addField("Sonstige Infos", info, false);
+
+				}
+
+				builder.addEmbeds(addbuild.build());
+
+			} else {
+				builder.setEmbeds(embbuild.build());
+			}
 
 			return builder.build();
 
@@ -299,7 +328,7 @@ public class VplanNEW_XML implements InternalAPI {
 	 */
 	private boolean checkPlanChanges(Document plan, Element classPlan) {
 
-		log.warn("PLAN DB CHECK");
+		log.debug("PLAN DB CHECK");
 
 		Integer dbhash = null;
 
@@ -338,7 +367,7 @@ public class VplanNEW_XML implements InternalAPI {
 					}
 
 				} catch (SQLException e) {
-					log.error(e.getMessage(),e);
+					log.error(e.getMessage(), e);
 				}
 				return true;
 
@@ -419,7 +448,7 @@ public class VplanNEW_XML implements InternalAPI {
 					return false;
 				}
 			} catch (SQLException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 			}
 		}
 		return false;
@@ -452,8 +481,7 @@ public class VplanNEW_XML implements InternalAPI {
 	 */
 	private Document read(OffsetDateTime date) {
 		if (date == null) {
-			log.error("DocumentReadError - date = null caused by\n"
-					+ new NullPointerException().getStackTrace().toString());
+			log.error("DocumentReadError - date = null caused by\n", new NullPointerException());
 			return null;
 		}
 
@@ -472,7 +500,7 @@ public class VplanNEW_XML implements InternalAPI {
 			}
 
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -514,7 +542,7 @@ public class VplanNEW_XML implements InternalAPI {
 
 		} catch (IOException e) {
 			log.error("Vplan IO Exception - please check your connection");
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 
 		return null;

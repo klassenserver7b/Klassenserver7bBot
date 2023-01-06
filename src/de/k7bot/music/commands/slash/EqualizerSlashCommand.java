@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class EqualizerSlashCommand implements SlashCommand {

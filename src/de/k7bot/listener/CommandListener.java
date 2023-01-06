@@ -31,7 +31,13 @@ public class CommandListener extends ListenerAdapter {
 			case TEXT: {
 				try {
 					String prefix = Klassenserver7bbot.getInstance().getPrefixMgr()
-							.getPrefix(event.getGuild().getIdLong()).toLowerCase();
+							.getPrefix(event.getGuild().getIdLong());
+
+					if (prefix == null) {
+						prefix = "-";
+					}
+
+					prefix = prefix.toLowerCase();
 					guildMessageRecieved(event, message, prefix);
 				} catch (IllegalStateException e) {
 					log.error(e.getMessage(), e);

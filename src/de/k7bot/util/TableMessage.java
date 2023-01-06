@@ -26,6 +26,7 @@ public class TableMessage {
      *
      * @return the number of rows
      */
+    
     public int getRows() {
         return content.size() / columns + (content.size() % columns > 0 ? 1 : 0);
     }
@@ -35,6 +36,7 @@ public class TableMessage {
      *
      * @return the number of columns
      */
+    
     public int getColumns() {
         return columns;
     }
@@ -44,6 +46,7 @@ public class TableMessage {
      *
      * @return the content data
      */
+     
     public List<Cell> getContent() {
         return content;
     }
@@ -53,6 +56,7 @@ public class TableMessage {
      *
      * @return whether the table has any data
      */
+    
     public boolean hasData() {
         return getContent().size() > getColumns();
     }
@@ -65,6 +69,7 @@ public class TableMessage {
      * @param header the contents of this header entry
      * @return this table
      */
+    
     public TableMessage addHeader(String header) {
         content.add(Cell.of(header, Cell.STYLE_BOLD | Cell.STYLE_UNDERLINED));
         columns++;
@@ -79,6 +84,7 @@ public class TableMessage {
      * @param headers the contents of the header entries
      * @return this table
      */
+     
     public TableMessage addHeadline(String... headers) {
         content.addAll(Stream.of(headers)
                 .map(header -> Cell.of(header, Cell.STYLE_BOLD | Cell.STYLE_UNDERLINED))
@@ -95,6 +101,7 @@ public class TableMessage {
      * @param cell the contents of this cell
      * @return this table
      */
+     
     public TableMessage addCell(String cell) {
         content.add(Cell.of(cell));
         return this;
@@ -108,6 +115,7 @@ public class TableMessage {
      * @param cell the cell
      * @return this table
      */
+     
     public TableMessage addCell(Cell cell) {
         content.add(cell);
         return this;
@@ -121,6 +129,7 @@ public class TableMessage {
      * @param cells the contents of this cell
      * @return this table
      */
+     
     public TableMessage addRow(String... cells) {
 		content.addAll(Stream.of(cells).map(Cell::of).collect(Collectors.toList()));
         return this;
@@ -134,6 +143,7 @@ public class TableMessage {
      * @param cells the contents of this cell
      * @return this table
      */
+     
     public TableMessage addRow(Cell... cells) {
         content.addAll(Arrays.asList(cells));
         return this;
@@ -147,8 +157,12 @@ public class TableMessage {
      *
      * @param objCells the cells
      * @return this table
-     */
-    public TableMessage addRow(Object... objCells) {
+     
+ 
+ 
+ 
+ 
+ */    public TableMessage addRow(Object... objCells) {
         List<Cell> cells = new ArrayList<>();
 
         for (Object cell : objCells) {
@@ -178,8 +192,13 @@ public class TableMessage {
      *
      * @param column the column in which the line breaks are to be inserted
      * @return this table
-     */
-    public TableMessage automaticLineBreaks(int column) {
+     
+ 
+ 
+ 
+ 
+ 
+ */    public TableMessage automaticLineBreaks(int column) {
         if (column >= getColumns())
             return this;
 
@@ -241,8 +260,12 @@ public class TableMessage {
      * Returns the format code sequence representing this table.
      *
      * @return the formatted contents of this table
-     */
-    public String build() {
+     
+ 
+ 
+ 
+ 
+ */    public String build() {
         int rows = content.size() / columns + (content.size() % columns > 0 ? 1 : 0);
 
         List<Integer> columnWidths = new ArrayList<>();
@@ -301,8 +324,12 @@ public class TableMessage {
      * @param c          the column on the screen
      * @param rowHeights an array containing the precomputed heights of the rows of the table
      * @return the cell on the screen
-     */
-    private Cell getCellData(int r, int c, List<Integer> rowHeights) {
+     
+ 
+ 
+ 
+ 
+ */    private Cell getCellData(int r, int c, List<Integer> rowHeights) {
         if (c >= columns)
             return Cell.of("");
 
@@ -323,8 +350,12 @@ public class TableMessage {
      * @param r the row of the requested cell
      * @param c the column of the requested cell
      * @return the cell at the specified position
-     */
-    private Cell getCell(int r, int c) {
+     
+ 
+ 
+ 
+ 
+ */    private Cell getCell(int r, int c) {
         int index = columns * r + c;
         if (index >= content.size())
             return Cell.of("");
@@ -337,20 +368,28 @@ public class TableMessage {
      *
      * @param length the number of spaces
      * @return the string containing the spaces
-     */
-    private String whiteSpace(int length) {
+     
+ 
+ 
+ 
+ 
+ */    private String whiteSpace(int length) {
         if (length < 1)
             return EMPTY_CHARACTER;
         return " ".repeat(length);
     }
 
     /**
-     * Returns the format code sequence representing this cell.
-     *
-     * @param cell the cell to format
-     * @return the formatted contents of the cell
-     */
-    private String formatCell(Cell cell) {
+	 * Returns the format code sequence representing this cell.
+	 *
+	 * @param cell the cell to format
+	 * @return the formatted contents of the cell
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	   private String formatCell(Cell cell) {
         if (cell.getWidth() == 0)
             return "`" + EMPTY_CHARACTER + "`";
 

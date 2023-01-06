@@ -39,7 +39,7 @@ import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest
 
 /**
  * 
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
@@ -198,7 +198,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 		if (accessToken == null || accessToken.equalsIgnoreCase("") || clientId == null
 				|| (isoexpiration != null && isoexpiration <= new Date().getTime())) {
 
-			final CloseableHttpClient client = HttpClients.createDefault();
+			final CloseableHttpClient client = HttpClients.createSystem();
 			final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
 
 			try {

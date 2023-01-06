@@ -3,7 +3,6 @@ package de.k7bot.hypixel;
 
 import de.k7bot.commands.types.HypixelCommand;
 import de.k7bot.hypixel.commands.HypixelHelpCommand;
-import de.k7bot.hypixel.commands.HypixelNewsChannelCommand;
 import de.k7bot.hypixel.commands.HypixelRankCommand;
 import de.k7bot.hypixel.commands.KarmaCommand;
 import de.k7bot.hypixel.commands.OnlineCommand;
@@ -30,7 +29,6 @@ public class HypixelCommandManager {
 		this.commands.put("watchdog", new WatchdogCommand());
 		this.commands.put("rank", new HypixelRankCommand());
 		this.commands.put("test", new TestCommand());
-		this.commands.put("newschannel", new HypixelNewsChannelCommand());
 		this.commands.put("karma", new KarmaCommand());
 		this.commands.put("playerinfo", new PlayerInfoCommand());
 		this.commands.put("online", new OnlineCommand());
@@ -42,15 +40,13 @@ public class HypixelCommandManager {
 		this.help.put("rank",
 				"Gibt den höchsten Rang des Spielers auf Hypixel zurück (VIP/VIP+/MVP/MVP+/MVP++).\n- z.B. "
 						+ "[prefix]" + "hypixel rank [playername]");
-		this.help.put("newschannel", "Setzt den Newschannel auf den angegebenen channel.\n- z.B. "
-				+ "[prefix]" + "hypixel newschannel #channel");
 		this.help.put("karma", "Zeigt die Menge an Karma, die ein Spieler besitzt.\n- z.B. " + "[prefix]"
 				+ "hypixel karma [playername]");
-		this.help.put("playerinfo", "Zeigt die allerlei Infos zum Spieler.\n- z.B. " + "[prefix]"
-				+ "hypixel playerinfo [playername]");
+		this.help.put("playerinfo",
+				"Zeigt die allerlei Infos zum Spieler.\n- z.B. " + "[prefix]" + "hypixel playerinfo [playername]");
 		this.help.put("online",
-				"Zeigt ob ein Spieler aktuell online ist und welchen Spielmodus er gerade spielt.\n- z.B. "
-						+ "[prefix]" + "hypixel online [playername]");
+				"Zeigt ob ein Spieler aktuell online ist und welchen Spielmodus er gerade spielt.\n- z.B. " + "[prefix]"
+						+ "hypixel online [playername]");
 	}
 
 	public boolean performHypixel(String command, Member m, TextChannel channel, Message message) {

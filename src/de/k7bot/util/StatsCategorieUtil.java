@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 
 /**
- * @author Felix
+ * @author Klassenserver7b
  *
  */
 public class StatsCategorieUtil {
@@ -64,9 +64,10 @@ public class StatsCategorieUtil {
 
 	public static void onShutdown(boolean devmode) {
 		Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
-			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
-					guild.getIdLong());
-			try {
+
+			try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
+					guild.getIdLong())) {
+
 				if (set.next()) {
 					long catid = set.getLong("categoryId");
 					Category cat = guild.getCategoryById(catid);

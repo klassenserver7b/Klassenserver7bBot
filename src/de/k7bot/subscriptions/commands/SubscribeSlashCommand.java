@@ -36,7 +36,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 
 		InteractionHook hook = event.deferReply(true).complete();
 
-		String path = event.getCommandPath();
+		String path = event.getFullCommandName();
 
 		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
@@ -49,7 +49,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 			return;
 		}
 
-		if (path.equalsIgnoreCase("subscribe/privatechannel")) {
+		if (path.equalsIgnoreCase("subscribe privatechannel")) {
 
 			try {
 

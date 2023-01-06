@@ -12,3 +12,8 @@ bot.properties
 /resources/dance.json
 .classpath
 .project
+/desktop.ini
+/localmaven.txt
+/Songs.csv
+/settings.xml
+/resources/
