@@ -18,7 +18,7 @@ import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.*;
 import de.k7bot.manage.*;
 import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.utilities.GLAWrapper;
+import de.k7bot.music.utilities.gla.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 
 import java.io.File;
