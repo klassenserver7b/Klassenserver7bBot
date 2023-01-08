@@ -28,7 +28,7 @@ public class StopCommand implements ServerCommand {
 
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(channel, m) && !channel.getGuild().getAudioManager().isConnected()) {
 			return;
 		}
 

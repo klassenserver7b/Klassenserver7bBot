@@ -7,10 +7,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.commands.common.PlayCommand;
+import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
 
 import java.awt.Color;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -18,19 +20,19 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	private final String uri;
 	private final MusicController controller;
-	private final boolean setasnext;
+	private AudioLoadOption loadoption;
 
-	public AudioLoadResult(MusicController controller, String uri, boolean loadasnext) {
+	public AudioLoadResult(MusicController controller, String uri, AudioLoadOption loadoption) {
 		this.uri = uri;
 		this.controller = controller;
-		this.setasnext = loadasnext;
+		this.loadoption = loadoption;
 	}
 
 	public void trackLoaded(AudioTrack track) {
 
 		Queue queue = this.controller.getQueue();
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a single track");
-		addtoqueue(queue, track);
+		addTrackToqueue(queue, track);
 
 		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(LocalDateTime.now())
 				.setTitle("1 track added to queue");
@@ -45,13 +47,14 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a playlist");
 		if (!playlist.getTracks().isEmpty()) {
+			int added = 1;
 			if (this.uri.startsWith("ytsearch: ")) {
 				Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with ytsearch:");
 
 				// ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
-				addtoqueue(queue, track);
+				addTrackToqueue(queue, track);
 				return;
 			}
 
@@ -61,19 +64,16 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 				// scsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
 				// Queue hinzugefügt
 				AudioTrack track = playlist.getTracks().get(0);
-				addtoqueue(queue, track);
+				addTrackToqueue(queue, track);
 				return;
 			}
 
-			int added = 0;
+			added = playlist.getTracks().size();
 
-			for (AudioTrack track : playlist.getTracks()) {
-				addtoqueue(queue, track);
-				added++;
-			}
+			addPlaylistToQueue(queue, playlist);
 
 			EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
-					.setTimestamp(LocalDateTime.now()).setTitle(added + " tracks added to queue");
+					.setTimestamp(OffsetDateTime.now()).setTitle(added + " tracks added to queue");
 
 			MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
@@ -87,12 +87,34 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		}
 	}
 
-	private void addtoqueue(Queue queue, AudioTrack track) {
+	private void addPlaylistToQueue(Queue queue, AudioPlaylist playlist) {
 
-		if (setasnext) {
-			queue.setplaynext(track);
-		} else {
-			queue.addTracktoQueue(track);
+		
+		switch (loadoption) {
+		case APPEND -> {
+			queue.addPlaylistToQueue(playlist);
+		}
+		case NEXT -> {
+			queue.setNextPlaylist(playlist);
+		}
+		case REPLACE -> {
+			queue.replace(playlist);
+		}
+		}
+	}
+
+	private void addTrackToqueue(Queue queue, AudioTrack track) {
+
+		switch (loadoption) {
+		case APPEND -> {
+			queue.addTrackToQueue(track);
+		}
+		case NEXT -> {
+			queue.setNextTrack(track);
+		}
+		case REPLACE -> {
+			queue.replace(track);
+		}
 		}
 
 	}

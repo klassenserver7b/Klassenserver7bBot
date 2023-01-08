@@ -330,7 +330,7 @@ public class SpotifyConverter {
 				@Override
 				public void trackLoaded(AudioTrack track) {
 					yttracks.add(track);
-					queue.addTracktoQueue(track);
+					queue.addTrackToQueue(track);
 
 				}
 
@@ -342,7 +342,7 @@ public class SpotifyConverter {
 					if (!tracklist.isEmpty()) {
 
 						yttracks.add(tracklist.get(0));
-						queue.addTracktoQueue(tracklist.get(0));
+						queue.addTrackToQueue(tracklist.get(0));
 
 					}
 

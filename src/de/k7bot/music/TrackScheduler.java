@@ -123,6 +123,7 @@ public class TrackScheduler extends AudioEventAdapter {
 			}
 
 			player.stopTrack();
+			queue.clearQueue();
 			manager.closeAudioConnection();
 
 		} else {

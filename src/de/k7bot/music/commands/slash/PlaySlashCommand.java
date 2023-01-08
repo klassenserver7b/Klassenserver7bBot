@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SlashCommand;
@@ -23,6 +23,7 @@ import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.TrackScheduler;
+import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.PredefinedMusicPlaylists;
 import de.k7bot.sql.LiteSQL;
@@ -147,8 +148,9 @@ public class PlaySlashCommand implements SlashCommand {
 		try {
 			log.info("Bot startet searching a track: -> new Track(channelName = " + channel.getName() + ", playlist = "
 					+ playlist.toString() + ")");
-			apm.loadItem(playlist.getUrl(), new AudioLoadResult(controller, playlist.getUrl(), false)).get();
-		} catch (InterruptedException | ExecutionException e) {
+			apm.loadItem(playlist.getUrl(),
+					new AudioLoadResult(controller, playlist.getUrl(), AudioLoadOption.REPLACE));
+		} catch (FriendlyException e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -174,8 +176,8 @@ public class PlaySlashCommand implements SlashCommand {
 		url = url.trim();
 
 		try {
-			apm.loadItem(url, new AudioLoadResult(controller, url, false)).get();
-		} catch (InterruptedException | ExecutionException e) {
+			apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.REPLACE));
+		} catch (FriendlyException e) {
 			log.error(e.getMessage(), e);
 		}
 

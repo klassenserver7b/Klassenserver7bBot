@@ -1,7 +1,6 @@
 package de.k7bot.music.commands.common;
 
 import java.awt.Color;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -10,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
+import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -105,8 +106,8 @@ public class PlayNextCommand implements ServerCommand {
 							+ ", url = " + url + ")");
 
 			try {
-				apm.loadItem(url, new AudioLoadResult(controller, url, true)).get();
-			} catch (InterruptedException | ExecutionException e) {
+				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
+			} catch (FriendlyException e) {
 				log.error(e.getMessage(), e);
 			}
 

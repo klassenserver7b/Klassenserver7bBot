@@ -42,7 +42,7 @@ public class QueuelistCommand implements ServerCommand {
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setFooter("Requested by @" + m.getEffectiveName());
-			builder.setTitle("Queue for Guild: " + channel.getGuild().getName());
+			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " ("+queuelist.size()+" entrys)");
 			builder.setColor(Color.decode("#14cdc8"));
 			builder.setThumbnail("https://openclipart.org/image/800px/211805");
 

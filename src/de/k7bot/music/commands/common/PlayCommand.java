@@ -12,7 +12,7 @@ import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
-import de.k7bot.music.TrackScheduler;
+import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
 
 import java.sql.ResultSet;
@@ -100,39 +100,27 @@ public class PlayCommand implements ServerCommand {
 
 			if (player.getPlayingTrack() == null) {
 
-				queue.clearQueue();
-				manager.openAudioConnection(vc);
-
 				Klassenserver7bbot.getInstance().getMainLogger()
 						.info("Bot startet searching a track: no current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
 
 			} else {
 
-				queue.clearQueue();
-
-				TrackScheduler.next = true;
-				player.stopTrack();
 				Klassenserver7bbot.getInstance().getMainLogger()
 						.info("Bot startet searching a track: overwriting current track -> new Track(channelName = "
 								+ vc.getName() + ", url = " + url + ")");
-				TrackScheduler.next = false;
 			}
 
 		} else {
 
-			if (!queue.emptyQueueList()) {
-				queue.clearQueue();
-			}
-
-			manager.openAudioConnection(vc);
-
 			url = "audio.mp4";
-			player.stopTrack();
 
 		}
 
-		AudioLoadResult ares = new AudioLoadResult(controller, url, false);
+		queue.clearQueue();
+		manager.openAudioConnection(vc);
+
+		AudioLoadResult ares = new AudioLoadResult(controller, url, AudioLoadOption.REPLACE);
 		for (int i = 0; i < 5; i++) {
 			if (tryLoad(url, ares, apm)) {
 				log.debug("Track successfully submitted to ASM");
