@@ -6,7 +6,7 @@ import de.k7bot.util.customapis.LernsaxInteractions;
 import de.k7bot.util.customapis.VplanNEW_XML;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -85,7 +85,7 @@ public enum SubscriptionTarget {
 	/**
 	 * Whether this {@link SubscriptionTarget} needs special rights which are given
 	 * by the bot owner - e.g. access to Vplans
-	 * 
+	 *
 	 * @return Whether this needs special rights from the Admin
 	 */
 	public boolean isprivileged() {

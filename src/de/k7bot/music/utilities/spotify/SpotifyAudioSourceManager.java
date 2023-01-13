@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -35,7 +35,7 @@ import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
 	private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
@@ -48,7 +48,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	private SpotifyInteractions spotifyInteract;
 
 	/**
-	 * 
+	 *
 	 * @param combinedHttpConfiguration
 	 * @param playlistLoader
 	 * @param spotifyInteract
@@ -64,7 +64,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public SpotifyAudioSourceManager() {
 
@@ -74,7 +74,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
@@ -82,7 +82,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
@@ -90,7 +90,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public String getSourceName() {
@@ -98,7 +98,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
@@ -131,7 +131,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 * @param trackid
 	 * @return
 	 */
@@ -144,7 +144,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 * @param trackid
 	 * @return
 	 */
@@ -161,7 +161,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 * @param info
 	 * @return
 	 */
@@ -170,7 +170,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public boolean isTrackEncodable(AudioTrack track) {
@@ -178,7 +178,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
@@ -186,16 +186,16 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-		
+
 		return null;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void shutdown() {

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class EveryoneCommand implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		String[] args = message.getContentDisplay().split(" ");
 		StringBuilder builder = new StringBuilder();

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -77,11 +77,11 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param force
 	 * @param klasse
 	 * @param channel
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
@@ -109,9 +109,9 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param klasse
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void VplanNotify(String klasse) {
@@ -125,11 +125,11 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param force
 	 * @param klasse
 	 * @param chan
-	 * 
+	 *
 	 * @since 1.14.0
 	 */
 	private MessageCreateData getVplanMessage(boolean force, String klasse) {
@@ -244,7 +244,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
 	 * @param tablemess
 	 * @return
@@ -321,7 +321,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @param classPlan
 	 * @return
@@ -379,7 +379,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param obj
 	 * @param klasse
 	 * @return
@@ -413,7 +413,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @return
 	 * @since 1.14.0
@@ -457,7 +457,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @since 1.14.0
 	 */
@@ -475,7 +475,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @since 1.14.0
@@ -507,7 +507,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @since 1.14.0
@@ -550,7 +550,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void shutdown() {

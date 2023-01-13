@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -55,7 +55,7 @@ public class GourmettaInteractions implements InternalAPI {
 	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
-	 * 
+	 *
 	 */
 	public GourmettaInteractions() {
 		apienabled = false;
@@ -65,7 +65,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Login for the Gourmetta Rest-API based on the credentials given
-	 * 
+	 *
 	 * @return If the Login was successful
 	 */
 	public void login() {
@@ -137,6 +137,7 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Checks if there is a new Plan to provide and provides it
 	 */
+	@Override
 	public void checkforUpdates() {
 
 		login();
@@ -192,7 +193,7 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Parses the given meals and returns the as an usable Discord
 	 * {@link MessageCreateData}
-	 * 
+	 *
 	 * @param stripedDayMeals {@link JsonArray} obtained by
 	 *                        {@link GourmettaInteractions#getStripedDayMeals()}
 	 * @param provideDay      The day for which the plan is as an
@@ -240,7 +241,7 @@ public class GourmettaInteractions implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param data The pregenerated {@link MessageCreateData} which is used to build
 	 *             the {@link Message} - usually obtained by
 	 *             {@link GourmettaInteractions#buildMessage(JsonArray)}
@@ -252,7 +253,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Reduces the meal-array to the necessary information
-	 * 
+	 *
 	 * @return The stripped meals as a {@link JsonArray}
 	 */
 	private JsonArray getStripedDayMeals() {
@@ -296,7 +297,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Used to get all meals for a {@link DayOfWeek}
-	 * 
+	 *
 	 * @param day The {@link DayOfWeek} you want the meals for
 	 * @return The meals forthe selected {@link DayOfWeek} as a {@link JsonArray}
 	 */
@@ -308,11 +309,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 		JsonArray days = getWeekPlan();
 
-		if (days == null) {
-			return null;
-		}
-
-		if (day.getValue() >= days.size()) {
+		if ((days == null) || (day.getValue() >= days.size())) {
 			return null;
 		}
 
@@ -325,7 +322,7 @@ public class GourmettaInteractions implements InternalAPI {
 	 * Requests the Plan of the current week from the REST-API and returns it as a
 	 * {@link JsonArray} <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The days with the meals as an {@link JsonArray}
 	 */
 	private JsonArray getWeekPlan() {
@@ -343,7 +340,7 @@ public class GourmettaInteractions implements InternalAPI {
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
 		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
 			if (response.getCode() != 200) {
 				log.warn("Invalid response from bestellung-rest.gourmetta.de");
@@ -374,7 +371,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Builds the offer request
-	 * 
+	 *
 	 * @return the url for the current week offer request
 	 */
 	private String generateOfferRequestURI() {
@@ -397,7 +394,7 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Returns the Monday of the current week <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The Monday of the current week as an {@link OffsetDateTime}
 	 */
 	private OffsetDateTime getFirstDayofWeek() {
@@ -416,7 +413,7 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Returns the Friday of the current week <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The Friday of the current week as an {@link OffsetDateTime}
 	 */
 	private OffsetDateTime getLastDayofWeek() {
@@ -437,18 +434,14 @@ public class GourmettaInteractions implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private OffsetDateTime getNextDay() {
 
 		OffsetDateTime cutime = OffsetDateTime.now();
 
-		if (cutime.getHour() <= 14) {
-			return cutime;
-		}
-
-		if (cutime.getDayOfWeek().getValue() == 6 || cutime.getDayOfWeek().getValue() == 5) {
+		if ((cutime.getHour() <= 14) || cutime.getDayOfWeek().getValue() == 6 || cutime.getDayOfWeek().getValue() == 5) {
 			return cutime;
 		}
 
@@ -464,7 +457,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Checks if the Api is enabled and warns if not
-	 * 
+	 *
 	 * @return Whether this Api is currently enabled or not
 	 */
 	private boolean isApiEnabled() {

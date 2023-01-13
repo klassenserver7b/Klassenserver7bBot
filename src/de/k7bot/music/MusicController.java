@@ -1,18 +1,16 @@
 package de.k7bot.music;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class MusicController {
@@ -32,7 +30,7 @@ public class MusicController {
 		this.queue = new Queue(this);
 
 		this.guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(this.player));
-		this.player.addListener((AudioEventListener) new TrackScheduler());
+		this.player.addListener(new TrackScheduler());
 		loadVolume();
 	}
 

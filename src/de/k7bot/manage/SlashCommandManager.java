@@ -1,5 +1,11 @@
 package de.k7bot.manage;
 
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.slash.HA3MembersCommand;
 import de.k7bot.commands.slash.HelpSlashCommand;
@@ -16,13 +22,6 @@ import de.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
 import de.k7bot.util.commands.slash.ClearSlashCommand;
 import de.k7bot.util.commands.slash.ReactRolesSlashCommand;
 import de.k7bot.util.commands.slash.ToEmbedSlashCommand;
-
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
@@ -78,7 +77,7 @@ public class SlashCommandManager {
 
 			LiteSQL.onUpdate(
 					"INSERT INTO slashcommandlog (command, guildId, timestamp, commandstring) VALUES (?, ?, ?, ?)",
-					event.getName(), ((event.getGuild()!= null) ? event.getGuild().getIdLong() : 0),
+					event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
 					event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
 					event.getCommandString());
 

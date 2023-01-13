@@ -6,15 +6,17 @@ import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ClearQueueCommand implements ServerCommand {
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
 

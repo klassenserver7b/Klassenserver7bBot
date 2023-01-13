@@ -1,10 +1,9 @@
 package de.k7bot.util.commands.slash;
 
+import java.awt.Color;
 import java.time.OffsetDateTime;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.Color;
 
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.util.errorhandler.PermissionError;

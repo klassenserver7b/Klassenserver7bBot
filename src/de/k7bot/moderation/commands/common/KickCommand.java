@@ -1,15 +1,16 @@
 package de.k7bot.moderation.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.commands.types.ServerCommand;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import de.k7bot.HelpCategories;
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,6 +20,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class KickCommand implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
 
@@ -44,7 +46,7 @@ public class KickCommand implements ServerCommand {
 				PermissionError.onPermissionError(m, channel);
 			}
 		} catch (StringIndexOutOfBoundsException e) {
-			SyntaxError.oncmdSyntaxError(channel, "kick [@user] [reason]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "kick [@user] [reason]", m);
 		}
 	}
 

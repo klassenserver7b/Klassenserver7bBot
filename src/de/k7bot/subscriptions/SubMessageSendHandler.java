@@ -105,11 +105,7 @@ public class SubMessageSendHandler {
 
 	private void sendCanaryMessage(Subscription s, MessageCreateData data) {
 
-		if (!Klassenserver7bbot.getInstance().isDevMode()) {
-			return;
-		}
-
-		if (s.getDeliveryType() != SubscriptionDeliveryType.CANARY) {
+		if (!Klassenserver7bbot.getInstance().isDevMode() || (s.getDeliveryType() != SubscriptionDeliveryType.CANARY)) {
 			return;
 		}
 

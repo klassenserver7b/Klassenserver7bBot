@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.commands.slash;
 
@@ -51,19 +51,19 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class PlaySlashCommand implements SlashCommand {
 
 	/**
-	 * 
+	 *
 	 */
 	private final Logger log;
 
 	/**
-	 * 
+	 *
 	 */
 	public PlaySlashCommand() {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
@@ -135,7 +135,7 @@ public class PlaySlashCommand implements SlashCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param playlist
 	 * @param channel
 	 * @param queue
@@ -157,7 +157,7 @@ public class PlaySlashCommand implements SlashCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param querytype
 	 * @param channel
 	 * @param query
@@ -184,7 +184,7 @@ public class PlaySlashCommand implements SlashCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param player
 	 * @param guildId
 	 */
@@ -214,7 +214,7 @@ public class PlaySlashCommand implements SlashCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public SlashCommandData getCommandData() {

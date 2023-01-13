@@ -1,10 +1,6 @@
 
 package de.k7bot.hypixel.commands;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.errorhandler.SyntaxError;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
@@ -14,6 +10,10 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.HypixelCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.SyntaxError;
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;
@@ -34,6 +34,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
 		friends = "";
@@ -62,7 +63,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			channel.sendMessage("**Invalid Playername** - please enter a valid playername").complete().delete()
 					.queueAfter(10, TimeUnit.SECONDS);
-			SyntaxError.oncmdSyntaxError(channel, "hypixel playerinfo [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel playerinfo [playername]", m);
 		}
 
 		if (this.id != null) {
@@ -137,7 +138,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			}
 		} else {
-			SyntaxError.oncmdSyntaxError(channel, "hypixel playerinfo [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel playerinfo [playername]", m);
 		}
 	}
 }

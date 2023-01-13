@@ -5,5 +5,5 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public interface HypixelCommand {
-  void performHypixelCommand(Member m, TextChannel channel, Message Message);
+	void performHypixelCommand(Member m, TextChannel channel, Message Message);
 }

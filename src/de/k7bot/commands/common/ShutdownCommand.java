@@ -9,10 +9,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ShutdownCommand implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
-			
+
 			Klassenserver7bbot.getInstance().setexit(true);
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
 			return;

@@ -2,6 +2,7 @@ package de.k7bot.commands.common;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.customapis.VplanNEW_XML;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
@@ -35,7 +36,7 @@ public class VTestCommand implements ServerCommand {
 				new VplanNEW_XML().sendVplanToChannel(true, args[1], (TextChannel) chan);
 			}
 		} else {
-			SyntaxError.oncmdSyntaxError(channel, "vtest [klasse] #channel", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "vtest [klasse] #channel", m);
 		}
 
 	}

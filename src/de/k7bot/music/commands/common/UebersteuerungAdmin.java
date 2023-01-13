@@ -1,5 +1,8 @@
 package de.k7bot.music.commands.common;
 
+import java.time.OffsetDateTime;
+import java.util.concurrent.TimeUnit;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import de.k7bot.HelpCategories;
@@ -7,10 +10,8 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
-
-import java.time.OffsetDateTime;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,6 +32,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 		return HelpCategories.UNKNOWN;
 	}
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
@@ -51,10 +53,10 @@ public class UebersteuerungAdmin implements ServerCommand {
 					channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
 				} else {
-					SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
+					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
 				}
 			} catch (NumberFormatException e) {
-				SyntaxError.oncmdSyntaxError(channel, "volume [int]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
 			}
 		}
 	}

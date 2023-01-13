@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -34,14 +34,14 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
 	private final Logger log;
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultSpotifyPlaylistLoader() {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public AudioPlaylist load(SpotifyInteractions spotifyinteract, String playlistId, String selectedVideoId,
@@ -58,7 +58,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
 
 			String artist = SpotifyAudioSourceManager.getArtistString(t.getArtists());
 
-			AudioTrackInfo info = new AudioTrackInfo(t.getName(), artist, (long) t.getDurationMs(), t.getId(), false,
+			AudioTrackInfo info = new AudioTrackInfo(t.getName(), artist, t.getDurationMs(), t.getId(), false,
 					t.getUri());
 
 			resolvedtracks.add(trackFactory.apply(info));

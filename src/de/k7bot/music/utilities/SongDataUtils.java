@@ -210,7 +210,7 @@ public class SongDataUtils {
 
 	private SongJson parseOffline(String title, String channel) {
 		log.debug("Parsing Offline");
-		
+
 		if (titleContainsAuthor(title)) {
 			log.debug("Parsing YT Title Offline - Author in title");
 			return parseTitleWithAuthor(title);

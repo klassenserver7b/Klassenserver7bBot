@@ -1,12 +1,12 @@
 package de.k7bot.hypixel.commands;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.HypixelCommand;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.HypixelCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -21,6 +21,7 @@ public class WatchdogCommand implements HypixelCommand {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 

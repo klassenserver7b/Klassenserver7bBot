@@ -4,7 +4,7 @@ public class SpotifyPlayer {
 
 	public SpotifyPlayer() {
 	}
-	
+
 	public native void decryptDRM();
 
 }

@@ -1,26 +1,5 @@
 package de.k7bot;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.jagrosh.jlyrics.LyricsClient;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.sql.SQLManager;
-import de.k7bot.subscriptions.SubscriptionManager;
-import de.k7bot.threads.LoopThread;
-import de.k7bot.threads.ShutdownThread;
-import de.k7bot.util.customapis.InternalAPIManager;
-import de.k7bot.hypixel.HypixelCommandManager;
-import de.k7bot.listener.*;
-import de.k7bot.manage.*;
-import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.utilities.gla.GLAWrapper;
-import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,6 +13,42 @@ import org.kohsuke.github.GitHubBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+
+import de.k7bot.hypixel.HypixelCommandManager;
+import de.k7bot.listener.AutoRickroll;
+import de.k7bot.listener.BanListener;
+import de.k7bot.listener.BotgetDC;
+import de.k7bot.listener.ButtonListener;
+import de.k7bot.listener.ChannelCreateRemoveListener;
+import de.k7bot.listener.CommandListener;
+import de.k7bot.listener.JoinandLeaveListener;
+import de.k7bot.listener.MemesReact;
+import de.k7bot.listener.ReactionListener;
+import de.k7bot.listener.RoleEditListener;
+import de.k7bot.listener.Role_InviteListener;
+import de.k7bot.listener.SlashCommandListener;
+import de.k7bot.listener.VoiceListener;
+import de.k7bot.manage.CommandManager;
+import de.k7bot.manage.PrefixManager;
+import de.k7bot.manage.PropertiesManager;
+import de.k7bot.manage.SlashCommandManager;
+import de.k7bot.manage.SystemNotificationChannelManager;
+import de.k7bot.music.AudioPlayerUtil;
+import de.k7bot.music.utilities.gla.GLAWrapper;
+import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.sql.SQLManager;
+import de.k7bot.subscriptions.SubscriptionManager;
+import de.k7bot.threads.LoopThread;
+import de.k7bot.threads.ShutdownThread;
+import de.k7bot.util.customapis.InternalAPIManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -86,10 +101,7 @@ public class Klassenserver7bbot {
 		this.indev = indev;
 		this.propMgr = new PropertiesManager();
 
-		if (!propMgr.loadProps()) {
-			return;
-		}
-		if (!propMgr.isBotTokenValid()) {
+		if (!propMgr.loadProps() || !propMgr.isBotTokenValid()) {
 			return;
 		}
 
@@ -187,7 +199,7 @@ public class Klassenserver7bbot {
 		this.playerutil = new AudioPlayerUtil();
 
 		this.lyricsapi = new LyricsClient("Genius");
-		//this.lyricsapiold = new GLA();
+		// this.lyricsapiold = new GLA();
 		this.lyricsapiold = new GLAWrapper();
 
 		if (propMgr.isApiEnabled("hypixel")) {

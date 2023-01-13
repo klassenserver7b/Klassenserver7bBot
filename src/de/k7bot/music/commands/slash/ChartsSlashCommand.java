@@ -10,12 +10,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map.Entry;
 
 import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.music.ChartList;
@@ -24,10 +23,10 @@ import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -40,7 +39,7 @@ public class ChartsSlashCommand implements SlashCommand {
 		OptionMapping timeopt = event.getOption("time");
 		OptionMapping timeunitopt = event.getOption("timeunit");
 		OptionMapping guildopt = event.getOption("guild");
-		
+
 		HashMap<String, Long> charts = provideOptionselectedCharts(timeopt, timeunitopt, guildopt, event.getGuild(),
 				hook);
 
@@ -73,7 +72,7 @@ public class ChartsSlashCommand implements SlashCommand {
 					Long time = timeopt.getAsLong();
 
 					try {
-						
+
 						ChronoUnit u = ChronoUnit.valueOf(timeunitopt.getAsString());
 
 						sheduledcharts = chartlist.getcharts(guild, time, u);

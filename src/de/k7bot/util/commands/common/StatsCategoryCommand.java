@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.StatsCategorieUtil;
 import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

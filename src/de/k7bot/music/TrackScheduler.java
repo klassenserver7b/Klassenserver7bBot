@@ -1,20 +1,6 @@
 
 package de.k7bot.music;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.commands.common.SkipCommand;
-import de.k7bot.music.utilities.MusicUtil;
-import de.k7bot.music.utilities.SongJson;
-import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +16,20 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.commands.common.SkipCommand;
+import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.music.utilities.SongJson;
+import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -48,13 +48,16 @@ public class TrackScheduler extends AudioEventAdapter {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void onPlayerPause(AudioPlayer player) {
 	}
 
+	@Override
 	public void onPlayerResume(AudioPlayer player) {
 
 	}
 
+	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
 
 		if (!SkipCommand.onskip) {
@@ -105,6 +108,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		}
 	}
 
+	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 
 		long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());

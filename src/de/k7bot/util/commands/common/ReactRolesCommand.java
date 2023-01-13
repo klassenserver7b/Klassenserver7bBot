@@ -1,16 +1,16 @@
 package de.k7bot.util.commands.common;
 
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
-
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,6 +23,7 @@ public class ReactRolesCommand implements ServerCommand {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
@@ -66,7 +67,8 @@ public class ReactRolesCommand implements ServerCommand {
 				}
 			} else {
 
-				SyntaxError.oncmdSyntaxError(channel, "reactrole [#channel] [messageId] [:emote:] [@role]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
+						"reactrole [#channel] [messageId] [:emote:] [@role]", m);
 			}
 		} else {
 			PermissionError.onPermissionError(m, channel);

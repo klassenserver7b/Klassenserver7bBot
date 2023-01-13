@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -23,7 +23,7 @@ public class InternalAPIManager {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
-	 * 
+	 *
 	 */
 	public InternalAPIManager() {
 		apis = new HashMap<>();
@@ -40,7 +40,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param api
 	 */
 	public void registerAPI(InternalAPI api) {
@@ -48,7 +48,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param identifyer
 	 */
 	public void removeAPI(String identifyer) {
@@ -56,7 +56,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param identifyer
 	 */
 	public void enableApi(String identifyer) {
@@ -64,7 +64,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param identifyer
 	 */
 	public void disableApi(String identifyer) {
@@ -72,7 +72,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void checkForUpdates() {
 		apis.entrySet().forEach(entry -> {
@@ -85,7 +85,7 @@ public class InternalAPIManager {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void initializeApis() {
 
@@ -111,7 +111,7 @@ public class InternalAPIManager {
 			registerAPI(new KauflandInteractions());
 			log.debug("KauflandAPI initialized");
 		}
-		
+
 		if (propMgr.isApiEnabled("github")) {
 			registerAPI(new GitHubAPI());
 			log.debug("GitHubAPI initialized");

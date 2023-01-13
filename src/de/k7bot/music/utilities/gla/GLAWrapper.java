@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.gla;
 
@@ -16,7 +16,7 @@ public class GLAWrapper {
 	private GLACustomHttpManager httpManager = new GLACustomHttpManager();
 
 	/**
-	 * 
+	 *
 	 */
 	public GLAWrapper() {
 		super();

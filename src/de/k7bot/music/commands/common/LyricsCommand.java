@@ -23,11 +23,12 @@ import de.k7bot.music.utilities.SongJson;
 import de.k7bot.music.utilities.gla.GLACustomSongSearch;
 import de.k7bot.music.utilities.gla.GLACustomSongSearch.Hit;
 import de.k7bot.music.utilities.gla.GLAWrapper;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class LyricsCommand implements ServerCommand {
 
@@ -40,11 +41,7 @@ public class LyricsCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
-			return;
-		}
-
-		if (!MusicUtil.isPlayingSong(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m) || !MusicUtil.isPlayingSong(channel, m)) {
 			return;
 		}
 

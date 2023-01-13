@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music;
 
@@ -23,7 +23,7 @@ public class BotEqualizer {
 	private final AudioPlayer player;
 
 	/**
-	 * 
+	 *
 	 * @param play
 	 */
 	private BotEqualizer(AudioPlayer play) {
@@ -32,16 +32,16 @@ public class BotEqualizer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 * @return
 	 */
-	public static BotEqualizer getEQ(AudioPlayer p) {		
+	public static BotEqualizer getEQ(AudioPlayer p) {
 		return new BotEqualizer(p);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param diff
 	 */
 	private void bassUp(float diff) {
@@ -51,7 +51,7 @@ public class BotEqualizer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param diff
 	 */
 	private void bassDown(float diff) {
@@ -61,21 +61,21 @@ public class BotEqualizer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void eqstart() {
 		player.setFilterFactory(eqfac);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void eqstop() {
 		player.setFilterFactory(null);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mode
 	 */
 	public void setEQMode(int mode) {
@@ -101,27 +101,26 @@ public class BotEqualizer {
 		}
 
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param preset
 	 */
 	public void setEQMode(EqualizerPreset preset) {
-		
-		if(preset == EqualizerPreset.OFF) {
+
+		if (preset == EqualizerPreset.OFF) {
 			eqstop();
 			return;
 		}
-		
+
 		float[] bands = preset.getBands();
-		
+
 		for (int i = 0; i < bands.length; i++) {
 			eqfac.setGain(i, bands[i]);
 		}
-		
+
 		eqstart();
-		
-		
+
 	}
 
 }

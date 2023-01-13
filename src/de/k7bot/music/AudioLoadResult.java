@@ -1,19 +1,17 @@
 package de.k7bot.music;
 
+import java.awt.Color;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.commands.common.PlayCommand;
 import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
-
-import java.awt.Color;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class AudioLoadResult implements AudioLoadResultHandler {
@@ -28,6 +26,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		this.loadoption = loadoption;
 	}
 
+	@Override
 	public void trackLoaded(AudioTrack track) {
 
 		Queue queue = this.controller.getQueue();
@@ -41,6 +40,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	}
 
+	@Override
 	public void playlistLoaded(AudioPlaylist playlist) {
 
 		Queue queue = this.controller.getQueue();
@@ -77,11 +77,6 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 			MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 
-			if (PlayCommand.party) {
-				queue.shuffle();
-				queue.loop();
-				PlayCommand.party = false;
-			}
 		} else {
 			noMatches();
 		}
@@ -89,7 +84,6 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	private void addPlaylistToQueue(Queue queue, AudioPlaylist playlist) {
 
-		
 		switch (loadoption) {
 		case APPEND -> {
 			queue.addPlaylistToQueue(playlist);
@@ -119,6 +113,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	}
 
+	@Override
 	public void noMatches() {
 		Klassenserver7bbot.getInstance().getMainLogger()
 				.info("Bot AudioLoadResult couldn't find a matching audio track");
@@ -127,6 +122,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
 
+	@Override
 	public void loadFailed(FriendlyException exception) {
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())

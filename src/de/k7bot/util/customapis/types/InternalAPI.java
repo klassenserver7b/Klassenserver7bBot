@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis.types;
 
@@ -8,9 +8,9 @@ package de.k7bot.util.customapis.types;
  *
  */
 public interface InternalAPI {
-	
+
 	public void checkforUpdates();
+
 	public void shutdown();
-	
 
 }

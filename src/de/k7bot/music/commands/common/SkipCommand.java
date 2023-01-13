@@ -1,18 +1,18 @@
 package de.k7bot.music.commands.common;
 
+import java.time.OffsetDateTime;
+import java.util.concurrent.TimeUnit;
+
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
-
-import java.time.OffsetDateTime;
-import java.util.concurrent.TimeUnit;
-
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -32,9 +32,10 @@ public class SkipCommand implements ServerCommand {
 		return HelpCategories.MUSIK;
 	}
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
 
@@ -73,7 +74,7 @@ public class SkipCommand implements ServerCommand {
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
 			} catch (NumberFormatException e) {
-				SyntaxError.oncmdSyntaxError(channel, "skip [int]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "skip [int]", m);
 			}
 		}
 		onskip = false;

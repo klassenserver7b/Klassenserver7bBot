@@ -1,5 +1,14 @@
 package de.k7bot.music;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -9,15 +18,6 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.utilities.SongDataUtils;
 import de.k7bot.music.utilities.SongJson;
 import de.k7bot.sql.LiteSQL;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Queue {
 	private boolean islooped = false;

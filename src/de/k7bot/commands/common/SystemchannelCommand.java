@@ -4,6 +4,7 @@ import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.manage.SystemNotificationChannelManager;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,16 +29,16 @@ public class SystemchannelCommand implements ServerCommand {
 		if (m.hasPermission(Permission.MANAGE_SERVER)) {
 
 			if (!message.getMentions().getChannels(TextChannel.class).isEmpty()) {
-				
+
 				TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
-				
-				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getsyschannell();				
+
+				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getsyschannell();
 				sys.insertChannel(chan);
-				
+
 				channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
-				
-			}else {
-				SyntaxError.oncmdSyntaxError(channel, "syschannel [@new syschannel]", m);
+
+			} else {
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "syschannel [@new syschannel]", m);
 			}
 
 		}

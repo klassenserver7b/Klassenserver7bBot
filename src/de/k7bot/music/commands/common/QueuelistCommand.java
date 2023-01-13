@@ -42,15 +42,13 @@ public class QueuelistCommand implements ServerCommand {
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setFooter("Requested by @" + m.getEffectiveName());
-			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " ("+queuelist.size()+" entrys)");
+			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " (" + queuelist.size() + " entrys)");
 			builder.setColor(Color.decode("#14cdc8"));
 			builder.setThumbnail("https://openclipart.org/image/800px/211805");
 
 			StringBuilder strbuild = new StringBuilder();
 
-			for (int i = 0; i < queuelist.size(); i++) {
-				AudioTrack t = queuelist.get(i);
-
+			for (AudioTrack t : queuelist) {
 				String content;
 				if (t instanceof YoutubeAudioTrack) {
 					content = "- " + t.getInfo().title.replaceAll("\\|", "-") + "\n";

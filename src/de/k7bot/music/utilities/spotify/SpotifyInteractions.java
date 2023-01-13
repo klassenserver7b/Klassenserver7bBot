@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -52,7 +52,7 @@ public class SpotifyInteractions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param prop
 	 * @return
 	 */
@@ -75,7 +75,7 @@ public class SpotifyInteractions {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void startfetchcycle() {
 
@@ -103,7 +103,7 @@ public class SpotifyInteractions {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void refreshToken() {
 
@@ -120,7 +120,7 @@ public class SpotifyInteractions {
 		httpget.setHeader("Cookie", cookie);
 		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
 			if (response.getCode() != 200) {
 				log.warn("Invalid response from " + url);

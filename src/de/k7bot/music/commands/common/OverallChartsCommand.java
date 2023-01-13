@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.awt.Color;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;

@@ -3,60 +3,59 @@ package de.k7bot.music;
 import javax.annotation.Nonnull;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
 public enum EqualizerPreset {
 
 	/**
-	 * 
+	 *
 	 */
 	UNKNOWN(-1, new float[] {}),
 
 	/**
-	 * 
+	 *
 	 */
-	OFF(0,
-			new float[] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }),
+	OFF(0, new float[] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }),
 
 	/**
-	 * 
+	 *
 	 */
 	ULTRA_LOW_BASS(1,
 			new float[] { -0.2f, -0.15f, -0.1f, -0.05f, 0.0f, 0.05f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f,
 					0.1f }),
 
 	/**
-	 * 
+	 *
 	 */
 	LOW_BASS(2,
 			new float[] { -0.15f, -0.1f, -0.05f, -0.05f, 0.0f, 0.0f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.1f,
 					0.1f, 0.1f }),
 
 	/**
-	 * 
+	 *
 	 */
 	LESS_LOW_BASS(3,
 			new float[] { -0.1f, -0.75f, -0.05f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f,
 					0.05f }),
 
 	/**
-	 * 
+	 *
 	 */
 	LESS_BASS_BOOST(4,
 			new float[] { 0.1f, 0.75f, 0.05f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -0.05f, -0.05f, -0.05f, -0.05f, -0.1f,
 					-0.05f, -0.05f }),
 
 	/**
-	 * 
+	 *
 	 */
 	BASS_BOOST(5,
 			new float[] { 0.15f, 0.1f, 0.05f, 0.05f, 0.0f, -0.0f, -0.05f, -0.05f, -0.05f, -0.05f, -0.05f, -0.05f, -0.1f,
 					-0.1f, -0.1f }),
 
 	/**
-	 * 
+	 *
 	 */
 	ULTRA_BASS_BOOST(6, new float[] { 0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f,
 			-0.1f, -0.1f, -0.1f });
@@ -65,7 +64,7 @@ public enum EqualizerPreset {
 	private final float[] bands;
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param bands
 	 */
@@ -84,8 +83,9 @@ public enum EqualizerPreset {
 		return id;
 	}
 
-	/**Used to obtain the bands of the EQ-Preset
-	 * 
+	/**
+	 * Used to obtain the bands of the EQ-Preset
+	 *
 	 * @return The Bands as an float-array
 	 */
 	@Nonnull

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis.types;
 
@@ -19,7 +19,7 @@ public class ApiEntry {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 	public InternalAPI getAPI() {
 		return this.api;
 	}

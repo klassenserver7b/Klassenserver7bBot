@@ -20,7 +20,7 @@ public class ChartList {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
-	 * 
+	 *
 	 * @param guild    <br>
 	 *                 The specific {@link Guild} for which you want the charts.
 	 * @param time     <br>
@@ -39,7 +39,7 @@ public class ChartList {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guildid  <br>
 	 *                 The specific Id of the {@link Guild} for which you want the
 	 *                 charts.
@@ -59,7 +59,7 @@ public class ChartList {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guild <br>
 	 *              The specific {@link Guild} for which you want the charts.
 	 * @return A {@link HashMap HashHashMap} containing the selected Charts.
@@ -72,7 +72,7 @@ public class ChartList {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guild    <br>
 	 *                 The specific Id of the {@link Guild} for which you want the
 	 *                 charts.

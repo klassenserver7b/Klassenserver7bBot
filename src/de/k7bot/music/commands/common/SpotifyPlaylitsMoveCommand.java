@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -25,7 +26,7 @@ import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistReques
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 public class SpotifyPlaylitsMoveCommand implements ServerCommand {
-	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
@@ -46,7 +47,8 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 		String[] args = message.getContentDisplay().split(" ");
 		if (args.length < 4) {
 
-			SyntaxError.oncmdSyntaxError(channel, "test [quell id] [ziel id] [offset]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "test [quell id] [ziel id] [offset]",
+					m);
 			return;
 
 		}
@@ -68,7 +70,7 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 			songs = tracks.getItems();
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 
 		for (int i = 0; i < songs.length - 1; i++) {
@@ -91,7 +93,7 @@ public class SpotifyPlaylitsMoveCommand implements ServerCommand {
 					.setTimestamp(LocalDateTime.now()).setDescription("Copied " + songs.length + " songs").build())
 					.queue();
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 
 	}

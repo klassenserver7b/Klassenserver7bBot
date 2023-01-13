@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities;
 
@@ -31,7 +31,7 @@ public enum AudioLoadOption {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int getId() {
@@ -39,7 +39,7 @@ public enum AudioLoadOption {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static AudioLoadOption byId(int id) {

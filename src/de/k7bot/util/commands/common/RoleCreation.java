@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -83,7 +84,7 @@ public class RoleCreation implements ServerCommand {
 				}
 
 			} else {
-				SyntaxError.oncmdSyntaxError(channel, "createrole [name] (#color)", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "createrole [name] (#color)", m);
 			}
 
 		} else {

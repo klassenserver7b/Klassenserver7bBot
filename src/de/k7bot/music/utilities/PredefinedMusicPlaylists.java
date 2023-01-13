@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities;
 
@@ -31,7 +31,7 @@ public enum PredefinedMusicPlaylists {
 
 	/**
 	 * The K7Bot id key used to represent the {@link PredefinedMusicPlaylists}.
-	 * 
+	 *
 	 * @return The id as int
 	 */
 	public int getId() {
@@ -40,7 +40,7 @@ public enum PredefinedMusicPlaylists {
 
 	/**
 	 * Used to retrieve the url of the playlist
-	 * 
+	 *
 	 * @return The Url as String
 	 */
 	public String getUrl() {
