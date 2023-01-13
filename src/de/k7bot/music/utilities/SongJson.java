@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities;
 
@@ -29,7 +29,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -52,7 +52,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public JsonObject getSongJson() {
@@ -61,22 +61,12 @@ public class SongJson {
 
 	/**
 	 * Checks if the base {@link JsonObject} contains all necessary information
-	 * 
+	 *
 	 * @return If the {@link SongJson} is valid
 	 */
 	public boolean isNotnull() {
 
-		if (json.get("title") == null) {
-			return false;
-		}
-
-		if (json.get("artists") == null) {
-			return false;
-		}
-		if (json.get("year") == null) {
-			return false;
-		}
-		if (json.get("url") == null) {
+		if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null) || (json.get("url") == null)) {
 			return false;
 		}
 		if (json.get("apiurl") == null) {
@@ -89,7 +79,7 @@ public class SongJson {
 
 	/**
 	 * Fully validates the SongJson including {@link #isNotnull()}
-	 * 
+	 *
 	 * @return If the {@link SongJson} is valid
 	 */
 	public boolean validateViaHttpRequest() {
@@ -101,7 +91,7 @@ public class SongJson {
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
 			if (response.getCode() == 200) {
 
@@ -134,7 +124,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param json
 	 * @return
 	 * @throws IllegalArgumentException
@@ -152,7 +142,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -175,7 +165,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -198,7 +188,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -230,7 +220,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTitle() {
@@ -238,7 +228,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getAuthorString() {
@@ -258,7 +248,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public JsonArray getAuthors() {
@@ -266,7 +256,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getYear() {
@@ -274,7 +264,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getURL() {

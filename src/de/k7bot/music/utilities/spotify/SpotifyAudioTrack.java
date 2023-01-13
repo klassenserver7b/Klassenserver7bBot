@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -106,9 +106,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 		// DRM Conversion
 		String license = getLicense();
-		if (license == null) {
-
-		}
 
 		File drmconverted = decryptedf;
 
@@ -158,7 +155,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param url
 	 * @param extension
 	 * @return
@@ -209,7 +206,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fileid
 	 * @return
 	 */
@@ -254,7 +251,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param array
 	 * @return
 	 */
@@ -289,7 +286,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param hexid
 	 * @return
 	 */
@@ -332,7 +329,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param trackid
 	 * @return
 	 */
@@ -354,7 +351,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */

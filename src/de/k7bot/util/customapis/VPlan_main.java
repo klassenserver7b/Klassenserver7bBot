@@ -1,5 +1,6 @@
 package de.k7bot.util.customapis;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,6 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.awt.Color;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -37,7 +37,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * 
+ *
  * @author felix
  * @Deprecated use {@link de.k7bot.util.customapis.VplanNEW_XML VplanNEW_XML
  *             instead}
@@ -53,11 +53,11 @@ public class VPlan_main {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param force
 	 * @param klasse
 	 * @param channel
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
@@ -71,9 +71,9 @@ public class VPlan_main {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param klasse
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void VplanNotify(String klasse) {

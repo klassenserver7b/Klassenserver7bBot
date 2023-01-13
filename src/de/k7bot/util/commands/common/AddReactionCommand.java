@@ -1,21 +1,22 @@
 package de.k7bot.util.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 
 public class AddReactionCommand implements ServerCommand {
-	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
+
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
@@ -34,7 +35,7 @@ public class AddReactionCommand implements ServerCommand {
 				}
 
 			} catch (NumberFormatException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

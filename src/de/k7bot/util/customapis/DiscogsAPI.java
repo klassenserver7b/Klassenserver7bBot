@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -73,7 +73,7 @@ public class DiscogsAPI {
 
 	private JsonObject getSongJson(String searchquery) {
 
-		assert this.isApiEnabled() == true;
+		assert this.isApiEnabled();
 
 		String res_url = getMasterJson(searchquery);
 
@@ -84,7 +84,7 @@ public class DiscogsAPI {
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(res_url);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
 			if (response.getCode() != 200) {
 				log.warn("Invalid response from api.dicogs.com");
@@ -106,7 +106,7 @@ public class DiscogsAPI {
 			} catch (IOException e1) {
 				log.error(e1.getMessage(), e1);
 			}
-			
+
 		}
 
 		return null;
@@ -114,7 +114,7 @@ public class DiscogsAPI {
 
 	private String getMasterJson(String searchquery) {
 
-		assert this.isApiEnabled() == true;
+		assert this.isApiEnabled();
 
 		JsonObject queryresults = getQueryResults(searchquery);
 
@@ -141,7 +141,7 @@ public class DiscogsAPI {
 
 	private JsonObject getQueryResults(String searchquery) {
 
-		assert this.isApiEnabled() == true;
+		assert this.isApiEnabled();
 
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 
@@ -153,7 +153,7 @@ public class DiscogsAPI {
 				"https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
 			if (response.getCode() != 200) {
 				log.warn("Invalid response from api.dicogs.com");
@@ -169,13 +169,13 @@ public class DiscogsAPI {
 
 		} catch (IOException | JsonSyntaxException | ParseException e) {
 			log.error(e.getMessage(), e);
-			
+
 			try {
 				httpclient.close();
 			} catch (IOException e1) {
 				log.error(e1.getMessage(), e1);
 			}
-			
+
 		}
 
 		return null;

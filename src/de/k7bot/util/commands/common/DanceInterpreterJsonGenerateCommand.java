@@ -26,6 +26,7 @@ import com.google.gson.JsonParser;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -38,7 +39,7 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -65,7 +66,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 
 		if (args.length < 2) {
 
-			SyntaxError.oncmdSyntaxError(channel, "DILoad [quell id]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "DILoad [quell id]", m);
 			return;
 
 		}
@@ -138,7 +139,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 			}
 
 		} catch (ParseException | SpotifyWebApiException | IOException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 
 		JsonObject main = new JsonObject();
@@ -185,13 +186,13 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 			stream.close();
 
 		} catch (IOException e1) {
-			logger.error(e1.getMessage(),e1);
+			logger.error(e1.getMessage(), e1);
 		}
 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void checkAccessToken() {
 
@@ -221,14 +222,14 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
 				}
 			} catch (IOException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 			}
 
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getAccessToken() {

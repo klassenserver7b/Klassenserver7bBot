@@ -1,10 +1,10 @@
 package de.k7bot.util.customapis;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
 import java.awt.Color;
 import java.time.LocalDateTime;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

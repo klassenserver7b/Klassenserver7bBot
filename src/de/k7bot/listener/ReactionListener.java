@@ -1,17 +1,16 @@
 
 package de.k7bot.listener;
 
-import de.k7bot.sql.LiteSQL;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.dv8tion.jda.api.entities.channel.ChannelType;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -26,6 +25,7 @@ public class ReactionListener extends ListenerAdapter {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event) {
 		if (event.getChannelType() == ChannelType.TEXT && !event.getUser().isBot()) {
 			long guildid = event.getGuild().getIdLong();
@@ -51,6 +51,7 @@ public class ReactionListener extends ListenerAdapter {
 		}
 	}
 
+	@Override
 	public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
 		if (event.getChannelType() == ChannelType.TEXT) {
 			long guildid = event.getGuild().getIdLong();
@@ -68,7 +69,7 @@ public class ReactionListener extends ListenerAdapter {
 
 					Guild guildmanager = event.getGuild();
 					RestAction<Member> member = event.retrieveMember();
-					Member memb = (Member) member.complete();
+					Member memb = member.complete();
 
 					guildmanager.removeRoleFromMember(memb, guildmanager.getRoleById(rollenid)).queue();
 				}

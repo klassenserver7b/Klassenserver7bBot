@@ -2,10 +2,12 @@ package de.k7bot.listener;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
+import de.k7bot.music.utilities.AudioLoadOption;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -32,7 +34,7 @@ public class AutoRickroll extends ListenerAdapter {
 					queue.clearQueue();
 				}
 				manager.openAudioConnection(vc);
-				apm.loadItem(url, new AudioLoadResult(controller, url, false));
+				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
 				player.setPaused(false);
 			} else {
 
@@ -40,7 +42,8 @@ public class AutoRickroll extends ListenerAdapter {
 					queue.clearQueue();
 				}
 				player.stopTrack();
-				apm.loadItem(url, new AudioLoadResult(controller, url, false));
+				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
+				queue.next(null);
 				player.setPaused(false);
 			}
 		}

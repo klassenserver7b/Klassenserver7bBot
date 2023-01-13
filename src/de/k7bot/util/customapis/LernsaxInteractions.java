@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * - {@link LernsaxInteractions#checkForLernplanMessages() check for new
  * "Learning Plans"} <br>
  * - {@link LernsaxInteractions#disconnect() disconnect}
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -57,7 +57,7 @@ public class LernsaxInteractions implements InternalAPI {
 
 	/**
 	 * Used to connect to the LernsaxAPI via.
-	 * 
+	 *
 	 * @param lsaxemail     The email of your Lernsax account
 	 * @param token         The token for this application
 	 * @param applicationID The Id of this application
@@ -79,7 +79,7 @@ public class LernsaxInteractions implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void checkforUpdates() {
@@ -100,7 +100,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 * Checks if there are any new "Lernplaene" -> "LearningPlans"<br>
 	 * Should only be used in connection with
 	 * {@link LernsaxInteractions#sendLernsaxEmbeds(List)}
-	 * 
+	 *
 	 * @return A List of all new LearningPlans (empty if there are none)
 	 * @throws SQLException
 	 */
@@ -143,7 +143,6 @@ public class LernsaxInteractions implements InternalAPI {
 							messages.get(messages.size() - 1).getId());
 				}
 			} catch (NumberFormatException | WebWeaverException e) {
-				// TODO Auto-generated catch block
 				log.error(e.getMessage(), e);
 			}
 		}
@@ -161,7 +160,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 * Sends the given List of "lerplanmessages" obtained by
 	 * {@link LernsaxInteractions#checkForLernplanMessages()} to every "Lernsax"
 	 * subscribing channel
-	 * 
+	 *
 	 * @param lernplanmessages The List obtained by
 	 *                         {@link LernsaxInteractions#checkForLernplanMessages()}
 	 */
@@ -175,7 +174,7 @@ public class LernsaxInteractions implements InternalAPI {
 		if (lernplanmessages.size() > 0) {
 
 			log.info("Sending " + lernplanmessages.size() + " new Lernplan-Embeds");
-			ArrayList<MessageEmbed> embeds = new ArrayList<MessageEmbed>();
+			ArrayList<MessageEmbed> embeds = new ArrayList<>();
 
 			lernplanmessages.forEach(msg -> {
 

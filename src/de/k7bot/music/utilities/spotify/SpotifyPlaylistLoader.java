@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -17,5 +17,5 @@ public interface SpotifyPlaylistLoader {
 
 	AudioPlaylist load(SpotifyInteractions spotifyinteract, String playlistId, String selectedVideoId,
 			Function<AudioTrackInfo, AudioTrack> trackFactory);
-	
+
 }

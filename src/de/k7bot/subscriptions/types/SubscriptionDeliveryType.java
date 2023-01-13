@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */

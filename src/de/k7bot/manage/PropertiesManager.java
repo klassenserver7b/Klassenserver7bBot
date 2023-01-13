@@ -114,21 +114,20 @@ public class PropertiesManager {
 			stream.close();
 
 		} catch (IOException e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 
 	}
-	
+
 	public void setProperty(String id, String value) {
 		prop.setProperty(id, value);
-		
+
 		flushConfig();
 	}
-	
+
 	private void flushConfig() {
 		try {
-			BufferedWriter stream = Files.newBufferedWriter(Path
-					.of("resources/bot.properties"),
+			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
 					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();

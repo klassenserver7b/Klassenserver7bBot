@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.threads;
 
@@ -51,7 +51,7 @@ public class ShutdownThread implements Runnable {
 				if (System.in.available() == 0 || !sysinr.ready()) {
 					continue;
 				}
-				
+
 				if ((line = reader.readLine()) != null) {
 
 					if (line.equalsIgnoreCase("exit")) {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.subscriptions.commands;
 
@@ -159,11 +159,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 
 				GuildChannel ch = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(targetdcid);
 
-				if (ch == null) {
-					continue;
-				}
-
-				if (ch.getGuild().getIdLong() != guildid) {
+				if ((ch == null) || (ch.getGuild().getIdLong() != guildid)) {
 					continue;
 				}
 

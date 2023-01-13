@@ -34,7 +34,7 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS commandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, timestamp INTEGER);");
-		
+
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, timestamp INTEGER, commandstring STRING);");
 
@@ -46,7 +46,7 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS gourmettaInteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lastday LONG);");
-		
+
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS githubinteractions(id INTEGER NOT NUlL PRIMARY KEY AUTOINCREMENT, lastcommit STRING);");
 

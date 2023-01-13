@@ -1,13 +1,12 @@
 package de.k7bot.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.errorhandler.PermissionError;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,6 +15,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ClientInfo implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		channel.sendTyping().queue();

@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class HelpSlashCommand implements SlashCommand {
 
+	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		HelpCommand help = new HelpCommand();

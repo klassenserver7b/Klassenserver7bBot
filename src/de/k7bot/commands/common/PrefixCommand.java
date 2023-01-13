@@ -1,13 +1,14 @@
 package de.k7bot.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.commands.types.ServerCommand;
-
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;
+
+import de.k7bot.HelpCategories;
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class PrefixCommand implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.ADMINISTRATOR)) {
@@ -31,7 +33,7 @@ public class PrefixCommand implements ServerCommand {
 
 			} else {
 
-				SyntaxError.oncmdSyntaxError(channel, "prefix [String]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "prefix [String]", m);
 			}
 		} else {
 			PermissionError.onPermissionError(m, channel);

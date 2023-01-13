@@ -1,8 +1,17 @@
 
 package de.k7bot.hypixel.commands;
 
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.HypixelCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
@@ -12,22 +21,15 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.hypixel.api.HypixelAPI;
 
-import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class KarmaCommand implements HypixelCommand {
-	
+
 	private final Logger log;
 
 	public KarmaCommand() {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
-	
+
+	@Override
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
@@ -56,30 +58,30 @@ public class KarmaCommand implements HypixelCommand {
 				id = MojangAPI.getUUID(name);
 			} catch (APIException | InvalidPlayerException | IOException e1) {
 
-				log.error(e1.getMessage(),e1);
+				log.error(e1.getMessage(), e1);
 			}
 
 			if (id != null) {
 				channel.sendTyping().queue();
 				try {
-					channel.sendMessage(name + " has "
-							+ api.getPlayerByUuid(id).get().getPlayer().getKarma() + " Karma.").queue();
+					channel.sendMessage(
+							name + " has " + api.getPlayerByUuid(id).get().getPlayer().getKarma() + " Karma.").queue();
 				} catch (ExecutionException e) {
 					System.err.println("Oh no, our API request failed!");
 					e.getCause().printStackTrace();
 				} catch (InterruptedException e) {
 
 					System.err.println("Oh no, the player fetch thread was interrupted!");
-					log.error(e.getMessage(),e);
+					log.error(e.getMessage(), e);
 				}
 			} else {
-				channel.sendMessage(name + " is not a valid username " + m.getAsMention())
-						.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+				channel.sendMessage(name + " is not a valid username " + m.getAsMention()).complete().delete()
+						.queueAfter(10L, TimeUnit.SECONDS);
 			}
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(channel, "hypixel friends [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel friends [playername]", m);
 		}
 	}
 }

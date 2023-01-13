@@ -1,14 +1,5 @@
 package de.k7bot.music;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.utilities.SongDataUtils;
-import de.k7bot.music.utilities.SongJson;
-import de.k7bot.sql.LiteSQL;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,6 +8,16 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.utilities.SongDataUtils;
+import de.k7bot.music.utilities.SongJson;
+import de.k7bot.sql.LiteSQL;
 
 public class Queue {
 	private boolean islooped = false;
@@ -124,7 +125,41 @@ public class Queue {
 
 	}
 
-	public void addTracktoQueue(AudioTrack track) {
+	public void replace(AudioTrack track) {
+
+		clearQueue();
+		TrackScheduler.next = true;
+		queuelist.add(track);
+		next(track);
+		TrackScheduler.next = false;
+
+	}
+
+	public void replace(AudioPlaylist playlist) {
+
+		clearQueue();
+		TrackScheduler.next = true;
+
+		queuelist = playlist.getTracks();
+
+		next(playlist.getTracks().get(0));
+		TrackScheduler.next = false;
+
+	}
+
+	public void addPlaylistToQueue(AudioPlaylist playlist) {
+
+		queuelist.addAll(playlist.getTracks());
+
+		if (this.controller.getPlayer().getPlayingTrack() == null) {
+			Klassenserver7bbot.getInstance().getMainLogger()
+					.debug("Queue - setNextTrack: playing track = null -> next(track)");
+			next(queuelist.get(0));
+		}
+
+	}
+
+	public void addTrackToQueue(AudioTrack track) {
 		this.queuelist.add(track);
 
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
@@ -134,7 +169,18 @@ public class Queue {
 		}
 	}
 
-	public void setplaynext(AudioTrack track) {
+	public void setNextPlaylist(AudioPlaylist playlist) {
+
+		queuelist.addAll(0, playlist.getTracks());
+		if (this.controller.getPlayer().getPlayingTrack() == null) {
+			Klassenserver7bbot.getInstance().getMainLogger()
+					.debug("Queue - setNextTrack: playing track = null -> next(track)");
+			next(queuelist.get(0));
+		}
+
+	}
+
+	public void setNextTrack(AudioTrack track) {
 		this.queuelist.add(0, track);
 		if (this.controller.getPlayer().getPlayingTrack() == null) {
 			Klassenserver7bbot.getInstance().getMainLogger()

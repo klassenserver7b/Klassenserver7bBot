@@ -1,3 +1,4 @@
 package de.k7bot.hypixel;
 
-public class HypixelMain {}
+public class HypixelMain {
+}

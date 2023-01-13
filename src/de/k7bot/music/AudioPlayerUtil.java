@@ -1,12 +1,13 @@
 package de.k7bot.music;
 
-import de.k7bot.Klassenserver7bbot;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.k7bot.Klassenserver7bbot;
+
 public class AudioPlayerUtil {
-	
+
 	private ConcurrentHashMap<Long, MusicController> controller = new ConcurrentHashMap<>();
-	
+
 	public static final int STANDARDVOLUME = 10;
 
 	public MusicController getController(long guildid) {
@@ -32,7 +33,7 @@ public class AudioPlayerUtil {
 		}
 		return -1L;
 	}
-	
+
 	public void stopAllTracks() {
 		controller.values().forEach(contr -> {
 			contr.getPlayer().stopTrack();

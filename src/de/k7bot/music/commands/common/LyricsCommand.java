@@ -6,13 +6,13 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 
-import core.GLA;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
@@ -20,13 +20,15 @@ import de.k7bot.music.MusicController;
 import de.k7bot.music.Queue;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.SongJson;
-import genius.SongSearch;
-import genius.SongSearch.Hit;
+import de.k7bot.music.utilities.gla.GLACustomSongSearch;
+import de.k7bot.music.utilities.gla.GLACustomSongSearch.Hit;
+import de.k7bot.music.utilities.gla.GLAWrapper;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class LyricsCommand implements ServerCommand {
 
@@ -39,11 +41,7 @@ public class LyricsCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
-			return;
-		}
-
-		if (!MusicUtil.isPlayingSong(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m) || !MusicUtil.isPlayingSong(channel, m)) {
 			return;
 		}
 
@@ -59,25 +57,25 @@ public class LyricsCommand implements ServerCommand {
 
 		try {
 
-			SongSearch genius = getGeniusLyrics(query);
+			GLACustomSongSearch genius = getGeniusLyrics(query);
 
 			if (genius != null) {
 				sendGeniusEmbed(genius, channel, m);
 				return;
 			}
-			
+
 			LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
 
 			Lyrics lyrics = lapi.getLyrics(data.getTitle() + " " + data.getAuthorString()).get();
-			
-			if(lyrics != null) {
+
+			if (lyrics != null) {
 				sendJLyricsEmbed(lyrics, channel, m);
 				return;
 			}
-			
+
 			sendErrorEmbed(channel);
 
-		} catch (IOException | InterruptedException | ExecutionException e) {
+		} catch (IOException | InterruptedException | ExecutionException | ParseException e) {
 			sendErrorEmbed(channel);
 		}
 
@@ -94,8 +92,8 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private void sendGeniusEmbed(SongSearch data, TextChannel c, Member m) {
-		
+	private void sendGeniusEmbed(GLACustomSongSearch data, TextChannel c, Member m) {
+
 		c.sendTyping().queue();
 
 		if (data.getHits().isEmpty()) {
@@ -120,7 +118,7 @@ public class LyricsCommand implements ServerCommand {
 	}
 
 	private void sendJLyricsEmbed(Lyrics data, TextChannel c, Member m) {
-		
+
 		c.sendTyping().queue();
 
 		EmbedBuilder builder = new EmbedBuilder();
@@ -136,9 +134,9 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private SongSearch getGeniusLyrics(String query) throws IOException {
+	private GLACustomSongSearch getGeniusLyrics(String query) throws IOException, ParseException {
 
-		GLA lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
+		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
 		return lapi.search(query);
 

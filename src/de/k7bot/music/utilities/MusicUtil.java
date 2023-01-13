@@ -1,9 +1,5 @@
 package de.k7bot.music.utilities;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.MusicController;
-import de.k7bot.sql.LiteSQL;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.MusicController;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -33,7 +33,7 @@ public class MusicUtil {
 	private static final Logger log = LoggerFactory.getLogger(MusicUtil.class);
 
 	/**
-	 * 
+	 *
 	 * @param channel
 	 */
 	public static void updateChannel(TextChannel channel) {
@@ -54,7 +54,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param channel
 	 */
 	public static void updateChannel(InteractionHook hook) {
@@ -77,7 +77,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guildid
 	 * @param builder
 	 */
@@ -103,7 +103,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guildid
 	 * @param builder
 	 */
@@ -130,7 +130,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param m
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param m
 	 * @return
 	 */
@@ -163,7 +163,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ac
 	 * @return
 	 */
@@ -182,16 +182,16 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
-	 * @param c
+	 *
+	 * @param sendHandler
 	 * @param m
 	 * @return
 	 */
-	public static boolean checkConditions(TextChannel c, Member m) {
+	public static boolean checkDefaultConditions(GenericMessageSendHandler sendHandler, Member m) {
 
 		if (!MusicUtil.membHasVcConnection(m)) {
-			c.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
-					TimeUnit.SECONDS);
+			sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
+					.queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
 
@@ -199,13 +199,42 @@ public class MusicUtil {
 
 		switch (MusicUtil.isConnectedtoChannel(vc)) {
 		case 0: {
-			c.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
+			sendHandler.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention())
+					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+		default: {
+			return true;
+		}
+		}
+	}
+
+	/**
+	 *
+	 * @param sendHandler
+	 * @param m
+	 * @return
+	 */
+	public static boolean checkConditions(GenericMessageSendHandler sendHandler, Member m) {
+
+		if (!MusicUtil.membHasVcConnection(m)) {
+			sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
+					.queueAfter(10L, TimeUnit.SECONDS);
+			return false;
+		}
+
+		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		switch (MusicUtil.isConnectedtoChannel(vc)) {
+		case 0: {
+			sendHandler.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention())
+					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
 		case 2: {
-			c.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
+
+			sendHandler.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention())
+					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
 		}
@@ -214,39 +243,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
-	 * @param channel
-	 * @param m
-	 * @return
-	 */
-	public static boolean checkConditions(InteractionHook channel, Member m) {
-
-		if (!MusicUtil.membHasVcConnection(m)) {
-			channel.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete().queueAfter(10L,
-					TimeUnit.SECONDS);
-			return false;
-		}
-
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-
-		switch (MusicUtil.isConnectedtoChannel(vc)) {
-		case 0: {
-			channel.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
-			return false;
-		}
-		case 2: {
-			channel.sendMessage("The Bot isn't playing a Song use -p [Song] to play one" + m.getAsMention()).complete()
-					.delete().queueAfter(10L, TimeUnit.SECONDS);
-			return false;
-		}
-		}
-
-		return true;
-	}
-
-	/**
-	 * 
+	 *
 	 * @param m
 	 * @return
 	 */
@@ -271,7 +268,7 @@ public class MusicUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param c
 	 * @param m
 	 * @return

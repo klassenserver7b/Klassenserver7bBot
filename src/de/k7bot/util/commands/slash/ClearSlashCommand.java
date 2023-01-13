@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ClearSlashCommand implements SlashCommand {
+	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		if (event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {

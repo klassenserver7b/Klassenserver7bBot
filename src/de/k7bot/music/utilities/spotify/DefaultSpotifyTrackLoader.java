@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities.spotify;
 
@@ -27,7 +27,7 @@ public class DefaultSpotifyTrackLoader implements SpotifyTrackLoader {
 	private final Logger log;
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultSpotifyTrackLoader() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -51,8 +51,8 @@ public class DefaultSpotifyTrackLoader implements SpotifyTrackLoader {
 
 			String artist = SpotifyAudioSourceManager.getArtistString(track.getArtists());
 
-			AudioTrackInfo info = new AudioTrackInfo(track.getName(), artist, (long) track.getDurationMs(),
-					songid, false, track.getUri());
+			AudioTrackInfo info = new AudioTrackInfo(track.getName(), artist, track.getDurationMs(), songid,
+					false, track.getUri());
 
 			return trackFactory.apply(info);
 

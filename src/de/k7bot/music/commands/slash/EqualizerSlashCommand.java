@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.commands.slash;
 
@@ -15,13 +15,14 @@ import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.music.BotEqualizer;
 import de.k7bot.music.EqualizerPreset;
 import de.k7bot.music.utilities.MusicUtil;
-import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -38,24 +39,30 @@ public class EqualizerSlashCommand implements SlashCommand {
 		String preset = event.getOption("preset").getAsString();
 		InteractionHook hook = event.deferReply(true).complete();
 
-		if (!MusicUtil.checkConditions(hook, event.getMember())) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(hook), event.getMember())) {
 			return;
 		}
 
-		BotEqualizer eq = BotEqualizer.getEQ(
-				Klassenserver7bbot.getInstance().getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
+		BotEqualizer eq = BotEqualizer.getEQ(Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(event.getGuild().getIdLong()).getPlayer());
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
 
-		for (int i = 0; i < vals.length; i++) {
-			if (vals[i].toString().equalsIgnoreCase(preset)) {
-				eq.setEQMode(vals[i]);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00")).setFooter("Provided by @K7Bot").setTimestamp(OffsetDateTime.now()).setDescription("Equalizer was sucessful set to preset '"+preset+"'").build()).queue();
+		for (EqualizerPreset val : vals) {
+			if (val.toString().equalsIgnoreCase(preset)) {
+				eq.setEQMode(val);
+				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
+						.setFooter("Provided by @K7Bot").setTimestamp(OffsetDateTime.now())
+						.setDescription("Equalizer was sucessful set to preset '" + preset + "'").build()).queue();
 				return;
 			}
 		}
-		
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000")).setFooter("Provided by @K7Bot").setTimestamp(OffsetDateTime.now()).setDescription("Something went wrong! Please try again and contact the bot support if this keeps happening.").build()).queue();
+
+		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000")).setFooter("Provided by @K7Bot")
+				.setTimestamp(OffsetDateTime.now())
+				.setDescription(
+						"Something went wrong! Please try again and contact the bot support if this keeps happening.")
+				.build()).queue();
 
 	}
 
@@ -66,10 +73,10 @@ public class EqualizerSlashCommand implements SlashCommand {
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
 
-		for (int i = 0; i < vals.length; i++) {
+		for (EqualizerPreset val : vals) {
 
-			if (vals[i] != EqualizerPreset.UNKNOWN) {
-				choices.add(new Choice(vals[i].toString(), vals[i].toString()));
+			if (val != EqualizerPreset.UNKNOWN) {
+				choices.add(new Choice(val.toString(), val.toString()));
 			}
 		}
 

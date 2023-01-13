@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
- * 
+ *
  * @author Felix
  *
  */
@@ -71,11 +71,11 @@ public class HelpCommand implements ServerCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param guild
 	 * @return
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public MessageEmbed generateHelpOverview(Guild guild) {
 
@@ -126,11 +126,11 @@ public class HelpCommand implements ServerCommand {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param category
 	 * @return
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
@@ -188,9 +188,7 @@ public class HelpCommand implements ServerCommand {
 
 		StringBuilder categoryHelpStr = new StringBuilder();
 
-		for (int i = 0; i < searchresults.size(); i++) {
-
-			Entry<String, ServerCommand> entry = searchresults.get(i);
+		for (Entry<String, ServerCommand> entry : searchresults) {
 
 			StringBuilder inbuild = new StringBuilder();
 
@@ -220,9 +218,9 @@ public class HelpCommand implements ServerCommand {
 
 		String[] helpparts = categoryHelpStr.toString().split("<@>");
 
-		for (int i = 0; i < helpparts.length; i++) {
+		for (String helppart : helpparts) {
 
-			ret.addField("", helpparts[i], false);
+			ret.addField("", helppart, false);
 
 		}
 
@@ -238,14 +236,14 @@ public class HelpCommand implements ServerCommand {
 	 * Sends the {@link MessageEmbed Embed} with the HelpMessage to the
 	 * {@link net.dv8tion.jda.api.entities.User User} using {@link PrivateChannel
 	 * PrivateChannels}
-	 * 
+	 *
 	 * @param embed The HelpEmbed to be sent to the user
 	 * @param m     The {@link Member} wich is used to get the
 	 *              {@link net.dv8tion.jda.api.entities.User User}
 	 * @param tc    The {@link TextChannel} in which the reference to the DM and the
 	 *              error messages are to be sent.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private void sendEmbedPrivate(MessageEmbed embed, Member m, TextChannel tc) {
 

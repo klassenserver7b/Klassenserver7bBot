@@ -1,9 +1,6 @@
 
 package de.k7bot.listener;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;

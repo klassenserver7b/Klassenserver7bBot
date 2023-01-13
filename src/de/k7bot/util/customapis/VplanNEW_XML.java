@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -77,11 +77,11 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param force
 	 * @param klasse
 	 * @param channel
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
@@ -109,9 +109,9 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param klasse
-	 * 
+	 *
 	 * @since 1.15.0
 	 */
 	public void VplanNotify(String klasse) {
@@ -125,11 +125,11 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param force
 	 * @param klasse
 	 * @param chan
-	 * 
+	 *
 	 * @since 1.14.0
 	 */
 	private MessageCreateData getVplanMessage(boolean force, String klasse) {
@@ -244,7 +244,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
 	 * @param tablemess
 	 * @return
@@ -268,9 +268,10 @@ public class VplanNEW_XML implements InternalAPI {
 			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
 
 			if (teacher != null && !teacher.equalsIgnoreCase("")) {
-				JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList().get(teacher);
+				JsonObject teachobj = Klassenserver7bbot.getInstance().getTeacherList();
+				JsonElement teachelem;
 
-				if (teachelem != null) {
+				if (teachobj != null && (teachelem = teachobj.get(teacher)) != null) {
 
 					JsonObject teach = teachelem.getAsJsonObject();
 
@@ -320,7 +321,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @param classPlan
 	 * @return
@@ -378,7 +379,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param obj
 	 * @param klasse
 	 * @return
@@ -412,7 +413,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @return
 	 * @since 1.14.0
@@ -456,7 +457,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @since 1.14.0
 	 */
@@ -474,7 +475,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @since 1.14.0
@@ -506,7 +507,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @since 1.14.0
@@ -549,7 +550,7 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void shutdown() {

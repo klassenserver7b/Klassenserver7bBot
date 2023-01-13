@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.commands.common;
 
@@ -8,6 +8,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -32,14 +33,14 @@ public class SeekCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
 
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
-			SyntaxError.oncmdSyntaxError(channel, "seek [position in seconds]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "seek [position in seconds]", m);
 			return;
 		}
 

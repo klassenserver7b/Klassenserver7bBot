@@ -1,12 +1,6 @@
 
 package de.k7bot.moderation.commands.common;
 
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -17,6 +11,12 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,6 +28,7 @@ public class MemberLogsCommand implements ServerCommand {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.KICK_MEMBERS)) {
@@ -79,7 +80,7 @@ public class MemberLogsCommand implements ServerCommand {
 					log.error(e.getMessage(), e);
 				}
 			} else {
-				SyntaxError.oncmdSyntaxError(channel, "memberlogs [@user]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "memberlogs [@user]", m);
 			}
 		} else {
 			PermissionError.onPermissionError(m, channel);

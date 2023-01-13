@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.TableMessage;
-import de.k7bot.commands.types.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;

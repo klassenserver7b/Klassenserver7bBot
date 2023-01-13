@@ -1,27 +1,71 @@
 
 package de.k7bot.manage;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.commands.common.*;
-import de.k7bot.moderation.commands.common.*;
-import de.k7bot.music.commands.common.*;
-import de.k7bot.util.commands.common.*;
-import de.k7bot.hypixel.commands.SCtoHC;
-import de.k7bot.util.customapis.DisabledAPI;
-
 import java.util.LinkedHashMap;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.common.ClientInfo;
+import de.k7bot.commands.common.DanielCommand;
+import de.k7bot.commands.common.GithubRepoCommand;
+import de.k7bot.commands.common.HelpCommand;
+import de.k7bot.commands.common.PingCommand;
+import de.k7bot.commands.common.PrefixCommand;
+import de.k7bot.commands.common.RestartCommand;
+import de.k7bot.commands.common.ShutdownCommand;
+import de.k7bot.commands.common.SystemchannelCommand;
+import de.k7bot.commands.common.TeacherCommand;
+import de.k7bot.commands.common.TestCommand;
+import de.k7bot.commands.common.VTestCommand;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.hypixel.commands.SCtoHC;
+import de.k7bot.moderation.commands.common.BanCommand;
+import de.k7bot.moderation.commands.common.KickCommand;
+import de.k7bot.moderation.commands.common.MemberLogsCommand;
+import de.k7bot.moderation.commands.common.MemberdevicesCommand;
+import de.k7bot.moderation.commands.common.ModLogsCommand;
+import de.k7bot.moderation.commands.common.StopTimeoutCommand;
+import de.k7bot.moderation.commands.common.TimeoutCommand;
+import de.k7bot.moderation.commands.common.WarnCommand;
+import de.k7bot.music.commands.common.AddQueueTrackCommand;
+import de.k7bot.music.commands.common.ClearQueueCommand;
+import de.k7bot.music.commands.common.EqualizerCommand;
+import de.k7bot.music.commands.common.LoopCommand;
+import de.k7bot.music.commands.common.LyricsCommand;
+import de.k7bot.music.commands.common.OverallChartsCommand;
+import de.k7bot.music.commands.common.PauseCommand;
+import de.k7bot.music.commands.common.PlayCommand;
+import de.k7bot.music.commands.common.PlayNextCommand;
+import de.k7bot.music.commands.common.QueuelistCommand;
+import de.k7bot.music.commands.common.ResumeCommand;
+import de.k7bot.music.commands.common.SeekCommand;
+import de.k7bot.music.commands.common.ShuffleCommand;
+import de.k7bot.music.commands.common.SkipBackCommand;
+import de.k7bot.music.commands.common.SkipCommand;
+import de.k7bot.music.commands.common.SkipForwardCommand;
+import de.k7bot.music.commands.common.StopCommand;
+import de.k7bot.music.commands.common.TrackInfoCommand;
+import de.k7bot.music.commands.common.UebersteuerungAdmin;
+import de.k7bot.music.commands.common.UnLoopCommand;
+import de.k7bot.music.commands.common.VolumeCommand;
+import de.k7bot.util.commands.common.AddReactionCommand;
+import de.k7bot.util.commands.common.ClearCommand;
+import de.k7bot.util.commands.common.DanceInterpreterJsonGenerateCommand;
+import de.k7bot.util.commands.common.EveryoneCommand;
+import de.k7bot.util.commands.common.MessagetoEmbedCommand;
+import de.k7bot.util.commands.common.ReactRolesCommand;
+import de.k7bot.util.commands.common.RoleCreation;
+import de.k7bot.util.commands.common.StatsCategoryCommand;
+import de.k7bot.util.customapis.DisabledAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -30,7 +74,7 @@ public class CommandManager {
 	public Logger commandlog;
 
 	/**
-	 * 
+	 *
 	 * @param hypenable <br>
 	 *                  Should the HypixelAPI be enabled
 	 * @param gitenable <br>
@@ -122,7 +166,7 @@ public class CommandManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param command
 	 * @param m
 	 * @param channel

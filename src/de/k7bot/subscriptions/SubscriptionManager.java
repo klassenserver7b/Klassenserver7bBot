@@ -1,9 +1,5 @@
 package de.k7bot.subscriptions;
 
-import de.k7bot.subscriptions.types.SubscriptionTarget;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,9 +10,12 @@ import org.slf4j.LoggerFactory;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.Subscription;
 import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
+import de.k7bot.subscriptions.types.SubscriptionTarget;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -27,7 +26,7 @@ public class SubscriptionManager {
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	/**
-	 * 
+	 *
 	 */
 	public SubscriptionManager() {
 		sendhandler = new SubMessageSendHandler(log);
@@ -37,7 +36,7 @@ public class SubscriptionManager {
 
 	/**
 	 * Provides the {@link Message} to every (target)-matching subscription
-	 * 
+	 *
 	 * @param target The target of the notification e.g a new Lernplan
 	 * @param data   The message which schould be send to all subscribers
 	 */
@@ -59,13 +58,13 @@ public class SubscriptionManager {
 	/**
 	 * Creates a new Subscription for the submitted target and saves it to the
 	 * database.
-	 * 
+	 *
 	 * @param type             The {@link SubscriptionDeliveryType} of the Channel
 	 *                         the Bot should deliver the Subscription in
-	 * 
+	 *
 	 * @param target           The {@link SubscriptionTarget} of the new
 	 *                         Subscription
-	 * 
+	 *
 	 * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
 	 *                         <code>TYPE.getIdLong()<code>.
 	 */
@@ -157,7 +156,7 @@ public class SubscriptionManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @return
 	 */
@@ -166,7 +165,7 @@ public class SubscriptionManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @param target
 	 * @param deliverytargetid

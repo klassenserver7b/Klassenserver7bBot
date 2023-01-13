@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -57,7 +58,7 @@ public class TeacherCommand implements ServerCommand {
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(channel, "teacher [Lehrerkürzel]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "teacher [Lehrerkürzel]", m);
 
 		}
 	}

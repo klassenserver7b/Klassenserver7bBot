@@ -5,11 +5,12 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ShuffleCommand implements ServerCommand {
@@ -25,9 +26,10 @@ public class ShuffleCommand implements ServerCommand {
 		return HelpCategories.MUSIK;
 	}
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
 

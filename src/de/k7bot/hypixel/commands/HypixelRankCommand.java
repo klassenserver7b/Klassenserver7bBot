@@ -1,9 +1,5 @@
 package de.k7bot.hypixel.commands;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.errorhandler.SyntaxError;
-
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -12,6 +8,10 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.HypixelCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.SyntaxError;
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;
@@ -28,6 +28,7 @@ public class HypixelRankCommand implements HypixelCommand {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
@@ -76,7 +77,7 @@ public class HypixelRankCommand implements HypixelCommand {
 						.queueAfter(10L, TimeUnit.SECONDS);
 			}
 		} else {
-			SyntaxError.oncmdSyntaxError(channel, "hypixel rank [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel rank [playername]", m);
 		}
 	}
 }

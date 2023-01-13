@@ -1,14 +1,16 @@
 package de.k7bot.hypixel.commands;
 
+import java.util.concurrent.TimeUnit;
+
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SCtoHC implements ServerCommand {
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		String mess = message.getContentStripped();
 
@@ -19,8 +21,8 @@ public class SCtoHC implements ServerCommand {
 			if (args.length > 0) {
 
 				if (!Klassenserver7bbot.getInstance().gethypMan().performHypixel(args[0], m, channel, message))
-					((Message) channel.sendMessage("`unbekannter Hypixel - Command` - Hilfe: '-Hypixel help'")
-							.complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
+					channel.sendMessage("`unbekannter Hypixel - Command` - Hilfe: '-Hypixel help'")
+							.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 			}
 		}
 	}
