@@ -6,13 +6,15 @@ import java.nio.charset.StandardCharsets;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.json.JSONObject;
+
+import de.k7bot.util.EntityHttpCLientResponseHandler;
 
 public class GLACustomHttpManager {
 
@@ -29,18 +31,20 @@ public class GLACustomHttpManager {
 		httpget.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON);
 		httpget.setHeader(HttpHeaders.ACCEPT, "application/json");
 
-		final CloseableHttpResponse response = httpclient.execute(httpget);
+		try {
 
-		if (response.getCode() != 200) {
-			throw new HttpResponseException(response.getCode(), response.getReasonPhrase());
+			HttpEntity response = httpclient.execute(httpget, new EntityHttpCLientResponseHandler());
+
+			String respstr = EntityUtils.toString(response, StandardCharsets.UTF_8);
+
+			httpclient.close();
+
+			return new JSONObject(respstr);
+
+		} catch (HttpResponseException e) {
+			throw e;
+
 		}
-
-		String respstr = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-
-		response.close();
-		httpclient.close();
-
-		return new JSONObject(respstr);
 
 	}
 

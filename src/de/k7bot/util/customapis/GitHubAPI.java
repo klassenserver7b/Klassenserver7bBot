@@ -13,6 +13,7 @@ import java.util.List;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,9 @@ public class GitHubAPI implements InternalAPI {
 				dbid = set.getString("lastcommit");
 			}
 
+		} catch (HttpException e1) {
+			log.warn("Github Connection failed!");
+			return null;
 		} catch (IOException | SQLException e) {
 			log.error(e.getMessage(), e);
 			return null;

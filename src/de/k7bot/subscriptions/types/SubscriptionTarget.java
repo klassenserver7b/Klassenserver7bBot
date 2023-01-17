@@ -35,15 +35,9 @@ public enum SubscriptionTarget {
 	GOURMETTA(4, true, false),
 
 	/**
-	 * The Type for the current special offers at the "Kaufland Dresden Striesen
-	 * West"
-	 */
-	KAUFLAND(5, true, false),
-
-	/**
 	 * The Type for News about Hypixel Syblock
 	 */
-	SKYBLOCKNEWS(6, true, false),
+	SKYBLOCKNEWS(5, true, false),
 
 	/**
 	 * Unknown {@link SubscriptionTarget} type. Should never happen and would only

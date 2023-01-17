@@ -3,10 +3,8 @@
  */
 package de.k7bot.music.commands.generic;
 
-import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +22,11 @@ import de.k7bot.commands.types.SlashCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.commands.common.PlayCommand;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -176,18 +172,17 @@ public abstract class GenericPlayCommand implements ServerCommand, SlashCommand 
 
 		if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
 
-			if (getChildClass() instanceof PlayCommand) {
-				sendHandler.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
-						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
-						.setDescription(
-								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.getInstance().getPrefixMgr()
-												.getPrefix(vc.getGuild().getIdLong())
-										+ "play` INSTEAD!")
-						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+//				sendHandler.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
+//						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
+//						.setDescription(
+//								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
+//										+ Klassenserver7bbot.getInstance().getPrefixMgr()
+//												.getPrefix(vc.getGuild().getIdLong())
+//										+ "play` INSTEAD!")
+//						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+//
+//				return false;
 
-				return false;
-			}
 
 			manager.openAudioConnection(vc);
 

@@ -64,8 +64,6 @@ public class PropertiesManager {
 		this.apienabled.put("gourmetta",
 				(prop.getProperty("gourmettauserid") != null) && (prop.getProperty("gourmettapassword") != null));
 
-		this.apienabled.put("kaufland", true);
-
 		this.apienabled.put("discogs", prop.getProperty("discogs-token") != null);
 
 	}

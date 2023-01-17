@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.sql.SQLManager;
 import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.RestartUtil;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,15 +26,10 @@ public class RestartCommand implements ServerCommand {
 
 				try {
 
-					Klassenserver7bbot.getInstance().getPlayerUtil().stopAllTracks();
-
-					Klassenserver7bbot.getInstance().stopLoop();
-					SQLManager.onCreate();
+					RestartUtil.restart();
 
 					Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
-
-					Klassenserver7bbot.getInstance().runLoop();
 
 				} catch (NumberFormatException e) {
 					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", m);

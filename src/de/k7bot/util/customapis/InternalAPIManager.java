@@ -107,11 +107,6 @@ public class InternalAPIManager {
 			log.debug("GourmettaAPI initialized");
 		}
 
-		if (propMgr.isApiEnabled("kaufland")) {
-			registerAPI(new KauflandInteractions());
-			log.debug("KauflandAPI initialized");
-		}
-
 		if (propMgr.isApiEnabled("github")) {
 			registerAPI(new GitHubAPI());
 			log.debug("GitHubAPI initialized");

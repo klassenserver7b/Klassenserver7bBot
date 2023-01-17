@@ -3,6 +3,7 @@
  */
 package de.k7bot.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -79,11 +80,15 @@ public class GenericMessageSendHandler {
 		return null;
 	}
 
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed embed,
-			@Nonnull MessageEmbed... embeds) {
-		List<MessageEmbed> list = Arrays.asList(embeds);
-		list.add(0, embed);
-		return sendMessageEmbeds(list);
+	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed embed) {
+		List<MessageEmbed> embedlist = new ArrayList<>();
+		embedlist.add(embed);
+		return sendMessageEmbeds(embedlist);
+	}
+
+	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed... embeds) {
+		List<MessageEmbed> embedlist = Arrays.asList(embeds);
+		return sendMessageEmbeds(embedlist);
 	}
 
 	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull Collection<? extends MessageEmbed> embeds) {

@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 public class LernsaxInteractions implements InternalAPI {
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+	private int ecount = 0;
 
 	/**
 	 * Used to connect to the LernsaxAPI via the credentials given in the configfile
@@ -51,7 +52,11 @@ public class LernsaxInteractions implements InternalAPI {
 		Credentials cred = new Credentials(propMgr.getProperty("lsaxemail"), propMgr.getProperty("lsaxtoken"),
 				propMgr.getProperty("lsaxappid"));
 
-		client.login(cred);
+		try {
+			client.login(cred);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 
 	}
 
@@ -76,6 +81,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 */
 	public void disconnect() {
 		client.logout();
+		client = null;
 	}
 
 	/**
@@ -84,7 +90,8 @@ public class LernsaxInteractions implements InternalAPI {
 	@Override
 	public void checkforUpdates() {
 
-		if (client == null) {
+		if (client == null || ecount >= 15) {
+			ecount = 0;
 			connect();
 		}
 
@@ -143,7 +150,16 @@ public class LernsaxInteractions implements InternalAPI {
 							messages.get(messages.size() - 1).getId());
 				}
 			} catch (NumberFormatException | WebWeaverException e) {
-				log.error(e.getMessage(), e);
+				if (e.getMessage().equalsIgnoreCase("null")) {
+					log.warn("Lernsax API request failed");
+					ecount++;
+				} else {
+					log.error(e.getMessage(), e);
+					ecount++;
+				}
+			} catch (NullPointerException e) {
+				log.warn("Lernsax API request failed");
+				ecount++;
 			}
 		}
 

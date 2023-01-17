@@ -18,11 +18,12 @@ import net.dv8tion.jda.api.entities.Activity;
  */
 public class LoopThread implements Runnable {
 
-	private final Thread t;
+	private Thread t;
 	private final Logger log;
 	private int min;
 	private boolean hasstarted;
-	private final String[] status = new String[] { "-help", "@K7Bot", "-getprefix" };
+	private final String[] status = new String[] { "-help", "-getprefix", "YouTube", "Spotify", "SlashCommands",
+			"Logging" };
 	// private final VPlan_main vpold;
 
 	public LoopThread() {
@@ -57,11 +58,6 @@ public class LoopThread implements Runnable {
 		}
 	}
 
-	public void stopLoop() {
-		t.interrupt();
-		log.info("interrupted");
-	}
-
 	private void onrun() {
 		if (!t.isInterrupted()) {
 
@@ -86,6 +82,18 @@ public class LoopThread implements Runnable {
 
 			}
 		}
+	}
+
+	public void restart() {
+		t.interrupt();
+		t = new Thread(this, "Loop");
+		t.start();
+		log.info("restarted");
+	}
+
+	public void stopLoop() {
+		t.interrupt();
+		log.info("interrupted");
 	}
 
 }
