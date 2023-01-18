@@ -458,4 +458,9 @@ public class GourmettaInteractions implements InternalAPI {
 
 	}
 
+	@Override
+	public void restart() {
+		logout();
+		log.debug("restart requested");
+	}
 }

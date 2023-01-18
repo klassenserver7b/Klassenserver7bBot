@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
-public class SubscribeSlashCommand implements SlashCommand {
+public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
 	Logger log = LoggerFactory.getLogger(this.getClass());
 

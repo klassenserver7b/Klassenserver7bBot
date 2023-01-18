@@ -88,6 +88,7 @@ public class LoopThread implements Runnable {
 		t.interrupt();
 		t = new Thread(this, "Loop");
 		t.start();
+		Klassenserver7bbot.getInstance().getInternalAPIManager().restart();
 		log.info("restarted");
 	}
 

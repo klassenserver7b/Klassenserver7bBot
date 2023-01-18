@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 
 import org.jetbrains.annotations.NotNull;
 
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class ToEmbedSlashCommand implements SlashCommand {
+public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {

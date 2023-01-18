@@ -549,4 +549,9 @@ public class VplanNEW_XML implements InternalAPI {
 
 	}
 
+	@Override
+	public void restart() {
+		log.debug("restart requested");
+	}
+
 }

@@ -13,4 +13,6 @@ public interface InternalAPI {
 
 	public void shutdown();
 
+	public void restart();
+
 }

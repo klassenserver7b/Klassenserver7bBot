@@ -231,4 +231,11 @@ public class LernsaxInteractions implements InternalAPI {
 
 	}
 
+	@Override
+	public void restart() {
+		log.debug("restart requested");
+		disconnect();
+		connect();
+	}
+
 }

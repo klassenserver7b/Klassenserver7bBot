@@ -149,4 +149,10 @@ public class GitHubAPI implements InternalAPI {
 		log.debug("GitHubAPI disabled");
 	}
 
+	@Override
+	public void restart() {
+		log.debug("restart requested");
+		gh.refreshCache();
+	}
+
 }

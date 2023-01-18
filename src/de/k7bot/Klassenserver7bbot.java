@@ -221,11 +221,12 @@ public class Klassenserver7bbot {
 		}
 
 		this.hypMgr = new HypixelCommandManager();
-		this.slashMgr = new SlashCommandManager();
 		this.spotifyinteractions = new SpotifyInteractions();
 
 		InitializeMusic(this.audioPlayerManager);
+
 		this.cmdMgr = new CommandManager();
+		this.slashMgr = new SlashCommandManager();
 	}
 
 	public void InitializeMusic(AudioPlayerManager manager) {

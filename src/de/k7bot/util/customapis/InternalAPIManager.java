@@ -30,13 +30,18 @@ public class InternalAPIManager {
 	}
 
 	public void shutdownAPIs() {
-		apis.entrySet().forEach(entry -> {
+		try {
 
-			entry.getValue().getAPI().shutdown();
+			apis.entrySet().forEach(entry -> {
 
-		});
+				entry.getValue().getAPI().shutdown();
 
-		apis.clear();
+			});
+
+			apis.clear();
+		} catch (Exception e) {
+			log.warn("Forced APIs to shut down");
+		}
 	}
 
 	/**
@@ -80,6 +85,17 @@ public class InternalAPIManager {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().getAPI().checkforUpdates();
 			}
+
+		});
+	}
+
+	/*
+	 * 
+	 */
+	public void restart() {
+		apis.entrySet().forEach(entry -> {
+
+			entry.getValue().getAPI().restart();
 
 		});
 	}
