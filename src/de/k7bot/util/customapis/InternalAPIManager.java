@@ -30,13 +30,18 @@ public class InternalAPIManager {
 	}
 
 	public void shutdownAPIs() {
-		apis.entrySet().forEach(entry -> {
+		try {
 
-			entry.getValue().getAPI().shutdown();
+			apis.entrySet().forEach(entry -> {
 
-		});
+				entry.getValue().getAPI().shutdown();
 
-		apis.clear();
+			});
+
+			apis.clear();
+		} catch (Exception e) {
+			log.warn("Forced APIs to shut down");
+		}
 	}
 
 	/**
@@ -84,6 +89,17 @@ public class InternalAPIManager {
 		});
 	}
 
+	/*
+	 * 
+	 */
+	public void restart() {
+		apis.entrySet().forEach(entry -> {
+
+			entry.getValue().getAPI().restart();
+
+		});
+	}
+
 	/**
 	 *
 	 */
@@ -105,11 +121,6 @@ public class InternalAPIManager {
 		if (propMgr.isApiEnabled("gourmetta")) {
 			registerAPI(new GourmettaInteractions());
 			log.debug("GourmettaAPI initialized");
-		}
-
-		if (propMgr.isApiEnabled("kaufland")) {
-			registerAPI(new KauflandInteractions());
-			log.debug("KauflandAPI initialized");
 		}
 
 		if (propMgr.isApiEnabled("github")) {

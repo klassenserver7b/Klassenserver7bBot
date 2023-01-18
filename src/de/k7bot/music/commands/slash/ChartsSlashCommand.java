@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 import org.jetbrains.annotations.NotNull;
 
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.ChartList;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class ChartsSlashCommand implements SlashCommand {
+public class ChartsSlashCommand implements TopLevelSlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {

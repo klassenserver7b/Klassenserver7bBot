@@ -30,7 +30,7 @@ public class StopCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)
+		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(channel), m)
 				&& !channel.getGuild().getAudioManager().isConnected()) {
 			return;
 		}

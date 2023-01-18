@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
+import de.k7bot.Klassenserver7bbot;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 
 /**
@@ -69,7 +70,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	public SpotifyAudioSourceManager() {
 
 		this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
-				new DefaultSpotifyTrackLoader(), new SpotifyInteractions());
+				new DefaultSpotifyTrackLoader(), Klassenserver7bbot.getInstance().getSpotifyinteractions());
 
 	}
 

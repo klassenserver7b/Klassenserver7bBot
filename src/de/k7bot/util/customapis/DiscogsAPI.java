@@ -8,13 +8,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +25,7 @@ import com.google.gson.JsonSyntaxException;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.utilities.SongJson;
+import de.k7bot.util.HttpUtilities;
 
 /**
  * @author Klassenserver7b
@@ -84,32 +84,7 @@ public class DiscogsAPI {
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(res_url);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
-
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from api.dicogs.com");
-				return null;
-			}
-
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
-
-			response.close();
-			httpclient.close();
-
-			return elem.getAsJsonObject();
-
-		} catch (IOException | JsonSyntaxException | ParseException e) {
-			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-
-		}
-
-		return null;
+		return request(httpclient, httpget);
 	}
 
 	private String getMasterJson(String searchquery) {
@@ -143,43 +118,39 @@ public class DiscogsAPI {
 
 		assert this.isApiEnabled();
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-
 		String token = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("discogs-token");
 
 		String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
-
 		final HttpGet httpget = new HttpGet(
 				"https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
+		final CloseableHttpClient httpclient = HttpClients.createSystem();
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from api.dicogs.com");
-				return null;
-			}
+		return request(httpclient, httpget);
 
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+	}
 
-			response.close();
+	private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
+		try {
+			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+
+			JsonElement elem = JsonParser.parseString(response);
 			httpclient.close();
 
 			return elem.getAsJsonObject();
 
-		} catch (IOException | JsonSyntaxException | ParseException e) {
-			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-
+		} catch (HttpHostConnectException e1) {
+			log.warn("Invalid response from api.dicogs.com" + e1.getMessage());
 		}
 
-		return null;
+		catch (IOException | JsonSyntaxException e) {
+			log.error(e.getMessage(), e);
 
+			HttpUtilities.closeHttpClient(httpclient);
+
+		}
+		return null;
 	}
 
 	public boolean isApiEnabled() {

@@ -18,14 +18,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -34,7 +34,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.api.client.util.Charsets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -42,6 +41,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.Cell;
+import de.k7bot.util.HttpUtilities;
 import de.k7bot.util.TableMessage;
 import de.k7bot.util.customapis.types.InternalAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -515,8 +515,9 @@ public class VplanNEW_XML implements InternalAPI {
 	private String getVplanXML(OffsetDateTime date) {
 
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443), new UsernamePasswordCredentials(
-				"schueler", Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw")));
+		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
+				new UsernamePasswordCredentials("schueler",
+						Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
 
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
 				.build()) {
@@ -524,23 +525,13 @@ public class VplanNEW_XML implements InternalAPI {
 			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
 					+ Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("schoolID")
 					+ "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
-			final CloseableHttpResponse response = httpclient.execute(httpget);
 
-			if (response.getStatusLine().getStatusCode() == 200) {
-				return EntityUtils.toString(response.getEntity(), Charsets.UTF_8);
+			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+			HttpUtilities.closeHttpClient(httpclient);
+			return response;
 
-			} else {
-
-				if (response.getStatusLine().getStatusCode() == 201) {
-					return null;
-				}
-
-				log.debug("Vplan-Servererror StatusCode: " + response.getStatusLine().getStatusCode() + " - "
-						+ response.getStatusLine().getReasonPhrase());
-				return null;
-
-			}
-
+		} catch (HttpHostConnectException e1) {
+			log.warn("Vplan Connection failed!" + e1.getMessage());
 		} catch (IOException e) {
 			log.error("Vplan IO Exception - please check your connection");
 			log.error(e.getMessage(), e);
@@ -556,6 +547,11 @@ public class VplanNEW_XML implements InternalAPI {
 	public void shutdown() {
 		klassen.clear();
 
+	}
+
+	@Override
+	public void restart() {
+		log.debug("restart requested");
 	}
 
 }

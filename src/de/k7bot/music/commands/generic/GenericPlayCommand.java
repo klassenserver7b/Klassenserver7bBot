@@ -3,10 +3,8 @@
  */
 package de.k7bot.music.commands.generic;
 
-import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +18,16 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.MusicController;
-import de.k7bot.music.commands.common.PlayCommand;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.SupportedPlayQueries;
 import de.k7bot.util.errorhandler.SyntaxError;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -44,7 +41,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
  * @author Felix
  *
  */
-public abstract class GenericPlayCommand implements ServerCommand, SlashCommand {
+public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlashCommand {
 
 	private final Logger log;
 	private final AudioPlayerManager apm;
@@ -118,7 +115,7 @@ public abstract class GenericPlayCommand implements ServerCommand, SlashCommand 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(false).complete();
+		InteractionHook hook = event.deferReply(true).complete();
 		Member m = event.getMember();
 
 		if (event.getOptions().isEmpty()) {
@@ -132,7 +129,30 @@ public abstract class GenericPlayCommand implements ServerCommand, SlashCommand 
 
 		performInternalChecks(m, vc, controller, new GenericMessageSendHandler(hook));
 
-		performItemLoad("", controller, vc.getName());
+		playQueriedItem(SupportedPlayQueries.fromId(event.getOption("target").getAsInt()), vc,
+				event.getOption("url").getAsString(), controller);
+
+		hook.sendMessage("Successfully Loaded").queue();
+
+	}
+
+	/**
+	 *
+	 * @param querytype
+	 * @param channel
+	 * @param query
+	 * @param hook
+	 * @param apm
+	 * @param controller
+	 */
+	private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
+			MusicController controller) {
+
+		String suffix = querytype.getSearchSuffix();
+		String url = suffix + " " + query;
+		url = url.trim();
+
+		performItemLoad(url, controller, channel.getName());
 
 	}
 
@@ -176,18 +196,16 @@ public abstract class GenericPlayCommand implements ServerCommand, SlashCommand 
 
 		if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
 
-			if (getChildClass() instanceof PlayCommand) {
-				sendHandler.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
-						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
-						.setDescription(
-								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-										+ Klassenserver7bbot.getInstance().getPrefixMgr()
-												.getPrefix(vc.getGuild().getIdLong())
-										+ "play` INSTEAD!")
-						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-
-				return false;
-			}
+//				sendHandler.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
+//						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
+//						.setDescription(
+//								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
+//										+ Klassenserver7bbot.getInstance().getPrefixMgr()
+//												.getPrefix(vc.getGuild().getIdLong())
+//										+ "play` INSTEAD!")
+//						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+//
+//				return false;
 
 			manager.openAudioConnection(vc);
 

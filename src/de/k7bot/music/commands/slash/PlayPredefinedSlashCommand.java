@@ -10,7 +10,7 @@ import de.k7bot.music.AudioLoadResult;
 import de.k7bot.music.MusicController;
 import de.k7bot.music.commands.generic.GenericPlayCommand;
 import de.k7bot.music.utilities.AudioLoadOption;
-import de.k7bot.util.SupportedPlayQueries;
+import de.k7bot.music.utilities.PredefinedMusicPlaylists;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -20,27 +20,24 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  * @author Felix
  *
  */
-public class PlaySlashCommand extends GenericPlayCommand implements SubSlashCommand {
+public class PlayPredefinedSlashCommand extends GenericPlayCommand implements SubSlashCommand {
 
 	@Override
 	public SubcommandData getSubCommandData() {
-		ArrayList<Choice> targets = new ArrayList<>();
-		for (SupportedPlayQueries q : SupportedPlayQueries.values()) {
-			targets.add(new Choice(q.toString(), q.getId()));
+
+		ArrayList<Choice> playlists = new ArrayList<>();
+		for (PredefinedMusicPlaylists q : PredefinedMusicPlaylists.values()) {
+			playlists.add(new Choice(q.toString(), q.getId()));
 		}
-		OptionData target = new OptionData(OptionType.INTEGER, "target", "from where the song should be loaded")
-				.addChoices(targets).setRequired(true);
+		OptionData playlist = new OptionData(OptionType.INTEGER, "playlist", "a predefined playlist")
+				.addChoices(playlists).setRequired(true);
 
-		OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
-				.setRequired(true);
-
-		return new SubcommandData("imediately", "plays the selected AudioItem replacing the whole queue")
-				.addOptions(target, url);
+		return new SubcommandData("predefined", "for our predefined playlists").addOptions(playlist);
 	}
 
 	@Override
 	public String getSubPath() {
-		return "imediately";
+		return "predefined";
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -23,7 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
-public class WhitelistSlashCommand implements SlashCommand {
+public class WhitelistSlashCommand implements TopLevelSlashCommand {
 	private final Logger log = LoggerFactory.getLogger("Whitelist");
 
 	@Override

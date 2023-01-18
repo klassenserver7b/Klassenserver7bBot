@@ -3,13 +3,14 @@ package de.k7bot.music.utilities.gla;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+
+import de.k7bot.util.EntityHttpCLientResponseHandler;
 
 public class GLALyricsParser {
 
@@ -28,13 +29,9 @@ public class GLALyricsParser {
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(GENIUS_EMBED_URL_HEAD + id + GENIUS_EMBED_URL_TAIL);
 
-		final CloseableHttpResponse response = httpclient.execute(httpget);
+		final HttpEntity response = httpclient.execute(httpget, new EntityHttpCLientResponseHandler());
 
-		if (response.getCode() != 200) {
-			throw new HttpResponseException(response.getCode(), response.getReasonPhrase());
-		}
-
-		String respstr = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+		String respstr = EntityUtils.toString(response, StandardCharsets.UTF_8);
 
 		response.close();
 		httpclient.close();

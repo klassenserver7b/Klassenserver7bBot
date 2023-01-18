@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  * @author Felix
  *
  */
-public class PlaySlashCommand extends GenericPlayCommand implements SubSlashCommand {
+public class AddToQueueSlashCommand extends GenericPlayCommand implements SubSlashCommand {
 
 	@Override
 	public SubcommandData getSubCommandData() {
@@ -34,13 +34,12 @@ public class PlaySlashCommand extends GenericPlayCommand implements SubSlashComm
 		OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
 				.setRequired(true);
 
-		return new SubcommandData("imediately", "plays the selected AudioItem replacing the whole queue")
-				.addOptions(target, url);
+		return new SubcommandData("addtoqueue", "appends the selected AudioItem to the queue").addOptions(target, url);
 	}
 
 	@Override
 	public String getSubPath() {
-		return "imediately";
+		return "addtoqueue";
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class PlaySlashCommand extends GenericPlayCommand implements SubSlashComm
 
 	@Override
 	protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
-		return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE);
+		return new AudioLoadResult(controller, url, AudioLoadOption.APPEND);
 	}
 
 	@Override

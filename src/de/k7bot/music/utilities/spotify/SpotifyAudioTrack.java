@@ -11,15 +11,15 @@ import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +37,8 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 
+import de.k7bot.util.EntityHttpCLientResponseHandler;
+import de.k7bot.util.HttpUtilities;
 import io.seruco.encoding.base62.Base62;
 
 /**
@@ -132,19 +134,17 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			httppost.setEntity(builder.build());
 
-			final CloseableHttpResponse response = httpclient.execute(httppost);
-
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from Spotify License Server - " + response.getReasonPhrase());
+			String response = null;
+			try {
+				response = httpclient.execute(httppost, new BasicHttpClientResponseHandler());
+			} catch (HttpResponseException e) {
+				log.warn("Invalid response from Spotify License Server - " + e.getMessage());
 				return null;
 			}
 
-			String resp = new String(response.getEntity().getContent().readAllBytes());
-
-			response.close();
 			httpclient.close();
 
-			return resp;
+			return response;
 
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
@@ -168,15 +168,15 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			final HttpGet httpget = new HttpGet(url);
 			httpget.addHeader("Authorization", "Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
 
-			final CloseableHttpResponse response = httpclient.execute(httpget);
-
-			if (response.getCode() != 200) {
+			HttpEntity response = null;
+			try {
+				response = httpclient.execute(httpget, new EntityHttpCLientResponseHandler());
+			} catch (HttpResponseException e) {
 				log.warn("Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive - "
-						+ response.getReasonPhrase());
+						+ e.getMessage());
 				return null;
 			}
-
-			InputStream filein = response.getEntity().getContent();
+			InputStream filein = response.getContent();
 
 			File targetFile = File.createTempFile("K7Bot_Spotify_" + new Date().getTime(), "." + extension);
 			targetFile.deleteOnExit();
@@ -220,30 +220,26 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 		final HttpGet httpget = new HttpGet(url);
 		httpget.addHeader("Authorization", "Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
+		try {
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive - "
-						+ response.getReasonPhrase());
-				return null;
-			}
+			String response = null;
+			response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+			JsonElement elem = JsonParser.parseString(response);
 
-			response.close();
 			httpclient.close();
 
 			return elem.getAsJsonObject().get("cdnurl").getAsJsonArray().get(0).getAsString();
 
-		} catch (IOException | JsonSyntaxException | ParseException e) {
+		} catch (HttpResponseException e) {
+			log.warn("Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive - "
+					+ e.getMessage());
+			return null;
+		} catch (IOException | JsonSyntaxException e) {
 
 			log.error(e.getMessage(), e);
 
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
+			HttpUtilities.closeHttpClient(httpclient);
 		}
 
 		return null;
@@ -300,28 +296,23 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 		final HttpGet httpget = new HttpGet(url);
 		httpget.addHeader("Authorization", "Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
+		try {
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from spclient.wg.spotify.com - " + response.getReasonPhrase());
-				return null;
-			}
+			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+			JsonElement elem = JsonParser.parseString(response);
 
-			response.close();
 			httpclient.close();
 
 			return elem.getAsJsonObject().get("file").getAsJsonArray();
 
-		} catch (IOException | JsonSyntaxException | ParseException e) {
+		} catch (HttpResponseException e) {
+			log.warn("Invalid response from spclient.wg.spotify.com - " + e.getMessage());
+			return null;
+		} catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
 
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
+			HttpUtilities.closeHttpClient(httpclient);
 		}
 
 		return null;

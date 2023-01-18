@@ -13,16 +13,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +34,7 @@ import com.google.gson.JsonSyntaxException;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
+import de.k7bot.util.HttpUtilities;
 import de.k7bot.util.customapis.types.InternalAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -92,19 +92,12 @@ public class GourmettaInteractions implements InternalAPI {
 		try {
 
 			post.setEntity(entitybuild.build());
-			CloseableHttpResponse response = httpclient.execute(post);
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from bestellung-rest.gourmetta.de");
-				return;
-			}
+			final String response = httpclient.execute(post, new BasicHttpClientResponseHandler());
 
-			String content = EntityUtils.toString(response.getEntity());
-
-			response.close();
 			httpclient.close();
 
-			JsonElement elem = JsonParser.parseString(content);
+			JsonElement elem = JsonParser.parseString(response);
 
 			this.token = elem.getAsJsonObject().get("token").getAsString();
 
@@ -113,15 +106,12 @@ public class GourmettaInteractions implements InternalAPI {
 			this.userid = JsonParser.parseString(uidjson).getAsJsonObject().get("userUuid").getAsString();
 			this.apienabled = true;
 
-		} catch (IOException | ParseException e) {
+		} catch (HttpHostConnectException e1) {
+			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
+			HttpUtilities.closeHttpClient(httpclient);
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-
+			HttpUtilities.closeHttpClient(httpclient);
 		}
 	}
 
@@ -340,29 +330,21 @@ public class GourmettaInteractions implements InternalAPI {
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
 		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
+		try {
+			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from bestellung-rest.gourmetta.de");
-				return null;
-			}
+			JsonElement elem = JsonParser.parseString(response);
 
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
-
-			response.close();
 			httpclient.close();
 
 			return elem.getAsJsonObject().get("orderDays").getAsJsonArray();
 
-		} catch (IOException | JsonSyntaxException | ParseException e) {
+		} catch (HttpHostConnectException e1) {
+			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
+			HttpUtilities.closeHttpClient(httpclient);
+		} catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-
+			HttpUtilities.closeHttpClient(httpclient);
 		}
 
 		return null;
@@ -441,7 +423,8 @@ public class GourmettaInteractions implements InternalAPI {
 
 		OffsetDateTime cutime = OffsetDateTime.now();
 
-		if ((cutime.getHour() <= 14) || cutime.getDayOfWeek().getValue() == 6 || cutime.getDayOfWeek().getValue() == 5) {
+		if ((cutime.getHour() <= 14) || cutime.getDayOfWeek().getValue() == 6
+				|| cutime.getDayOfWeek().getValue() == 5) {
 			return cutime;
 		}
 
@@ -475,4 +458,9 @@ public class GourmettaInteractions implements InternalAPI {
 
 	}
 
+	@Override
+	public void restart() {
+		logout();
+		log.debug("restart requested");
+	}
 }

@@ -6,8 +6,8 @@ package de.k7bot.music.utilities;
 import java.io.IOException;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import com.google.gson.JsonArray;
@@ -66,7 +66,8 @@ public class SongJson {
 	 */
 	public boolean isNotnull() {
 
-		if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null) || (json.get("url") == null)) {
+		if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null)
+				|| (json.get("url") == null)) {
 			return false;
 		}
 		if (json.get("apiurl") == null) {
@@ -91,21 +92,11 @@ public class SongJson {
 		final CloseableHttpClient httpclient = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)) {
+		try {
 
-			if (response.getCode() == 200) {
-
-				response.close();
-				httpclient.close();
-
-				this.isDiscogsValidated = true;
-				return true;
-			}
-
-			response.close();
+			httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+			this.isDiscogsValidated = true;
 			httpclient.close();
-
-			this.isDiscogsValidated = false;
 			return false;
 
 		} catch (IOException e) {

@@ -11,7 +11,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.BotEqualizer;
 import de.k7bot.music.EqualizerPreset;
 import de.k7bot.music.utilities.MusicUtil;
@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
  * @author Klassenserver7b
  *
  */
-public class EqualizerSlashCommand implements SlashCommand {
+public class EqualizerSlashCommand implements TopLevelSlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {

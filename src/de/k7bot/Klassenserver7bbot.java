@@ -43,6 +43,7 @@ import de.k7bot.manage.SystemNotificationChannelManager;
 import de.k7bot.music.AudioPlayerUtil;
 import de.k7bot.music.utilities.gla.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
+import de.k7bot.music.utilities.spotify.SpotifyInteractions;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
@@ -88,6 +89,7 @@ public class Klassenserver7bbot {
 	private HypixelAPI hypixelApi;
 	private LyricsClient lyricsapi;
 	private GLAWrapper lyricsapiold;
+	private SpotifyInteractions spotifyinteractions;
 
 	private Long ownerId;
 	private JsonObject teacherslist;
@@ -218,11 +220,13 @@ public class Klassenserver7bbot {
 
 		}
 
-		this.cmdMgr = new CommandManager();
 		this.hypMgr = new HypixelCommandManager();
-		this.slashMgr = new SlashCommandManager();
+		this.spotifyinteractions = new SpotifyInteractions();
 
 		InitializeMusic(this.audioPlayerManager);
+
+		this.cmdMgr = new CommandManager();
+		this.slashMgr = new SlashCommandManager();
 	}
 
 	public void InitializeMusic(AudioPlayerManager manager) {
@@ -273,6 +277,10 @@ public class Klassenserver7bbot {
 
 	public void runLoop() {
 		this.loop = new LoopThread();
+	}
+
+	public void restartLoop() {
+		this.loop.restart();
 	}
 
 	public void stopLoop() {
@@ -416,5 +424,9 @@ public class Klassenserver7bbot {
 
 	public void setEventBlocking(boolean inshutdown) {
 		this.blockevents = inshutdown;
+	}
+
+	public SpotifyInteractions getSpotifyinteractions() {
+		return spotifyinteractions;
 	}
 }
