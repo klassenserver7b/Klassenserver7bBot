@@ -1,4 +1,4 @@
-package de.k7bot.music;
+package de.k7bot.music.lavaplayer;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;

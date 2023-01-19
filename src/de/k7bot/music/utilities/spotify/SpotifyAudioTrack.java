@@ -37,6 +37,7 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.util.EntityHttpCLientResponseHandler;
 import de.k7bot.util.HttpUtilities;
 import io.seruco.encoding.base62.Base62;
@@ -127,10 +128,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			EntityBuilder builder = EntityBuilder.create();
 
 			builder.setContentType(ContentType.DEFAULT_TEXT);
-			builder.setText("\b×+K\r\n" + "I\r\n"
-					+ "3\bÉÏÃøK¯ºWÌå7Äspotify\"ÉÏÃøK¯ºWÌå7Ä Ë)ìÈkêGP	È¥\f.Ïç}* ¿08ñÿÃ\bB÷*\r\n"
-					+ "spotify.comO-'ÙaYz|½*44hëRÀ(RÔ¯e(+s[Î»í=4»lâ|½mKÔãÒ?ÂKÛQ¦McÌ%¹+ÁÚÂn¶\"DËt\"¼5z8øÁÿ½ïF[ï²ÚÉ]\r\n"
-					+ "7É;ÙÊ Q7Ä<]&Ùy8£ï@G§¢LRoýø¸õâ¸rbÀÅÖI°Í¯Öy¨mf´¢dûá´e'«¨.è\bøóób*@SÆÿÿ`ä~ïªìs¥Q°CÊ3FXA°Í×oýSpoL4;GòvÉñ)pDÜ");
+			builder.setText("tu are une huanson");
 
 			httppost.setEntity(builder.build());
 

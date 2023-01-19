@@ -1,7 +1,6 @@
-package de.k7bot.music;
+package de.k7bot.music.lavaplayer;
 
 import java.awt.Color;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -33,7 +32,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a single track");
 		addTrackToqueue(queue, track);
 
-		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(LocalDateTime.now())
+		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(OffsetDateTime.now())
 				.setTitle("1 track added to queue");
 
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
@@ -117,7 +116,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	public void noMatches() {
 		Klassenserver7bbot.getInstance().getMainLogger()
 				.info("Bot AudioLoadResult couldn't find a matching audio track");
-		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
 				.setDescription("Couldn't find the Song you Searched for! :sob:");
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
@@ -125,7 +124,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	@Override
 	public void loadFailed(FriendlyException exception) {
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
-		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(LocalDateTime.now())
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
 				.setDescription(exception.getMessage());
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}

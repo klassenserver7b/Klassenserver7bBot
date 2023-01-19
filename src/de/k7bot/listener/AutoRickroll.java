@@ -4,9 +4,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.AudioLoadOption;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;

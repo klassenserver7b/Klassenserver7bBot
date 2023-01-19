@@ -19,11 +19,11 @@ import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.commands.types.TopLevelSlashCommand;
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.utilities.AudioPlayerUtil;
 import de.k7bot.music.utilities.MusicUtil;
-import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.SupportedPlayQueries;
@@ -53,63 +53,8 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		this.log = LoggerFactory.getLogger(this.getClass());
 
 		apm = new DefaultAudioPlayerManager();
-		apm.registerSourceManager(new SpotifyAudioSourceManager());
+		apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
 		AudioSourceManagers.registerRemoteSources(apm);
-		AudioSourceManagers.registerLocalSource(apm);
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
-
-	protected boolean tryLoad(String identifyer, AudioLoadResult ares, AudioPlayerManager apm) {
-		try {
-			apm.loadItem(identifyer, ares);
-			return true;
-		} catch (FriendlyException e) {
-			return false;
-		}
-	}
-
-	private String formatQuerry(String q) {
-
-		String url = q;
-
-		if (url.startsWith("lf: ")) {
-
-			url = url.substring(4);
-
-		} else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
-			url = "ytsearch: " + url;
-		}
-
-		return url;
-	}
-
-	protected void setVolume(AudioPlayer player, Long guildId) {
-
-		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId);
-
-		try {
-			if (set.next()) {
-				int volume = set.getInt("volume");
-				if (volume != 0) {
-					player.setVolume(volume);
-				} else {
-					LiteSQL.onUpdate("UPDATE musicutil SET volume = ? WHERE guildId = ?;",
-							AudioPlayerUtil.STANDARDVOLUME, guildId);
-					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
-				}
-			} else {
-				LiteSQL.onUpdate("INSERT INTO musicutil(volume, guildId) VALUES(?,?);", AudioPlayerUtil.STANDARDVOLUME,
-						guildId);
-				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-
 	}
 
 	@Override
@@ -133,26 +78,6 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 				event.getOption("url").getAsString(), controller);
 
 		hook.sendMessage("Successfully Loaded").queue();
-
-	}
-
-	/**
-	 *
-	 * @param querytype
-	 * @param channel
-	 * @param query
-	 * @param hook
-	 * @param apm
-	 * @param controller
-	 */
-	private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
-			MusicController controller) {
-
-		String suffix = querytype.getSearchSuffix();
-		String url = suffix + " " + query;
-		url = url.trim();
-
-		performItemLoad(url, controller, channel.getName());
 
 	}
 
@@ -185,33 +110,24 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 	}
 
-	public boolean performInternalChecks(Member m, AudioChannel vc, MusicController controller,
-			GenericMessageSendHandler sendHandler) {
+	/**
+	 *
+	 * @param querytype
+	 * @param channel
+	 * @param query
+	 * @param hook
+	 * @param apm
+	 * @param controller
+	 */
+	private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
+			MusicController controller) {
 
-		if (!MusicUtil.checkDefaultConditions(sendHandler, m)) {
-			return false;
-		}
+		String suffix = querytype.getSearchSuffix();
+		String url = suffix + " " + query;
+		url = url.trim();
 
-		AudioManager manager = vc.getGuild().getAudioManager();
+		performItemLoad(url, controller, channel.getName());
 
-		if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
-
-//				sendHandler.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
-//						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
-//						.setDescription(
-//								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
-//										+ Klassenserver7bbot.getInstance().getPrefixMgr()
-//												.getPrefix(vc.getGuild().getIdLong())
-//										+ "play` INSTEAD!")
-//						.build()).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-//
-//				return false;
-
-			manager.openAudioConnection(vc);
-
-		}
-
-		return true;
 	}
 
 	protected void performItemLoad(String url, MusicController controller, String vcname) {
@@ -225,6 +141,78 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		} catch (FriendlyException e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+
+	protected boolean tryLoad(String identifyer, AudioLoadResult ares, AudioPlayerManager apm) {
+		try {
+			apm.loadItem(identifyer, ares);
+			return true;
+		} catch (FriendlyException e) {
+			return false;
+		}
+	}
+
+	protected boolean performInternalChecks(Member m, AudioChannel vc, MusicController controller,
+			GenericMessageSendHandler sendHandler) {
+
+		if (!MusicUtil.checkDefaultConditions(sendHandler, m)) {
+			return false;
+		}
+
+		AudioManager manager = vc.getGuild().getAudioManager();
+
+		if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
+
+			manager.openAudioConnection(vc);
+
+		}
+
+		return true;
+	}
+
+	protected void setVolume(AudioPlayer player, Long guildId) {
+
+		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId);
+
+		try {
+			if (set.next()) {
+				int volume = set.getInt("volume");
+				if (volume != 0) {
+					player.setVolume(volume);
+				} else {
+					LiteSQL.onUpdate("UPDATE musicutil SET volume = ? WHERE guildId = ?;",
+							AudioPlayerUtil.STANDARDVOLUME, guildId);
+					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
+				}
+			} else {
+				LiteSQL.onUpdate("INSERT INTO musicutil(volume, guildId) VALUES(?,?);", AudioPlayerUtil.STANDARDVOLUME,
+						guildId);
+				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
+			}
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+
+	}
+
+	private String formatQuerry(String q) {
+
+		String url = q;
+
+		if (url.startsWith("lf: ")) {
+
+			url = url.substring(4);
+
+		} else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
+			url = "ytsearch: " + url;
+		}
+
+		return url;
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override

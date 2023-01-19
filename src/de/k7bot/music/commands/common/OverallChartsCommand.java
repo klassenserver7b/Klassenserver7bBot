@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.ChartList;
+import de.k7bot.music.utilities.ChartList;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;

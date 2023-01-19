@@ -9,8 +9,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.SongJson;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -56,7 +56,7 @@ public class TrackInfoCommand implements ServerCommand {
 		String title = tinfo.title;
 		String author = tinfo.author;
 
-		if (data.isDiscogsValidated()) {
+		if (data != null && data.isDiscogsValidated()) {
 			title = data.getTitle();
 			author = data.getAuthorString();
 		}

@@ -1,8 +1,9 @@
-package de.k7bot.music;
+package de.k7bot.music.utilities;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.lavaplayer.MusicController;
 
 public class AudioPlayerUtil {
 

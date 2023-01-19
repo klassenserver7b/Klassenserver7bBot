@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.TopLevelSlashCommand;
-import de.k7bot.music.BotEqualizer;
-import de.k7bot.music.EqualizerPreset;
+import de.k7bot.music.utilities.BotEqualizer;
+import de.k7bot.music.utilities.EqualizerPreset;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;

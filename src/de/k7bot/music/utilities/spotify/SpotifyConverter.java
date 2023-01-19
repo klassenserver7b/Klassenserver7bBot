@@ -30,7 +30,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.MusicUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;

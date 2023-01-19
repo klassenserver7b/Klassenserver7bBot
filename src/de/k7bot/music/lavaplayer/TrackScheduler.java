@@ -1,5 +1,5 @@
 
-package de.k7bot.music;
+package de.k7bot.music.lavaplayer;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
@@ -90,7 +91,12 @@ public class TrackScheduler extends AudioEventAdapter {
 			sekunden %= 60L;
 
 			String url = info.uri;
-			builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
+
+			if (!(track instanceof LocalAudioTrack)) {
+				builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
+			} else {
+				builder.addField("Name", author + " - " + title, false);
+			}
 			builder.addField("Länge: ",
 					info.isStream ? "LiveStream"
 							: (((stunden > 0L) ? (stunden + "h ") : "") + ((minuten > 0L) ? (minuten + "min ") : "")
