@@ -197,7 +197,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	 */
 	@Override
 	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-
 		return null;
 	}
 

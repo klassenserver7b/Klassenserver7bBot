@@ -56,7 +56,7 @@ public class TrackInfoCommand implements ServerCommand {
 		String title = tinfo.title;
 		String author = tinfo.author;
 
-		if (data.isDiscogsValidated()) {
+		if (data != null && data.isDiscogsValidated()) {
 			title = data.getTitle();
 			author = data.getAuthorString();
 		}

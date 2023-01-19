@@ -19,7 +19,6 @@ import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.AutoRickroll;
@@ -40,7 +39,6 @@ import de.k7bot.manage.PrefixManager;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.manage.SlashCommandManager;
 import de.k7bot.manage.SystemNotificationChannelManager;
-import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.music.utilities.AudioPlayerUtil;
 import de.k7bot.music.utilities.gla.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyInteractions;
@@ -232,20 +230,6 @@ public class Klassenserver7bbot {
 	public void InitializeMusic(AudioPlayerManager manager) {
 
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
-
-		manager.registerSourceManager(new SpotifyAudioSourceManager());
-
-//		manager.registerSourceManager(new YoutubeAudioSourceManager());
-//		manager.registerSourceManager(new LocalAudioSourceManager());
-//		manager.registerSourceManager(new HttpAudioSourceManager());
-//		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-//		manager.registerSourceManager(new BandcampAudioSourceManager());
-//		manager.registerSourceManager(new VimeoAudioSourceManager());
-//		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-//		manager.registerSourceManager(new BeamAudioSourceManager());
-
-		AudioSourceManagers.registerRemoteSources(manager);
-		AudioSourceManagers.registerLocalSource(manager);
 
 	}
 
