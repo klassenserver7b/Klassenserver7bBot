@@ -1,7 +1,7 @@
 /**
  *
  */
-package de.k7bot.music.utilities.spotify;
+package de.k7bot.music.asms;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -27,6 +27,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.asms.loader.DefaultSpotifyPlaylistLoader;
+import de.k7bot.music.asms.loader.DefaultSpotifyTrackLoader;
+import de.k7bot.music.asms.loader.SpotifyPlaylistLoader;
+import de.k7bot.music.asms.loader.SpotifyTrackLoader;
+import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
+import de.k7bot.music.utilities.spotify.SpotifyInteractions;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 
 /**

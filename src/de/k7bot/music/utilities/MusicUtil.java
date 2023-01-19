@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;

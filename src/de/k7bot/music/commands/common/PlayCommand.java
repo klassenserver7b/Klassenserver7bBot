@@ -3,9 +3,9 @@
  */
 package de.k7bot.music.commands.common;
 
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.MusicController;
 import de.k7bot.music.commands.generic.GenericPlayCommand;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.AudioLoadOption;
 
 /**

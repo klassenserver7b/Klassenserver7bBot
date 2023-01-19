@@ -6,7 +6,7 @@ package de.k7bot.music.commands.common;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;

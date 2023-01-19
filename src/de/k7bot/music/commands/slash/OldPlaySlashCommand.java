@@ -18,12 +18,12 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.TopLevelSlashCommand;
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
-import de.k7bot.music.TrackScheduler;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
+import de.k7bot.music.lavaplayer.TrackScheduler;
 import de.k7bot.music.utilities.AudioLoadOption;
+import de.k7bot.music.utilities.AudioPlayerUtil;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.PredefinedMusicPlaylists;
 import de.k7bot.sql.LiteSQL;

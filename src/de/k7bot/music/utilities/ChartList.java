@@ -1,4 +1,4 @@
-package de.k7bot.music;
+package de.k7bot.music.utilities;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,8 +10,6 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.k7bot.music.utilities.SongDataUtils;
-import de.k7bot.music.utilities.SongJson;
 import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 

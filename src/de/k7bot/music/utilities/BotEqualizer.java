@@ -1,7 +1,7 @@
 /**
  *
  */
-package de.k7bot.music;
+package de.k7bot.music.utilities;
 
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;

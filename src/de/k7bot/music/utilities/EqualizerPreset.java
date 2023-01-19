@@ -1,4 +1,4 @@
-package de.k7bot.music;
+package de.k7bot.music.utilities;
 
 import javax.annotation.Nonnull;
 

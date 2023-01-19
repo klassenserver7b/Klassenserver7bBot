@@ -37,6 +37,7 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.util.EntityHttpCLientResponseHandler;
 import de.k7bot.util.HttpUtilities;
 import io.seruco.encoding.base62.Base62;

@@ -17,7 +17,7 @@ import java.util.TreeMap;
 import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.commands.types.TopLevelSlashCommand;
-import de.k7bot.music.ChartList;
+import de.k7bot.music.utilities.ChartList;
 import de.k7bot.util.Cell;
 import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;

@@ -1,4 +1,4 @@
-package de.k7bot.music;
+package de.k7bot.music.lavaplayer;
 
 import java.awt.Color;
 import java.time.LocalDateTime;

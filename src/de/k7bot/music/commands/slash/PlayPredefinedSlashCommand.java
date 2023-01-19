@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.SubSlashCommand;
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.MusicController;
 import de.k7bot.music.commands.generic.GenericPlayCommand;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.AudioLoadOption;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.PredefinedMusicPlaylists;
