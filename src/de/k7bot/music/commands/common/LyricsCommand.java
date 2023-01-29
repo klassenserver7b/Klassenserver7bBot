@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
@@ -41,7 +42,8 @@ public class LyricsCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m) || !MusicUtil.isPlayingSong(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)
+				|| !MusicUtil.isPlayingSong(channel, m)) {
 			return;
 		}
 
@@ -51,7 +53,14 @@ public class LyricsCommand implements ServerCommand {
 				.getController(vc.getGuild().getIdLong());
 		Queue queue = controller.getQueue();
 		SongJson data = queue.getCurrentSongData();
-		String query = data.getTitle() + " " + data.getAuthorString();
+
+		String query;
+		if (data != null) {
+			query = data.getTitle() + " " + data.getAuthorString();
+		} else {
+			AudioTrackInfo info = queue.getController().getPlayer().getPlayingTrack().getInfo();
+			query = info.author + " - " + info.title;
+		}
 
 		log.info("Searching Lyrics Querry: " + data.getTitle() + " - " + data.getAuthorString());
 

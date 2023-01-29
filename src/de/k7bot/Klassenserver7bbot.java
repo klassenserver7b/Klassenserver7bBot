@@ -45,8 +45,8 @@ import de.k7bot.music.utilities.spotify.SpotifyInteractions;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
+import de.k7bot.threads.ConsoleReadThread;
 import de.k7bot.threads.LoopThread;
-import de.k7bot.threads.ShutdownThread;
 import de.k7bot.util.customapis.InternalAPIManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -81,7 +81,7 @@ public class Klassenserver7bbot {
 	private AudioPlayerUtil playerutil;
 
 	private LoopThread loop;
-	private ShutdownThread shutdownT;
+	private ConsoleReadThread shutdownT;
 
 	private GitHub github;
 	private HypixelAPI hypixelApi;
@@ -256,7 +256,7 @@ public class Klassenserver7bbot {
 	}
 
 	private void runShutdown() {
-		this.shutdownT = new ShutdownThread();
+		this.shutdownT = new ConsoleReadThread();
 	}
 
 	public void runLoop() {
@@ -398,7 +398,7 @@ public class Klassenserver7bbot {
 		return this.prefixMgr;
 	}
 
-	public ShutdownThread getShutdownThread() {
+	public ConsoleReadThread getShutdownThread() {
 		return this.shutdownT;
 	}
 

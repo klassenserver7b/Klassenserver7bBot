@@ -115,7 +115,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	@Override
 	public void noMatches() {
 		Klassenserver7bbot.getInstance().getMainLogger()
-				.info("Bot AudioLoadResult couldn't find a matching audio track");
+				.info("Bot AudioLoadResult couldn't find a matching audio track (uri=" + uri + ")");
 		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
 				.setDescription("Couldn't find the Song you Searched for! :sob:");
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
