@@ -75,7 +75,7 @@ public class ConsoleReadThread implements Runnable {
 
 		String[] commandargs = s.split(" ");
 
-		switch (commandargs[0]) {
+		switch (commandargs[0].toLowerCase()) {
 		case "exit" -> {
 
 			Klassenserver7bbot.getInstance().setEventBlocking(true);
@@ -86,11 +86,11 @@ public class ConsoleReadThread implements Runnable {
 			return;
 		}
 
-		case "enableCommand" -> {
+		case "enablecommand" -> {
 			changeCommandState(true, commandargs[1]);
 		}
 
-		case "disableCommand" -> {
+		case "disablecommand" -> {
 			changeCommandState(false, commandargs[1]);
 		}
 

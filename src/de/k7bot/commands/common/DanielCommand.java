@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -31,7 +33,6 @@ public class DanielCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-
 		return null;
 	}
 
@@ -54,9 +55,7 @@ public class DanielCommand implements ServerCommand {
 			y = Integer.valueOf(writtenMessage[2]);
 			zahl = Integer.valueOf(writtenMessage[3]);
 		} catch (Exception e) {
-			channel.sendMessage(
-					"Schreibe deinen customized Zahlenbereich in folgendem Format in diesen Kanal: \"min max\"\n")
-					.queue();
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "daniel <min> <max> [guess]", m);
 			return;
 		}
 

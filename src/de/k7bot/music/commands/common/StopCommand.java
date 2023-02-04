@@ -18,7 +18,7 @@ public class StopCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		String help = "Stopt den aktuellen Track und der Bot verlässt den VoiceChannel.";
+		String help = "Stoppt den aktuellen Track und der Bot verlässt den VoiceChannel.";
 		return help;
 	}
 
