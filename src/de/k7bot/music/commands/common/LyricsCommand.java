@@ -59,7 +59,7 @@ public class LyricsCommand implements ServerCommand {
 			query = data.getTitle() + " " + data.getAuthorString();
 		} else {
 			AudioTrackInfo info = queue.getController().getPlayer().getPlayingTrack().getInfo();
-			query = info.author + " - " + info.title;
+			query = info.title + " " + info.author;
 		}
 
 		log.info("Searching Lyrics Querry: " + data.getTitle() + " - " + data.getAuthorString());
@@ -147,7 +147,9 @@ public class LyricsCommand implements ServerCommand {
 
 		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
-		return lapi.search(query);
+		GLACustomSongSearch songsearch = lapi.search(query);
+
+		return songsearch;
 
 	}
 

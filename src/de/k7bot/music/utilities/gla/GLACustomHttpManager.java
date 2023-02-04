@@ -1,20 +1,16 @@
 package de.k7bot.music.utilities.gla;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.json.JSONObject;
-
-import de.k7bot.util.EntityHttpCLientResponseHandler;
 
 public class GLACustomHttpManager {
 
@@ -33,13 +29,11 @@ public class GLACustomHttpManager {
 
 		try {
 
-			HttpEntity response = httpclient.execute(httpget, new EntityHttpCLientResponseHandler());
-
-			String respstr = EntityUtils.toString(response, StandardCharsets.UTF_8);
+			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
 			httpclient.close();
 
-			return new JSONObject(respstr);
+			return new JSONObject(response);
 
 		} catch (HttpResponseException e) {
 			throw e;
