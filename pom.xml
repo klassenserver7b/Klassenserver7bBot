@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>klassenserver7bbot</artifactId>
-	<version>1.16.4-RC.0</version>
+	<version>1.16.5-RC.1</version>
 	<packaging>jar</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
-			<version>3.13.4</version>
+			<version>3.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
@@ -124,7 +124,7 @@
 		<dependency>
 			<groupId>se.michaelthelin.spotify</groupId>
 			<artifactId>spotify-web-api-java</artifactId>
-			<version>7.2.2</version>
+			<version>7.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vdurmont</groupId>

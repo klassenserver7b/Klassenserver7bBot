@@ -1,7 +1,7 @@
-ASM für Ordner und lokale m3u
+ASM für lokale m3u
 
 Spotify Stuff
-Invalid Hex codes - warum 00 am Anfang
+-> Invalid Hex codes - warum 00 am Anfang
 
 Equalizer für Music -> Mehr Profile
 
@@ -10,13 +10,9 @@ Mehr Interactions auf SlashCommands und Buttons umstellen
 bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
 -> Tabelle fixen
 
-Mehrere player per guild (music)
-
 YT-Api
 
 Language per Guild - German and English Version
-
-GitHub-API
 
 Generell:
 

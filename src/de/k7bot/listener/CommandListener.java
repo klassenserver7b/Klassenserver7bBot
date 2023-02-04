@@ -100,11 +100,16 @@ public class CommandListener extends ListenerAdapter {
 				return;
 			}
 
-			if (!Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
-					event.getMessage())) {
+			int status = Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
+					event.getMessage());
 
+			switch (status) {
+			case 0 -> {
+				sendDisabledCommand(channel, args[0]);
+			}
+			case -1 -> {
 				sendUnknownCommand(channel, args[0]);
-
+			}
 			}
 
 			inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild());
@@ -113,6 +118,19 @@ public class CommandListener extends ListenerAdapter {
 
 		}
 
+	}
+
+	private void sendDisabledCommand(TextChannel chan, String command) {
+
+		String shortcommand = command;
+
+		if (shortcommand.length() >= 100) {
+			shortcommand = shortcommand.substring(0, 99);
+			shortcommand += "...";
+		}
+
+		chan.sendMessage("`Deaktivierter Command - '" + shortcommand + "'` -> Currently disabled by the Bot-devs!")
+				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
 	private void sendUnknownCommand(TextChannel chan, String command) {
@@ -126,7 +144,7 @@ public class CommandListener extends ListenerAdapter {
 			shortcommand += "...";
 		}
 
-		chan.sendMessage("`unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
+		chan.sendMessage("`Unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
 				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 

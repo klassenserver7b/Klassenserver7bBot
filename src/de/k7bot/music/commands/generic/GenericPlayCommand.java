@@ -20,6 +20,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.music.lavaplayer.AudioLoadResult;
 import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.AudioPlayerUtil;
@@ -53,6 +54,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		this.log = LoggerFactory.getLogger(this.getClass());
 
 		apm = new DefaultAudioPlayerManager();
+		apm.registerSourceManager(new SpotifyAudioSourceManager());
 		apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
 		AudioSourceManagers.registerRemoteSources(apm);
 	}

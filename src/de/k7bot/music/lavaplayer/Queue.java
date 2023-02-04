@@ -107,9 +107,15 @@ public class Queue {
 			if (track instanceof YoutubeAudioTrack) {
 				SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
 				this.currentSong = data;
-
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-						data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+				if (this.currentSong != null) {
+					LiteSQL.onUpdate(
+							"INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+							data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+				} else {
+					LiteSQL.onUpdate(
+							"INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+							track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
+				}
 			} else {
 
 				this.currentSong = null;

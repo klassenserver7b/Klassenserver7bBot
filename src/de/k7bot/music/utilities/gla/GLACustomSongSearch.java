@@ -21,6 +21,7 @@ public class GLACustomSongSearch {
 													 * As suggested by User DimitrisStaratzis, for consistent encoding
 													 * on all devices
 													 */);
+		System.out.println(query);
 		String url = "https://genius.com/api/search/song?page=1&q=" + query;
 		request(url);
 	}

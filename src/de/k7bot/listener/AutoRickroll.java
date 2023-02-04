@@ -36,6 +36,7 @@ public class AutoRickroll extends ListenerAdapter {
 				manager.openAudioConnection(vc);
 				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
 				player.setPaused(false);
+				queue.next(null);
 			} else {
 
 				if (!queue.emptyQueueList()) {

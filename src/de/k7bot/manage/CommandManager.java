@@ -1,7 +1,9 @@
 
 package de.k7bot.manage;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
@@ -70,8 +72,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  *
  */
 public class CommandManager {
-	public LinkedHashMap<String, ServerCommand> commands;
-	public Logger commandlog;
+	public final LinkedHashMap<String, ServerCommand> commands;
+	public final LinkedHashMap<String, ServerCommand> activeCommands;
+	public final Logger commandlog;
 
 	/**
 	 *
@@ -82,6 +85,7 @@ public class CommandManager {
 	 */
 	public CommandManager() {
 		this.commands = new LinkedHashMap<>();
+		this.activeCommands = new LinkedHashMap<>();
 		this.commandlog = LoggerFactory.getLogger("Commandlog");
 
 		// Allgemein
@@ -163,6 +167,8 @@ public class CommandManager {
 			this.commands.put("test", new TestCommand());
 			this.commands.put("vtest", new VTestCommand());
 		}
+
+		this.activeCommands.putAll(commands);
 	}
 
 	/**
@@ -173,9 +179,9 @@ public class CommandManager {
 	 * @param message
 	 * @return
 	 */
-	public boolean perform(String command, Member m, TextChannel channel, Message message) {
+	public int perform(String command, Member m, TextChannel channel, Message message) {
 		ServerCommand cmd;
-		if ((cmd = this.commands.get(command.toLowerCase())) != null) {
+		if ((cmd = this.activeCommands.get(command.toLowerCase())) != null) {
 
 			message.delete().queue();
 
@@ -185,9 +191,116 @@ public class CommandManager {
 
 			cmd.performCommand(m, channel, message);
 
-			return true;
+			return 1;
+		} else if (this.commands.get(command.toLowerCase()) != null) {
+			return 0;
 		}
-		return false;
+		return -1;
+	}
+
+	public boolean disableCommand(String command) {
+
+		if (!activeCommands.containsKey(command)) {
+			return false;
+		}
+		activeCommands.remove(command);
+		return true;
+
+	}
+
+	public boolean disableCommand(ServerCommand command) {
+
+		boolean removed = false;
+		ArrayList<String> rem = new ArrayList<>();
+
+		for (Entry<String, ServerCommand> e : activeCommands.entrySet()) {
+			if (e.getValue().getClass().isInstance(command)) {
+				rem.add(e.getKey());
+				removed = true;
+			}
+		}
+		for (String s : rem) {
+			activeCommands.remove(s);
+		}
+
+		return removed;
+	}
+
+	public boolean disableCommand(Class<?> command) {
+
+		boolean removed = false;
+		ArrayList<String> rem = new ArrayList<>();
+
+		for (Entry<String, ServerCommand> e : activeCommands.entrySet()) {
+			if (e.getValue().getClass().isInstance(command)) {
+				rem.add(e.getKey());
+				removed = true;
+			}
+		}
+		for (String s : rem) {
+			activeCommands.remove(s);
+		}
+
+		return removed;
+	}
+
+	public boolean enableCommand(String command) {
+
+		if (activeCommands.containsKey(command)) {
+			return false;
+		}
+		if (!commands.containsKey(command)) {
+			return false;
+		}
+		activeCommands.put(command, commands.get(command));
+		return true;
+
+	}
+
+	public boolean enableCommand(ServerCommand command) {
+
+		boolean added = false;
+		ArrayList<Entry<String, ServerCommand>> add = new ArrayList<>();
+
+		for (Entry<String, ServerCommand> e : commands.entrySet()) {
+			if (e.getValue().getClass().isInstance(command)) {
+				add.add(e);
+			}
+		}
+
+		for (Entry<String, ServerCommand> e : add) {
+
+			if (!activeCommands.containsKey(e.getKey())) {
+				activeCommands.put(e.getKey(), e.getValue());
+				added = true;
+			}
+
+		}
+
+		return added;
+	}
+
+	public boolean enableCommand(Class<?> command) {
+
+		boolean added = false;
+		ArrayList<Entry<String, ServerCommand>> add = new ArrayList<>();
+
+		for (Entry<String, ServerCommand> e : commands.entrySet()) {
+			if (e.getValue().getClass().isInstance(command)) {
+				add.add(e);
+			}
+		}
+
+		for (Entry<String, ServerCommand> e : add) {
+
+			if (!activeCommands.containsKey(e.getKey())) {
+				activeCommands.put(e.getKey(), e.getValue());
+				added = true;
+			}
+
+		}
+
+		return added;
 	}
 
 	public String getNearestCommand(String str) {

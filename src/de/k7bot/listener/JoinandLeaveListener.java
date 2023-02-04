@@ -39,6 +39,9 @@ public class JoinandLeaveListener extends ListenerAdapter {
 		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
 
 		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
+		if (def == null) {
+			def = event.getGuild().getDefaultChannel().asTextChannel();
+		}
 
 		User usr = event.getUser();
 		EmbedBuilder embbuild = new EmbedBuilder();
