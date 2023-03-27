@@ -36,8 +36,8 @@ public class Queue {
 		this.log = LoggerFactory.getLogger(this.getClass());
 	}
 
-	public boolean emptyQueueList() {
-		return this.queuelist.size() == 0;
+	public boolean isemptyQueueList() {
+		return this.queuelist.isEmpty();
 	}
 
 	public boolean next(AudioTrack currentTrack) {

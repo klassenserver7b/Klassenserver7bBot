@@ -53,6 +53,6 @@ public class JoinandLeaveListener extends ListenerAdapter {
 		embbuild.setDescription(usr.getAsMention() + " leaved");
 
 		system.sendMessageEmbeds(embbuild.build()).queue();
-		def.sendMessage("Schade das du gehst " + usr.getAsMention()).queue();
+		def.sendMessage("Schade, dass du gehst " + usr.getAsMention()).queue();
 	}
 }

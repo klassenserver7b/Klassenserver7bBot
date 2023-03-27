@@ -43,7 +43,7 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 
 			if (event.getChannel().getType() != ChannelType.TEXT) {
 				hook.sendMessageEmbeds(new EmbedBuilder().setDescription("Can't do this in this channel!")
-						.setTimestamp(OffsetDateTime.now()).setColor(Color.decode("#ff0000")).build()).queue();
+						.setTimestamp(OffsetDateTime.now()).setColor(Color.red).build()).queue();
 				return;
 			}
 

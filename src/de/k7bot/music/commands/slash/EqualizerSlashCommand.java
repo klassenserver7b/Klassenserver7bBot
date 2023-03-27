@@ -58,7 +58,7 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
 			}
 		}
 
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000")).setFooter("Provided by @K7Bot")
+		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setFooter("Provided by @K7Bot")
 				.setTimestamp(OffsetDateTime.now())
 				.setDescription(
 						"Something went wrong! Please try again and contact the bot support if this keeps happening.")

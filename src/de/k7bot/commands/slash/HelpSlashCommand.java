@@ -48,12 +48,12 @@ public class HelpSlashCommand implements TopLevelSlashCommand {
 
 		if (ch == null) {
 
-			MessageEmbed errorembed = new EmbedBuilder().setColor(Color.decode("#ff0000")).setDescription(
+			MessageEmbed errorembed = new EmbedBuilder().setColor(Color.red).setDescription(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
 
 			hook.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-
+			return;
 		}
 
 		ch.sendMessageEmbeds(embed).queue();

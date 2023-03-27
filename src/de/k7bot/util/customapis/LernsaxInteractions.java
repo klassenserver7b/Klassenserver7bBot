@@ -109,7 +109,6 @@ public class LernsaxInteractions implements InternalAPI {
 	 * {@link LernsaxInteractions#sendLernsaxEmbeds(List)}
 	 *
 	 * @return A List of all new LearningPlans (empty if there are none)
-	 * @throws SQLException
 	 */
 	private List<Message> checkForLernplanMessages() {
 

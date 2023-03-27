@@ -27,7 +27,7 @@ public class HA3MembersCommand implements TopLevelSlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		if (!isHA3Member(event.getUser())) {
-			event.replyEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000")).setFooter("Handeled by @K7Bot")
+			event.replyEmbeds(new EmbedBuilder().setColor(Color.red).setFooter("Handeled by @K7Bot")
 					.setDescription("Sorry, you are not allowed to use this command!").build()).queue();
 			return;
 		}

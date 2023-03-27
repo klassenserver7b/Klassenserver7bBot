@@ -71,10 +71,13 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		}
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		if (!performInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
+			return;
+		}
+
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
-
-		performInternalChecks(m, vc, controller, new GenericMessageSendHandler(hook));
 
 		playQueriedItem(SupportedPlayQueries.fromId(event.getOption("target").getAsInt()), vc,
 				event.getOption("url").getAsString(), controller);
@@ -94,10 +97,12 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		}
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		if (!performInternalChecks(m, vc, new GenericMessageSendHandler(channel))) {
+			return;
+		}
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
-
-		performInternalChecks(m, vc, controller, new GenericMessageSendHandler(channel));
 
 		StringBuilder strBuilder = new StringBuilder();
 
@@ -154,8 +159,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		}
 	}
 
-	protected boolean performInternalChecks(Member m, AudioChannel vc, MusicController controller,
-			GenericMessageSendHandler sendHandler) {
+	protected boolean performInternalChecks(Member m, AudioChannel vc, GenericMessageSendHandler sendHandler) {
 
 		if (!MusicUtil.checkDefaultConditions(sendHandler, m)) {
 			return false;
@@ -163,10 +167,8 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 		AudioManager manager = vc.getGuild().getAudioManager();
 
-		if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
-
+		if (!manager.isConnected()) {
 			manager.openAudioConnection(vc);
-
 		}
 
 		return true;

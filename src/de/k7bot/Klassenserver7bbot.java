@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.AutoRickroll;
@@ -35,10 +36,13 @@ import de.k7bot.listener.Role_InviteListener;
 import de.k7bot.listener.SlashCommandListener;
 import de.k7bot.listener.VoiceListener;
 import de.k7bot.manage.CommandManager;
+import de.k7bot.manage.InternalAPIManager;
 import de.k7bot.manage.PrefixManager;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.manage.SlashCommandManager;
 import de.k7bot.manage.SystemNotificationChannelManager;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.music.utilities.AudioPlayerUtil;
 import de.k7bot.music.utilities.gla.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyInteractions;
@@ -47,7 +51,6 @@ import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
 import de.k7bot.threads.ConsoleReadThread;
 import de.k7bot.threads.LoopThread;
-import de.k7bot.util.customapis.InternalAPIManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -230,6 +233,9 @@ public class Klassenserver7bbot {
 	public void InitializeMusic(AudioPlayerManager manager) {
 
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
+		manager.registerSourceManager(new SpotifyAudioSourceManager());
+		manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
+		AudioSourceManagers.registerRemoteSources(manager);
 
 	}
 

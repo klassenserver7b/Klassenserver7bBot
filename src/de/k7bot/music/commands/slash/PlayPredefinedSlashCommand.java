@@ -55,10 +55,12 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 		}
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		if (!super.performInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
+			return;
+		}
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
-
-		super.performInternalChecks(m, vc, controller, new GenericMessageSendHandler(hook));
 
 		OptionMapping predef = event.getOption("playlist");
 		String url = PredefinedMusicPlaylists.fromId(predef.getAsInt()).getUrl();

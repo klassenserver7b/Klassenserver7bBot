@@ -55,7 +55,7 @@ public class MusicUtil {
 
 	/**
 	 *
-	 * @param channel
+	 * @param hook
 	 */
 	public static void updateChannel(InteractionHook hook) {
 

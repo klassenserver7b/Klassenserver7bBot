@@ -89,14 +89,14 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
 		} catch (NumberFormatException e) {
 
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 					.setDescription("Error while removing subscription!").build()).queue();
 
 		}
 	}
 
 	private void sendInvalidIdEmbed(InteractionHook hook) {
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 				.setDescription("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
 	}
 

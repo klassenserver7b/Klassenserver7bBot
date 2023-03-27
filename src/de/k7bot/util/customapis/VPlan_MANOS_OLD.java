@@ -39,16 +39,16 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 /**
  *
  * @author felix
- * @Deprecated use {@link de.k7bot.util.customapis.VplanNEW_XML VplanNEW_XML
+ * @deprecated use {@link de.k7bot.util.customapis.Stundenplan24Vplan VplanNEW_XML
  *             instead}
  */
 @DeprecatedSince(value = "1.14.0")
-public class VPlan_main {
+public class VPlan_MANOS_OLD {
 
 	private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
 	private String vplanpw;
 
-	public VPlan_main(String pw) {
+	public VPlan_MANOS_OLD(String pw) {
 		vplanpw = pw;
 	}
 
@@ -87,7 +87,7 @@ public class VPlan_main {
 	}
 
 	/**
-	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 * See {@link VPlan_MANOS_OLD}
 	 */
 	@DeprecatedSince(value = "1.14.0")
 	private MessageCreateData getVplanMessage() {
@@ -258,7 +258,7 @@ public class VPlan_main {
 	}
 
 	/**
-	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 * See {@link VPlan_MANOS_OLD}
 	 */
 	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> finalplancheck(JsonObject plan) {
@@ -323,7 +323,7 @@ public class VPlan_main {
 	}
 
 	/**
-	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 * See {@link VPlan_MANOS_OLD}
 	 */
 	@DeprecatedSince(value = "1.14.0")
 	private boolean synchronizePlanDB(JsonObject plan) {
@@ -367,7 +367,7 @@ public class VPlan_main {
 	}
 
 	/**
-	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 * See {@link VPlan_MANOS_OLD}
 	 */
 	@DeprecatedSince(value = "1.14.0")
 	private List<JsonObject> getyourC(JsonObject obj) {
@@ -392,7 +392,7 @@ public class VPlan_main {
 	}
 
 	/**
-	 * See {@link de.k7bot.timed.Vplan_main Vplan_main}
+	 * See {@link VPlan_MANOS_OLD}
 	 */
 	@DeprecatedSince(value = "1.14.0")
 	private JsonObject getPlan() {

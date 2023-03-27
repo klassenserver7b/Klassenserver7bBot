@@ -37,6 +37,7 @@ import de.k7bot.music.commands.common.ClearQueueCommand;
 import de.k7bot.music.commands.common.EqualizerCommand;
 import de.k7bot.music.commands.common.LoopCommand;
 import de.k7bot.music.commands.common.LyricsCommand;
+import de.k7bot.music.commands.common.NightcoreCommand;
 import de.k7bot.music.commands.common.OverallChartsCommand;
 import de.k7bot.music.commands.common.PauseCommand;
 import de.k7bot.music.commands.common.PlayCommand;
@@ -77,11 +78,7 @@ public class CommandManager {
 	public final Logger commandlog;
 
 	/**
-	 *
-	 * @param hypenable <br>
-	 *                  Should the HypixelAPI be enabled
-	 * @param gitenable <br>
-	 *                  Should the GitHubAPI be enabled
+	 * 
 	 */
 	public CommandManager() {
 		this.commands = new LinkedHashMap<>();
@@ -144,6 +141,8 @@ public class CommandManager {
 		this.commands.put("lyrics", new LyricsCommand());
 		this.commands.put("charts", new OverallChartsCommand());
 		this.commands.put("eq", new EqualizerCommand());
+		this.commands.put("nightcore", new NightcoreCommand());
+		this.commands.put("nc", new NightcoreCommand());
 
 		// Private
 		this.commands.put("uvolume", new UebersteuerungAdmin());

@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -53,16 +54,16 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author felix
  * @since 1.14.0
  */
-public class VplanNEW_XML implements InternalAPI {
+public class Stundenplan24Vplan implements InternalAPI {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private List<String> klassen;
 
-	public VplanNEW_XML() {
+	public Stundenplan24Vplan() {
 		klassen = new ArrayList<>();
 	}
 
-	public VplanNEW_XML(String... klassen) {
+	public Stundenplan24Vplan(String... klassen) {
 		this.klassen = new ArrayList<>();
 
 		for (String klasse : klassen) {
@@ -125,12 +126,11 @@ public class VplanNEW_XML implements InternalAPI {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param force
 	 * @param klasse
-	 * @param chan
-	 *
 	 * @since 1.14.0
+	 * @return
 	 */
 	private MessageCreateData getVplanMessage(boolean force, String klasse) {
 
@@ -146,6 +146,11 @@ public class VplanNEW_XML implements InternalAPI {
 		if (sendApproved) {
 
 			String info = "";
+
+			if (doc == null) {
+				return null;
+			}
+
 			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 			}
@@ -530,10 +535,10 @@ public class VplanNEW_XML implements InternalAPI {
 			HttpUtilities.closeHttpClient(httpclient);
 			return response;
 
-		} catch (HttpHostConnectException e1) {
+		} catch (HttpHostConnectException | HttpResponseException e1) {
 			log.warn("Vplan Connection failed!" + e1.getMessage());
 		} catch (IOException e) {
-			log.error("Vplan IO Exception - please check your connection");
+			log.error("Vplan IO Exception - please check your connection and settings");
 			log.error(e.getMessage(), e);
 		}
 

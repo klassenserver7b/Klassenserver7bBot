@@ -126,11 +126,10 @@ public class HelpCommand implements ServerCommand {
 	}
 
 	/**
-	 *
-	 * @param category
+	 * 
+	 * @param catstr
+	 * @param guild
 	 * @return
-	 *
-	 *
 	 */
 	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
@@ -151,7 +150,7 @@ public class HelpCommand implements ServerCommand {
 
 		} catch (IllegalArgumentException e) {
 
-			ret.setColor(Color.decode("#ff0000"));
+			ret.setColor(Color.red);
 			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
 
 			return ret.build();

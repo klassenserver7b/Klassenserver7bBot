@@ -80,7 +80,7 @@ public class WarnCommand implements ServerCommand {
 
 			}
 
-			if (system.getIdLong() != channel.getIdLong()) {
+			if (system == null || system.getIdLong() != channel.getIdLong()) {
 
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 

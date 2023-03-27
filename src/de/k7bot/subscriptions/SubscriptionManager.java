@@ -66,7 +66,7 @@ public class SubscriptionManager {
 	 *                         Subscription
 	 *
 	 * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
-	 *                         <code>TYPE.getIdLong()<code>.
+	 *                         <code>TYPE.getIdLong()</code>.
 	 */
 
 	public boolean createSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
@@ -137,7 +137,7 @@ public class SubscriptionManager {
 					Long deliveryid = set.getLong("targetDcId");
 					Long subid = set.getLong("subscriptionId");
 
-					if (typeid != null && targetid != null && deliveryid != null && subid != null) {
+					if (typeid != 0 && targetid != 0 && deliveryid != 0 && subid != 0) {
 
 						Subscription s = new Subscription(SubscriptionDeliveryType.fromId(typeid),
 								SubscriptionTarget.fromId(targetid), deliveryid, subid);

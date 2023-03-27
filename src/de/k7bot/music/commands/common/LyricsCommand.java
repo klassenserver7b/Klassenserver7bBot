@@ -62,7 +62,7 @@ public class LyricsCommand implements ServerCommand {
 			query = info.title + " " + info.author;
 		}
 
-		log.info("Searching Lyrics Querry: " + data.getTitle() + " - " + data.getAuthorString());
+		log.info("Searching Lyrics Querry: " + query);
 
 		try {
 
@@ -75,7 +75,7 @@ public class LyricsCommand implements ServerCommand {
 
 			LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
 
-			Lyrics lyrics = lapi.getLyrics(data.getTitle() + " " + data.getAuthorString()).get();
+			Lyrics lyrics = lapi.getLyrics(query).get();
 
 			if (lyrics != null) {
 				sendJLyricsEmbed(lyrics, channel, m);

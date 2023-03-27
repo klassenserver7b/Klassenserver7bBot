@@ -116,7 +116,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	public void noMatches() {
 		Klassenserver7bbot.getInstance().getMainLogger()
 				.info("Bot AudioLoadResult couldn't find a matching audio track (uri=" + uri + ")");
-		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 				.setDescription("Couldn't find the Song you Searched for! :sob:");
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}
@@ -124,7 +124,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 	@Override
 	public void loadFailed(FriendlyException exception) {
 		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
-		EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#ff0000")).setTimestamp(OffsetDateTime.now())
+		EmbedBuilder builder = new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 				.setDescription(exception.getMessage());
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
 	}

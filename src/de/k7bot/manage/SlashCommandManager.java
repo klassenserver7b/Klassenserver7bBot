@@ -11,6 +11,7 @@ import de.k7bot.commands.slash.HA3MembersCommand;
 import de.k7bot.commands.slash.HelpSlashCommand;
 import de.k7bot.commands.slash.PingSlashCommand;
 import de.k7bot.commands.slash.Shutdownslashcommand;
+import de.k7bot.commands.slash.VotingCommand;
 import de.k7bot.commands.slash.WhitelistSlashCommand;
 import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.commands.slash.ChartsSlashCommand;
@@ -47,6 +48,7 @@ public class SlashCommandManager {
 		this.commands.put("equalizer", new EqualizerSlashCommand());
 		this.commands.put("whitelistadd", new WhitelistSlashCommand());
 		this.commands.put("ha3members", new HA3MembersCommand());
+		this.commands.put("voting", new VotingCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();

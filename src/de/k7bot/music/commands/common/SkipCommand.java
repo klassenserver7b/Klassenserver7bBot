@@ -1,5 +1,6 @@
 package de.k7bot.music.commands.common;
 
+import java.io.File;
 import java.time.OffsetDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -11,6 +12,7 @@ import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.MusicUtil;
+import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -44,6 +46,10 @@ public class SkipCommand implements ServerCommand {
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		Queue queue = controller.getQueue();
 		AudioTrack lastTrack = controller.getPlayer().getPlayingTrack();
+
+		if (lastTrack instanceof SpotifyAudioTrack) {
+			new File(lastTrack.getIdentifier()).delete();
+		}
 		onskip = true;
 
 		if (args.length == 1) {

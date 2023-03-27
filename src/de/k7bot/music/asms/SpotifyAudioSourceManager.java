@@ -11,6 +11,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -61,7 +63,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	 * @param spotifyInteract
 	 */
 	public SpotifyAudioSourceManager(ExtendedHttpConfigurable combinedHttpConfiguration,
-			SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader, SpotifyInteractions spotifyInteract) {
+			SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
+			@Nonnull SpotifyInteractions spotifyInteract) {
 
 		this.combinedHttpConfiguration = combinedHttpConfiguration;
 		this.playlistLoader = playlistLoader;
@@ -152,7 +155,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
 	/**
 	 *
-	 * @param trackid
+	 * @param playlistid
 	 * @return
 	 */
 	private AudioItem loadPlaylist(String playlistid) {

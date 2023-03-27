@@ -41,7 +41,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
 		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 					.setTimestamp(OffsetDateTime.now())
 					.setDescription(
 							"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
@@ -65,7 +65,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 			} catch (Exception e) {
 
 				log.error(e.getMessage(), e);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 						.setTimestamp(OffsetDateTime.now())
 						.setDescription(
 								"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
@@ -89,7 +89,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 				}
 				default:
 					delivery = SubscriptionDeliveryType.UNKNOWN;
-					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 							.setTimestamp(OffsetDateTime.now()).setDescription("Can't create subscription in "
 									+ union.getType() + "!\nPlease use a Text or News Channel")
 							.build()).queue();

@@ -66,7 +66,6 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Login for the Gourmetta Rest-API based on the credentials given
 	 *
-	 * @return If the Login was successful
 	 */
 	public void login() {
 

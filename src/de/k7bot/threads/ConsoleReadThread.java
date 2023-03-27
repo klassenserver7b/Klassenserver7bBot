@@ -52,7 +52,6 @@ public class ConsoleReadThread implements Runnable {
 				if (System.in.available() == 0 || !sysinr.ready()) {
 					continue;
 				}
-
 				if ((line = reader.readLine()) != null) {
 					interpretConsoleContent(line);
 				}

@@ -3,7 +3,7 @@ package de.k7bot.subscriptions.types;
 import javax.annotation.Nonnull;
 
 import de.k7bot.util.customapis.LernsaxInteractions;
-import de.k7bot.util.customapis.VplanNEW_XML;
+import de.k7bot.util.customapis.Stundenplan24Vplan;
 
 /**
  *
@@ -13,7 +13,8 @@ import de.k7bot.util.customapis.VplanNEW_XML;
 public enum SubscriptionTarget {
 
 	/**
-	 * The Type for {@link VplanNEW_XML} Subscription, only when Vplan API enabled.
+	 * The Type for {@link Stundenplan24Vplan} Subscription, only when Vplan API
+	 * enabled.
 	 */
 	VPLAN(1, true, true),
 
@@ -38,6 +39,11 @@ public enum SubscriptionTarget {
 	 * The Type for News about Hypixel Syblock
 	 */
 	SKYBLOCKNEWS(5, true, false),
+
+	/**
+	 * The Type for the dvb departure plan
+	 */
+	DVB(6, true, false),
 
 	/**
 	 * Unknown {@link SubscriptionTarget} type. Should never happen and would only

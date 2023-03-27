@@ -71,15 +71,9 @@ public class ChartList {
 
 	/**
 	 *
-	 * @param guild    <br>
-	 *                 The specific Id of the {@link Guild} for which you want the
-	 *                 charts.
-	 * @param time     <br>
-	 *                 The {@link java.lang.Long amount} of (days/weeks/months/etc.)
-	 *                 you want the charts for.
-	 * @param timeunit <br>
-	 *                 The specification which {@link ChronoUnit Unit} is used for
-	 *                 time.
+	 * @param guildid <br>
+	 *                The specific Id of the {@link Guild} for which you want the
+	 *                charts.
 	 * @return A {@link HashMap HashHashMap} containing the selected Charts.
 	 *         "songname - author" Strings are the {@link java.lang.String keys} and
 	 *         the "timesplayed" are the {@link java.lang.Long values}.

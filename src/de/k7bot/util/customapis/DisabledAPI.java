@@ -26,7 +26,7 @@ public class DisabledAPI implements ServerCommand {
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		channel.sendMessageEmbeds(new EmbedBuilder().setTitle("Disabled Command")
-				.setFooter("requested by @" + m.getEffectiveName()).setColor(Color.decode("#ff0000"))
+				.setFooter("requested by @" + m.getEffectiveName()).setColor(Color.red)
 				.setTimestamp(LocalDateTime.now())
 				.setDescription(
 						"We are sorry but you try to use an command which is currently disabled!\nPlease contact the Bot-Admin if you think that is an issue.")

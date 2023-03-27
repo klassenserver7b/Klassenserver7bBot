@@ -72,7 +72,7 @@ public class OldAddQueueTrackCommand implements ServerCommand {
 			if (!manager.isConnected() || controller.getPlayer().getPlayingTrack() == null) {
 
 				channel.sendMessageEmbeds(new EmbedBuilder().setFooter("requested by @" + m.getEffectiveName())
-						.setTitle("Invalid Command Usage").setColor(Color.decode("#ff0000"))
+						.setTitle("Invalid Command Usage").setColor(Color.red)
 						.setDescription(
 								"The Bot isn't connected to a voicechannel / isn't playing a Song!\nPLEASE USE `"
 										+ Klassenserver7bbot.getInstance().getPrefixMgr()
