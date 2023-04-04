@@ -1,4 +1,6 @@
 ASM für lokale m3u
+Equalizer Command und SPeedchange zu AudioEffects Command mit Subcommands umbauen
+Fix Restart nahc Connection lost
 
 Spotify Stuff
 -> Invalid Hex codes - warum 00 am Anfang
