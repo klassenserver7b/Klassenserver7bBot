@@ -65,7 +65,7 @@ public class LoopThread implements Runnable {
 
 				Klassenserver7bbot instance = Klassenserver7bbot.getInstance();
 
-				instance.getInternalAPIManager().checkForUpdates();
+				instance.getLoopedEventManager().checkForUpdates();
 				// vpold.VplanNotify("10b");
 
 				if ((!this.hasstarted)) {
@@ -88,7 +88,7 @@ public class LoopThread implements Runnable {
 		t.interrupt();
 		t = new Thread(this, "Loop");
 		t.start();
-		Klassenserver7bbot.getInstance().getInternalAPIManager().restart();
+		Klassenserver7bbot.getInstance().getLoopedEventManager().restartAll();
 		log.info("restarted");
 	}
 

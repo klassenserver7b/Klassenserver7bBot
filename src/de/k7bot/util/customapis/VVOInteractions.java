@@ -13,30 +13,32 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
-public class VVOInteractions implements InternalAPI {
+public class VVOInteractions implements LoopedEvent {
 
 	private final Logger log;
 
@@ -45,27 +47,29 @@ public class VVOInteractions implements InternalAPI {
 	}
 
 	@Override
-	public void checkforUpdates() {
+	public int checkforUpdates() {
 
 		JsonElement plan = downloadPlan(LocalDateTime.now());
 		if (plan == null || plan.isJsonNull()) {
-			return;
+			return InternalStatusCodes.FAILURE;
 		}
 
 		List<String> lines = getAllFieldsFromData(plan.getAsJsonObject());
 
 		if (lines == null || lines.isEmpty()) {
-			return;
+			return InternalStatusCodes.FAILURE;
 		}
 
 		MessageCreateData data = getMessage(getEmbed(lines));
 
 		if (data == null) {
-			return;
+			return InternalStatusCodes.FAILURE;
 		}
 
 		Klassenserver7bbot.getInstance().getSubscriptionManager()
 				.provideSubscriptionNotification(SubscriptionTarget.DVB, data);
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
@@ -182,7 +186,6 @@ public class VVOInteractions implements InternalAPI {
 	}
 
 	public JsonElement downloadPlan(LocalDateTime time) {
-		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost request = new HttpPost("https://webapi.vvo-online.de/dm");
 		JsonObject requestData = new JsonObject();
 		requestData.addProperty("format", "json");
@@ -196,26 +199,46 @@ public class VVOInteractions implements InternalAPI {
 		entityBuilder.setContentType(ContentType.APPLICATION_JSON);
 		entityBuilder.setText(requestData.toString());
 		request.setEntity(entityBuilder.build());
-		try {
-			CloseableHttpResponse response = httpClient.execute(request);
-			String content = EntityUtils.toString(response.getEntity());
-			response.close();
-			httpClient.close();
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+
+			String content = httpClient.execute(request, new BasicHttpClientResponseHandler());
 			return JsonParser.parseString(content);
 
-		} catch (IOException e) {
+		} catch (IOException | JsonParseException e) {
 			log.error(e.getMessage(), e);
 			return null;
 		}
 	}
 
 	@Override
-	public void restart() {
+	public boolean restart() {
 		// Nothing to do here
+		return true;
 	}
 
 	@Override
 	public void shutdown() {
 		// Nothing to do here
+	}
+
+	@Override
+	public boolean isAvailable() {
+
+		HttpGet request = new HttpGet("https://webapi.vvo-online.de/");
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+
+			httpClient.execute(request, new BasicHttpClientResponseHandler());
+
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "vvo";
 	}
 }

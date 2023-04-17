@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,6 +28,7 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -42,9 +44,9 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import de.k7bot.util.Cell;
-import de.k7bot.util.HttpUtilities;
+import de.k7bot.util.InternalStatusCodes;
 import de.k7bot.util.TableMessage;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -54,7 +56,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author felix
  * @since 1.14.0
  */
-public class Stundenplan24Vplan implements InternalAPI {
+public class Stundenplan24Vplan implements LoopedEvent {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private List<String> klassen;
@@ -99,14 +101,11 @@ public class Stundenplan24Vplan implements InternalAPI {
 	 *
 	 */
 	@Override
-	public void checkforUpdates() {
-
+	public int checkforUpdates() {
 		for (String klasse : klassen) {
-
 			VplanNotify(klasse);
-
 		}
-
+		return InternalStatusCodes.SUCCESS;
 	}
 
 	/**
@@ -115,14 +114,17 @@ public class Stundenplan24Vplan implements InternalAPI {
 	 *
 	 * @since 1.15.0
 	 */
-	public void VplanNotify(String klasse) {
+	public boolean VplanNotify(String klasse) {
 
 		MessageCreateData d = getVplanMessage(false, klasse);
 
-		if (d != null) {
-			Klassenserver7bbot.getInstance().getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+		if (d == null) {
+			return false;
 		}
+
+		Klassenserver7bbot.getInstance().getSubscriptionManager()
+				.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+		return true;
 	}
 
 	/**
@@ -136,6 +138,7 @@ public class Stundenplan24Vplan implements InternalAPI {
 
 		OffsetDateTime d = checkdate();
 		Document doc = read(d);
+
 		Element classPlan = getyourClass(doc, klasse);
 		boolean sendApproved = true;
 
@@ -485,7 +488,7 @@ public class Stundenplan24Vplan implements InternalAPI {
 	 * @return
 	 * @since 1.14.0
 	 */
-	private Document read(OffsetDateTime date) {
+	private Document read(@Nonnull OffsetDateTime date) {
 		if (date == null) {
 			log.error("DocumentReadError - date = null caused by\n", new NullPointerException());
 			return null;
@@ -532,7 +535,7 @@ public class Stundenplan24Vplan implements InternalAPI {
 					+ "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 			return response;
 
 		} catch (HttpHostConnectException | HttpResponseException e1) {
@@ -555,8 +558,20 @@ public class Stundenplan24Vplan implements InternalAPI {
 	}
 
 	@Override
-	public void restart() {
+	public boolean restart() {
 		log.debug("restart requested");
+		return true;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "vplan";
 	}
 
 }

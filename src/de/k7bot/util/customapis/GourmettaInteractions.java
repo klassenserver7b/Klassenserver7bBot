@@ -22,6 +22,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +35,8 @@ import com.google.gson.JsonSyntaxException;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.HttpUtilities;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -45,7 +46,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author Klassenserver7b
  *
  */
-public class GourmettaInteractions implements InternalAPI {
+public class GourmettaInteractions implements LoopedEvent {
 
 	String token;
 	String userid;
@@ -107,10 +108,10 @@ public class GourmettaInteractions implements InternalAPI {
 
 		} catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 		}
 	}
 
@@ -127,11 +128,11 @@ public class GourmettaInteractions implements InternalAPI {
 	 * Checks if there is a new Plan to provide and provides it
 	 */
 	@Override
-	public void checkforUpdates() {
+	public int checkforUpdates() {
 
 		login();
 		if (!isApiEnabled()) {
-			return;
+			return InternalStatusCodes.SUCCESS;
 		}
 
 		log.debug("Gourmetta Check");
@@ -159,10 +160,11 @@ public class GourmettaInteractions implements InternalAPI {
 				}
 
 			} else {
+
 				MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
 
 				if (data == null) {
-					return;
+					return InternalStatusCodes.SUCCESS;
 				}
 
 				providePlanMessage(data);
@@ -172,10 +174,15 @@ public class GourmettaInteractions implements InternalAPI {
 
 		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
-			return;
+			return InternalStatusCodes.FAILURE;
+		} catch (IllegalArgumentException e) {
+			log.debug(e.getMessage(), e);
+			return InternalStatusCodes.FAILURE;
 		}
 
 		logout();
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
@@ -190,9 +197,14 @@ public class GourmettaInteractions implements InternalAPI {
 	 * @return The {@link MessageCreateData} which can be used in
 	 *         {@link GourmettaInteractions#providePlanMessage(MessageCreateData)}
 	 */
-	private MessageCreateData buildMessage(JsonArray stripedDayMeals, OffsetDateTime provideDay) {
+	private MessageCreateData buildMessage(JsonArray stripedDayMeals, OffsetDateTime provideDay)
+			throws IllegalArgumentException {
 
-		if (stripedDayMeals == null || stripedDayMeals.isEmpty()) {
+		if (stripedDayMeals == null) {
+			throw new IllegalArgumentException();
+		}
+
+		if (stripedDayMeals.isEmpty()) {
 			return null;
 		}
 
@@ -245,7 +257,7 @@ public class GourmettaInteractions implements InternalAPI {
 	 *
 	 * @return The stripped meals as a {@link JsonArray}
 	 */
-	private JsonArray getStripedDayMeals() {
+	private JsonArray getStripedDayMeals() throws IllegalStateException {
 
 		if (!isApiEnabled()) {
 			return null;
@@ -253,7 +265,11 @@ public class GourmettaInteractions implements InternalAPI {
 
 		JsonArray meals = getMealsforDayofWeek(DayOfWeek.of(getNextDay().getDayOfWeek().getValue()));
 
-		if (meals == null || meals.isEmpty()) {
+		if (meals == null) {
+			throw new IllegalStateException();
+		}
+
+		if (meals.isEmpty()) {
 			return null;
 		}
 
@@ -299,7 +315,7 @@ public class GourmettaInteractions implements InternalAPI {
 		JsonArray days = getWeekPlan();
 
 		if ((days == null) || (day.getValue() >= days.size())) {
-			return null;
+			return new JsonArray();
 		}
 
 		JsonObject jsonday = days.get(day.getValue() - 1).getAsJsonObject();
@@ -340,10 +356,10 @@ public class GourmettaInteractions implements InternalAPI {
 
 		} catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 		} catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 		}
 
 		return null;
@@ -458,8 +474,19 @@ public class GourmettaInteractions implements InternalAPI {
 	}
 
 	@Override
-	public void restart() {
+	public boolean restart() {
 		logout();
 		log.debug("restart requested");
+		return true;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		return getWeekPlan() != null;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "gourmetta";
 	}
 }

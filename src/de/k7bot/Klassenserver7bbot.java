@@ -36,7 +36,7 @@ import de.k7bot.listener.Role_InviteListener;
 import de.k7bot.listener.SlashCommandListener;
 import de.k7bot.listener.VoiceListener;
 import de.k7bot.manage.CommandManager;
-import de.k7bot.manage.InternalAPIManager;
+import de.k7bot.manage.LoopedEventManager;
 import de.k7bot.manage.PrefixManager;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.manage.SlashCommandManager;
@@ -78,7 +78,7 @@ public class Klassenserver7bbot {
 	private HypixelCommandManager hypMgr;
 
 	private PropertiesManager propMgr;
-	private InternalAPIManager internalApiMgr;
+	private LoopedEventManager loopedEventMgr;
 
 	private AudioPlayerManager audioPlayerManager;
 	private AudioPlayerUtil playerutil;
@@ -150,7 +150,7 @@ public class Klassenserver7bbot {
 
 		propMgr.checkAPIProps();
 		initializeObjects();
-		internalApiMgr.initializeApis();
+		loopedEventMgr.initializeDefaultEvents();
 
 		return true;
 	}
@@ -194,7 +194,7 @@ public class Klassenserver7bbot {
 		this.prefixMgr = new PrefixManager();
 
 		this.subMgr = new SubscriptionManager();
-		this.internalApiMgr = new InternalAPIManager();
+		this.loopedEventMgr = new LoopedEventManager();
 
 		this.syschannels = new SystemNotificationChannelManager();
 
@@ -392,8 +392,8 @@ public class Klassenserver7bbot {
 		return this.propMgr;
 	}
 
-	public InternalAPIManager getInternalAPIManager() {
-		return this.internalApiMgr;
+	public LoopedEventManager getLoopedEventManager() {
+		return this.loopedEventMgr;
 	}
 
 	public JsonObject getTeacherList() {

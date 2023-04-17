@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>klassenserver7bbot</artifactId>
-	<version>1.16.6-RC.0</version>
+	<version>1.17.0-RC.0</version>
 	<packaging>jar</packaging>
 	<name>Klassenserver7bbot</name>
 	<description>My Discord Bot</description>
@@ -160,8 +160,7 @@
 			<groupId>
 				org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
-			<version>
-				5.2.1</version>
+			<version>5.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.KevinPriv</groupId>

@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
@@ -28,7 +29,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
  * @author Klassenserver7b
  *
  */
-public class GitHubAPI implements InternalAPI {
+public class GitHubAPI implements LoopedEvent {
 
 	private final GitHub gh;
 	private final Logger log;
@@ -41,12 +42,16 @@ public class GitHubAPI implements InternalAPI {
 	}
 
 	@Override
-	public void checkforUpdates() {
+	public int checkforUpdates() {
 
 		List<String> newcommits = getNewCommits();
 
-		if (newcommits == null || newcommits.isEmpty()) {
-			return;
+		if (newcommits == null) {
+			return InternalStatusCodes.FAILURE;
+		}
+
+		if (newcommits.isEmpty()) {
+			return InternalStatusCodes.SUCCESS;
 		}
 
 		for (String s : newcommits) {
@@ -72,6 +77,8 @@ public class GitHubAPI implements InternalAPI {
 					.provideSubscriptionNotification(SubscriptionTarget.BOT_NEWS, messb.build());
 
 		}
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
@@ -107,13 +114,13 @@ public class GitHubAPI implements InternalAPI {
 		}
 
 		if (commitl.isEmpty()) {
-			return null;
+			return List.of();
 		}
 
 		String commitid = commitl.get(0).getSHA1();
 
 		if (commitid.equalsIgnoreCase(dbid)) {
-			return null;
+			return List.of();
 		}
 
 		try {
@@ -150,9 +157,28 @@ public class GitHubAPI implements InternalAPI {
 	}
 
 	@Override
-	public void restart() {
+	public boolean restart() {
 		log.debug("restart requested");
 		gh.refreshCache();
+
+		return true;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		try {
+			gh.checkApiUrlValidity();
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "github";
 	}
 
 }

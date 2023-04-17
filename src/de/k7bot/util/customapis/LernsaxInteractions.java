@@ -14,7 +14,8 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.WebWeaverException;
 import de.konsl.webweaverapi.model.auth.Credentials;
@@ -36,7 +37,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author Klassenserver7b
  *
  */
-public class LernsaxInteractions implements InternalAPI {
+public class LernsaxInteractions implements LoopedEvent {
 	WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	private int ecount = 0;
@@ -44,7 +45,7 @@ public class LernsaxInteractions implements InternalAPI {
 	/**
 	 * Used to connect to the LernsaxAPI via the credentials given in the configfile
 	 */
-	public void connect() {
+	public boolean connect() {
 
 		PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
 
@@ -53,11 +54,16 @@ public class LernsaxInteractions implements InternalAPI {
 				propMgr.getProperty("lsaxappid"));
 
 		try {
+
 			client.login(cred);
+
 		} catch (Exception e) {
+			// TODO replace Exception
 			log.error(e.getMessage(), e);
+			return false;
 		}
 
+		return true;
 	}
 
 	/**
@@ -66,13 +72,24 @@ public class LernsaxInteractions implements InternalAPI {
 	 * @param lsaxemail     The email of your Lernsax account
 	 * @param token         The token for this application
 	 * @param applicationID The Id of this application
+	 * 
+	 * @return if the connect was successful
 	 */
-	public void connect(String lsaxemail, String token, String applicationID) {
+	public boolean connect(String lsaxemail, String token, String applicationID) {
 
 		this.client = new WebWeaverClient();
 		Credentials cred = new Credentials(lsaxemail, token, applicationID);
 
-		client.login(cred);
+		try {
+
+			client.login(cred);
+
+		} catch (Exception e) {
+			// TODO replace Exception
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -88,7 +105,7 @@ public class LernsaxInteractions implements InternalAPI {
 	 *
 	 */
 	@Override
-	public void checkforUpdates() {
+	public int checkforUpdates() {
 
 		if (client == null || ecount >= 15) {
 			ecount = 0;
@@ -97,9 +114,15 @@ public class LernsaxInteractions implements InternalAPI {
 
 		List<Message> messages = checkForLernplanMessages();
 
+		if (messages == null) {
+			return InternalStatusCodes.FAILURE;
+		}
+
 		if (!messages.isEmpty()) {
 			sendLernsaxEmbeds(messages);
 		}
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
@@ -124,6 +147,7 @@ public class LernsaxInteractions implements InternalAPI {
 			}
 		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
+			return null;
 		}
 
 		if (currentMessageID == null) {
@@ -135,6 +159,7 @@ public class LernsaxInteractions implements InternalAPI {
 						messages.get(messages.size() - 1).getId());
 			} catch (WebWeaverException e) {
 				log.error(e.getMessage(), e);
+				return null;
 			}
 
 		} else {
@@ -152,13 +177,16 @@ public class LernsaxInteractions implements InternalAPI {
 				if (e.getMessage().equalsIgnoreCase("null")) {
 					log.warn("Lernsax API request failed");
 					ecount++;
+					return null;
 				} else {
 					log.error(e.getMessage(), e);
 					ecount++;
+					return null;
 				}
 			} catch (NullPointerException e) {
 				log.warn("Lernsax API request failed");
 				ecount++;
+				return null;
 			}
 		}
 
@@ -231,10 +259,20 @@ public class LernsaxInteractions implements InternalAPI {
 	}
 
 	@Override
-	public void restart() {
+	public boolean restart() {
 		log.debug("restart requested");
 		disconnect();
-		connect();
+		return connect();
+	}
+
+	@Override
+	public boolean isAvailable() {
+		return connect();
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "lernsax";
 	}
 
 }
