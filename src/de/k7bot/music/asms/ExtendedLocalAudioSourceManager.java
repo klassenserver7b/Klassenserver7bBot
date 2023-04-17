@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerDescriptor;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerHints;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalSeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
@@ -105,12 +107,18 @@ public class ExtendedLocalAudioSourceManager extends LocalAudioSourceManager imp
 
 	@Override
 	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-		// Nothing to do here!
+		encodeTrackFactory(((LocalAudioTrack) track).getContainerTrackFactory(), output);
 
 	}
 
 	@Override
 	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+		MediaContainerDescriptor containerTrackFactory = decodeTrackFactory(input);
+
+		if (containerTrackFactory != null) {
+			return new LocalAudioTrack(trackInfo, containerTrackFactory, this);
+		}
+
 		return null;
 	}
 

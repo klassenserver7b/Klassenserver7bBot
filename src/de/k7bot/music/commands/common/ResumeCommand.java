@@ -34,11 +34,10 @@ public class ResumeCommand implements ServerCommand {
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
-
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
+
 		AudioPlayer player = controller.getPlayer();
 		MusicUtil.updateChannel(channel);
 		if (player.isPaused()) {
