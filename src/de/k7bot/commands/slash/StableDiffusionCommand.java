@@ -54,7 +54,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 	private final Logger log;
 
 	private final HashMap<User, Long> limits;
-	private static final List<Long> allowedUsers = new ArrayList<>();;
+	private static final List<Long> allowedUsers = new ArrayList<>();
 
 	/**
 	 * 

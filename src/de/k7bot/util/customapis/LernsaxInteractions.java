@@ -1,7 +1,9 @@
 package de.k7bot.util.customapis;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -57,8 +59,7 @@ public class LernsaxInteractions implements LoopedEvent {
 
 			client.login(cred);
 
-		} catch (Exception e) {
-			// TODO replace Exception
+		} catch (IOException | NoSuchAlgorithmException | WebWeaverException e) {
 			log.error(e.getMessage(), e);
 			return false;
 		}
@@ -84,8 +85,7 @@ public class LernsaxInteractions implements LoopedEvent {
 
 			client.login(cred);
 
-		} catch (Exception e) {
-			// TODO replace Exception
+		} catch (IOException | NoSuchAlgorithmException | WebWeaverException e) {
 			return false;
 		}
 
@@ -97,7 +97,11 @@ public class LernsaxInteractions implements LoopedEvent {
 	 * Disconnects this client from the API
 	 */
 	public void disconnect() {
-		client.logout();
+		try {
+			client.logout();
+		} catch (IOException | WebWeaverException e) {
+			log.error(e.getMessage(), e);
+		}
 		client = null;
 	}
 
@@ -157,7 +161,7 @@ public class LernsaxInteractions implements LoopedEvent {
 
 				LiteSQL.onUpdate("INSERT INTO lernsaxinteractions(LernplanId) VALUES(?);",
 						messages.get(messages.size() - 1).getId());
-			} catch (WebWeaverException e) {
+			} catch (WebWeaverException | IOException e) {
 				log.error(e.getMessage(), e);
 				return null;
 			}
@@ -183,7 +187,7 @@ public class LernsaxInteractions implements LoopedEvent {
 					ecount++;
 					return null;
 				}
-			} catch (NullPointerException e) {
+			} catch (NullPointerException | IOException e) {
 				log.warn("Lernsax API request failed");
 				ecount++;
 				return null;

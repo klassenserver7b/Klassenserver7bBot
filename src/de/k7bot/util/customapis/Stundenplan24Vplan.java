@@ -565,7 +565,6 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 	@Override
 	public boolean isAvailable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
