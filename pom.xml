@@ -168,7 +168,7 @@
 		<dependency>
 			<groupId>com.github.jagrosh</groupId>
 			<artifactId>JLyrics</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>01cf4ee007</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
