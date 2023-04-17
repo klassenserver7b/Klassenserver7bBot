@@ -32,7 +32,6 @@ public class SpotifyInteractions {
 
 	/**
 	 *
-	 * @param prop
 	 * @return
 	 */
 	public boolean initialize() {

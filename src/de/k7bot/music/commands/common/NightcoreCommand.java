@@ -1,0 +1,50 @@
+/**
+ * 
+ */
+package de.k7bot.music.commands.common;
+
+import java.util.Collections;
+
+import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+
+import de.k7bot.HelpCategories;
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.music.lavaplayer.MusicController;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+
+/**
+ * 
+ * @author Felix
+ *
+ */
+public class NightcoreCommand implements ServerCommand {
+
+	@Override
+	public String gethelp() {
+		return null;
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
+	}
+
+	@Override
+	public void performCommand(Member m, TextChannel channel, Message message) {
+
+		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+				.getController(channel.getGuild().getIdLong());
+		AudioPlayer player = controller.getPlayer();
+
+		player.setFilterFactory((track, format, output) -> {
+			TimescalePcmAudioFilter timescale = new TimescalePcmAudioFilter(output, format.channelCount,
+					format.sampleRate);
+			timescale.setRate(1.25);
+			return Collections.singletonList(timescale);
+		});
+	}
+}

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.TopLevelSlashCommand;
-import de.k7bot.music.utilities.BotEqualizer;
+import de.k7bot.music.utilities.BotAudioEffectsManager;
 import de.k7bot.music.utilities.EqualizerPreset;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.util.GenericMessageSendHandler;
@@ -43,7 +43,7 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
 			return;
 		}
 
-		BotEqualizer eq = BotEqualizer.getEQ(Klassenserver7bbot.getInstance().getPlayerUtil()
+		BotAudioEffectsManager eq = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(event.getGuild().getIdLong()).getPlayer());
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
@@ -58,7 +58,7 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
 			}
 		}
 
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000")).setFooter("Provided by @K7Bot")
+		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setFooter("Provided by @K7Bot")
 				.setTimestamp(OffsetDateTime.now())
 				.setDescription(
 						"Something went wrong! Please try again and contact the bot support if this keeps happening.")

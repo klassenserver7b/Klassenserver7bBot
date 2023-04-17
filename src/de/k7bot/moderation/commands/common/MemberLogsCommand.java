@@ -13,77 +13,75 @@ import org.slf4j.LoggerFactory;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.moderation.commands.generic.GenericUserLogsCommand;
 import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.GenericMessageSendHandler;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class MemberLogsCommand implements ServerCommand {
+public class MemberLogsCommand extends GenericUserLogsCommand implements ServerCommand {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (m.hasPermission(Permission.KICK_MEMBERS)) {
-			List<Member> memb = message.getMentions().getMembers();
-			if (!memb.isEmpty()) {
-				List<Role> roles = memb.get(0).getRoles();
-				ArrayList<Long> roleid = new ArrayList<>();
-				for (Role r : roles) {
-					roleid.add(r.getIdLong());
-				}
-				long guildid = channel.getGuild().getIdLong();
-				long membid = memb.get(0).getIdLong();
-				ResultSet set = LiteSQL.onQuery(
-						"SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = AND memberId = ?",
-						guildid, membid);
+		if (!checkPermissions(m, channel)) {
+			return;
+		}
 
-				try {
-					ArrayList<String> requName = new ArrayList<>();
-					ArrayList<String> action = new ArrayList<>();
-					ArrayList<String> reason = new ArrayList<>();
-					ArrayList<String> date = new ArrayList<>();
+		List<Member> memb;
+		try {
+			memb = getMemberFromMessage(channel, message, m);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
 
-					for (int i = 1; i < 51 && set.next(); i++) {
-						requName.add(set.getString("requesterName"));
-						action.add(set.getString("action"));
-						reason.add(set.getString("reason"));
-						date.add(set.getString("date"));
-					}
+		List<Role> roles = memb.get(0).getRoles();
+		ArrayList<Long> roleid = new ArrayList<>();
+		for (Role r : roles) {
+			roleid.add(r.getIdLong());
+		}
+		long guildid = channel.getGuild().getIdLong();
+		long membid = memb.get(0).getIdLong();
+		ResultSet set = LiteSQL.onQuery(
+				"SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = AND memberId = ?", guildid,
+				membid);
 
-					if (!requName.isEmpty()) {
-						for (int j = 0; j < requName.size(); j++) {
-							EmbedBuilder embed = new EmbedBuilder();
-							embed.setTitle("Memberlogs for @" + memb.get(0).getEffectiveName());
-							embed.setColor(13565967);
-							embed.setTimestamp(OffsetDateTime.now());
-							embed.setThumbnail(memb.get(0).getUser().getEffectiveAvatarUrl());
-							embed.setFooter("requested by @" + m.getEffectiveName());
-							embed.setDescription("user: @" + memb.get(0).getEffectiveName() + "\n" + "action: "
-									+ action.get(j) + "\n" + "moderator: " + requName.get(j) + "\n" + "reason: "
-									+ reason.get(j) + "\n" + "date: " + date.get(j));
-							channel.sendMessageEmbeds(embed.build()).queue();
-						}
-					} else {
+		try {
+			ArrayList<String> requName = new ArrayList<>();
+			ArrayList<String> action = new ArrayList<>();
+			ArrayList<String> reason = new ArrayList<>();
+			ArrayList<String> date = new ArrayList<>();
 
-						channel.sendMessage("This user hasn't a log!").complete().delete().queueAfter(20L,
-								TimeUnit.SECONDS);
-					}
-				} catch (SQLException e) {
-					log.error(e.getMessage(), e);
+			for (int i = 1; i < 51 && set.next(); i++) {
+				requName.add(set.getString("requesterName"));
+				action.add(set.getString("action"));
+				reason.add(set.getString("reason"));
+				date.add(set.getString("date"));
+			}
+
+			if (!requName.isEmpty()) {
+				for (int j = 0; j < requName.size(); j++) {
+					EmbedBuilder embed = new EmbedBuilder();
+					embed.setTitle("Memberlogs for @" + memb.get(0).getEffectiveName());
+					embed.setColor(13565967);
+					embed.setTimestamp(OffsetDateTime.now());
+					embed.setThumbnail(memb.get(0).getUser().getEffectiveAvatarUrl());
+					embed.setFooter("requested by @" + m.getEffectiveName());
+					embed.setDescription("user: @" + memb.get(0).getEffectiveName() + "\n" + "action: " + action.get(j)
+							+ "\n" + "moderator: " + requName.get(j) + "\n" + "reason: " + reason.get(j) + "\n"
+							+ "date: " + date.get(j));
+					channel.sendMessageEmbeds(embed.build()).queue();
 				}
 			} else {
-				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "memberlogs [@user]", m);
+
+				channel.sendMessage("This user hasn't a log!").complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 			}
-		} else {
-			PermissionError.onPermissionError(m, channel);
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
 		}
 	}
 

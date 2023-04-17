@@ -2,8 +2,11 @@ package de.k7bot.listener;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.k7bot.music.lavaplayer.AudioLoadResult;
 import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.lavaplayer.Queue;
@@ -14,6 +17,17 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class AutoRickroll extends ListenerAdapter {
+	private final AudioPlayerManager apm;
+
+	/**
+	 * @param apm
+	 */
+	public AutoRickroll() {
+		this.apm = new DefaultAudioPlayerManager();
+
+		apm.registerSourceManager(new YoutubeAudioSourceManager());
+		apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
+	}
 
 	@Override
 	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
@@ -23,25 +37,26 @@ public class AutoRickroll extends ListenerAdapter {
 			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
 			AudioManager manager = vc.getGuild().getAudioManager();
-			AudioPlayerManager apm = Klassenserver7bbot.getInstance().getAudioPlayerManager();
+
 			AudioPlayer player = controller.getPlayer();
 			Queue queue = controller.getQueue();
 
 			String url = "https://www.youtube.com/watch?v=BBJa32lCaaY";
 
 			if (player.getPlayingTrack() == null) {
-				if (!queue.emptyQueueList()) {
+				if (!queue.isemptyQueueList()) {
 					queue.clearQueue();
 				}
 				manager.openAudioConnection(vc);
-				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
+				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.REPLACE));
 				player.setPaused(false);
 				queue.next(null);
 			} else {
 
-				if (!queue.emptyQueueList()) {
+				if (!queue.isemptyQueueList()) {
 					queue.clearQueue();
 				}
+
 				player.stopTrack();
 				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
 				queue.next(null);

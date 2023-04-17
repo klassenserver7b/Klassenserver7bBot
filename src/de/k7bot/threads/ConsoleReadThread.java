@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.slash.StableDiffusionCommand;
 import de.k7bot.commands.types.ServerCommand;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.util.StatsCategorieUtil;
@@ -52,7 +53,6 @@ public class ConsoleReadThread implements Runnable {
 				if (System.in.available() == 0 || !sysinr.ready()) {
 					continue;
 				}
-
 				if ((line = reader.readLine()) != null) {
 					interpretConsoleContent(line);
 				}
@@ -92,6 +92,14 @@ public class ConsoleReadThread implements Runnable {
 
 		case "disablecommand" -> {
 			changeCommandState(false, commandargs[1]);
+		}
+
+		case "addaiuser" -> {
+			addAIUser(commandargs[1]);
+		}
+
+		case "rmaiuser" -> {
+			removeAIUser(commandargs[1]);
 		}
 
 		default -> {
@@ -135,6 +143,18 @@ public class ConsoleReadThread implements Runnable {
 				disableCommandbyStr(command_OR_CommandClassName);
 			}
 		}
+	}
+
+	private void addAIUser(String uid) {
+		Long userid = Long.valueOf(uid);
+		StableDiffusionCommand.addAIUser(userid);
+		log.info("successfully added " + uid + "to ai allowlist");
+	}
+
+	private void removeAIUser(String uid) {
+		Long userid = Long.valueOf(uid);
+		StableDiffusionCommand.removeAIUser(userid);
+		log.info("successfully removed " + uid + "from ai allowlist");
 	}
 
 	private void disableCommandbyStr(String name) {
@@ -210,7 +230,7 @@ public class ConsoleReadThread implements Runnable {
 			Klassenserver7bbot.getInstance().stopLoop();
 
 			Klassenserver7bbot.getInstance().getHypixelAPI().shutdown();
-			Klassenserver7bbot.getInstance().getInternalAPIManager().shutdownAPIs();
+			Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
 			StatsCategorieUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
 

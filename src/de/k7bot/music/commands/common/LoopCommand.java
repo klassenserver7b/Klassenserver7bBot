@@ -38,7 +38,7 @@ public class LoopCommand implements ServerCommand {
 
 		} else {
 
-			channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+			channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 					.setDescription("There isn't a song/playlist to loop!").build()).queue();
 
 		}

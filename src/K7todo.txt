@@ -1,4 +1,7 @@
+random Gourmetta Generator
+
 ASM für lokale m3u
+Equalizer Command und Speedchange zu AudioEffects Command mit Subcommands umbauen
 
 Spotify Stuff
 -> Invalid Hex codes - warum 00 am Anfang

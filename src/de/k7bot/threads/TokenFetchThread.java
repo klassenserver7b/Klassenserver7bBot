@@ -12,6 +12,7 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.util.HttpUtilities;
 
 /**
  * @author Felix
@@ -104,7 +104,7 @@ public class TokenFetchThread implements Runnable {
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 
 			httpclient.close();
 
@@ -114,12 +114,11 @@ public class TokenFetchThread implements Runnable {
 
 		} catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from " + url);
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 
 		} catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
-
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 
 		}
 	}

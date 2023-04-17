@@ -14,6 +14,7 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,6 @@ import com.google.gson.JsonSyntaxException;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.music.utilities.SongJson;
-import de.k7bot.util.HttpUtilities;
 
 /**
  * @author Klassenserver7b
@@ -132,10 +132,11 @@ public class DiscogsAPI {
 	}
 
 	private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
+		
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 			httpclient.close();
 
 			return elem.getAsJsonObject();
@@ -147,7 +148,7 @@ public class DiscogsAPI {
 		catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
 
-			HttpUtilities.closeHttpClient(httpclient);
+			httpclient.close(CloseMode.GRACEFUL);
 
 		}
 		return null;

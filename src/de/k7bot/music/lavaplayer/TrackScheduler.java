@@ -2,6 +2,7 @@
 package de.k7bot.music.lavaplayer;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -121,9 +122,14 @@ public class TrackScheduler extends AudioEventAdapter {
 		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
 		Queue queue = controller.getQueue();
-		AudioManager manager = null;
-		if (guild != null) {
-			manager = guild.getAudioManager();
+
+		if (track instanceof SpotifyAudioTrack) {
+			new File(track.getIdentifier()).delete();
+		}
+
+		AudioManager manager;
+		if (guild == null || (manager = guild.getAudioManager()) == null) {
+			return;
 		}
 
 		if (endReason.mayStartNext) {
@@ -138,7 +144,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		} else {
 
-			if (queue.emptyQueueList() && !next && !queue.isLooped()) {
+			if (queue.isemptyQueueList() && !next && !queue.isLooped()) {
 
 				player.stopTrack();
 				manager.closeAudioConnection();
@@ -176,7 +182,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 			}
 
-			JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+			JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
 
 			String token = resp.get("accessToken").getAsString();
 

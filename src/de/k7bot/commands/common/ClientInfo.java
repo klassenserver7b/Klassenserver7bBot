@@ -14,6 +14,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+/**
+ * 
+ * @author Felix
+ *
+ */
 public class ClientInfo implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {

@@ -37,6 +37,7 @@ import de.k7bot.music.commands.common.ClearQueueCommand;
 import de.k7bot.music.commands.common.EqualizerCommand;
 import de.k7bot.music.commands.common.LoopCommand;
 import de.k7bot.music.commands.common.LyricsCommand;
+import de.k7bot.music.commands.common.NightcoreCommand;
 import de.k7bot.music.commands.common.OverallChartsCommand;
 import de.k7bot.music.commands.common.PauseCommand;
 import de.k7bot.music.commands.common.PlayCommand;
@@ -77,11 +78,7 @@ public class CommandManager {
 	public final Logger commandlog;
 
 	/**
-	 *
-	 * @param hypenable <br>
-	 *                  Should the HypixelAPI be enabled
-	 * @param gitenable <br>
-	 *                  Should the GitHubAPI be enabled
+	 * 
 	 */
 	public CommandManager() {
 		this.commands = new LinkedHashMap<>();
@@ -144,6 +141,8 @@ public class CommandManager {
 		this.commands.put("lyrics", new LyricsCommand());
 		this.commands.put("charts", new OverallChartsCommand());
 		this.commands.put("eq", new EqualizerCommand());
+		this.commands.put("nightcore", new NightcoreCommand());
+		this.commands.put("nc", new NightcoreCommand());
 
 		// Private
 		this.commands.put("uvolume", new UebersteuerungAdmin());
@@ -209,21 +208,7 @@ public class CommandManager {
 	}
 
 	public boolean disableCommand(ServerCommand command) {
-
-		boolean removed = false;
-		ArrayList<String> rem = new ArrayList<>();
-
-		for (Entry<String, ServerCommand> e : activeCommands.entrySet()) {
-			if (e.getValue().getClass().isInstance(command)) {
-				rem.add(e.getKey());
-				removed = true;
-			}
-		}
-		for (String s : rem) {
-			activeCommands.remove(s);
-		}
-
-		return removed;
+		return disableCommand(command.getClass());
 	}
 
 	public boolean disableCommand(Class<?> command) {
@@ -258,26 +243,7 @@ public class CommandManager {
 	}
 
 	public boolean enableCommand(ServerCommand command) {
-
-		boolean added = false;
-		ArrayList<Entry<String, ServerCommand>> add = new ArrayList<>();
-
-		for (Entry<String, ServerCommand> e : commands.entrySet()) {
-			if (e.getValue().getClass().isInstance(command)) {
-				add.add(e);
-			}
-		}
-
-		for (Entry<String, ServerCommand> e : add) {
-
-			if (!activeCommands.containsKey(e.getKey())) {
-				activeCommands.put(e.getKey(), e.getValue());
-				added = true;
-			}
-
-		}
-
-		return added;
+		return enableCommand(command.getClass());
 	}
 
 	public boolean enableCommand(Class<?> command) {

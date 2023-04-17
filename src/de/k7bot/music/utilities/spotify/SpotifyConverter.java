@@ -99,7 +99,7 @@ public class SpotifyConverter {
 
 			if (response.getStatusLine().getStatusCode() == 200) {
 
-				JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+				JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
 
 				String token = resp.get("accessToken").getAsString();
 				if (token != null && !token.equalsIgnoreCase("")) {

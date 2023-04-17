@@ -1,6 +1,8 @@
 package de.k7bot.manage;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -11,11 +13,14 @@ import de.k7bot.commands.slash.HA3MembersCommand;
 import de.k7bot.commands.slash.HelpSlashCommand;
 import de.k7bot.commands.slash.PingSlashCommand;
 import de.k7bot.commands.slash.Shutdownslashcommand;
+import de.k7bot.commands.slash.StableDiffusionCommand;
+import de.k7bot.commands.slash.VotingCommand;
 import de.k7bot.commands.slash.WhitelistSlashCommand;
 import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.music.commands.slash.ChartsSlashCommand;
 import de.k7bot.music.commands.slash.EqualizerSlashCommand;
 import de.k7bot.music.commands.slash.PlaySlashCommandSplitter;
+import de.k7bot.music.commands.slash.SpeedChangeCommand;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
@@ -23,6 +28,7 @@ import de.k7bot.util.commands.slash.ClearSlashCommand;
 import de.k7bot.util.commands.slash.ReactRolesSlashCommand;
 import de.k7bot.util.commands.slash.ToEmbedSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 public class SlashCommandManager {
@@ -34,28 +40,34 @@ public class SlashCommandManager {
 
 		this.commands = new ConcurrentHashMap<>();
 
-		this.commands.put("help", new HelpSlashCommand());
-		this.commands.put("clear", new ClearSlashCommand());
-		this.commands.put("shutdown", new Shutdownslashcommand());
-		this.commands.put("ping", new PingSlashCommand());
-		this.commands.put("toembed", new ToEmbedSlashCommand());
-		this.commands.put("reactrole", new ReactRolesSlashCommand());
-		this.commands.put("play", new PlaySlashCommandSplitter());
-		this.commands.put("charts", new ChartsSlashCommand());
-		this.commands.put("subscribe", new SubscribeSlashCommand());
-		this.commands.put("unsubscribe", new UnSubscribeSlashCommand());
-		this.commands.put("equalizer", new EqualizerSlashCommand());
-		this.commands.put("whitelistadd", new WhitelistSlashCommand());
-		this.commands.put("ha3members", new HA3MembersCommand());
+		List<TopLevelSlashCommand> registerschedule = new ArrayList<>();
+
+		registerschedule.add(new HelpSlashCommand());
+		registerschedule.add(new ClearSlashCommand());
+		registerschedule.add(new Shutdownslashcommand());
+		registerschedule.add(new PingSlashCommand());
+		registerschedule.add(new ToEmbedSlashCommand());
+		registerschedule.add(new ReactRolesSlashCommand());
+		registerschedule.add(new PlaySlashCommandSplitter());
+		registerschedule.add(new ChartsSlashCommand());
+		registerschedule.add(new SubscribeSlashCommand());
+		registerschedule.add(new UnSubscribeSlashCommand());
+		registerschedule.add(new EqualizerSlashCommand());
+		registerschedule.add(new WhitelistSlashCommand());
+		registerschedule.add(new HA3MembersCommand());
+		registerschedule.add(new VotingCommand());
+		registerschedule.add(new SpeedChangeCommand());
+		registerschedule.add(new StableDiffusionCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
 
-			commands.values().forEach(command -> {
+			for (TopLevelSlashCommand command : registerschedule) {
 
-				commup.addCommands(command.getCommandData());
-
-			});
+				SlashCommandData cdata = command.getCommandData();
+				this.commands.put(cdata.getName(), command);
+				commup.addCommands(cdata);
+			}
 
 			commup.complete();
 

@@ -55,25 +55,13 @@ public class MusicUtil {
 
 	/**
 	 *
-	 * @param channel
+	 * @param hook
 	 */
 	public static void updateChannel(InteractionHook hook) {
 
 		TextChannel channel = (TextChannel) hook.getInteraction().getMessageChannel();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;", channel.getGuild().getIdLong());
-
-		try {
-			if (set.next()) {
-				LiteSQL.onUpdate("UPDATE musicutil SET channelId = ? WHERE guildId = ?;", channel.getIdLong(),
-						channel.getGuild().getIdLong());
-			} else {
-				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(?, ?, ?);",
-						channel.getGuild().getIdLong(), channel.getIdLong(), 10);
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+		updateChannel(channel);
 	}
 
 	/**
@@ -195,18 +183,7 @@ public class MusicUtil {
 			return false;
 		}
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-
-		switch (MusicUtil.isConnectedtoChannel(vc)) {
-		case 0: {
-			sendHandler.sendMessage("You are not connected to the music playing VoiceChannel" + m.getAsMention())
-					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
-			return false;
-		}
-		default: {
-			return true;
-		}
-		}
+		return checkChannelConnection(sendHandler, m);
 	}
 
 	/**
@@ -222,6 +199,11 @@ public class MusicUtil {
 					.queueAfter(10L, TimeUnit.SECONDS);
 			return false;
 		}
+
+		return checkChannelConnection(sendHandler, m);
+	}
+
+	protected static boolean checkChannelConnection(GenericMessageSendHandler sendHandler, Member m) {
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
@@ -240,6 +222,7 @@ public class MusicUtil {
 		}
 
 		return true;
+
 	}
 
 	/**

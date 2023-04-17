@@ -22,26 +22,25 @@ public class ShuffleCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
-
-	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
-
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
+
 		controller.getQueue().shuffle();
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setDescription("playlist shuffled");
 		builder.setColor(10827773);
 		channel.sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("U+1F500")).queue();
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 }

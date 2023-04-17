@@ -14,15 +14,16 @@ public class Subscription {
 
 	/**
 	 *
-	 * @param type       The {@link SubscriptionDeliveryType} of the new
-	 *                   {@link Subscription}.
+	 * @param type            The {@link SubscriptionDeliveryType} of the new
+	 *                        {@link Subscription}.
 	 *
-	 * @param target     The {@link SubscriptionTarget} of the new
-	 *                   {@link Subscription}.
+	 * @param target          The {@link SubscriptionTarget} of the new
+	 *                        {@link Subscription}.
 	 *
-	 * @param targetDcId The {@link Long Id} of the target-channel given by discord.
+	 * @param targetdiscordid The {@link Long Id} of the target-channel given by
+	 *                        discord.
 	 *
-	 * @param id         The id of the Subscription if already known
+	 * @param id              The id of the Subscription if already known
 	 */
 	public Subscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long targetdiscordid, Long id) {
 		this.target = target;

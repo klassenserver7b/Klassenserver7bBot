@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import de.k7bot.hypixel.HypixelCommandManager;
 import de.k7bot.listener.AutoRickroll;
@@ -35,10 +36,13 @@ import de.k7bot.listener.Role_InviteListener;
 import de.k7bot.listener.SlashCommandListener;
 import de.k7bot.listener.VoiceListener;
 import de.k7bot.manage.CommandManager;
+import de.k7bot.manage.LoopedEventManager;
 import de.k7bot.manage.PrefixManager;
 import de.k7bot.manage.PropertiesManager;
 import de.k7bot.manage.SlashCommandManager;
 import de.k7bot.manage.SystemNotificationChannelManager;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.k7bot.music.utilities.AudioPlayerUtil;
 import de.k7bot.music.utilities.gla.GLAWrapper;
 import de.k7bot.music.utilities.spotify.SpotifyInteractions;
@@ -47,7 +51,6 @@ import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
 import de.k7bot.threads.ConsoleReadThread;
 import de.k7bot.threads.LoopThread;
-import de.k7bot.util.customapis.InternalAPIManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -75,7 +78,7 @@ public class Klassenserver7bbot {
 	private HypixelCommandManager hypMgr;
 
 	private PropertiesManager propMgr;
-	private InternalAPIManager internalApiMgr;
+	private LoopedEventManager loopedEventMgr;
 
 	private AudioPlayerManager audioPlayerManager;
 	private AudioPlayerUtil playerutil;
@@ -147,7 +150,7 @@ public class Klassenserver7bbot {
 
 		propMgr.checkAPIProps();
 		initializeObjects();
-		internalApiMgr.initializeApis();
+		loopedEventMgr.initializeDefaultEvents();
 
 		return true;
 	}
@@ -191,7 +194,7 @@ public class Klassenserver7bbot {
 		this.prefixMgr = new PrefixManager();
 
 		this.subMgr = new SubscriptionManager();
-		this.internalApiMgr = new InternalAPIManager();
+		this.loopedEventMgr = new LoopedEventManager();
 
 		this.syschannels = new SystemNotificationChannelManager();
 
@@ -230,6 +233,9 @@ public class Klassenserver7bbot {
 	public void InitializeMusic(AudioPlayerManager manager) {
 
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
+		manager.registerSourceManager(new SpotifyAudioSourceManager());
+		manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
+		AudioSourceManagers.registerRemoteSources(manager);
 
 	}
 
@@ -280,7 +286,7 @@ public class Klassenserver7bbot {
 
 				String jsonstring = Files.readString(file.toPath());
 
-				JsonElement json = JsonParser.parseString(jsonstring);
+				JsonElement json = new JsonParser().parse(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
 			} catch (IOException e1) {
@@ -386,8 +392,8 @@ public class Klassenserver7bbot {
 		return this.propMgr;
 	}
 
-	public InternalAPIManager getInternalAPIManager() {
-		return this.internalApiMgr;
+	public LoopedEventManager getLoopedEventManager() {
+		return this.loopedEventMgr;
 	}
 
 	public JsonObject getTeacherList() {

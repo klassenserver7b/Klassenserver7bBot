@@ -33,7 +33,7 @@ public class SkipBackCommand implements ServerCommand {
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "seek [position in seconds]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "back [position in seconds]", m);
 			return;
 		}
 

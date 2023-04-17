@@ -86,7 +86,7 @@ public class ButtonListener extends ListenerAdapter {
 
 		if (pvtch != null) {
 
-			MessageEmbed denymessage = new EmbedBuilder().setColor(Color.decode("#ff0000"))
+			MessageEmbed denymessage = new EmbedBuilder().setColor(Color.red)
 					.setFooter("Handeled by K7Bot")
 					.setDescription("Sorry, but you 'HA3' whitelistrequest has been denied")
 					.setTimestamp(OffsetDateTime.now()).build();

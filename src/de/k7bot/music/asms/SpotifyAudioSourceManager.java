@@ -11,6 +11,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -61,7 +63,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	 * @param spotifyInteract
 	 */
 	public SpotifyAudioSourceManager(ExtendedHttpConfigurable combinedHttpConfiguration,
-			SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader, SpotifyInteractions spotifyInteract) {
+			SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
+			@Nonnull SpotifyInteractions spotifyInteract) {
 
 		this.combinedHttpConfiguration = combinedHttpConfiguration;
 		this.playlistLoader = playlistLoader;
@@ -152,7 +155,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
 	/**
 	 *
-	 * @param trackid
+	 * @param playlistid
 	 * @return
 	 */
 	private AudioItem loadPlaylist(String playlistid) {
@@ -175,34 +178,21 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	private SpotifyAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
 		return new SpotifyAudioTrack(info, this);
 	}
-
-	/**
-	 *
-	 */
+	
 	@Override
 	public boolean isTrackEncodable(AudioTrack track) {
 		return true;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
 		// No custom values that need saving
 	}
-
-	/**
-	 *
-	 */
 	@Override
 	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-		return null;
+		return new SpotifyAudioTrack(trackInfo, this);
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void shutdown() {
 		spotifyInteract.shutdown();
