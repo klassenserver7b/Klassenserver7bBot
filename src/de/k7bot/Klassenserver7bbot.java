@@ -286,7 +286,7 @@ public class Klassenserver7bbot {
 
 				String jsonstring = Files.readString(file.toPath());
 
-				JsonElement json = JsonParser.parseString(jsonstring);
+				JsonElement json = new JsonParser().parse(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
 			} catch (IOException e1) {

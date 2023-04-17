@@ -116,7 +116,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 		String[] filepath = encryptedf.getAbsolutePath().split("\\.");
 
-		Files.createTempDir();
 		File outputfile;
 		try {
 			outputfile = File.createTempFile(filepath[0] + "_decrypted", "." + filepath[1]);
@@ -312,7 +311,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			String response = null;
 			response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 
 			return elem.getAsJsonObject().get("cdnurl").getAsJsonArray().get(0).getAsString();
 
@@ -383,7 +382,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 
 			return elem.getAsJsonObject().get("file").getAsJsonArray();
 
@@ -410,7 +409,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 
 			String resp = elem.getAsJsonObject().get("pssh").getAsString();
 

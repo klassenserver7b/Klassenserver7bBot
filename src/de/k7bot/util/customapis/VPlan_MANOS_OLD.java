@@ -39,8 +39,8 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 /**
  *
  * @author felix
- * @deprecated use {@link de.k7bot.util.customapis.Stundenplan24Vplan VplanNEW_XML
- *             instead}
+ * @deprecated use {@link de.k7bot.util.customapis.Stundenplan24Vplan
+ *             VplanNEW_XML instead}
  */
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_MANOS_OLD {
@@ -405,7 +405,7 @@ public class VPlan_MANOS_OLD {
 			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
 			final CloseableHttpResponse response = httpclient.execute(httpget);
 			if (response.getStatusLine().getStatusCode() == 200) {
-				JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+				JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
 				return elem.getAsJsonObject();
 			} else {
 				return null;

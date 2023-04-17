@@ -117,7 +117,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		
+
 		long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
 		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
@@ -182,7 +182,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 			}
 
-			JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+			JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
 
 			String token = resp.get("accessToken").getAsString();
 

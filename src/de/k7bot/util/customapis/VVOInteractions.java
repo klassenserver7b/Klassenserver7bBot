@@ -202,7 +202,7 @@ public class VVOInteractions implements LoopedEvent {
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
 			String content = httpClient.execute(request, new BasicHttpClientResponseHandler());
-			return JsonParser.parseString(content);
+			return new JsonParser().parse(content);
 
 		} catch (IOException | JsonParseException e) {
 			log.error(e.getMessage(), e);

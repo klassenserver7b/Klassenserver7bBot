@@ -150,8 +150,10 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 			String resp = client.execute(post, new BasicHttpClientResponseHandler());
 
-			JsonObject jsresponse = JsonParser.parseString(resp).getAsJsonObject();
-			String seed = JsonParser.parseString(jsresponse.get("info").getAsString()).getAsJsonObject().get("seed")
+			JsonParser jparse = new JsonParser();
+
+			JsonObject jsresponse = jparse.parse(resp).getAsJsonObject();
+			String seed = jparse.parse(jsresponse.get("info").getAsString()).getAsJsonObject().get("seed")
 					.getAsString();
 
 			byte[] decodedBytes = Base64.getDecoder()

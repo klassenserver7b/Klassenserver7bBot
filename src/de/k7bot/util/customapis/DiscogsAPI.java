@@ -136,7 +136,7 @@ public class DiscogsAPI {
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+			JsonElement elem = new JsonParser().parse(response);
 			httpclient.close();
 
 			return elem.getAsJsonObject();
