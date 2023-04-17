@@ -33,7 +33,7 @@ public class SkipForwardCommand implements ServerCommand {
 		String[] args = message.getContentDisplay().split(" ");
 
 		if (args.length < 2) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "seek [position in seconds]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "forward [position in seconds]", m);
 			return;
 		}
 
