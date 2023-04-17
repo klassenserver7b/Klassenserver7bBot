@@ -208,21 +208,7 @@ public class CommandManager {
 	}
 
 	public boolean disableCommand(ServerCommand command) {
-
-		boolean removed = false;
-		ArrayList<String> rem = new ArrayList<>();
-
-		for (Entry<String, ServerCommand> e : activeCommands.entrySet()) {
-			if (e.getValue().getClass().isInstance(command)) {
-				rem.add(e.getKey());
-				removed = true;
-			}
-		}
-		for (String s : rem) {
-			activeCommands.remove(s);
-		}
-
-		return removed;
+		return disableCommand(command.getClass());
 	}
 
 	public boolean disableCommand(Class<?> command) {
@@ -257,26 +243,7 @@ public class CommandManager {
 	}
 
 	public boolean enableCommand(ServerCommand command) {
-
-		boolean added = false;
-		ArrayList<Entry<String, ServerCommand>> add = new ArrayList<>();
-
-		for (Entry<String, ServerCommand> e : commands.entrySet()) {
-			if (e.getValue().getClass().isInstance(command)) {
-				add.add(e);
-			}
-		}
-
-		for (Entry<String, ServerCommand> e : add) {
-
-			if (!activeCommands.containsKey(e.getKey())) {
-				activeCommands.put(e.getKey(), e.getValue());
-				added = true;
-			}
-
-		}
-
-		return added;
+		return enableCommand(command.getClass());
 	}
 
 	public boolean enableCommand(Class<?> command) {

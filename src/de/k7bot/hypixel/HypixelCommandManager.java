@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.k7bot.commands.types.HypixelCommand;
 import de.k7bot.hypixel.commands.HypixelHelpCommand;
 import de.k7bot.hypixel.commands.HypixelRankCommand;
-import de.k7bot.hypixel.commands.KarmaCommand;
 import de.k7bot.hypixel.commands.OnlineCommand;
 import de.k7bot.hypixel.commands.PlayerCountCommand;
 import de.k7bot.hypixel.commands.PlayerInfoCommand;
@@ -30,7 +29,6 @@ public class HypixelCommandManager {
 		this.commands.put("watchdog", new WatchdogCommand());
 		this.commands.put("rank", new HypixelRankCommand());
 		this.commands.put("test", new TestCommand());
-		this.commands.put("karma", new KarmaCommand());
 		this.commands.put("playerinfo", new PlayerInfoCommand());
 		this.commands.put("online", new OnlineCommand());
 
