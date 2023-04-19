@@ -311,7 +311,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			String response = null;
 			response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			return elem.getAsJsonObject().get("cdnurl").getAsJsonArray().get(0).getAsString();
 
@@ -382,7 +382,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			return elem.getAsJsonObject().get("file").getAsJsonArray();
 
@@ -409,7 +409,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			String resp = elem.getAsJsonObject().get("pssh").getAsString();
 

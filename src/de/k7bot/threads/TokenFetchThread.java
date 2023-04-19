@@ -104,7 +104,7 @@ public class TokenFetchThread implements Runnable {
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			httpclient.close();
 

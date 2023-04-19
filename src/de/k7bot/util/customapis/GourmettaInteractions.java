@@ -97,15 +97,13 @@ public class GourmettaInteractions implements LoopedEvent {
 
 			httpclient.close();
 
-			JsonParser jparse = new JsonParser();
-
-			JsonElement elem = jparse.parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			this.token = elem.getAsJsonObject().get("token").getAsString();
 
 			String base64uid = token.split("\\.")[1];
 			String uidjson = new String(Base64.getDecoder().decode(base64uid));
-			this.userid = jparse.parse(uidjson).getAsJsonObject().get("userUuid").getAsString();
+			this.userid = JsonParser.parseString(uidjson).getAsJsonObject().get("userUuid").getAsString();
 			this.apienabled = true;
 
 		} catch (HttpHostConnectException e1) {
@@ -350,7 +348,7 @@ public class GourmettaInteractions implements LoopedEvent {
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			httpclient.close();
 

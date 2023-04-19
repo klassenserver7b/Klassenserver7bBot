@@ -165,7 +165,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 
 			String jsonstring = Files.readString(f.toPath());
 
-			JsonElement json = new JsonParser().parse(jsonstring);
+			JsonElement json = JsonParser.parseString(jsonstring);
 
 			if (json != null && !jsonstring.isBlank() && !jsonstring.isEmpty()) {
 
@@ -208,7 +208,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 
 				if (response.getStatusLine().getStatusCode() == 200) {
 
-					JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity()))
+					JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity()))
 							.getAsJsonObject();
 
 					String token = resp.get("accessToken").getAsString();
