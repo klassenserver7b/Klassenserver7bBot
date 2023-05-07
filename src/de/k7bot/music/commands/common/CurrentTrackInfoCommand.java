@@ -18,12 +18,19 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class TrackInfoCommand implements ServerCommand {
+public class CurrentTrackInfoCommand implements ServerCommand {
+
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
 		String help = "Zeigt die Info zum aktuellen Track.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "nowplaying", "np" };
 	}
 
 	@Override
@@ -84,5 +91,20 @@ public class TrackInfoCommand implements ServerCommand {
 								+ ((minuten > 0L) ? (String.valueOf(minuten) + "min ") : "") + sekunden + "s"),
 				true);
 		MusicUtil.sendEmbed(channel.getGuild().getIdLong(), builder);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

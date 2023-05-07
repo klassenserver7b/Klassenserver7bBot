@@ -11,11 +11,18 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class SystemchannelCommand implements ServerCommand {
+public class SystemchannelCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
 		return "Ändert den Channel für Systembenachrichtigungen (z.B. Logs für Einladungen oder gelöschte Nachrichten) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server Verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new syschannel]";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "syschannel" };
 	}
 
 	@Override
@@ -43,6 +50,21 @@ public class SystemchannelCommand implements ServerCommand {
 
 		}
 
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

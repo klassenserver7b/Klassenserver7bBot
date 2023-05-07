@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  */
 
 public interface ServerCommand {
+
 	/**
 	 *
 	 * @return The Help for the {@link de.k7bot.commands.types.ServerCommand
@@ -25,5 +26,17 @@ public interface ServerCommand {
 	 */
 	HelpCategories getcategory();
 
+	/**
+	 * 
+	 * @return
+	 */
+	String[] getCommandStrings();
+
 	void performCommand(Member m, TextChannel channel, Message message);
+
+	boolean isEnabled();
+
+	void disableCommand();
+
+	void enableCommand();
 }

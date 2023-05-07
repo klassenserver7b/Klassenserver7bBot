@@ -11,7 +11,25 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class ClearQueueCommand implements ServerCommand {
+public class ClearQueueCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Löscht die aktuelle Queuelist.";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "clearqueue", "cq" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -26,15 +44,20 @@ public class ClearQueueCommand implements ServerCommand {
 		Queue queue = controller.getQueue();
 		queue.clearQueue();
 	}
-
+	
 	@Override
-	public String gethelp() {
-		String help = "Löscht die aktuelle Queuelist.";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public void disableCommand() {
+		isEnabled = false;
 	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
+	}
+
 }

@@ -49,9 +49,7 @@ public class LiteSQL {
 			dblog.error(e.getMessage(), e);
 		}
 
-		try {
-
-			PreparedStatement p = conn.prepareStatement(sqlpattern);
+		try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
 
 			for (int i = 0; i < parameters.length; i++) {
 				p.setObject(i + 1, parameters[i]);
@@ -64,6 +62,7 @@ public class LiteSQL {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public static ResultSet onQuery(String sqlpattern, Object... parameters) {
 
 		if (parameters.length != countMatches(sqlpattern, "?")) {
@@ -81,6 +80,7 @@ public class LiteSQL {
 			}
 
 			return p.executeQuery();
+
 		} catch (SQLException e) {
 			dblog.error(e.getMessage(), e);
 			return null;

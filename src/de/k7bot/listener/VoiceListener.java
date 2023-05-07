@@ -66,9 +66,8 @@ public class VoiceListener extends ListenerAdapter {
 	public void onLeave(AudioChannel audioChannel) {
 		if (audioChannel.getMembers().size() <= 0) {
 
-			ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;");
+			try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;")) {
 
-			try {
 				while (set.next()) {
 					this.tempchannels.add(set.getLong("channelId"));
 				}
@@ -80,7 +79,8 @@ public class VoiceListener extends ListenerAdapter {
 							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
 				}
 
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 
 				log.error(e.getMessage(), e);
 			}

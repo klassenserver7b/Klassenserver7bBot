@@ -19,10 +19,17 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class QueuelistCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "Zeigt die aktuelle Queuelist an.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "queuelist", "ql" };
 	}
 
 	@Override
@@ -81,5 +88,20 @@ public class QueuelistCommand implements ServerCommand {
 			channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
 		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

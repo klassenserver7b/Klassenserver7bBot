@@ -90,7 +90,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	private File decryptTrack(String trackid) {
-		new AudioTrackInfo(trackid, trackid, 0, trackid, false, trackid);
 
 		FriendlyException e = new FriendlyException("Error on loading Track " + trackid, Severity.COMMON,
 				new Throwable("Error on loading Track " + trackid));
@@ -277,10 +276,9 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			File targetFile = File.createTempFile("K7Bot_Spotify_" + new Date().getTime(), "." + extension);
 			targetFile.deleteOnExit();
 
-			OutputStream outStream = new FileOutputStream(targetFile);
-			outStream.write(bresponse);
-
-			outStream.close();
+			try (OutputStream outStream = new FileOutputStream(targetFile)) {
+				outStream.write(bresponse);
+			}
 
 			return targetFile;
 
@@ -430,10 +428,10 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 		String url = "https://api.spotify.com/v1/widevine-license/v1/audio/license";
 
-		try {
+		try (ByteArrayEntity byteentity = new ByteArrayEntity(license, ContentType.APPLICATION_FORM_URLENCODED)) {
 
 			final HttpPost httppost = new HttpPost(url);
-			httppost.setEntity(new ByteArrayEntity(license, ContentType.APPLICATION_FORM_URLENCODED));
+			httppost.setEntity(byteentity);
 			httppost.setHeader(HttpHeaders.AUTHORIZATION,
 					"Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
 

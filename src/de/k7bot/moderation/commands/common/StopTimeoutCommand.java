@@ -20,6 +20,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class StopTimeoutCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "stoptimeout" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
@@ -36,19 +54,10 @@ public class StopTimeoutCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		} catch (StringIndexOutOfBoundsException e) {
+		}
+		catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "stoptimeout [@user]", m);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
 	}
 
 	public void stopTimeout(Member requester, Member u, TextChannel channel) {
@@ -88,8 +97,24 @@ public class StopTimeoutCommand implements ServerCommand {
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, "null", OffsetDateTime.now());
-		} catch (HierarchyException e) {
+		}
+		catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

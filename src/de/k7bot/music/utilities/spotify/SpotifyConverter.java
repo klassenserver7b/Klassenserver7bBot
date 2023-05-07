@@ -91,11 +91,10 @@ public class SpotifyConverter {
 	@Deprecated
 	private String retrieveToken() {
 
-		final CloseableHttpClient client = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
-		try {
 
-			final CloseableHttpResponse response = client.execute(httpget);
+		try (final CloseableHttpClient client = HttpClients.createSystem();
+				final CloseableHttpResponse response = client.execute(httpget)) {
 
 			if (response.getStatusLine().getStatusCode() == 200) {
 
@@ -354,10 +353,12 @@ public class SpotifyConverter {
 
 				@Override
 				public void noMatches() {
+					//
 				}
 
 				@Override
 				public void loadFailed(FriendlyException exception) {
+					//
 				}
 
 			};

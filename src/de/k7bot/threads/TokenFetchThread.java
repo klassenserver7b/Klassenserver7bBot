@@ -12,7 +12,6 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +32,16 @@ public class TokenFetchThread implements Runnable {
 	private long expires;
 	private final String cookie;
 	private static TokenFetchThread INSTANCE;
+	private int errorcount;
+	private int errorstage;
 
 	/**
 	 *
 	 */
-	private TokenFetchThread(boolean enabled, String cookie) {
+	private TokenFetchThread(String cookie) {
 
+		errorcount = 0;
+		errorstage = 1;
 		INSTANCE = this;
 		log = LoggerFactory.getLogger(this.getClass());
 		this.cookie = cookie;
@@ -62,13 +65,14 @@ public class TokenFetchThread implements Runnable {
 
 		while (!Klassenserver7bbot.getInstance().isInExit() && !t.isInterrupted()) {
 
-			if (!(this.expires >= new Date().getTime() - 60000)) {
+			if (!(this.expires >= new Date().getTime() - 30000)) {
 				refreshToken();
-				log.debug("authcode_refresh");
+				log.debug("spotify_authcode_refresh");
 			}
 			try {
-				Thread.sleep(55000);
-			} catch (InterruptedException e) {
+				Thread.sleep(29000);
+			}
+			catch (InterruptedException e) {
 				log.warn(e.getMessage(), e);
 			}
 		}
@@ -94,14 +98,13 @@ public class TokenFetchThread implements Runnable {
 
 		String url = "https://open.spotify.com/get_access_token";
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		final HttpGet httpget = new HttpGet(url);
+			final HttpGet httpget = new HttpGet(url);
 
-		httpget.setHeader("Cookie", cookie);
-		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+			httpget.setHeader("Cookie", cookie);
+			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
 			JsonElement elem = JsonParser.parseString(response);
@@ -111,15 +114,32 @@ public class TokenFetchThread implements Runnable {
 			Klassenserver7bbot.getInstance().getSpotifyinteractions().getSpotifyApi()
 					.setAccessToken(elem.getAsJsonObject().get("accessToken").getAsString());
 			expires = elem.getAsJsonObject().get("accessTokenExpirationTimestampMs").getAsLong();
+			errorcount = 0;
+			errorstage = 1;
 
-		} catch (HttpHostConnectException e1) {
+		}
+		catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from " + url);
-			httpclient.close(CloseMode.GRACEFUL);
+			timeoutFetch();
+			return;
 
-		} catch (IOException | JsonSyntaxException e) {
+		}
+		catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
-			httpclient.close(CloseMode.GRACEFUL);
+			timeoutFetch();
+			return;
 
+		}
+	}
+
+	protected void timeoutFetch() {
+		errorcount++;
+
+		if (errorcount >= 10) {
+			long add = 120000 * errorstage;
+			expires = new Date().getTime() + add;
+			log.warn("TokenFetch failed - retrying in " + (add / 1000) + "s");
+			errorstage++;
 		}
 	}
 
@@ -132,12 +152,12 @@ public class TokenFetchThread implements Runnable {
 		return INSTANCE;
 	}
 
-	public static TokenFetchThread getINSTANCE(boolean enabled, String cookie) {
+	public static TokenFetchThread getINSTANCE(String cookie) {
 		if (INSTANCE != null) {
 			return INSTANCE;
 		}
 
-		return INSTANCE = new TokenFetchThread(enabled, cookie);
+		return INSTANCE = new TokenFetchThread(cookie);
 	}
 
 }

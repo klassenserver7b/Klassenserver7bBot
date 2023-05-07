@@ -18,7 +18,26 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
-public class BanCommand implements ServerCommand {
+public class BanCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
+	
+
+	@Override
+	public String gethelp() {
+		return "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
+	}
+	
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "ban" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+	
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
@@ -47,16 +66,6 @@ public class BanCommand implements ServerCommand {
 		} catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "ban [@user] [reason]", m);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		return "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
 	}
 
 	public void onBan(Member requester, Member u, TextChannel channel, String grund) {
@@ -99,5 +108,20 @@ public class BanCommand implements ServerCommand {
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

@@ -149,12 +149,10 @@ public class ChartList {
 
 		HashMap<String, Long> chartslist = new HashMap<>();
 
-		ResultSet set = LiteSQL
-				.onQuery("SELECT * FROM musiclogs" + guildselect + dateselect + " ORDER BY timestamp DESC;");
+		try (ResultSet set = LiteSQL
+				.onQuery("SELECT * FROM musiclogs" + guildselect + dateselect + " ORDER BY timestamp DESC;")) {
 
-		if (set != null) {
-
-			try {
+			if (set != null) {
 
 				while (set.next()) {
 
@@ -176,12 +174,12 @@ public class ChartList {
 
 				return chartslist;
 
-			} catch (SQLException e) {
-				log.error(e.getMessage(), e);
-				return null;
 			}
 
-		} else {
+			return null;
+
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
 			return null;
 		}
 

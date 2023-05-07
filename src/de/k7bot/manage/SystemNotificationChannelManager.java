@@ -29,9 +29,8 @@ public class SystemNotificationChannelManager {
 
 	private void reload() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
 
-		try {
 			while (set.next()) {
 				Long guildid = set.getLong("guildId");
 				Long systemchannel = set.getLong("syschannelId");
@@ -56,7 +55,8 @@ public class SystemNotificationChannelManager {
 				}
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 

@@ -6,7 +6,6 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ParseException;
 
 public class GLALyricsParser {
 
@@ -16,20 +15,20 @@ public class GLALyricsParser {
 	public String get(String id) {
 		try {
 			return parseLyrics(id);
-		} catch (ParseException | IOException e) {
+		} catch (IOException e) {
 			return null;
 		}
 	}
 
-	private String parseLyrics(String id) throws IOException, ParseException {
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(GENIUS_EMBED_URL_HEAD + id + GENIUS_EMBED_URL_TAIL);
+	private String parseLyrics(String id) throws IOException {
 
-		final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+			final HttpGet httpget = new HttpGet(GENIUS_EMBED_URL_HEAD + id + GENIUS_EMBED_URL_TAIL);
 
-		httpclient.close();
+			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+			return getReadable(response);
+		}
 
-		return getReadable(response);
 	}
 
 	private String getReadable(String rawLyrics) {

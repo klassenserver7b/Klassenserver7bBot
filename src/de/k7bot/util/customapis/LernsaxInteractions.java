@@ -58,13 +58,13 @@ public class LernsaxInteractions implements LoopedEvent {
 		try {
 
 			client.login(cred);
+			return true;
 
 		} catch (IOException | NoSuchAlgorithmException | WebWeaverException e) {
-			log.error(e.getMessage(), e);
+			log.warn(e.getMessage());
 			return false;
 		}
 
-		return true;
 	}
 
 	/**
@@ -113,7 +113,9 @@ public class LernsaxInteractions implements LoopedEvent {
 
 		if (client == null || ecount >= 15) {
 			ecount = 0;
-			connect();
+			if (!connect()) {
+				return InternalStatusCodes.FAILURE;
+			}
 		}
 
 		List<Message> messages = checkForLernplanMessages();
@@ -141,11 +143,9 @@ public class LernsaxInteractions implements LoopedEvent {
 
 		List<Message> messages = new ArrayList<>();
 
-		ResultSet set = LiteSQL.onQuery("Select LernplanId from lernsaxinteractions;");
-
 		String currentMessageID = null;
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery("Select LernplanId from lernsaxinteractions;")) {
 			if (set.next()) {
 				currentMessageID = set.getString("LernplanId");
 			}
@@ -182,11 +182,10 @@ public class LernsaxInteractions implements LoopedEvent {
 					log.warn("Lernsax API request failed");
 					ecount++;
 					return null;
-				} else {
-					log.error(e.getMessage(), e);
-					ecount++;
-					return null;
 				}
+				log.error(e.getMessage(), e);
+				ecount++;
+				return null;
 			} catch (NullPointerException | IOException e) {
 				log.warn("Lernsax API request failed");
 				ecount++;
@@ -226,10 +225,14 @@ public class LernsaxInteractions implements LoopedEvent {
 			lernplanmessages.forEach(msg -> {
 
 				String linkURLQuery = null;
+
 				try {
+
 					linkURLQuery = URLEncoder.encode(
 							"learning_plan|" + msg.getFromGroup().getLogin() + "|" + msg.getData() + "|/", "UTF-8");
+
 				} catch (UnsupportedEncodingException ignored) {
+					// IGNORED
 				}
 
 				embeds.add(new EmbedBuilder()
@@ -243,10 +246,11 @@ public class LernsaxInteractions implements LoopedEvent {
 
 			for (MessageEmbed e : embeds) {
 
-				MessageCreateData data = new MessageCreateBuilder().setEmbeds(e).build();
+				try (MessageCreateData data = new MessageCreateBuilder().setEmbeds(e).build()) {
 
-				Klassenserver7bbot.getInstance().getSubscriptionManager()
-						.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
+					Klassenserver7bbot.getInstance().getSubscriptionManager()
+							.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
+				}
 			}
 
 		}

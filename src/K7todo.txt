@@ -1,5 +1,7 @@
 random Gourmetta Generator
 
+move DanceInterpreterJSONGenerateCommand into Danceinterpreter
+
 ASM für lokale m3u
 Equalizer Command und Speedchange zu AudioEffects Command mit Subcommands umbauen
 

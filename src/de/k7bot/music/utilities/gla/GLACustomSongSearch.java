@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 
-import org.apache.hc.core5.http.ParseException;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class GLACustomSongSearch {
 
@@ -15,7 +14,7 @@ public class GLACustomSongSearch {
 	private int nextPage;
 	private LinkedList<Hit> hits = new LinkedList<>();
 
-	public GLACustomSongSearch(GLAWrapper gla, String query) throws ParseException, IOException {
+	public GLACustomSongSearch(GLAWrapper gla, String query) throws IOException {
 		this.glaw = gla;
 		query = URLEncoder.encode(query, "UTF-8" /*
 													 * As suggested by User DimitrisStaratzis, for consistent encoding
@@ -26,15 +25,15 @@ public class GLACustomSongSearch {
 		request(url);
 	}
 
-	public GLACustomSongSearch(GLAWrapper gla, String query, int page) throws ParseException, IOException {
+	public GLACustomSongSearch(GLAWrapper gla, String query, int page) throws IOException {
 		this.glaw = gla;
 		query = URLEncoder.encode(query, "UTF-8");
 		String url = "https://genius.com/api/search/song?page=" + page + "&q=" + query;
 		request(url);
 	}
 
-	private void request(String uri) throws ParseException, IOException {
-		JSONObject obj;
+	private void request(String uri) throws IOException {
+		JsonObject obj;
 		try {
 			obj = this.glaw.getHttpManager().performRequest(uri);
 
@@ -43,21 +42,22 @@ public class GLACustomSongSearch {
 			}
 
 			parse(obj);
-		} catch (ParseException | IOException e) {
+		} catch (IOException e) {
 			throw e;
 		}
 	}
 
-	private void parse(JSONObject jRoot) {
-		this.status = jRoot.getJSONObject("meta").getInt("status");
-		JSONObject response = jRoot.getJSONObject("response");
-		if (!response.isNull("next_page")) {
-			this.nextPage = response.getInt("next_page");
+	private void parse(JsonObject jRoot) {
+
+		this.status = jRoot.getAsJsonObject("meta").get("status").getAsInt();
+		JsonObject response = jRoot.getAsJsonObject("response");
+		if (!(response.get("next_page") == null || response.get("next_page").isJsonNull())) {
+			this.nextPage = response.get("next_page").getAsInt();
 		}
-		JSONObject section = response.getJSONArray("sections").getJSONObject(0);
-		JSONArray hits = section.getJSONArray("hits");
-		for (int i = 0; i < hits.length(); i++) {
-			JSONObject hitRoot = hits.getJSONObject(i).getJSONObject("result");
+		JsonObject section = response.getAsJsonArray("sections").get(0).getAsJsonObject();
+		JsonArray hits = section.getAsJsonArray("hits");
+		for (int i = 0; i < hits.size(); i++) {
+			JsonObject hitRoot = hits.get(i).getAsJsonObject().getAsJsonObject("result");
 			this.hits.add(new Hit(hitRoot));
 		}
 	}
@@ -88,14 +88,14 @@ public class GLACustomSongSearch {
 		private String thumbnailUrl;
 		private Artist artist;
 
-		public Hit(JSONObject jRoot) {
-			this.id = jRoot.getLong("id");
-			this.title = jRoot.getString("title");
-			this.titleWithFeatured = jRoot.getString("title_with_featured");
-			this.url = jRoot.getString("url");
-			this.imageUrl = jRoot.getString("header_image_url");
-			this.thumbnailUrl = jRoot.getString("song_art_image_thumbnail_url");
-			this.artist = new Artist(jRoot.getJSONObject("primary_artist"));
+		public Hit(JsonObject jRoot) {
+			this.id = jRoot.get("id").getAsLong();
+			this.title = jRoot.get("title").getAsString();
+			this.titleWithFeatured = jRoot.get("title_with_featured").getAsString();
+			this.url = jRoot.get("url").getAsString();
+			this.imageUrl = jRoot.get("header_image_url").getAsString();
+			this.thumbnailUrl = jRoot.get("song_art_image_thumbnail_url").getAsString();
+			this.artist = new Artist(jRoot.get("primary_artist").getAsJsonObject());
 		}
 
 		public long getId() {
@@ -140,12 +140,12 @@ public class GLACustomSongSearch {
 		private String slug;
 		private String url;
 
-		public Artist(JSONObject jRoot) {
-			this.id = jRoot.getLong("id");
-			this.imageUrl = jRoot.getString("image_url");
-			this.name = jRoot.getString("name");
-			this.slug = jRoot.getString("slug");
-			this.url = jRoot.getString("url");
+		public Artist(JsonObject jRoot) {
+			this.id = jRoot.get("id").getAsLong();
+			this.imageUrl = jRoot.get("image_url").getAsString();
+			this.name = jRoot.get("name").getAsString();
+			this.slug = jRoot.get("slug").getAsString();
+			this.url = jRoot.get("url").getAsString();
 		}
 
 		public long getId() {

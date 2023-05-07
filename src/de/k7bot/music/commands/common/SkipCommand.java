@@ -21,12 +21,19 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class SkipCommand implements ServerCommand {
+
+	private boolean isEnabled;
 	public static boolean onskip = false;
 
 	@Override
 	public String gethelp() {
 		String help = "Überspringt den aktuellen Song.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "skip" };
 	}
 
 	@Override
@@ -79,10 +86,26 @@ public class SkipCommand implements ServerCommand {
 
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
-			} catch (NumberFormatException e) {
+			}
+			catch (NumberFormatException e) {
 				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "skip [int]", m);
 			}
 		}
 		onskip = false;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

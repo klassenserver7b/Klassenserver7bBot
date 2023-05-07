@@ -6,11 +6,18 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class TestCommand implements ServerCommand {
+public class TestCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
 		return null;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "test" };
 	}
 
 	@Override
@@ -20,10 +27,24 @@ public class TestCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
+		//Test command is only used when I have something to test......
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
 
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }
-
 
 /**
  * MODAL TEST

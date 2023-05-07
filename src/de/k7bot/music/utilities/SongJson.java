@@ -89,10 +89,9 @@ public class SongJson {
 			return false;
 		}
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		try {
+			final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
 			httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 			this.isDiscogsValidated = true;
@@ -102,12 +101,6 @@ public class SongJson {
 		} catch (IOException e) {
 
 			this.isDiscogsValidated = false;
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				// do smth
-			}
 
 			return false;
 		}

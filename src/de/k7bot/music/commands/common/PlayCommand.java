@@ -14,6 +14,8 @@ import de.k7bot.music.utilities.AudioLoadOption;
  */
 public class PlayCommand extends GenericPlayCommand {
 
+	private boolean isEnabled;
+
 	/**
 	 *
 	 */
@@ -27,6 +29,11 @@ public class PlayCommand extends GenericPlayCommand {
 	}
 
 	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "play", "p" };
+	}
+
+	@Override
 	protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
 		return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE);
 	}
@@ -34,6 +41,21 @@ public class PlayCommand extends GenericPlayCommand {
 	@Override
 	protected GenericPlayCommand getChildClass() {
 		return this;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

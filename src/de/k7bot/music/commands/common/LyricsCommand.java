@@ -6,7 +6,6 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,25 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class LyricsCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	private final Logger log;
+
+	@Override
+	public String gethelp() {
+		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "lyrics" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
 
 	public LyricsCommand() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -84,7 +101,7 @@ public class LyricsCommand implements ServerCommand {
 
 			sendErrorEmbed(channel);
 
-		} catch (IOException | InterruptedException | ExecutionException | ParseException e) {
+		} catch (IOException | InterruptedException | ExecutionException e) {
 			sendErrorEmbed(channel);
 		}
 
@@ -143,7 +160,7 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private GLACustomSongSearch getGeniusLyrics(String query) throws IOException, ParseException {
+	private GLACustomSongSearch getGeniusLyrics(String query) throws IOException {
 
 		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
@@ -154,14 +171,18 @@ public class LyricsCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

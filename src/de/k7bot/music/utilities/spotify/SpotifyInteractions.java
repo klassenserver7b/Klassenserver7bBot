@@ -57,7 +57,7 @@ public class SpotifyInteractions {
 	 */
 	public void startfetchcycle() {
 
-		this.fetchthread = TokenFetchThread.getINSTANCE(apienabled, cookie);
+		this.fetchthread = TokenFetchThread.getINSTANCE(cookie);
 
 	}
 

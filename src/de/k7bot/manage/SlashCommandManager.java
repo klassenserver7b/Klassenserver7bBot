@@ -88,8 +88,9 @@ public class SlashCommandManager {
 					+ event.getCommandString() + "\n");
 
 			LiteSQL.onUpdate(
-					"INSERT INTO slashcommandlog (command, guildId, timestamp, commandstring) VALUES (?, ?, ?, ?)",
+					"INSERT INTO slashcommandlog (command, guildId, userId, timestamp, commandstring) VALUES (?, ?, ?, ?, ?)",
 					event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
+					event.getUser().getIdLong(),
 					event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
 					event.getCommandString());
 

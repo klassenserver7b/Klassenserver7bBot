@@ -9,8 +9,9 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.ParseException;
-import org.json.JSONObject;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GLACustomHttpManager {
 
@@ -20,20 +21,20 @@ public class GLACustomHttpManager {
 	public GLACustomHttpManager() {
 	}
 
-	public JSONObject performRequest(String url) throws IOException, HttpResponseException, ParseException {
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(url);
-		httpget.setHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
-		httpget.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON);
-		httpget.setHeader(HttpHeaders.ACCEPT, "application/json");
+	public JsonObject performRequest(String url) throws IOException, HttpResponseException {
 
-		try {
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+
+			final HttpGet httpget = new HttpGet(url);
+			httpget.setHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
+			httpget.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON);
+			httpget.setHeader(HttpHeaders.ACCEPT, "application/json");
 
 			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
 			httpclient.close();
 
-			return new JSONObject(response);
+			return JsonParser.parseString(response).getAsJsonObject();
 
 		} catch (HttpResponseException e) {
 			throw e;

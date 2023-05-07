@@ -10,6 +10,24 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class MessagetoEmbedCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		return "Sendet die eingegebene Nachricht als Embed.\n - z.B. [prefix]toembed [nachricht]";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "toembed" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -26,12 +44,17 @@ public class MessagetoEmbedCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		return "Sendet die eingegebene Nachricht als Embed.\n - z.B. [prefix]toembed [nachricht]";
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

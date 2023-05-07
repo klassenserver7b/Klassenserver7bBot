@@ -21,6 +21,25 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class TimeoutCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
+
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "timeout" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -47,7 +66,8 @@ public class TimeoutCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		} catch (StringIndexOutOfBoundsException e) {
+		}
+		catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
 					"timeout [time (in minutes)] [reason] @user", m);
 		}
@@ -107,11 +127,13 @@ public class TimeoutCommand implements ServerCommand {
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
-		} catch (HierarchyException e) {
+		}
+		catch (HierarchyException e) {
 
 			PermissionError.onPermissionError(requester, channel);
 
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
 					"timeout [time (in minutes)] [reason] @user", requester);
@@ -120,14 +142,17 @@ public class TimeoutCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
-
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

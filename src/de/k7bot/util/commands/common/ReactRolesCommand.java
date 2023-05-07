@@ -21,7 +21,25 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ReactRolesCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public String gethelp() {
+		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "reactrole" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -61,7 +79,8 @@ public class ReactRolesCommand implements ServerCommand {
 									channel.getGuild().getIdLong(), tc.getIdLong(), MessageId, utfemote,
 									role.getIdLong());
 						}
-					} catch (NumberFormatException e) {
+					}
+					catch (NumberFormatException e) {
 						log.error(e.getMessage(), e);
 					}
 				}
@@ -76,13 +95,17 @@ public class ReactRolesCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

@@ -81,10 +81,14 @@ public class DiscogsAPI {
 			return null;
 		}
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(res_url);
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+			final HttpGet httpget = new HttpGet(res_url);
 
-		return request(httpclient, httpget);
+			return request(httpclient, httpget);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	private String getMasterJson(String searchquery) {
@@ -125,14 +129,18 @@ public class DiscogsAPI {
 				"https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		return request(httpclient, httpget);
+			return request(httpclient, httpget);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
 
 	}
 
 	private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
-		
+
 		try {
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 

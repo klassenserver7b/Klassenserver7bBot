@@ -18,6 +18,24 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class LoopCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "loopt die aktuelle Queuelist";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "loop" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -45,21 +63,25 @@ public class LoopCommand implements ServerCommand {
 
 	}
 
-	@Override
-	public String gethelp() {
-		String help = "loopt die aktuelle Queuelist";
-		return help;
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
-
 	public static void onLoop(@Nonnull MusicController controller) {
 
 		controller.getQueue().loop();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

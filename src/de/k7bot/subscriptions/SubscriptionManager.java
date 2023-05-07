@@ -77,12 +77,10 @@ public class SubscriptionManager {
 
 			return registerSubscription(new Subscription(type, target, deliverytargetid, subscriptionid));
 
-		} else {
-
-			log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
-			return false;
-
 		}
+
+		log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
+		return false;
 
 	}
 
@@ -98,7 +96,8 @@ public class SubscriptionManager {
 
 			return true;
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 
 			log.error(e.getMessage(), e);
 			return false;
@@ -126,9 +125,8 @@ public class SubscriptionManager {
 	 */
 	private void refreshList() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-		try {
 			if (set != null) {
 				while (set.next()) {
 
@@ -149,7 +147,8 @@ public class SubscriptionManager {
 
 				}
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 

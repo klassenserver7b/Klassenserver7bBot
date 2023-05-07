@@ -22,6 +22,7 @@ import org.apache.hc.client5.http.entity.EntityBuilder;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import com.google.gson.JsonParser;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.TopLevelSlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -65,15 +67,15 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 		limits = new HashMap<>();
 
 		allowedUsers.add(Klassenserver7bbot.getInstance().getOwnerId());
-		allowedUsers.add(672065757538025482L);
-		allowedUsers.add(778273888408174672L);
-		allowedUsers.add(642378883345154048L);
-		allowedUsers.add(453175290991214603L);
-		allowedUsers.add(672514862101954570L);
-		allowedUsers.add(669980663797121042L);
-		allowedUsers.add(675828196389683223L);
-		allowedUsers.add(809065974909239316L);
-		allowedUsers.add(550930895691972608L);
+		try {
+			for (Member m : Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L)
+					.getMembers()) {
+				allowedUsers.add(m.getUser().getIdLong());
+			}
+		}
+		catch (NullPointerException e) {
+			return;
+		}
 	}
 
 	@Override
@@ -88,7 +90,8 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 			if (!event.getChannel().asTextChannel().isNSFW()) {
 				throw new IllegalStateException();
 			}
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			sendErrorEmbed(event, "You can only use this in an NSFW Channel", "Restricted");
 			return;
 		}
@@ -103,7 +106,8 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 				return null;
 			});
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			sendErrorEmbed(event, "Stable-diffusion is currently not available - please try again later", null);
 			return;
 		}
@@ -144,9 +148,9 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 		entbuild.setText(body.toString());
 
-		post.setEntity(entbuild.build());
+		try (HttpEntity entity = entbuild.build()) {
 
-		try {
+			post.setEntity(entity);
 
 			String resp = client.execute(post, new BasicHttpClientResponseHandler());
 
@@ -162,15 +166,14 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 					+ OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), ".png");
 			f.deleteOnExit();
 
-			FileOutputStream fout = new FileOutputStream(f);
+			try (FileOutputStream fout = new FileOutputStream(f); FileUpload fup = FileUpload.fromData(f)) {
+				fout.write(decodedBytes);
+				hook.sendFiles().complete();
+				f.delete();
+			}
 
-			fout.write(decodedBytes);
-			fout.close();
-
-			hook.sendFiles(FileUpload.fromData(f)).complete();
-			f.delete();
-
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
 	}

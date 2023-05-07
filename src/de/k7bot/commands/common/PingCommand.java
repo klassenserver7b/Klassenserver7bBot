@@ -2,19 +2,14 @@ package de.k7bot.commands.common;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class PingCommand implements ServerCommand {
 
-	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
-
-		long gatewayping = getGatewayping(channel);
-		long time = getRESTping(channel);
-		channel.sendMessageFormat("Pong! %dms", time, gatewayping, "s").queue();
-	}
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
@@ -23,21 +18,49 @@ public class PingCommand implements ServerCommand {
 	}
 
 	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "ping" };
+	}
+
+	@Override
 	public HelpCategories getcategory() {
 		return HelpCategories.ALLGEMEIN;
 	}
 
-	public Long getGatewayping(TextChannel channel) {
+	@Override
+	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		long gatewayping = channel.getJDA().getGatewayPing();
+		long gatewayping = getGatewayping(channel.getJDA());
+		long time = getRESTping(channel.getJDA());
+		channel.sendMessageFormat("Pong! %dms", time, gatewayping, "s").queue();
+	}
+
+	public Long getGatewayping(JDA jda) {
+
+		long gatewayping = jda.getGatewayPing();
 
 		return gatewayping;
 	}
 
-	public Long getRESTping(TextChannel channel) {
+	public Long getRESTping(JDA jda) {
 
-		long time = channel.getJDA().getRestPing().complete();
+		long time = jda.getRestPing().complete();
 
 		return time;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

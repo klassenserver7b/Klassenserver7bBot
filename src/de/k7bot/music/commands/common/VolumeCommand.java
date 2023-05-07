@@ -20,12 +20,19 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class VolumeCommand implements ServerCommand {
+public class VolumeCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
 		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
 		return help;
+	}
+	
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "volume" };
 	}
 
 	@Override
@@ -80,5 +87,20 @@ public class VolumeCommand implements ServerCommand {
 		} catch (NumberFormatException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
 		}
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

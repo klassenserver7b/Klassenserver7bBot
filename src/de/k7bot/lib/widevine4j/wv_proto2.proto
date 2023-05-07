@@ -1,7 +1,7 @@
 syntax = "proto2";
 
 option java_multiple_files = false;
-option java_package = "de.konsl.widevine4j.widevine";
+option java_package = "de.k7bot.lib.widevine4j";
 option java_outer_classname = "WvProto2";
 
 enum LicenseType {

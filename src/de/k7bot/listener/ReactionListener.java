@@ -43,10 +43,10 @@ public class ReactionListener extends ListenerAdapter {
 
 			EmojiUnion emote = event.getEmoji();
 
-			ResultSet set = LiteSQL.onQuery(
+			try (ResultSet set = LiteSQL.onQuery(
 					"SELECT roleId FROM reactroles WHERE guildId = ? AND channelId = ? AND messageId = ? AND emote = ?;",
-					guildid, channelid, messageid, emote.getName());
-			try {
+					guildid, channelid, messageid, emote.getName())) {
+
 				if (set.next()) {
 					long rollenid = set.getLong("roleId");
 
@@ -63,7 +63,10 @@ public class ReactionListener extends ListenerAdapter {
 						guild.removeRoleFromMember(member, guild.getRoleById(rollenid)).queue();
 					}
 				}
-			} catch (SQLException | IllegalArgumentException e) {
+			}
+			catch (SQLException |
+
+					IllegalArgumentException e) {
 				log.error(e.getMessage(), e);
 			}
 		}

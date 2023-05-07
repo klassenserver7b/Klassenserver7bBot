@@ -21,10 +21,16 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class UebersteuerungAdmin implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
-		String help = null;
-		return help;
+		return null;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "uvolume" };
 	}
 
 	@Override
@@ -55,10 +61,26 @@ public class UebersteuerungAdmin implements ServerCommand {
 				} else {
 					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
 				}
-			} catch (NumberFormatException e) {
+			}
+			catch (NumberFormatException e) {
 				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
 			}
 		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

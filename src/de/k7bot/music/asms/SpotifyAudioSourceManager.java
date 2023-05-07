@@ -76,6 +76,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	/**
 	 *
 	 */
+	@SuppressWarnings("resource")
 	public SpotifyAudioSourceManager() {
 
 		this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
@@ -178,7 +179,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	private SpotifyAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
 		return new SpotifyAudioTrack(info, this);
 	}
-	
+
 	@Override
 	public boolean isTrackEncodable(AudioTrack track) {
 		return true;
@@ -188,6 +189,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
 		// No custom values that need saving
 	}
+
 	@Override
 	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
 		return new SpotifyAudioTrack(trackInfo, this);

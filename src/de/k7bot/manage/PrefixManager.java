@@ -32,9 +32,8 @@ public class PrefixManager {
 
 	private void reload() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
 
-		try {
 			while (set.next()) {
 				Long guildid = set.getLong("guildId");
 				String prefix = set.getString("prefix");

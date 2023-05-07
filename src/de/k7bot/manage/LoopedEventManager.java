@@ -48,6 +48,19 @@ public class LoopedEventManager {
 
 		List<LoopedEvent> change = new ArrayList<>();
 
+		for (LoopedEvent erroredEvent : erroredEvents) {
+
+			if (erroredEvent.isAvailable()) {
+				log.info(erroredEvent.getIdentifier() + " is available again");
+				change.add(erroredEvent);
+			}
+
+		}
+
+		erroredEvents.removeAll(change);
+		activeEvents.addAll(change);
+		change.clear();
+
 		for (LoopedEvent activeEvent : activeEvents) {
 			int status = activeEvent.checkforUpdates();
 
@@ -60,18 +73,6 @@ public class LoopedEventManager {
 		activeEvents.removeAll(change);
 		erroredEvents.addAll(change);
 		change.clear();
-
-		for (LoopedEvent erroredEvent : erroredEvents) {
-
-			if (erroredEvent.isAvailable()) {
-				log.info(erroredEvent.getIdentifier() + "is available again");
-				change.add(erroredEvent);
-			}
-
-		}
-
-		erroredEvents.removeAll(change);
-		activeEvents.addAll(change);
 	}
 
 	/**

@@ -36,8 +36,7 @@ public class MusicController {
 
 	private void loadVolume() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?", guild.getIdLong());
-		try {
+		try (ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?", guild.getIdLong())) {
 			if (set.next()) {
 				try {
 					int volume = set.getInt("volume");

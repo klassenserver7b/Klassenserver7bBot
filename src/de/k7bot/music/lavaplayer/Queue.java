@@ -73,19 +73,16 @@ public class Queue {
 				TrackScheduler.next = false;
 				return true;
 
-			} else {
-
-				TrackScheduler.next = true;
-				track = this.queuelist.remove(0);
-
-				logNewTrack(track);
-				player.playTrack(track);
-
-				TrackScheduler.next = false;
-
-				return true;
-
 			}
+			TrackScheduler.next = true;
+			track = this.queuelist.remove(0);
+
+			logNewTrack(track);
+			player.playTrack(track);
+
+			TrackScheduler.next = false;
+
+			return true;
 
 		} else if (this.islooped) {
 

@@ -17,10 +17,17 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class ResumeCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "Setzt den aktuellen Track fort.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "resume" };
 	}
 
 	@Override
@@ -49,5 +56,20 @@ public class ResumeCommand implements ServerCommand {
 					TimeUnit.SECONDS);
 		}
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

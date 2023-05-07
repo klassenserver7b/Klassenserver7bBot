@@ -15,10 +15,22 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class ShuffleCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "Spielt die aktuelle Playlist in zufälliger Reihenfolge.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "shuffle", "random" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
@@ -39,8 +51,18 @@ public class ShuffleCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

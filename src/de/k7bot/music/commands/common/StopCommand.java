@@ -16,10 +16,17 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 public class StopCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "Stoppt den aktuellen Track und der Bot verlässt den VoiceChannel.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "stop" };
 	}
 
 	@Override
@@ -46,6 +53,21 @@ public class StopCommand implements ServerCommand {
 		player.stopTrack();
 		manager.closeAudioConnection();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

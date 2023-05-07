@@ -87,10 +87,12 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
 					.setDescription("Successfully removed subscription with id `" + id + "`").build()).queue();
 
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-					.setDescription("Error while removing subscription!").build()).queue();
+			hook.sendMessageEmbeds(
+					new EmbedBuilder().setColor(Color.red).setDescription("Error while removing subscription!").build())
+					.queue();
 
 		}
 	}
@@ -150,9 +152,8 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
 		LinkedHashMap<Long, String> subs = new LinkedHashMap<>();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-		try {
 			while (set.next()) {
 
 				Long targetdcid = set.getLong("targetDcId");
@@ -168,7 +169,8 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 								+ SubscriptionDeliveryType.fromId((int) set.getLong("type")));
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -179,15 +181,15 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
 		LinkedHashMap<Long, Long> subs = new LinkedHashMap<>();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid);
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid)) {
 
-		try {
 			while (set.next()) {
 
 				subs.put(set.getLong("subscriptionId"), set.getLong("target"));
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 

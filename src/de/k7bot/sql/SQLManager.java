@@ -33,10 +33,10 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS musiclogs(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, songname STRING, songauthor STRING, guildId INTEGER, timestamp INTEGER);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS commandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, timestamp INTEGER);");
+				"CREATE TABLE IF NOT EXISTS commandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, userId INTEGER, timestamp INTEGER);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, timestamp INTEGER, commandstring STRING);");
+				"CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, userId INTEGER, timestamp INTEGER, commandstring STRING);");
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS ha3users(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ingamename STRING, realname STRING, dcname STRING, dcId INTEGER, approved INTEGER);");
