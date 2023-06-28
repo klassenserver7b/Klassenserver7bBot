@@ -2,13 +2,19 @@ package de.k7bot.util.customapis;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +26,16 @@ import de.k7bot.util.InternalStatusCodes;
 import de.k7bot.util.customapis.types.LoopedEvent;
 import de.konsl.webweaverapi.WebWeaverClient;
 import de.konsl.webweaverapi.WebWeaverException;
+import de.konsl.webweaverapi.messages.request.SelfAutologinRequest;
+import de.konsl.webweaverapi.model.FocusObject;
 import de.konsl.webweaverapi.model.auth.Credentials;
 import de.konsl.webweaverapi.model.messages.Message;
 import de.konsl.webweaverapi.model.messages.MessageType;
+import de.konsl.webweaverscraper.Popup;
+import de.konsl.webweaverscraper.WebWeaverScraper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -40,7 +51,8 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  *
  */
 public class LernsaxInteractions implements LoopedEvent {
-	WebWeaverClient client;
+
+	private WebWeaverClient client;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	private int ecount = 0;
 
@@ -210,6 +222,7 @@ public class LernsaxInteractions implements LoopedEvent {
 	 * @param lernplanmessages The List obtained by
 	 *                         {@link LernsaxInteractions#checkForLernplanMessages()}
 	 */
+	@SuppressWarnings("resource")
 	public void sendLernsaxEmbeds(List<Message> lernplanmessages) {
 
 		if (lernplanmessages == null) {
@@ -220,9 +233,9 @@ public class LernsaxInteractions implements LoopedEvent {
 		if (lernplanmessages.size() > 0) {
 
 			log.info("Sending " + lernplanmessages.size() + " new Lernplan-Embeds");
-			ArrayList<MessageEmbed> embeds = new ArrayList<>();
+			List<MessageCreateData> messageData = new ArrayList<>();
 
-			lernplanmessages.forEach(msg -> {
+			for (Message msg : lernplanmessages) {
 
 				String linkURLQuery = null;
 
@@ -235,22 +248,49 @@ public class LernsaxInteractions implements LoopedEvent {
 					// IGNORED
 				}
 
-				embeds.add(new EmbedBuilder()
+				MessageEmbed messEmbed = new EmbedBuilder()
 						.setTitle("Ein neuer Lernplan wurde bereitgestellt!",
 								"https://" + client.getRemoteHost() + "/l.php?" + linkURLQuery)
 						.addField("Name", msg.getData(), false)
 						.addField("Klasse / Gruppe", msg.getFromGroup().getName(), false)
-						.addField("Autor", msg.getFromUser().getName(), false).build());
+						.addField("Autor", msg.getFromUser().getName(), false).build();
 
-			});
+				messageData.add(new MessageCreateBuilder().addEmbeds(messEmbed).build());
 
-			for (MessageEmbed e : embeds) {
+				try (CloseableHttpClient httpClient = HttpClients.createSystem()) {
 
-				try (MessageCreateData data = new MessageCreateBuilder().setEmbeds(e).build()) {
+					String autologinUrl = client.request(
+							new SelfAutologinRequest(msg.getFromGroup().getLogin(), "learning_plan", msg.getData()),
+							FocusObject.TRUSTS).getUrl();
 
-					Klassenserver7bbot.getInstance().getSubscriptionManager()
-							.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
+					WebWeaverScraper scraper = new WebWeaverScraper();
+					Popup popup = scraper.navigate(URI.create(autologinUrl), true);
+					
+					Element learningPlanContent = popup.document().selectFirst("#main_content > p.panel");
+					if (learningPlanContent == null) continue;
+					String content = learningPlanContent.wholeText();
+
+					Element logoutLink = scraper.getDocument().selectFirst("a[href^=107480.php]");
+					if (logoutLink != null) {
+					    URI logoutUri = URI.create(logoutLink.attr("href"));
+					    scraper.navigate(logoutUri);
+					}
+
+					try (FileUpload fup = FileUpload.fromData(content.getBytes(StandardCharsets.UTF_8),	"Learningplan_"+OffsetDateTime.now().toEpochSecond() + "-" + msg.getData().replace(" ", "_") + ".txt")) {
+						messageData.add(new MessageCreateBuilder().addFiles(fup).build());
+					}
+
+				} catch (WebWeaverException | IOException e1) {
+					log.error(e1.getMessage(), e1);
 				}
+
+			}
+
+			for (MessageCreateData data : messageData) {
+
+				Klassenserver7bbot.getInstance().getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
+
 			}
 
 		}

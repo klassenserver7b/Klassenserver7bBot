@@ -52,5 +52,7 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER, target INTEGER, targetDcId INTEGER, subscriptionId INTEGER);");
+
+		LiteSQL.onUpdate("CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING);");
 	}
 }

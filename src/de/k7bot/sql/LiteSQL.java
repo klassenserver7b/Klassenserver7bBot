@@ -91,11 +91,15 @@ public class LiteSQL {
 	private static int countMatches(String base, String pattern) {
 
 		int occurences = 0;
-		if (0 != pattern.length()) {
-			for (int index = base.indexOf(pattern, 0); index != -1; index = base.indexOf(pattern, index + 1)) {
-				occurences++;
-			}
+		
+		if (0 == pattern.length()) {
+			return occurences;
 		}
+		
+		for (int index = base.indexOf(pattern, 0); index != -1; index = base.indexOf(pattern, index + 1)) {
+			occurences++;
+		}
+		
 		return occurences;
 
 	}

@@ -150,6 +150,7 @@ public class CommandManager {
 		}
 
 		commands.forEach(command -> {
+			command.enableCommand();
 			for (String s : command.getCommandStrings()) {
 				mappedCommands.put(s, command);
 			}
@@ -193,11 +194,7 @@ public class CommandManager {
 	}
 
 	public boolean disableCommand(ServerCommand command) {
-		if (command == null) {
-			return false;
-		}
-
-		if (!command.isEnabled()) {
+		if (command == null || !command.isEnabled()) {
 			return false;
 		}
 
@@ -229,11 +226,7 @@ public class CommandManager {
 
 	public boolean enableCommand(ServerCommand command) {
 
-		if (command == null) {
-			return false;
-		}
-
-		if (command.isEnabled()) {
+		if (command == null || command.isEnabled()) {
 			return false;
 		}
 

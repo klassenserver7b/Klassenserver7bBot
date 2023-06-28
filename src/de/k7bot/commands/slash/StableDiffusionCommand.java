@@ -50,7 +50,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
  */
 public class StableDiffusionCommand implements TopLevelSlashCommand {
 
-	private static final Long DEFAULT_RATE_LIMIT = 120000L;
+	private static final Long DEFAULT_RATE_LIMIT = 30000L;
 
 	private final HttpClient client;
 	private final Logger log;
@@ -72,8 +72,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 					.getMembers()) {
 				allowedUsers.add(m.getUser().getIdLong());
 			}
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			return;
 		}
 	}
@@ -82,7 +81,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		if (!allowedUsers.contains(event.getUser().getIdLong())) {
-			sendErrorEmbed(event, "You are not allowed to use the AI yet", "403 - Unauthorized");
+			sendErrorEmbed(event, "You are not allowed to use the AI yet", "403 - Forbidden");
 			return;
 		}
 
@@ -90,9 +89,8 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 			if (!event.getChannel().asTextChannel().isNSFW()) {
 				throw new IllegalStateException();
 			}
-		}
-		catch (IllegalStateException e) {
-			sendErrorEmbed(event, "You can only use this in an NSFW Channel", "Restricted");
+		} catch (IllegalStateException e) {
+			sendErrorEmbed(event, "You can only use this in a NSFW Channel", "Restricted");
 			return;
 		}
 
@@ -106,14 +104,13 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 				return null;
 			});
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			sendErrorEmbed(event, "Stable-diffusion is currently not available - please try again later", null);
 			return;
 		}
 
 		if (!checkRateLimit(event.getUser())) {
-			sendErrorEmbed(event, "You can only prompt every 2 minutes", ":warning: Rate Limit :warning:");
+			sendErrorEmbed(event, "You can only prompt every 30 seconds", ":warning: Rate Limit :warning:");
 			return;
 		}
 
@@ -168,12 +165,11 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 			try (FileOutputStream fout = new FileOutputStream(f); FileUpload fup = FileUpload.fromData(f)) {
 				fout.write(decodedBytes);
-				hook.sendFiles().complete();
+				hook.sendFiles(fup).complete();
 				f.delete();
 			}
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
 	}
@@ -193,6 +189,10 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 	}
 
 	protected boolean checkRateLimit(User u) {
+
+		if (u.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+			return true;
+		}
 
 		Long time = limits.get(u);
 

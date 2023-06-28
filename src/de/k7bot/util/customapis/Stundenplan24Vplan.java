@@ -149,6 +149,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		if (sendApproved) {
 
+			putRoomsInDB(doc);
+
 			String info = "";
 
 			if (doc == null) {
@@ -159,7 +161,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 			}
 
-			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
+			log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.getInstance().isDevMode());
 
 			EmbedBuilder embbuild = new EmbedBuilder();
@@ -250,6 +252,27 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		return null;
 
+	}
+
+	private void putRoomsInDB(Document doc) {
+
+		NodeList stdlist = doc.getElementsByTagName("Std");
+
+		LiteSQL.onUpdate("DELETE FROM vplandata");
+
+		for (int i = 0; i < stdlist.getLength(); i++) {
+
+			Element n = (Element) stdlist.item(i);
+
+			int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
+			String room = n.getElementsByTagName("Ra").item(0).getTextContent();
+
+			if (room.contains("&amp;nbsp;") || room.contains("nbsp;") || room.isBlank()) {
+				continue;
+			}
+			LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room) VALUES(?, ?)", lesson, room);
+
+		}
 	}
 
 	/**
@@ -534,7 +557,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			return response;
 
 		} catch (HttpHostConnectException | HttpResponseException e1) {
-			log.warn("Vplan Connection failed!" + e1.getMessage());
+			log.debug("Vplan Connection failed!" + e1.getMessage());
 		} catch (IOException e) {
 			log.error("Vplan IO Exception - please check your connection and settings");
 			log.error(e.getMessage(), e);

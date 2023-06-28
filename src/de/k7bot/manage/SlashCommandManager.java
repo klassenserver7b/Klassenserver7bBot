@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.slash.CheckRoomSlashCommand;
 import de.k7bot.commands.slash.HA3MembersCommand;
 import de.k7bot.commands.slash.HelpSlashCommand;
 import de.k7bot.commands.slash.PingSlashCommand;
+import de.k7bot.commands.slash.SearchForRoomSlashCommand;
 import de.k7bot.commands.slash.Shutdownslashcommand;
 import de.k7bot.commands.slash.StableDiffusionCommand;
 import de.k7bot.commands.slash.VotingCommand;
@@ -58,6 +60,8 @@ public class SlashCommandManager {
 		registerschedule.add(new VotingCommand());
 		registerschedule.add(new SpeedChangeCommand());
 		registerschedule.add(new StableDiffusionCommand());
+		registerschedule.add(new CheckRoomSlashCommand());
+		registerschedule.add(new SearchForRoomSlashCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
