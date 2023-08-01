@@ -48,10 +48,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 
-import de.k7bot.lib.widevine4j.CDMDevice;
-import de.k7bot.lib.widevine4j.CDMSession;
-import de.k7bot.lib.widevine4j.ContentKey;
 import de.k7bot.music.asms.SpotifyAudioSourceManager;
+import de.klassenserver7b.widevine4j.CDMDevice;
+import de.klassenserver7b.widevine4j.CDMSession;
+import de.klassenserver7b.widevine4j.ContentKey;
 import io.seruco.encoding.base62.Base62;
 
 /**
