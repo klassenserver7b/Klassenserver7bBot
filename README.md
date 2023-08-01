@@ -1,7 +1,8 @@
 # Klassenserver7bBot
 [![CodeFactor](https://www.codefactor.io/repository/github/klassenserver7b/klassenserver7bbot/badge)](https://www.codefactor.io/repository/github/klassenserver7b/klassenserver7bbot)
 [![License](https://img.shields.io/github/license/klassenserver7b/Klassenserver7bBot.svg)](https://github.com//klassenserver7b/Klassenserver7bBot/blob/master/LICENSE)
-[![Build status](https://ci.appveyor.com/api/projects/status/k70t7pfha0dbcvo2?svg=true)](https://ci.appveyor.com/project/klassenserver7b/Klassenserver7bBot)
+[![Build Status](https://jitci.com/gh/klassenserver7b/Klassenserver7bBot/svg)](https://jitci.com/gh/klassenserver7b/Klassenserver7bBot)
+[![Latest Release](https://jitpack.io/v/Klassenserver7b/Klassenserver7bbot.svg)](https://jitpack.io/#Klassenserver7b/Klassenserver7bbot)
 
 ## Install
 
@@ -15,11 +16,9 @@
 
 1. (Download/Use [Java 17](https://www.azul.com/downloads/?version=java-17-lts&package=jdk))
 2. Use Maven Compiler and the submitted pom.xml to compile the complete `DIRECTORY/src/de/k7bot` directory.
-3. The current "Main"-Class is `Klassenserver7bbot` - In a further release this will change to `Main`
+3. The current "Main"-Class is `Main`
 
 ## Support
-
-**The `friendly exceptions` and `Error on Trackloading` are not my fault and are also listed in the Lavaplayer Issuses**
 
 ### You can contact me via
 
