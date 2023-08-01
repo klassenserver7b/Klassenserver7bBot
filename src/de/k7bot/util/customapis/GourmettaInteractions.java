@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -13,16 +13,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.EntityBuilder;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,8 @@ import com.google.gson.JsonSyntaxException;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -45,7 +46,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  * @author Klassenserver7b
  *
  */
-public class GourmettaInteractions implements InternalAPI {
+public class GourmettaInteractions implements LoopedEvent {
 
 	String token;
 	String userid;
@@ -55,7 +56,7 @@ public class GourmettaInteractions implements InternalAPI {
 	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
-	 * 
+	 *
 	 */
 	public GourmettaInteractions() {
 		apienabled = false;
@@ -65,19 +66,16 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Login for the Gourmetta Rest-API based on the credentials given
-	 * 
-	 * @return If the Login was successful
+	 *
 	 */
-	public void login() {
+	public boolean login() {
 
 		String username = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettauserid");
 		String password = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettapassword");
 
 		if (username == null || password == null || username.isBlank() || password.isBlank()) {
-			return;
+			return false;
 		}
-
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
 
 		final HttpPost post = new HttpPost("https://bestellung-rest.gourmetta.de/login");
 
@@ -89,22 +87,14 @@ public class GourmettaInteractions implements InternalAPI {
 		auth.addProperty("password", password);
 		entitybuild.setText(auth.toString());
 
-		try {
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem();
+				HttpEntity entity = entitybuild.build()) {
 
-			post.setEntity(entitybuild.build());
-			CloseableHttpResponse response = httpclient.execute(post);
+			post.setEntity(entity);
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from bestellung-rest.gourmetta.de");
-				return;
-			}
+			final String response = httpclient.execute(post, new BasicHttpClientResponseHandler());
 
-			String content = EntityUtils.toString(response.getEntity());
-
-			response.close();
-			httpclient.close();
-
-			JsonElement elem = JsonParser.parseString(content);
+			JsonElement elem = JsonParser.parseString(response);
 
 			this.token = elem.getAsJsonObject().get("token").getAsString();
 
@@ -113,16 +103,19 @@ public class GourmettaInteractions implements InternalAPI {
 			this.userid = JsonParser.parseString(uidjson).getAsJsonObject().get("userUuid").getAsString();
 			this.apienabled = true;
 
-		} catch (IOException | ParseException e) {
-			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
+			if (userid != null && token != null) {
+				return true;
 			}
 
+		} catch (HttpHostConnectException e1) {
+			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
+			return false;
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			return false;
 		}
+
+		return false;
 	}
 
 	/**
@@ -137,29 +130,27 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Checks if there is a new Plan to provide and provides it
 	 */
-	public void checkforUpdates() {
+	@Override
+	public int checkforUpdates() {
 
 		login();
 		if (!isApiEnabled()) {
-			return;
+			return InternalStatusCodes.SUCCESS;
 		}
 
 		log.debug("Gourmetta Check");
 
-		ResultSet set = LiteSQL.onQuery("Select * FROM gourmettaInteractions");
-
 		OffsetDateTime offsetprovideDay = getNextDay();
 		long provideday = Long.parseLong(offsetprovideDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery("Select * FROM gourmettaInteractions");
+				MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);) {
 
 			if (set.next()) {
 
 				long dbday = set.getLong("lastday");
 
 				if (dbday != provideday) {
-
-					MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
 
 					if (data != null) {
 						providePlanMessage(data);
@@ -169,10 +160,9 @@ public class GourmettaInteractions implements InternalAPI {
 				}
 
 			} else {
-				MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
 
 				if (data == null) {
-					return;
+					return InternalStatusCodes.SUCCESS;
 				}
 
 				providePlanMessage(data);
@@ -180,19 +170,26 @@ public class GourmettaInteractions implements InternalAPI {
 
 			}
 
-		} catch (SQLException e) {
+		} catch (IllegalArgumentException e) {
+			log.info(e.getMessage(), e);
+			return InternalStatusCodes.FAILURE;
+		}
+
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
-			return;
+			return InternalStatusCodes.FAILURE;
 		}
 
 		logout();
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
 	/**
 	 * Parses the given meals and returns the as an usable Discord
 	 * {@link MessageCreateData}
-	 * 
+	 *
 	 * @param stripedDayMeals {@link JsonArray} obtained by
 	 *                        {@link GourmettaInteractions#getStripedDayMeals()}
 	 * @param provideDay      The day for which the plan is as an
@@ -200,9 +197,14 @@ public class GourmettaInteractions implements InternalAPI {
 	 * @return The {@link MessageCreateData} which can be used in
 	 *         {@link GourmettaInteractions#providePlanMessage(MessageCreateData)}
 	 */
-	private MessageCreateData buildMessage(JsonArray stripedDayMeals, OffsetDateTime provideDay) {
+	private MessageCreateData buildMessage(JsonArray stripedDayMeals, OffsetDateTime provideDay)
+			throws IllegalArgumentException {
 
-		if (stripedDayMeals == null || stripedDayMeals.isEmpty()) {
+		if (stripedDayMeals == null) {
+			throw new IllegalArgumentException();
+		}
+
+		if (stripedDayMeals.size() <= 0) {
 			return null;
 		}
 
@@ -240,7 +242,7 @@ public class GourmettaInteractions implements InternalAPI {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param data The pregenerated {@link MessageCreateData} which is used to build
 	 *             the {@link Message} - usually obtained by
 	 *             {@link GourmettaInteractions#buildMessage(JsonArray)}
@@ -252,10 +254,10 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Reduces the meal-array to the necessary information
-	 * 
+	 *
 	 * @return The stripped meals as a {@link JsonArray}
 	 */
-	private JsonArray getStripedDayMeals() {
+	private JsonArray getStripedDayMeals() throws IllegalStateException {
 
 		if (!isApiEnabled()) {
 			return null;
@@ -263,8 +265,12 @@ public class GourmettaInteractions implements InternalAPI {
 
 		JsonArray meals = getMealsforDayofWeek(DayOfWeek.of(getNextDay().getDayOfWeek().getValue()));
 
-		if (meals == null || meals.isEmpty()) {
-			return null;
+		if (meals == null) {
+			throw new IllegalStateException();
+		}
+
+		if (meals.size() <= 0) {
+			return new JsonArray();
 		}
 
 		JsonArray ret = new JsonArray();
@@ -296,7 +302,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Used to get all meals for a {@link DayOfWeek}
-	 * 
+	 *
 	 * @param day The {@link DayOfWeek} you want the meals for
 	 * @return The meals forthe selected {@link DayOfWeek} as a {@link JsonArray}
 	 */
@@ -308,16 +314,11 @@ public class GourmettaInteractions implements InternalAPI {
 
 		JsonArray days = getWeekPlan();
 
-		if (days == null) {
-			return null;
-		}
-
-		if (day.getValue() >= days.size()) {
-			return null;
+		if ((days == null) || (day.getValue() >= days.size())) {
+			return new JsonArray();
 		}
 
 		JsonObject jsonday = days.get(day.getValue() - 1).getAsJsonObject();
-
 		return jsonday.get("orderedMeals").getAsJsonArray();
 	}
 
@@ -325,7 +326,7 @@ public class GourmettaInteractions implements InternalAPI {
 	 * Requests the Plan of the current week from the REST-API and returns it as a
 	 * {@link JsonArray} <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The days with the meals as an {@link JsonArray}
 	 */
 	private JsonArray getWeekPlan() {
@@ -336,36 +337,27 @@ public class GourmettaInteractions implements InternalAPI {
 
 		String url = generateOfferRequestURI();
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		final HttpGet httpget = new HttpGet(url);
+			final HttpGet httpget = new HttpGet(url);
 
-		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
-		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
-
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from bestellung-rest.gourmetta.de");
-				return null;
-			}
-
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
-
-			response.close();
-			httpclient.close();
-
-			return elem.getAsJsonObject().get("orderDays").getAsJsonArray();
-
-		} catch (IOException | JsonSyntaxException | ParseException e) {
-			log.error(e.getMessage(), e);
+			httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
+			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
 			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
+				final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+
+				JsonElement elem = JsonParser.parseString(response);
+				return elem.getAsJsonObject().get("orderDays").getAsJsonArray();
+
+			} catch (HttpHostConnectException e1) {
+				log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
+			} catch (IOException | JsonSyntaxException e) {
+				log.error(e.getMessage(), e);
 			}
 
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
 		}
 
 		return null;
@@ -374,7 +366,7 @@ public class GourmettaInteractions implements InternalAPI {
 
 	/**
 	 * Builds the offer request
-	 * 
+	 *
 	 * @return the url for the current week offer request
 	 */
 	private String generateOfferRequestURI() {
@@ -397,7 +389,7 @@ public class GourmettaInteractions implements InternalAPI {
 	/**
 	 * Returns the Monday of the current week <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The Monday of the current week as an {@link OffsetDateTime}
 	 */
 	private OffsetDateTime getFirstDayofWeek() {
@@ -407,16 +399,15 @@ public class GourmettaInteractions implements InternalAPI {
 
 		if (day <= 5) {
 			return current.minusDays(day - 1);
-		} else {
-			return current.plusDays(8 - day);
 		}
 
+		return current.plusDays(8 - day);
 	}
 
 	/**
 	 * Returns the Friday of the current week <br>
 	 * If the current day is Saturday or Sunday the used week is the next week!
-	 * 
+	 *
 	 * @return The Friday of the current week as an {@link OffsetDateTime}
 	 */
 	private OffsetDateTime getLastDayofWeek() {
@@ -430,25 +421,21 @@ public class GourmettaInteractions implements InternalAPI {
 
 		if (day < 5) {
 			return current.plusDays(5 - day);
-		} else {
-			return current.plusDays(12 - day);
 		}
 
+		return current.plusDays(12 - day);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private OffsetDateTime getNextDay() {
 
 		OffsetDateTime cutime = OffsetDateTime.now();
 
-		if (cutime.getHour() <= 14) {
-			return cutime;
-		}
-
-		if (cutime.getDayOfWeek().getValue() == 6 || cutime.getDayOfWeek().getValue() == 5) {
+		if ((cutime.getHour() <= 14) || cutime.getDayOfWeek().getValue() == 6
+				|| cutime.getDayOfWeek().getValue() == 5) {
 			return cutime;
 		}
 
@@ -456,15 +443,14 @@ public class GourmettaInteractions implements InternalAPI {
 
 		if (day >= 5) {
 			return cutime.plusDays(8 - day);
-		} else {
-			return cutime.plusDays(1);
 		}
 
+		return cutime.plusDays(1);
 	}
 
 	/**
 	 * Checks if the Api is enabled and warns if not
-	 * 
+	 *
 	 * @return Whether this Api is currently enabled or not
 	 */
 	private boolean isApiEnabled() {
@@ -482,4 +468,20 @@ public class GourmettaInteractions implements InternalAPI {
 
 	}
 
+	@Override
+	public boolean restart() {
+		logout();
+		log.debug("restart requested");
+		return true;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		return login();
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "gourmetta";
+	}
 }

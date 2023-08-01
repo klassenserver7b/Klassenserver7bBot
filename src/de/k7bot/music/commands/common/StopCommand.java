@@ -5,20 +5,28 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class StopCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
-		String help = "Stopt den aktuellen Track und der Bot verlässt den VoiceChannel.";
+		String help = "Stoppt den aktuellen Track und der Bot verlässt den VoiceChannel.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "stop" };
 	}
 
 	@Override
@@ -26,9 +34,11 @@ public class StopCommand implements ServerCommand {
 		return HelpCategories.MUSIK;
 	}
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(channel), m)
+				&& !channel.getGuild().getAudioManager().isConnected()) {
 			return;
 		}
 
@@ -43,6 +53,21 @@ public class StopCommand implements ServerCommand {
 		player.stopTrack();
 		manager.closeAudioConnection();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

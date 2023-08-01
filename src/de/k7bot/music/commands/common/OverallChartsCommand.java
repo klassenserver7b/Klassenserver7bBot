@@ -1,137 +1,58 @@
 package de.k7bot.music.commands.common;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.awt.Color;
+import java.util.HashMap;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.ChartList;
-import de.k7bot.util.Cell;
-import de.k7bot.util.TableMessage;
-import net.dv8tion.jda.api.EmbedBuilder;
+import de.k7bot.music.commands.generic.GenericChartsCommand;
+import de.k7bot.music.utilities.ChartList;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class OverallChartsCommand implements ServerCommand {
+public class OverallChartsCommand extends GenericChartsCommand implements ServerCommand {
+
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
-		return null;
+		return "Zeigt die Bot-Charts seit jeher über alle server an";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "charts" };
 	}
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		ChartList chartlist = new ChartList();
-		Map<String, Long> musiclist = chartlist.getcharts();
+		HashMap<String, Long> charts = chartlist.getcharts();
 
-		List<Entry<String, Long>> orderedcharts = new ArrayList<>(musiclist.entrySet());
+		sendMessage(new GenericMessageSendHandler(channel), charts);
 
-		orderedcharts.sort(Map.Entry.comparingByValue());
-
-		TableMessage table = new TableMessage();
-		table.automaticLineBreaks(1);
-		TableMessage countingtable = new TableMessage();
-
-		table.addHeadline("Songname", "Author", "Times played");
-		countingtable.addHeadline("Songname", "Author", "Times played");
-
-		Set<String> keys = musiclist.keySet();
-		TreeMap<Long, Set<String>> treeMap = new TreeMap<>();
-		for (String key : keys) {
-			Long value = musiclist.get(key);
-			Set<String> values;
-			if (treeMap.containsKey(value)) {
-				values = treeMap.get(value);
-				values.add(key);
-			} else {
-				values = new HashSet<>();
-				values.add(key);
-			}
-
-			treeMap.put(value, values);
-		}
-		Set<Long> treeValues = treeMap.keySet();
-
-		List<Long> reverseKeys = new LinkedList<>(treeValues);
-		Collections.reverse(reverseKeys);
-
-		for (Long Long : reverseKeys) {
-			Set<String> values = treeMap.get(Long);
-
-			for (String title : values) {
-
-				String[] titleparts = title.split("%%SPLITTER%%");
-
-				String songauthor;
-				String songname;
-
-				if (titleparts.length > 1) {
-					songname = titleparts[1];
-					songauthor = titleparts[0];
-				} else {
-					songname = titleparts[0];
-					songauthor = "";
-				}
-
-				if (songauthor.equalsIgnoreCase("")) {
-
-					String[] split = songname.split(" - ");
-					songname = split[1];
-					songauthor = split[0];
-
-				}
-
-				if (!(countingtable.addRow(Cell.of(songname), Cell.of(songauthor), Cell.of(String.valueOf(Long)))
-						.build().length() >= 4096)) {
-
-					countingtable.addRow(Cell.of(songname), Cell.of(songauthor), Cell.of(String.valueOf(Long)));
-					table.addRow(Cell.of(songname), Cell.of(songauthor), Cell.of(String.valueOf(Long)));
-
-				} else {
-
-					break;
-
-				}
-			}
-
-		}
-
-		sendEmbed(channel, m, table.build(), Color.decode("#2ff538"));
 	}
 
-	public void sendEmbed(TextChannel chan, Member requester, String formatedcharts, Color col) {
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
 
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setTitle("The overall Charts");
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
 
-		if (col != null) {
-			builder.setColor(col);
-		} else {
-			builder.setColor(Color.decode("#2c82c9"));
-		}
-
-		builder.setDescription(formatedcharts);
-
-		chan.sendMessageEmbeds(builder.build()).queue();
-
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

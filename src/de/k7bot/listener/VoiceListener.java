@@ -1,9 +1,6 @@
 
 package de.k7bot.listener;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -67,9 +66,8 @@ public class VoiceListener extends ListenerAdapter {
 	public void onLeave(AudioChannel audioChannel) {
 		if (audioChannel.getMembers().size() <= 0) {
 
-			ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;");
+			try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;")) {
 
-			try {
 				while (set.next()) {
 					this.tempchannels.add(set.getLong("channelId"));
 				}
@@ -81,7 +79,8 @@ public class VoiceListener extends ListenerAdapter {
 							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
 				}
 
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 
 				log.error(e.getMessage(), e);
 			}

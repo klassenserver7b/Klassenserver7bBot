@@ -2,45 +2,69 @@ package de.k7bot.listener;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.AudioLoadResult;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.lavaplayer.AudioLoadResult;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
+import de.k7bot.music.utilities.AudioLoadOption;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class AutoRickroll extends ListenerAdapter {
+	private final AudioPlayerManager apm;
+
+	private static final String RickRollUrl = "https://www.youtube.com/watch?v=BBJa32lCaaY";
+
+	/**
+	 * @param apm
+	 */
+	public AutoRickroll() {
+		this.apm = new DefaultAudioPlayerManager();
+
+		apm.registerSourceManager(new YoutubeAudioSourceManager());
+		apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
+	}
 
 	@Override
 	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
+		
 		if (event.getChannelLeft() == null && event.getGuild().getIdLong() == 701341683325075477L
-				&& event.getMember().getIdLong() != 846296603139506187L && Math.random() >= 0.95D) {
+				&& event.getMember().getIdLong() != event.getGuild().getSelfMember().getUser().getIdLong()
+				&& Math.random() >= 0.95D) {
+			
 			AudioChannel vc = event.getChannelJoined();
 			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
 			AudioManager manager = vc.getGuild().getAudioManager();
-			AudioPlayerManager apm = Klassenserver7bbot.getInstance().getAudioPlayerManager();
+
 			AudioPlayer player = controller.getPlayer();
 			Queue queue = controller.getQueue();
 
-			String url = "https://www.youtube.com/watch?v=BBJa32lCaaY";
-
 			if (player.getPlayingTrack() == null) {
-				if (!queue.emptyQueueList()) {
+				
+				if (!queue.isemptyQueueList()) {
 					queue.clearQueue();
 				}
 				manager.openAudioConnection(vc);
-				apm.loadItem(url, new AudioLoadResult(controller, url, false));
+				apm.loadItem(RickRollUrl, new AudioLoadResult(controller, RickRollUrl, AudioLoadOption.REPLACE));
 				player.setPaused(false);
+				queue.next(null);
+				
 			} else {
 
-				if (!queue.emptyQueueList()) {
+				if (!queue.isemptyQueueList()) {
 					queue.clearQueue();
 				}
+
 				player.stopTrack();
-				apm.loadItem(url, new AudioLoadResult(controller, url, false));
+				apm.loadItem(RickRollUrl, new AudioLoadResult(controller, RickRollUrl, AudioLoadOption.NEXT));
+				queue.next(null);
 				player.setPaused(false);
 			}
 		}

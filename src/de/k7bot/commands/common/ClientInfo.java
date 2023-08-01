@@ -1,13 +1,12 @@
 package de.k7bot.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.util.errorhandler.PermissionError;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.k7bot.HelpCategories;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,7 +14,32 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class ClientInfo implements ServerCommand {
+/**
+ * 
+ * @author K7
+ *
+ */
+public class ClientInfo implements ServerCommand { 
+
+ 	private boolean isEnabled; 
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Informationen zum angegebenen User.\n - z.B. [prefix]memberinfo [@USER]";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "memberinfo" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		channel.sendTyping().queue();
@@ -30,17 +54,6 @@ public class ClientInfo implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		String help = "Zeigt die Informationen zum angegebenen User.\n - z.B. [prefix]memberinfo [@USER]";
-		return help;
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
 	}
 
 	public void onInfo(Member requester, Member u, TextChannel channel) {
@@ -73,5 +86,20 @@ public class ClientInfo implements ServerCommand {
 		builder.setDescription(strBuilder);
 
 		channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

@@ -1,21 +1,23 @@
 package de.k7bot.music.commands.common;
 
+import java.util.concurrent.TimeUnit;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
-
-import java.util.concurrent.TimeUnit;
-
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class ResumeCommand implements ServerCommand {
+
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
@@ -24,20 +26,25 @@ public class ResumeCommand implements ServerCommand {
 	}
 
 	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "resume" };
+	}
+
+	@Override
 	public HelpCategories getcategory() {
 		return HelpCategories.MUSIK;
 	}
 
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
-
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
+
 		AudioPlayer player = controller.getPlayer();
 		MusicUtil.updateChannel(channel);
 		if (player.isPaused()) {
@@ -49,5 +56,20 @@ public class ResumeCommand implements ServerCommand {
 					TimeUnit.SECONDS);
 		}
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

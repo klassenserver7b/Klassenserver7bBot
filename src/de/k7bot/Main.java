@@ -1,16 +1,15 @@
 package de.k7bot;
 
-import javax.security.auth.login.LoginException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(Main.class);
 
 	public static void main(String[] args) {
 		try {
+
 			if (args.length <= 0) {
 				Klassenserver7bbot.getInstance(false);
 			} else {
@@ -22,10 +21,9 @@ public class Main {
 
 			}
 
-		} catch (LoginException | IllegalArgumentException e) {
-			log.error(e.getMessage(),e);
+		} catch (IllegalArgumentException e) {
+			log.error(e.getMessage(), e);
 		}
 	}
-	
-}
 
+}

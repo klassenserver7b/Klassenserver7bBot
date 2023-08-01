@@ -1,11 +1,10 @@
 package de.k7bot.util.commands.slash;
 
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.errorhandler.PermissionError;
-
 import org.jetbrains.annotations.NotNull;
 
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -19,7 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class ReactRolesSlashCommand implements SlashCommand {
+public class ReactRolesSlashCommand implements TopLevelSlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {

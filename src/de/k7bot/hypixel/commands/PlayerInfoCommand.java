@@ -1,12 +1,7 @@
 
 package de.k7bot.hypixel.commands;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.HypixelCommand;
-import de.k7bot.util.errorhandler.SyntaxError;
-
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +9,10 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.HypixelCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.SyntaxError;
 import me.kbrewster.exceptions.APIException;
 import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;
@@ -21,12 +20,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.hypixel.api.HypixelAPI;
-import net.hypixel.api.reply.FriendsReply;
 import net.hypixel.api.reply.PlayerReply;
 
 public class PlayerInfoCommand implements HypixelCommand {
 	UUID id = null;
-	String friends = "";
 
 	private final Logger log;
 
@@ -34,9 +31,9 @@ public class PlayerInfoCommand implements HypixelCommand {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
+	@Override
 	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
 		String name;
-		friends = "";
 
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
@@ -62,7 +59,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			channel.sendMessage("**Invalid Playername** - please enter a valid playername").complete().delete()
 					.queueAfter(10, TimeUnit.SECONDS);
-			SyntaxError.oncmdSyntaxError(channel, "hypixel playerinfo [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel playerinfo [playername]", m);
 		}
 
 		if (this.id != null) {
@@ -71,32 +68,8 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			try {
 				PlayerReply apiReply = api.getPlayerByUuid(this.id).get();
-				FriendsReply freply = api.getFriends(this.id).get();
 
 				PlayerReply.Player player = apiReply.getPlayer();
-				freply.getFriendShips().forEach(friend -> {
-
-					if (friend.getUuidSender().compareTo(this.id) != 0) {
-
-						try {
-							if (!Objects.equals(MojangAPI.getName(this.id),
-									MojangAPI.getName(friend.getUuidSender()))) {
-								this.friends = this.friends + MojangAPI.getUsername(friend.getUuidSender()) + ", ";
-							}
-						} catch (APIException | IOException e) {
-
-							log.error(e.getMessage(), e);
-						}
-					} else {
-
-						try {
-
-							this.friends = this.friends + MojangAPI.getUsername(friend.getUuidReceiver()) + ", ";
-						} catch (APIException | IOException e) {
-							log.error(e.getMessage(), e);
-						}
-					}
-				});
 
 				StringBuilder build = new StringBuilder();
 
@@ -111,21 +84,6 @@ public class PlayerInfoCommand implements HypixelCommand {
 				build.append("Last Game Type: " + player.getMostRecentGameType() + "\n");
 				build.append("Previous Names: " + player.getArrayProperty("knownAliases") + "\n");
 
-				String friendstring = "Friends: " + this.friends;
-
-				if (build.toString().length() + friendstring.length() > 2000) {
-
-					build.append("```");
-					channel.sendMessage(build.toString().trim()).queue();
-					channel.sendMessage("```" + friendstring + "```").queue();
-
-				} else {
-
-					build.append(friendstring + "```");
-					channel.sendMessage(build.toString().trim()).queue();
-
-				}
-
 			} catch (ExecutionException e) {
 				System.err.println("Oh no, our API request failed!");
 				e.getCause().printStackTrace();
@@ -137,7 +95,7 @@ public class PlayerInfoCommand implements HypixelCommand {
 
 			}
 		} else {
-			SyntaxError.oncmdSyntaxError(channel, "hypixel playerinfo [playername]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "hypixel playerinfo [playername]", m);
 		}
 	}
 }

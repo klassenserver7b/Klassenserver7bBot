@@ -7,23 +7,36 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * Interface used to specify and registrate a general Command.
- * 
+ *
  */
 
 public interface ServerCommand {
+
 	/**
-	 * 
+	 *
 	 * @return The Help for the {@link de.k7bot.commands.types.ServerCommand
 	 *         ServerCommand}
 	 */
 	String gethelp();
 
 	/**
-	 * 
+	 *
 	 * @return The Category for the {@link de.k7bot.commands.types.ServerCommand
 	 *         ServerCommand}
 	 */
 	HelpCategories getcategory();
 
+	/**
+	 * 
+	 * @return
+	 */
+	String[] getCommandStrings();
+
 	void performCommand(Member m, TextChannel channel, Message message);
+
+	boolean isEnabled();
+
+	void disableCommand();
+
+	void enableCommand();
 }

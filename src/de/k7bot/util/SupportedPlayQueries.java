@@ -1,9 +1,11 @@
 /**
- * 
+ *
  */
 package de.k7bot.util;
 
 import javax.annotation.Nonnull;
+
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 /**
  * @author Klassenserver7b
@@ -44,7 +46,7 @@ public enum SupportedPlayQueries {
 	 * identify the load method
 	 * {@link AudioPlayerManager#loadItem(com.sedmelluq.discord.lavaplayer.track.AudioReference, com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler)
 	 * AudioPlayerManager.loadItem(AudioReference, AudioLoadResultHandler)}
-	 * 
+	 *
 	 * @return The suffix as String
 	 */
 

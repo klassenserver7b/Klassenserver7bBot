@@ -10,8 +10,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -19,10 +19,17 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class QueuelistCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "Zeigt die aktuelle Queuelist an.";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "queuelist", "ql" };
 	}
 
 	@Override
@@ -42,15 +49,13 @@ public class QueuelistCommand implements ServerCommand {
 
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setFooter("Requested by @" + m.getEffectiveName());
-			builder.setTitle("Queue for Guild: " + channel.getGuild().getName());
+			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " (" + queuelist.size() + " entrys)");
 			builder.setColor(Color.decode("#14cdc8"));
 			builder.setThumbnail("https://openclipart.org/image/800px/211805");
 
 			StringBuilder strbuild = new StringBuilder();
 
-			for (int i = 0; i < queuelist.size(); i++) {
-				AudioTrack t = queuelist.get(i);
-
+			for (AudioTrack t : queuelist) {
 				String content;
 				if (t instanceof YoutubeAudioTrack) {
 					content = "- " + t.getInfo().title.replaceAll("\\|", "-") + "\n";
@@ -83,5 +88,20 @@ public class QueuelistCommand implements ServerCommand {
 			channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
 		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

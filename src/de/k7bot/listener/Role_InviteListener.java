@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class Role_InviteListener extends ListenerAdapter {
 	String gen = "";
 
+	@Override
 	public void onRoleCreate(RoleCreateEvent event) {
 
 		Guild guild = event.getGuild();
@@ -36,6 +37,7 @@ public class Role_InviteListener extends ListenerAdapter {
 		this.gen = "";
 	}
 
+	@Override
 	public void onRoleDelete(RoleDeleteEvent event) {
 
 		Guild guild = event.getGuild();
@@ -50,6 +52,7 @@ public class Role_InviteListener extends ListenerAdapter {
 		system.sendMessageEmbeds(builder.build()).queue();
 	}
 
+	@Override
 	public void onGuildInviteCreate(GuildInviteCreateEvent event) {
 
 		Guild guild = event.getGuild();

@@ -1,9 +1,5 @@
 package de.k7bot.subscriptions;
 
-import de.k7bot.subscriptions.types.SubscriptionTarget;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,9 +10,12 @@ import org.slf4j.LoggerFactory;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.Subscription;
 import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
+import de.k7bot.subscriptions.types.SubscriptionTarget;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -27,7 +26,7 @@ public class SubscriptionManager {
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	/**
-	 * 
+	 *
 	 */
 	public SubscriptionManager() {
 		sendhandler = new SubMessageSendHandler(log);
@@ -37,7 +36,7 @@ public class SubscriptionManager {
 
 	/**
 	 * Provides the {@link Message} to every (target)-matching subscription
-	 * 
+	 *
 	 * @param target The target of the notification e.g a new Lernplan
 	 * @param data   The message which schould be send to all subscribers
 	 */
@@ -59,15 +58,15 @@ public class SubscriptionManager {
 	/**
 	 * Creates a new Subscription for the submitted target and saves it to the
 	 * database.
-	 * 
+	 *
 	 * @param type             The {@link SubscriptionDeliveryType} of the Channel
 	 *                         the Bot should deliver the Subscription in
-	 * 
+	 *
 	 * @param target           The {@link SubscriptionTarget} of the new
 	 *                         Subscription
-	 * 
+	 *
 	 * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
-	 *                         <code>TYPE.getIdLong()<code>.
+	 *                         <code>TYPE.getIdLong()</code>.
 	 */
 
 	public boolean createSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
@@ -78,12 +77,10 @@ public class SubscriptionManager {
 
 			return registerSubscription(new Subscription(type, target, deliverytargetid, subscriptionid));
 
-		} else {
-
-			log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
-			return false;
-
 		}
+
+		log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
+		return false;
 
 	}
 
@@ -99,7 +96,8 @@ public class SubscriptionManager {
 
 			return true;
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 
 			log.error(e.getMessage(), e);
 			return false;
@@ -127,9 +125,8 @@ public class SubscriptionManager {
 	 */
 	private void refreshList() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-		try {
 			if (set != null) {
 				while (set.next()) {
 
@@ -138,7 +135,7 @@ public class SubscriptionManager {
 					Long deliveryid = set.getLong("targetDcId");
 					Long subid = set.getLong("subscriptionId");
 
-					if (typeid != null && targetid != null && deliveryid != null && subid != null) {
+					if (typeid != 0 && targetid != 0 && deliveryid != 0 && subid != 0) {
 
 						Subscription s = new Subscription(SubscriptionDeliveryType.fromId(typeid),
 								SubscriptionTarget.fromId(targetid), deliveryid, subid);
@@ -150,14 +147,15 @@ public class SubscriptionManager {
 
 				}
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sub
 	 * @return
 	 */
@@ -166,7 +164,7 @@ public class SubscriptionManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @param target
 	 * @param deliverytargetid

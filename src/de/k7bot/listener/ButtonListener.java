@@ -12,12 +12,13 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public class ButtonListener extends ListenerAdapter {
 	public final Logger log = LoggerFactory.getLogger("HA3Buttons");
@@ -57,7 +58,11 @@ public class ButtonListener extends ListenerAdapter {
 
 		MessageEditBuilder messbuild = MessageEditBuilder.fromMessage(event.getMessage());
 		messbuild.setActionRow(Button.success("inWhitelistInserted", "I whitelisted the person!"));
-		event.editMessage(messbuild.build()).queue();
+
+		try (MessageEditData messdata = messbuild.build()) {
+			event.editMessage(messdata).queue();
+		}
+
 		log.info("Approved HA3 Request for UserId: " + dcid);
 
 		if (pvtch != null) {
@@ -86,8 +91,7 @@ public class ButtonListener extends ListenerAdapter {
 
 		if (pvtch != null) {
 
-			MessageEmbed denymessage = new EmbedBuilder().setColor(Color.decode("#ff0000"))
-					.setFooter("Handeled by K7Bot")
+			MessageEmbed denymessage = new EmbedBuilder().setColor(Color.red).setFooter("Handeled by K7Bot")
 					.setDescription("Sorry, but you 'HA3' whitelistrequest has been denied")
 					.setTimestamp(OffsetDateTime.now()).build();
 			pvtch.sendMessageEmbeds(denymessage).queue();

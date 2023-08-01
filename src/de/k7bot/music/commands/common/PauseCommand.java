@@ -1,24 +1,44 @@
 package de.k7bot.music.commands.common;
 
+import java.util.concurrent.TimeUnit;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
+import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.MusicUtil;
-
-import java.util.concurrent.TimeUnit;
-
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class PauseCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Pausiert den aktuellen Track.";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "pause" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
+
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
 		}
 
@@ -34,20 +54,25 @@ public class PauseCommand implements ServerCommand {
 			player.setPaused(true);
 			channel.sendMessage(":pause_button: paused").queue();
 		} else {
-			((Message) channel.sendMessage("the player is already paused!" + m.getAsMention()).complete()).delete()
-					.queueAfter(10L, TimeUnit.SECONDS);
+			channel.sendMessage("the player is already paused!" + m.getAsMention()).complete().delete().queueAfter(10L,
+					TimeUnit.SECONDS);
 		}
 
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Pausiert den aktuellen Track.";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public void disableCommand() {
+		isEnabled = false;
 	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
+	}
+
 }

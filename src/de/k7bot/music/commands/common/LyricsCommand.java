@@ -11,26 +11,46 @@ import org.slf4j.LoggerFactory;
 
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-import core.GLA;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
-import de.k7bot.music.MusicController;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.MusicController;
+import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.MusicUtil;
 import de.k7bot.music.utilities.SongJson;
-import genius.SongSearch;
-import genius.SongSearch.Hit;
+import de.k7bot.music.utilities.gla.GLACustomSongSearch;
+import de.k7bot.music.utilities.gla.GLACustomSongSearch.Hit;
+import de.k7bot.music.utilities.gla.GLAWrapper;
+import de.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class LyricsCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	private final Logger log;
+
+	@Override
+	public String gethelp() {
+		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "lyrics" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
 
 	public LyricsCommand() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -39,11 +59,8 @@ public class LyricsCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(channel, m)) {
-			return;
-		}
-
-		if (!MusicUtil.isPlayingSong(channel, m)) {
+		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)
+				|| !MusicUtil.isPlayingSong(channel, m)) {
 			return;
 		}
 
@@ -53,28 +70,35 @@ public class LyricsCommand implements ServerCommand {
 				.getController(vc.getGuild().getIdLong());
 		Queue queue = controller.getQueue();
 		SongJson data = queue.getCurrentSongData();
-		String query = data.getTitle() + " " + data.getAuthorString();
 
-		log.info("Searching Lyrics Querry: " + data.getTitle() + " - " + data.getAuthorString());
+		String query;
+		if (data != null) {
+			query = data.getTitle() + " " + data.getAuthorString();
+		} else {
+			AudioTrackInfo info = queue.getController().getPlayer().getPlayingTrack().getInfo();
+			query = info.title + " " + info.author;
+		}
+
+		log.info("Searching Lyrics Querry: " + query);
 
 		try {
 
-			SongSearch genius = getGeniusLyrics(query);
+			GLACustomSongSearch genius = getGeniusLyrics(query);
 
 			if (genius != null) {
 				sendGeniusEmbed(genius, channel, m);
 				return;
 			}
-			
+
 			LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
 
-			Lyrics lyrics = lapi.getLyrics(data.getTitle() + " " + data.getAuthorString()).get();
-			
-			if(lyrics != null) {
+			Lyrics lyrics = lapi.getLyrics(query).get();
+
+			if (lyrics != null) {
 				sendJLyricsEmbed(lyrics, channel, m);
 				return;
 			}
-			
+
 			sendErrorEmbed(channel);
 
 		} catch (IOException | InterruptedException | ExecutionException e) {
@@ -94,8 +118,8 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private void sendGeniusEmbed(SongSearch data, TextChannel c, Member m) {
-		
+	private void sendGeniusEmbed(GLACustomSongSearch data, TextChannel c, Member m) {
+
 		c.sendTyping().queue();
 
 		if (data.getHits().isEmpty()) {
@@ -120,7 +144,7 @@ public class LyricsCommand implements ServerCommand {
 	}
 
 	private void sendJLyricsEmbed(Lyrics data, TextChannel c, Member m) {
-		
+
 		c.sendTyping().queue();
 
 		EmbedBuilder builder = new EmbedBuilder();
@@ -136,23 +160,29 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private SongSearch getGeniusLyrics(String query) throws IOException {
+	private GLACustomSongSearch getGeniusLyrics(String query) throws IOException {
 
-		GLA lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
+		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
-		return lapi.search(query);
+		GLACustomSongSearch songsearch = lapi.search(query);
+
+		return songsearch;
 
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

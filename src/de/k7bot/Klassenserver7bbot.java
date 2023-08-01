@@ -1,5 +1,16 @@
 package de.k7bot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.EnumSet;
+import java.util.UUID;
+
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,34 +19,40 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
-import core.GLA;
+import de.k7bot.hypixel.HypixelCommandManager;
+import de.k7bot.listener.AutoRickroll;
+import de.k7bot.listener.BanListener;
+import de.k7bot.listener.BotgetDC;
+import de.k7bot.listener.ButtonListener;
+import de.k7bot.listener.ChannelCreateRemoveListener;
+import de.k7bot.listener.CommandListener;
+import de.k7bot.listener.JoinandLeaveListener;
+import de.k7bot.listener.MemesReact;
+import de.k7bot.listener.ReactionListener;
+import de.k7bot.listener.RoleEditListener;
+import de.k7bot.listener.Role_InviteListener;
+import de.k7bot.listener.SlashCommandListener;
+import de.k7bot.listener.VoiceListener;
+import de.k7bot.manage.CommandManager;
+import de.k7bot.manage.LoopedEventManager;
+import de.k7bot.manage.PrefixManager;
+import de.k7bot.manage.PropertiesManager;
+import de.k7bot.manage.SlashCommandManager;
+import de.k7bot.manage.SystemNotificationChannelManager;
+import de.k7bot.music.asms.ExtendedLocalAudioSourceManager;
+import de.k7bot.music.asms.SpotifyAudioSourceManager;
+import de.k7bot.music.utilities.AudioPlayerUtil;
+import de.k7bot.music.utilities.gla.GLAWrapper;
+import de.k7bot.music.utilities.spotify.SpotifyInteractions;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.sql.SQLManager;
 import de.k7bot.subscriptions.SubscriptionManager;
+import de.k7bot.threads.ConsoleReadThread;
 import de.k7bot.threads.LoopThread;
-import de.k7bot.threads.ShutdownThread;
-import de.k7bot.util.customapis.InternalAPIManager;
-import de.k7bot.hypixel.HypixelCommandManager;
-import de.k7bot.listener.*;
-import de.k7bot.manage.*;
-import de.k7bot.music.AudioPlayerUtil;
-import de.k7bot.music.utilities.spotify.SpotifyAudioSourceManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.EnumSet;
-import java.util.UUID;
-
-import javax.security.auth.login.LoginException;
-
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -61,18 +78,19 @@ public class Klassenserver7bbot {
 	private HypixelCommandManager hypMgr;
 
 	private PropertiesManager propMgr;
-	private InternalAPIManager internalApiMgr;
+	private LoopedEventManager loopedEventMgr;
 
 	private AudioPlayerManager audioPlayerManager;
 	private AudioPlayerUtil playerutil;
 
 	private LoopThread loop;
-	private ShutdownThread shutdownT;
+	private ConsoleReadThread shutdownT;
 
 	private GitHub github;
 	private HypixelAPI hypixelApi;
 	private LyricsClient lyricsapi;
-	private GLA lyricsapiold;
+	private GLAWrapper lyricsapiold;
+	private SpotifyInteractions spotifyinteractions;
 
 	private Long ownerId;
 	private JsonObject teacherslist;
@@ -81,15 +99,12 @@ public class Klassenserver7bbot {
 	private boolean exit = false;
 	private boolean indev;
 
-	private Klassenserver7bbot(boolean indev) throws LoginException, IllegalArgumentException {
+	private Klassenserver7bbot(boolean indev) throws IllegalArgumentException {
 		INSTANCE = this;
 		this.indev = indev;
 		this.propMgr = new PropertiesManager();
 
-		if (!propMgr.loadProps()) {
-			return;
-		}
-		if (!propMgr.isBotTokenValid()) {
+		if (!propMgr.loadProps() || !propMgr.isBotTokenValid()) {
 			return;
 		}
 
@@ -128,20 +143,21 @@ public class Klassenserver7bbot {
 
 		try {
 			buildBot(token, canaryToken, shardc);
-		} catch (LoginException | IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException | InvalidTokenException | ErrorResponseException e) {
 			logger.warn("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
 			logger.error(e.getMessage(), e);
 		}
 
 		propMgr.checkAPIProps();
 		initializeObjects();
-		internalApiMgr.initializeApis();
+		loopedEventMgr.initializeDefaultEvents();
 
 		return true;
 	}
 
 	private void buildBot(String token, String canaryToken, int shardc)
-			throws LoginException, IllegalArgumentException {
+			throws IllegalArgumentException, InvalidTokenException, ErrorResponseException {
 
 		DefaultShardManagerBuilder builder;
 
@@ -171,7 +187,12 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new BotgetDC());
 		builder.addEventListeners(new ButtonListener());
 
-		this.shardMgr = builder.build();
+		try {
+			this.shardMgr = builder.build();
+		}
+		catch (ErrorResponseException e) {
+			this.shardMgr = builder.build();
+		}
 	}
 
 	private void initializeObjects() {
@@ -179,7 +200,7 @@ public class Klassenserver7bbot {
 		this.prefixMgr = new PrefixManager();
 
 		this.subMgr = new SubscriptionManager();
-		this.internalApiMgr = new InternalAPIManager();
+		this.loopedEventMgr = new LoopedEventManager();
 
 		this.syschannels = new SystemNotificationChannelManager();
 
@@ -187,7 +208,8 @@ public class Klassenserver7bbot {
 		this.playerutil = new AudioPlayerUtil();
 
 		this.lyricsapi = new LyricsClient("Genius");
-		this.lyricsapiold = new GLA();
+		// this.lyricsapiold = new GLA();
+		this.lyricsapiold = new GLAWrapper();
 
 		if (propMgr.isApiEnabled("hypixel")) {
 			this.hypixelApi = new HypixelAPI(
@@ -196,39 +218,30 @@ public class Klassenserver7bbot {
 
 		if (propMgr.isApiEnabled("github")) {
 			try {
-				new GitHubBuilder();
 				this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				propMgr.getEnabledApis().put("github", false);
 				this.logger.error("couldn't start GitHub-Api");
 			}
 
 		}
 
-		this.cmdMgr = new CommandManager();
 		this.hypMgr = new HypixelCommandManager();
-		this.slashMgr = new SlashCommandManager();
+		this.spotifyinteractions = new SpotifyInteractions();
 
 		InitializeMusic(this.audioPlayerManager);
+
+		this.cmdMgr = new CommandManager();
+		this.slashMgr = new SlashCommandManager();
 	}
 
 	public void InitializeMusic(AudioPlayerManager manager) {
 
 		manager.getConfiguration().setFilterHotSwapEnabled(true);
-
 		manager.registerSourceManager(new SpotifyAudioSourceManager());
-
-//		manager.registerSourceManager(new YoutubeAudioSourceManager());
-//		manager.registerSourceManager(new LocalAudioSourceManager());
-//		manager.registerSourceManager(new HttpAudioSourceManager());
-//		manager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-//		manager.registerSourceManager(new BandcampAudioSourceManager());
-//		manager.registerSourceManager(new VimeoAudioSourceManager());
-//		manager.registerSourceManager(new TwitchStreamAudioSourceManager());
-//		manager.registerSourceManager(new BeamAudioSourceManager());
-
+		manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
 		AudioSourceManagers.registerRemoteSources(manager);
-		AudioSourceManagers.registerLocalSource(manager);
 
 	}
 
@@ -240,7 +253,8 @@ public class Klassenserver7bbot {
 			try {
 				logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
 				jda.awaitReady();
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
 						+ jda.getSelfUser().getName());
 				logger.error(e.getMessage(), e);
@@ -255,11 +269,15 @@ public class Klassenserver7bbot {
 	}
 
 	private void runShutdown() {
-		this.shutdownT = new ShutdownThread();
+		this.shutdownT = new ConsoleReadThread();
 	}
 
 	public void runLoop() {
 		this.loop = new LoopThread();
+	}
+
+	public void restartLoop() {
+		this.loop.restart();
 	}
 
 	public void stopLoop() {
@@ -278,7 +296,8 @@ public class Klassenserver7bbot {
 				JsonElement json = JsonParser.parseString(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
-			} catch (IOException e1) {
+			}
+			catch (IOException e1) {
 
 				logger.error(e1.getMessage(), e1);
 
@@ -291,8 +310,9 @@ public class Klassenserver7bbot {
 
 		if (INSTANCE == null) {
 			try {
-				new Klassenserver7bbot(false);
-			} catch (LoginException | IllegalArgumentException e) {
+				return new Klassenserver7bbot(false);
+			}
+			catch (IllegalArgumentException e) {
 				LoggerFactory.getLogger("InstanceManager").error(e.getMessage(), e);
 			}
 		}
@@ -300,10 +320,10 @@ public class Klassenserver7bbot {
 		return INSTANCE;
 	}
 
-	public static Klassenserver7bbot getInstance(boolean indev) throws LoginException, IllegalArgumentException {
+	public static Klassenserver7bbot getInstance(boolean indev) throws IllegalArgumentException {
 
 		if (INSTANCE == null) {
-			new Klassenserver7bbot(indev);
+			return new Klassenserver7bbot(indev);
 		}
 
 		return INSTANCE;
@@ -329,7 +349,7 @@ public class Klassenserver7bbot {
 		return this.lyricsapi;
 	}
 
-	public GLA getLyricsAPIold() {
+	public GLAWrapper getLyricsAPIold() {
 		return this.lyricsapiold;
 	}
 
@@ -381,8 +401,8 @@ public class Klassenserver7bbot {
 		return this.propMgr;
 	}
 
-	public InternalAPIManager getInternalAPIManager() {
-		return this.internalApiMgr;
+	public LoopedEventManager getLoopedEventManager() {
+		return this.loopedEventMgr;
 	}
 
 	public JsonObject getTeacherList() {
@@ -393,7 +413,7 @@ public class Klassenserver7bbot {
 		return this.prefixMgr;
 	}
 
-	public ShutdownThread getShutdownThread() {
+	public ConsoleReadThread getShutdownThread() {
 		return this.shutdownT;
 	}
 
@@ -403,5 +423,9 @@ public class Klassenserver7bbot {
 
 	public void setEventBlocking(boolean inshutdown) {
 		this.blockevents = inshutdown;
+	}
+
+	public SpotifyInteractions getSpotifyinteractions() {
+		return spotifyinteractions;
 	}
 }

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
-public class SubscribeSlashCommand implements SlashCommand {
+public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
 	Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -41,8 +41,7 @@ public class SubscribeSlashCommand implements SlashCommand {
 		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
 		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
-					.setTimestamp(OffsetDateTime.now())
+			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 					.setDescription(
 							"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
 					.build()).queue();
@@ -62,11 +61,11 @@ public class SubscribeSlashCommand implements SlashCommand {
 								.setDescription("The subscription was created successfull!").build())
 						.queue();
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 
 				log.error(e.getMessage(), e);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
-						.setTimestamp(OffsetDateTime.now())
+				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 						.setDescription(
 								"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 						.build()).queue();
@@ -80,19 +79,20 @@ public class SubscribeSlashCommand implements SlashCommand {
 			if (!Klassenserver7bbot.getInstance().isDevMode()) {
 				switch (union.getType()) {
 
-				case TEXT: {
+				case TEXT -> {
 					delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
 					break;
 				}
-				case NEWS: {
+				case NEWS -> {
 					delivery = SubscriptionDeliveryType.NEWS;
 				}
-				default:
+				default -> {
 					delivery = SubscriptionDeliveryType.UNKNOWN;
-					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
-							.setTimestamp(OffsetDateTime.now()).setDescription("Can't create subscription in "
-									+ union.getType() + "!\nPlease use a Text or News Channel")
+					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
+							.setDescription("Can't create subscription in " + union.getType()
+									+ "!\nPlease use a Text or News Channel")
 							.build()).queue();
+				}
 				}
 			} else {
 

@@ -3,6 +3,7 @@ package de.k7bot.listener;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import de.k7bot.Klassenserver7bbot;
@@ -21,6 +22,7 @@ public class RoleEditListener extends ListenerAdapter {
 
 	String gen = "";
 
+	@Override
 	public void onRoleUpdateName(@Nonnull RoleUpdateNameEvent event) {
 
 		Guild guild = event.getGuild();
@@ -38,6 +40,7 @@ public class RoleEditListener extends ListenerAdapter {
 		this.gen = "";
 	}
 
+	@Override
 	public void onRoleUpdatePermissions(@Nonnull RoleUpdatePermissionsEvent event) {
 
 		List<String> rem = new ArrayList<>();

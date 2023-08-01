@@ -30,11 +30,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.music.Queue;
+import de.k7bot.music.lavaplayer.Queue;
 import de.k7bot.music.utilities.MusicUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
@@ -43,12 +43,13 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 /**
- * 
- * @author Felix
+ *
+ * @author K7
  * @deprecated
  * @hidden
- * 
+ *
  */
+@Deprecated
 public class SpotifyConverter {
 
 	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
@@ -63,6 +64,7 @@ public class SpotifyConverter {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static void interrupt() {
 		if (converter != null) {
 			converter.interrupt();
@@ -73,13 +75,10 @@ public class SpotifyConverter {
 	 * @deprecated
 	 * @return
 	 */
+	@Deprecated
 	public String checkAccessToken() {
 
-		if (isoexpiration == null) {
-			return retrieveToken();
-		}
-
-		if (isoexpiration <= new Date().getTime()) {
+		if ((isoexpiration == null) || (isoexpiration <= new Date().getTime())) {
 			return retrieveToken();
 		}
 		return this.acctkn;
@@ -89,17 +88,17 @@ public class SpotifyConverter {
 	 * @deprecated
 	 * @return
 	 */
+	@Deprecated
 	private String retrieveToken() {
 
-		final CloseableHttpClient client = HttpClients.createSystem();
 		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
-		try {
 
-			final CloseableHttpResponse response = client.execute(httpget);
+		try (final CloseableHttpClient client = HttpClients.createSystem();
+				final CloseableHttpResponse response = client.execute(httpget)) {
 
 			if (response.getStatusLine().getStatusCode() == 200) {
 
-				JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+				JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
 
 				String token = resp.get("accessToken").getAsString();
 				if (token != null && !token.equalsIgnoreCase("")) {
@@ -122,6 +121,7 @@ public class SpotifyConverter {
 	 * @deprecated
 	 * @return
 	 */
+	@Deprecated
 	public String getAccessToken() {
 
 		logger.debug("Spotify-Accesstoken refresh requested");
@@ -135,6 +135,7 @@ public class SpotifyConverter {
 	 * @param load
 	 * @param vc
 	 */
+	@Deprecated
 	public void convertPlaylist(String playlistId, Message load, AudioChannel vc) {
 
 		Matcher m = URL_PATTERN.matcher(playlistId);
@@ -168,6 +169,7 @@ public class SpotifyConverter {
 	 * @param mess
 	 * @param vc
 	 */
+	@Deprecated
 	private void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
 		Long delay = System.currentTimeMillis();
 		final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId(clientId).setAccessToken(acctkn).build();
@@ -263,46 +265,46 @@ public class SpotifyConverter {
 
 	/*
 	 * private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery) {
-	 * 
+	 *
 	 * List<AudioTrack> yttracks = new ArrayList<>();
-	 * 
+	 *
 	 * if (searchquery != null && !searchquery.isEmpty()) {
-	 * 
+	 *
 	 * logger.debug("YTSearchQuery got a valid List");
-	 * 
+	 *
 	 * searchquery.forEach(trackinfo -> {
-	 * 
+	 *
 	 * logger.info(trackinfo); AudioPlayerManager manager = new
 	 * DefaultAudioPlayerManager(); manager.registerSourceManager(new
 	 * YoutubeAudioSourceManager()); AudioLoadResultHandler handler = new
 	 * AudioLoadResultHandler() {
-	 * 
+	 *
 	 * @Override public void trackLoaded(AudioTrack track) {
-	 * 
+	 *
 	 * yttracks.add(track);
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * @Override public void playlistLoaded(AudioPlaylist playlist) {
-	 * 
+	 *
 	 * List<AudioTrack> tracklist = playlist.getTracks();
-	 * 
+	 *
 	 * if (!tracklist.isEmpty()) { yttracks.add(tracklist.get(0)); }
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * @Override public void noMatches() { }
-	 * 
+	 *
 	 * @Override public void loadFailed(FriendlyException exception) { }
-	 * 
+	 *
 	 * };
-	 * 
+	 *
 	 * try { manager.loadItem("ytsearch: " + trackinfo, handler).get(); } catch
 	 * (InterruptedException | ExecutionException e) {
 	 * logger.error(e.getMessage(),e); }
-	 * 
+	 *
 	 * }); }
-	 * 
+	 *
 	 * return yttracks; }
 	 */
 
@@ -312,6 +314,7 @@ public class SpotifyConverter {
 	 * @param vc
 	 * @return
 	 */
+	@Deprecated
 	private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
 
 		List<AudioTrack> yttracks = new ArrayList<>();
@@ -330,7 +333,7 @@ public class SpotifyConverter {
 				@Override
 				public void trackLoaded(AudioTrack track) {
 					yttracks.add(track);
-					queue.addTracktoQueue(track);
+					queue.addTrackToQueue(track);
 
 				}
 
@@ -342,7 +345,7 @@ public class SpotifyConverter {
 					if (!tracklist.isEmpty()) {
 
 						yttracks.add(tracklist.get(0));
-						queue.addTracktoQueue(tracklist.get(0));
+						queue.addTrackToQueue(tracklist.get(0));
 
 					}
 
@@ -350,10 +353,12 @@ public class SpotifyConverter {
 
 				@Override
 				public void noMatches() {
+					//
 				}
 
 				@Override
 				public void loadFailed(FriendlyException exception) {
+					//
 				}
 
 			};

@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
 import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,6 +15,24 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class TeacherCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt kompletten Namen (inkl. Anrede) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "teacher" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -57,21 +76,24 @@ public class TeacherCommand implements ServerCommand {
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(channel, "teacher [Lehrerkürzel]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "teacher [Lehrerkürzel]", m);
 
 		}
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
-
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

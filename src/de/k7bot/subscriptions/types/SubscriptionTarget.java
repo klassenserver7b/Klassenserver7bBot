@@ -3,17 +3,18 @@ package de.k7bot.subscriptions.types;
 import javax.annotation.Nonnull;
 
 import de.k7bot.util.customapis.LernsaxInteractions;
-import de.k7bot.util.customapis.VplanNEW_XML;
+import de.k7bot.util.customapis.Stundenplan24Vplan;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
 public enum SubscriptionTarget {
 
 	/**
-	 * The Type for {@link VplanNEW_XML} Subscription, only when Vplan API enabled.
+	 * The Type for {@link Stundenplan24Vplan} Subscription, only when Vplan API
+	 * enabled.
 	 */
 	VPLAN(1, true, true),
 
@@ -35,15 +36,14 @@ public enum SubscriptionTarget {
 	GOURMETTA(4, true, false),
 
 	/**
-	 * The Type for the current special offers at the "Kaufland Dresden Striesen
-	 * West"
-	 */
-	KAUFLAND(5, true, false),
-
-	/**
 	 * The Type for News about Hypixel Syblock
 	 */
-	SKYBLOCKNEWS(6, true, false),
+	SKYBLOCKNEWS(5, true, false),
+
+	/**
+	 * The Type for the dvb departure plan
+	 */
+	DVB(6, true, false),
 
 	/**
 	 * Unknown {@link SubscriptionTarget} type. Should never happen and would only
@@ -85,7 +85,7 @@ public enum SubscriptionTarget {
 	/**
 	 * Whether this {@link SubscriptionTarget} needs special rights which are given
 	 * by the bot owner - e.g. access to Vplans
-	 * 
+	 *
 	 * @return Whether this needs special rights from the Admin
 	 */
 	public boolean isprivileged() {

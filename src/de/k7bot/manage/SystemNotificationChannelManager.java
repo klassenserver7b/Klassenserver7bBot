@@ -29,9 +29,8 @@ public class SystemNotificationChannelManager {
 
 	private void reload() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
 
-		try {
 			while (set.next()) {
 				Long guildid = set.getLong("guildId");
 				Long systemchannel = set.getLong("syschannelId");
@@ -56,7 +55,8 @@ public class SystemNotificationChannelManager {
 				}
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -65,15 +65,16 @@ public class SystemNotificationChannelManager {
 	/**
 	 * Puts the given {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
 	 * into the Hashmap keyed by his {@link Guild}.
-	 * 
+	 *
 	 * @param channel <br>
 	 *                The {@link net.dv8tion.jda.api.entities.TextChannel
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
-	 
- 
- 
- 
- */ 	public void insertChannel(TextChannel channel) {
+	 *
+	 *
+	 *
+	 *
+	 */
+	public void insertChannel(TextChannel channel) {
 
 		reload();
 
@@ -100,11 +101,12 @@ public class SystemNotificationChannelManager {
 	 *              The {@link Guild} for which you want the SystemChannel.
 	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
-	 
- 
- 
- 
- */ 	@Nullable
+	 *
+	 *
+	 *
+	 *
+	 */
+	@Nullable
 	public TextChannel getSysChannel(@Nonnull Guild guild) {
 
 		if (systemchannellist.get(guild) == null) {
@@ -120,11 +122,12 @@ public class SystemNotificationChannelManager {
 	 *                SystemChannel.
 	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
-	 
- 
- 
- 
- */ 	@Nullable
+	 *
+	 *
+	 *
+	 *
+	 */
+	@Nullable
 	public TextChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
 		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
@@ -136,11 +139,11 @@ public class SystemNotificationChannelManager {
 	 * Only used if you want the full ConcurrentHashMap! If you want only one
 	 * {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel} please use
 	 * {@link SystemNotificationChannelManager#getSysChannel()}
-	 * 
+	 *
 	 * @return The current HashMap of SystemChannels wich is used by the Bot.
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 */
 	public ConcurrentHashMap<Guild, TextChannel> getHashMap() {
 		reload();

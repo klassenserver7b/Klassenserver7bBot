@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /**
- * 
+ *
  * @author Klassenserver7b
  *
  */
@@ -15,7 +15,7 @@ public enum SubscriptionDeliveryType {
 	/**
 	 * A {@link GuildChannel GuildChannel}, Guild-Only.
 	 */
-	TEXT_CHANNEL(0, true),
+	TEXT_CHANNEL(1, true),
 
 	/**
 	 * A {@link PrivateChannel PrivateChannel}

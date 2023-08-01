@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util;
 
@@ -37,10 +37,9 @@ public class StatsCategorieUtil {
 	public static void onStartup(boolean devmode) {
 		Klassenserver7bbot.getInstance().setEventBlocking(true);
 		Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
-			ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
-					guild.getIdLong());
+			try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
+					guild.getIdLong())) {
 
-			try {
 				if (set.next()) {
 					long catid = set.getLong("categoryId");
 					Category cat = guild.getCategoryById(catid);
@@ -54,7 +53,8 @@ public class StatsCategorieUtil {
 					fillCategory(cat, devmode);
 
 				}
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				log.error(e.getMessage(), e);
 			}
 
@@ -79,7 +79,8 @@ public class StatsCategorieUtil {
 						cat.createVoiceChannel("🔴 Bot offline").complete();
 					}
 				}
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				log.error(e.getMessage(), e);
 			}
 		});

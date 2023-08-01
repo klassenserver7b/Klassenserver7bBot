@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -13,21 +13,24 @@ import java.util.List;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
-import de.k7bot.util.customapis.types.InternalAPI;
+import de.k7bot.util.InternalStatusCodes;
+import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  * @author Klassenserver7b
  *
  */
-public class GitHubAPI implements InternalAPI {
+public class GitHubAPI implements LoopedEvent {
 
 	private final GitHub gh;
 	private final Logger log;
@@ -40,12 +43,16 @@ public class GitHubAPI implements InternalAPI {
 	}
 
 	@Override
-	public void checkforUpdates() {
+	public int checkforUpdates() {
 
 		List<String> newcommits = getNewCommits();
 
-		if (newcommits == null || newcommits.isEmpty()) {
-			return;
+		if (newcommits == null) {
+			return InternalStatusCodes.FAILURE;
+		}
+
+		if (newcommits.isEmpty()) {
+			return InternalStatusCodes.SUCCESS;
 		}
 
 		for (String s : newcommits) {
@@ -67,22 +74,24 @@ public class GitHubAPI implements InternalAPI {
 			MessageCreateBuilder messb = new MessageCreateBuilder();
 			messb.setEmbeds(b.build());
 
-			Klassenserver7bbot.getInstance().getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.BOT_NEWS, messb.build());
+			try (MessageCreateData messdata = messb.build()) {
+				Klassenserver7bbot.getInstance().getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.BOT_NEWS, messdata);
+			}
 
 		}
+
+		return InternalStatusCodes.SUCCESS;
 
 	}
 
 	private List<String> getNewCommits() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM githubinteractions;");
-
 		GHRepository repo;
 		List<GHCommit> commitl;
 		String dbid;
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM githubinteractions;")) {
 
 			repo = gh.getRepository("klassenserver7b/Klassenserver7bBot");
 			commitl = repo.listCommits().toList();
@@ -97,19 +106,22 @@ public class GitHubAPI implements InternalAPI {
 				dbid = set.getString("lastcommit");
 			}
 
+		} catch (HttpException e1) {
+			log.warn("Github Connection failed!");
+			return null;
 		} catch (IOException | SQLException e) {
 			log.error(e.getMessage(), e);
 			return null;
 		}
 
 		if (commitl.isEmpty()) {
-			return null;
+			return List.of();
 		}
 
 		String commitid = commitl.get(0).getSHA1();
 
 		if (commitid.equalsIgnoreCase(dbid)) {
-			return null;
+			return List.of();
 		}
 
 		try {
@@ -143,6 +155,31 @@ public class GitHubAPI implements InternalAPI {
 	@Override
 	public void shutdown() {
 		log.debug("GitHubAPI disabled");
+	}
+
+	@Override
+	public boolean restart() {
+		log.debug("restart requested");
+		gh.refreshCache();
+
+		return true;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		try {
+			gh.checkApiUrlValidity();
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "github";
 	}
 
 }

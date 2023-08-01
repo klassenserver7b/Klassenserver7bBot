@@ -1,13 +1,13 @@
 /**
- * 
+ *
  */
 package de.k7bot.music.utilities;
 
 import java.io.IOException;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import com.google.gson.JsonArray;
@@ -29,7 +29,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -52,7 +52,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public JsonObject getSongJson() {
@@ -61,22 +61,13 @@ public class SongJson {
 
 	/**
 	 * Checks if the base {@link JsonObject} contains all necessary information
-	 * 
+	 *
 	 * @return If the {@link SongJson} is valid
 	 */
 	public boolean isNotnull() {
 
-		if (json.get("title") == null) {
-			return false;
-		}
-
-		if (json.get("artists") == null) {
-			return false;
-		}
-		if (json.get("year") == null) {
-			return false;
-		}
-		if (json.get("url") == null) {
+		if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null)
+				|| (json.get("url") == null)) {
 			return false;
 		}
 		if (json.get("apiurl") == null) {
@@ -89,7 +80,7 @@ public class SongJson {
 
 	/**
 	 * Fully validates the SongJson including {@link #isNotnull()}
-	 * 
+	 *
 	 * @return If the {@link SongJson} is valid
 	 */
 	public boolean validateViaHttpRequest() {
@@ -98,35 +89,18 @@ public class SongJson {
 			return false;
 		}
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+			final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
-			if (response.getCode() == 200) {
-
-				response.close();
-				httpclient.close();
-
-				this.isDiscogsValidated = true;
-				return true;
-			}
-
-			response.close();
+			httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+			this.isDiscogsValidated = true;
 			httpclient.close();
-
-			this.isDiscogsValidated = false;
 			return false;
 
 		} catch (IOException e) {
 
 			this.isDiscogsValidated = false;
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				// do smth
-			}
 
 			return false;
 		}
@@ -134,7 +108,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param json
 	 * @return
 	 * @throws IllegalArgumentException
@@ -152,7 +126,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -175,7 +149,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -198,7 +172,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param title
 	 * @param artists
 	 * @param year
@@ -230,7 +204,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTitle() {
@@ -238,7 +212,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getAuthorString() {
@@ -258,7 +232,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public JsonArray getAuthors() {
@@ -266,7 +240,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getYear() {
@@ -274,7 +248,7 @@ public class SongJson {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getURL() {

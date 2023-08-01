@@ -14,9 +14,26 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class GithubRepoCommand implements ServerCommand {
+public class GithubRepoCommand implements ServerCommand { 
+
+ 	private boolean isEnabled;
 
 	private final Logger log;
+
+	@Override
+	public String gethelp() {
+		return null;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "repo" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
+	}
 
 	public GithubRepoCommand() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -40,15 +57,20 @@ public class GithubRepoCommand implements ServerCommand {
 		}
 
 	}
-
+	
 	@Override
-	public String gethelp() {
-		return null;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

@@ -4,15 +4,34 @@ import org.slf4j.Logger;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.SQLManager;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.RestartUtil;
 import de.k7bot.util.errorhandler.PermissionError;
 import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class RestartCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "restart" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -25,18 +44,14 @@ public class RestartCommand implements ServerCommand {
 
 				try {
 
-					Klassenserver7bbot.getInstance().getPlayerUtil().stopAllTracks();
-
-					Klassenserver7bbot.getInstance().stopLoop();
-					SQLManager.onCreate();
+					RestartUtil.restart();
 
 					Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
 
-					Klassenserver7bbot.getInstance().runLoop();
-
-				} catch (NumberFormatException e) {
-					SyntaxError.oncmdSyntaxError(channel, "restart <shardId>", m);
+				}
+				catch (NumberFormatException e) {
+					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", m);
 				}
 
 			} else {
@@ -51,14 +66,18 @@ public class RestartCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

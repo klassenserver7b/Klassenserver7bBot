@@ -1,15 +1,16 @@
 package de.k7bot.moderation.commands.common;
 
-import de.k7bot.HelpCategories;
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.sql.LiteSQL;
-import de.k7bot.util.errorhandler.PermissionError;
-import de.k7bot.util.errorhandler.SyntaxError;
-import de.k7bot.commands.types.ServerCommand;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import de.k7bot.HelpCategories;
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.types.ServerCommand;
+import de.k7bot.sql.LiteSQL;
+import de.k7bot.util.GenericMessageSendHandler;
+import de.k7bot.util.errorhandler.PermissionError;
+import de.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,6 +21,26 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class TimeoutCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
+
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "timeout" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
+	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		List<Member> ment = message.getMentions().getMembers();
@@ -45,8 +66,10 @@ public class TimeoutCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		} catch (StringIndexOutOfBoundsException e) {
-			SyntaxError.oncmdSyntaxError(channel, "timeout [time (in minutes)] [reason] @user", m);
+		}
+		catch (StringIndexOutOfBoundsException e) {
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
+					"timeout [time (in minutes)] [reason] @user", m);
 		}
 	}
 
@@ -77,7 +100,7 @@ public class TimeoutCommand implements ServerCommand {
 
 			}
 
-			if (system.getIdLong() != channel.getIdLong()) {
+			if (system == null || system.getIdLong() != channel.getIdLong()) {
 
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 
@@ -104,26 +127,32 @@ public class TimeoutCommand implements ServerCommand {
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
-		} catch (HierarchyException e) {
+		}
+		catch (HierarchyException e) {
 
 			PermissionError.onPermissionError(requester, channel);
 
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 
-			SyntaxError.oncmdSyntaxError(channel, "timeout [time (in minutes)] [reason] @user", requester);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
+					"timeout [time (in minutes)] [reason] @user", requester);
 
 		}
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "timeoutet den angegeben Nutzer für den Ausgewählten Grund.\n - kann nur von Mitgliedern mit der Berechtigung 'Nachrichten verwalten' ausgeführt werden!\n - z.B. [prefix]timeout [zeit (in minuten)] [reason] @member";
-
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

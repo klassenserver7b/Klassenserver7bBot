@@ -5,13 +5,14 @@ import java.time.OffsetDateTime;
 import de.k7bot.Klassenserver7bbot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class JoinandLeaveListener extends ListenerAdapter {
+	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
 		TextChannel def = event.getGuild().getDefaultChannel().asTextChannel();
@@ -32,12 +33,16 @@ public class JoinandLeaveListener extends ListenerAdapter {
 		}
 	}
 
+	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-		
+
 		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
-		
+
 		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
-		
+		if (def == null) {
+			def = event.getGuild().getDefaultChannel().asTextChannel();
+		}
+
 		User usr = event.getUser();
 		EmbedBuilder embbuild = new EmbedBuilder();
 		embbuild.setTimestamp(OffsetDateTime.now());
@@ -48,6 +53,6 @@ public class JoinandLeaveListener extends ListenerAdapter {
 		embbuild.setDescription(usr.getAsMention() + " leaved");
 
 		system.sendMessageEmbeds(embbuild.build()).queue();
-		def.sendMessage("Schade das du gehst " + usr.getAsMention()).queue();
+		def.sendMessage("Schade, dass du gehst " + usr.getAsMention()).queue();
 	}
 }

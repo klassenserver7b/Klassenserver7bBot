@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.HelpCategories;
 import de.k7bot.commands.common.HelpCommand;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -21,8 +21,9 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class HelpSlashCommand implements SlashCommand {
+public class HelpSlashCommand implements TopLevelSlashCommand {
 
+	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		HelpCommand help = new HelpCommand();
@@ -47,12 +48,12 @@ public class HelpSlashCommand implements SlashCommand {
 
 		if (ch == null) {
 
-			MessageEmbed errorembed = new EmbedBuilder().setColor(Color.decode("#ff0000")).setDescription(
+			MessageEmbed errorembed = new EmbedBuilder().setColor(Color.red).setDescription(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
 
 			hook.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-
+			return;
 		}
 
 		ch.sendMessageEmbeds(embed).queue();

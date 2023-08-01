@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot;
 
@@ -12,37 +12,37 @@ import javax.annotation.Nonnull;
 public enum HelpCategories {
 
 	/**
-	 * 
+	 *
 	 */
 	UNKNOWN(-1),
-	
+
 	/**
-	 * 
+	 *
 	 */
 	OVERVIEW(0),
 
 	/**
-	 * 
+	 *
 	 */
 	ALLGEMEIN(1),
 
 	/**
-	 * 
+	 *
 	 */
 	TOOLS(2),
 
 	/**
-	 * 
+	 *
 	 */
 	MODERATION(3),
 
 	/**
-	 * 
+	 *
 	 */
 	MUSIK(4),
 
 	/**
-	 * 
+	 *
 	 */
 	GAMES(5);
 
@@ -58,7 +58,7 @@ public enum HelpCategories {
 	 * Used to retrieve the id of the category Can be used to spimplify the category
 	 * and to retrieve the corresponding {@link HelpCategories} by using
 	 * {@link #fromId(int)}
-	 * 
+	 *
 	 * @return The static id of the category
 	 */
 	public int getId() {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.util.customapis;
 
@@ -8,13 +8,13 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class DiscogsAPI {
 
 	private JsonObject getSongJson(String searchquery) {
 
-		assert this.isApiEnabled() == true;
+		assert this.isApiEnabled();
 
 		String res_url = getMasterJson(searchquery);
 
@@ -81,40 +81,19 @@ public class DiscogsAPI {
 			return null;
 		}
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet(res_url);
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+			final HttpGet httpget = new HttpGet(res_url);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
-
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from api.dicogs.com");
-				return null;
-			}
-
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
-
-			response.close();
-			httpclient.close();
-
-			return elem.getAsJsonObject();
-
-		} catch (IOException | JsonSyntaxException | ParseException e) {
+			return request(httpclient, httpget);
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-			
 		}
-
 		return null;
 	}
 
 	private String getMasterJson(String searchquery) {
 
-		assert this.isApiEnabled() == true;
+		assert this.isApiEnabled();
 
 		JsonObject queryresults = getQueryResults(searchquery);
 
@@ -141,45 +120,46 @@ public class DiscogsAPI {
 
 	private JsonObject getQueryResults(String searchquery) {
 
-		assert this.isApiEnabled() == true;
-
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
+		assert this.isApiEnabled();
 
 		String token = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("discogs-token");
 
 		String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
-
 		final HttpGet httpget = new HttpGet(
 				"https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
 		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
-		try (final CloseableHttpResponse response = httpclient.execute(httpget)){
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-			if (response.getCode() != 200) {
-				log.warn("Invalid response from api.dicogs.com");
-				return null;
-			}
+			return request(httpclient, httpget);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
 
-			JsonElement elem = JsonParser.parseString(EntityUtils.toString(response.getEntity()));
+	}
 
-			response.close();
+	private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
+
+		try {
+			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+
+			JsonElement elem = JsonParser.parseString(response);
 			httpclient.close();
 
 			return elem.getAsJsonObject();
 
-		} catch (IOException | JsonSyntaxException | ParseException e) {
-			log.error(e.getMessage(), e);
-			
-			try {
-				httpclient.close();
-			} catch (IOException e1) {
-				log.error(e1.getMessage(), e1);
-			}
-			
+		} catch (HttpHostConnectException e1) {
+			log.warn("Invalid response from api.dicogs.com" + e1.getMessage());
 		}
 
-		return null;
+		catch (IOException | JsonSyntaxException e) {
+			log.error(e.getMessage(), e);
 
+			httpclient.close(CloseMode.GRACEFUL);
+
+		}
+		return null;
 	}
 
 	public boolean isApiEnabled() {

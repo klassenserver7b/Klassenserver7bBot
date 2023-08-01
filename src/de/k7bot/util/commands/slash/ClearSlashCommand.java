@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import org.jetbrains.annotations.NotNull;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.util.MessageClearUtil;
 import de.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,7 +23,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class ClearSlashCommand implements SlashCommand {
+public class ClearSlashCommand implements TopLevelSlashCommand {
+	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		if (event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
@@ -42,7 +43,7 @@ public class ClearSlashCommand implements SlashCommand {
 
 			if (event.getChannel().getType() != ChannelType.TEXT) {
 				hook.sendMessageEmbeds(new EmbedBuilder().setDescription("Can't do this in this channel!")
-						.setTimestamp(OffsetDateTime.now()).setColor(Color.decode("#ff0000")).build()).queue();
+						.setTimestamp(OffsetDateTime.now()).setColor(Color.red).build()).queue();
 				return;
 			}
 

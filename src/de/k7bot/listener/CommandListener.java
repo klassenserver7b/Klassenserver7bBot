@@ -1,24 +1,29 @@
 
 package de.k7bot.listener;
 
-import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.common.HelpCommand;
-import de.k7bot.sql.LiteSQL;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.k7bot.Klassenserver7bbot;
+import de.k7bot.commands.common.HelpCommand;
+import de.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author K7
+ *
+ */
 public class CommandListener extends ListenerAdapter {
 	Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -62,7 +67,7 @@ public class CommandListener extends ListenerAdapter {
 
 		if (message.getContentStripped().startsWith("-help")) {
 			HelpCommand help = new HelpCommand();
-			inserttoLog("help", LocalDateTime.now(), 0L);
+			inserttoLog("help", LocalDateTime.now(), 0L, event.getAuthor().getIdLong());
 			help.performCommand(channel, message);
 		}
 	}
@@ -77,14 +82,14 @@ public class CommandListener extends ListenerAdapter {
 			Klassenserver7bbot.getInstance().getCmdMan().perform("help", event.getMember(), channel,
 					event.getMessage());
 
-			inserttoLog("help", LocalDateTime.now(), event.getGuild());
+			inserttoLog("help", LocalDateTime.now(), event.getGuild(), event.getAuthor().getIdLong());
 		}
 
 		case "-getprefix" -> {
 
 			channel.sendMessage("The prefix for your Guild is: `" + prefix + "`.").queue();
 
-			inserttoLog("getprefix", LocalDateTime.now(), event.getGuild());
+			inserttoLog("getprefix", LocalDateTime.now(), event.getGuild(), event.getAuthor().getIdLong());
 
 		}
 
@@ -100,19 +105,38 @@ public class CommandListener extends ListenerAdapter {
 				return;
 			}
 
-			if (!Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
-					event.getMessage())) {
+			int status = Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
+					event.getMessage());
 
+			switch (status) {
+			case 0 -> {
+				sendDisabledCommand(channel, args[0]);
+			}
+			case -1 -> {
 				sendUnknownCommand(channel, args[0]);
-
+			}
 			}
 
-			inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild());
+			inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild(),
+					event.getAuthor().getIdLong());
 
 		}
 
 		}
 
+	}
+
+	private void sendDisabledCommand(TextChannel chan, String command) {
+
+		String shortcommand = command;
+
+		if (shortcommand.length() >= 100) {
+			shortcommand = shortcommand.substring(0, 99);
+			shortcommand += "...";
+		}
+
+		chan.sendMessage("`Deaktivierter Command - '" + shortcommand + "'` -> Currently disabled by the Bot-devs!")
+				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
 	private void sendUnknownCommand(TextChannel chan, String command) {
@@ -126,24 +150,24 @@ public class CommandListener extends ListenerAdapter {
 			shortcommand += "...";
 		}
 
-		chan.sendMessage("`unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
+		chan.sendMessage("`Unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
 				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
-	private void inserttoLog(String command, LocalDateTime time, Guild guild) {
+	private void inserttoLog(String command, LocalDateTime time, Guild guild, Long userid) {
 
 		if (!Klassenserver7bbot.getInstance().isInExit()) {
-			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES(?, ?, ?);", command,
-					guild.getIdLong(), time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?, ?, ?);", command,
+					guild.getIdLong(), userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
 		}
 
 	}
 
-	private void inserttoLog(String command, LocalDateTime time, Long guildid) {
+	private void inserttoLog(String command, LocalDateTime time, Long guildid, Long userid) {
 
 		if (!Klassenserver7bbot.getInstance().isInExit()) {
-			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, timestamp) VALUES(?, ?, ?);", command, guildid,
-					time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+			LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?, ?, ?);", command,
+					guildid, userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
 		}
 
 	}

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.k7bot.subscriptions.commands;
 
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.k7bot.Klassenserver7bbot;
-import de.k7bot.commands.types.SlashCommand;
+import de.k7bot.commands.types.TopLevelSlashCommand;
 import de.k7bot.sql.LiteSQL;
 import de.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.k7bot.subscriptions.types.SubscriptionTarget;
@@ -40,7 +40,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
  * @author Klassenserver7b
  *
  */
-public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCommand {
+public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevelSlashCommand {
 
 	private final Logger log;
 
@@ -87,16 +87,18 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
 					.setDescription("Successfully removed subscription with id `" + id + "`").build()).queue();
 
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
-					.setDescription("Error while removing subscription!").build()).queue();
+			hook.sendMessageEmbeds(
+					new EmbedBuilder().setColor(Color.red).setDescription("Error while removing subscription!").build())
+					.queue();
 
 		}
 	}
 
 	private void sendInvalidIdEmbed(InteractionHook hook) {
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#ff0000"))
+		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
 				.setDescription("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
 	}
 
@@ -150,20 +152,15 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 
 		LinkedHashMap<Long, String> subs = new LinkedHashMap<>();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;");
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-		try {
 			while (set.next()) {
 
 				Long targetdcid = set.getLong("targetDcId");
 
 				GuildChannel ch = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(targetdcid);
 
-				if (ch == null) {
-					continue;
-				}
-
-				if (ch.getGuild().getIdLong() != guildid) {
+				if ((ch == null) || (ch.getGuild().getIdLong() != guildid)) {
 					continue;
 				}
 
@@ -172,7 +169,8 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 								+ SubscriptionDeliveryType.fromId((int) set.getLong("type")));
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -183,15 +181,15 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements SlashCom
 
 		LinkedHashMap<Long, Long> subs = new LinkedHashMap<>();
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid);
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid)) {
 
-		try {
 			while (set.next()) {
 
 				subs.put(set.getLong("subscriptionId"), set.getLong("target"));
 
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
