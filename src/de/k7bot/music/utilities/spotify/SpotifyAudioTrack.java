@@ -55,7 +55,7 @@ import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import io.seruco.encoding.base62.Base62;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class SpotifyAudioTrack extends DelegatedAudioTrack {
@@ -90,7 +90,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	}
 
 	private File decryptTrack(String trackid) {
-		new AudioTrackInfo(trackid, trackid, 0, trackid, false, trackid);
 
 		FriendlyException e = new FriendlyException("Error on loading Track " + trackid, Severity.COMMON,
 				new Throwable("Error on loading Track " + trackid));
@@ -277,10 +276,9 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			File targetFile = File.createTempFile("K7Bot_Spotify_" + new Date().getTime(), "." + extension);
 			targetFile.deleteOnExit();
 
-			OutputStream outStream = new FileOutputStream(targetFile);
-			outStream.write(bresponse);
-
-			outStream.close();
+			try (OutputStream outStream = new FileOutputStream(targetFile)) {
+				outStream.write(bresponse);
+			}
 
 			return targetFile;
 
@@ -311,7 +309,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			String response = null;
 			response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			return elem.getAsJsonObject().get("cdnurl").getAsJsonArray().get(0).getAsString();
 
@@ -382,7 +380,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			return elem.getAsJsonObject().get("file").getAsJsonArray();
 
@@ -409,7 +407,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			String resp = elem.getAsJsonObject().get("pssh").getAsString();
 
@@ -430,10 +428,10 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 		String url = "https://api.spotify.com/v1/widevine-license/v1/audio/license";
 
-		try {
+		try (ByteArrayEntity byteentity = new ByteArrayEntity(license, ContentType.APPLICATION_FORM_URLENCODED)) {
 
 			final HttpPost httppost = new HttpPost(url);
-			httppost.setEntity(new ByteArrayEntity(license, ContentType.APPLICATION_FORM_URLENCODED));
+			httppost.setEntity(byteentity);
 			httppost.setHeader(HttpHeaders.AUTHORIZATION,
 					"Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
 

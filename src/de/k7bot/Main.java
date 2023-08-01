@@ -1,7 +1,5 @@
 package de.k7bot;
 
-import javax.security.auth.login.LoginException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +21,7 @@ public class Main {
 
 			}
 
-		} catch (LoginException | IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage(), e);
 		}
 	}

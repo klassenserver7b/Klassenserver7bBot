@@ -23,7 +23,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class MemberLogsCommand extends GenericUserLogsCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public String gethelp() {
+		return "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "memberlogs" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -35,7 +52,8 @@ public class MemberLogsCommand extends GenericUserLogsCommand implements ServerC
 		List<Member> memb;
 		try {
 			memb = getMemberFromMessage(channel, message, m);
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			return;
 		}
 
@@ -46,11 +64,11 @@ public class MemberLogsCommand extends GenericUserLogsCommand implements ServerC
 		}
 		long guildid = channel.getGuild().getIdLong();
 		long membid = memb.get(0).getIdLong();
-		ResultSet set = LiteSQL.onQuery(
-				"SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = AND memberId = ?", guildid,
-				membid);
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery(
+				"SELECT requesterName, action, reason, date FROM modlogs  WHERE guildId = AND memberId = ?", guildid,
+				membid)) {
+
 			ArrayList<String> requName = new ArrayList<>();
 			ArrayList<String> action = new ArrayList<>();
 			ArrayList<String> reason = new ArrayList<>();
@@ -80,18 +98,24 @@ public class MemberLogsCommand extends GenericUserLogsCommand implements ServerC
 
 				channel.sendMessage("This user hasn't a log!").complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public String gethelp() {
-		return "Zeigt die Logs zu einem Mitglied.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @member";
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

@@ -21,8 +21,8 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,16 +68,14 @@ public class GourmettaInteractions implements LoopedEvent {
 	 * Login for the Gourmetta Rest-API based on the credentials given
 	 *
 	 */
-	public void login() {
+	public boolean login() {
 
 		String username = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettauserid");
 		String password = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettapassword");
 
 		if (username == null || password == null || username.isBlank() || password.isBlank()) {
-			return;
+			return false;
 		}
-
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
 
 		final HttpPost post = new HttpPost("https://bestellung-rest.gourmetta.de/login");
 
@@ -89,32 +87,35 @@ public class GourmettaInteractions implements LoopedEvent {
 		auth.addProperty("password", password);
 		entitybuild.setText(auth.toString());
 
-		try {
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem();
+				HttpEntity entity = entitybuild.build()) {
 
-			post.setEntity(entitybuild.build());
+			post.setEntity(entity);
 
 			final String response = httpclient.execute(post, new BasicHttpClientResponseHandler());
 
-			httpclient.close();
-
-			JsonParser jparse = new JsonParser();
-
-			JsonElement elem = jparse.parse(response);
+			JsonElement elem = JsonParser.parseString(response);
 
 			this.token = elem.getAsJsonObject().get("token").getAsString();
 
 			String base64uid = token.split("\\.")[1];
 			String uidjson = new String(Base64.getDecoder().decode(base64uid));
-			this.userid = jparse.parse(uidjson).getAsJsonObject().get("userUuid").getAsString();
+			this.userid = JsonParser.parseString(uidjson).getAsJsonObject().get("userUuid").getAsString();
 			this.apienabled = true;
+
+			if (userid != null && token != null) {
+				return true;
+			}
 
 		} catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
-			httpclient.close(CloseMode.GRACEFUL);
+			return false;
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-			httpclient.close(CloseMode.GRACEFUL);
+			return false;
 		}
+
+		return false;
 	}
 
 	/**
@@ -139,20 +140,17 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		log.debug("Gourmetta Check");
 
-		ResultSet set = LiteSQL.onQuery("Select * FROM gourmettaInteractions");
-
 		OffsetDateTime offsetprovideDay = getNextDay();
 		long provideday = Long.parseLong(offsetprovideDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery("Select * FROM gourmettaInteractions");
+				MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);) {
 
 			if (set.next()) {
 
 				long dbday = set.getLong("lastday");
 
 				if (dbday != provideday) {
-
-					MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
 
 					if (data != null) {
 						providePlanMessage(data);
@@ -163,8 +161,6 @@ public class GourmettaInteractions implements LoopedEvent {
 
 			} else {
 
-				MessageCreateData data = buildMessage(getStripedDayMeals(), offsetprovideDay);
-
 				if (data == null) {
 					return InternalStatusCodes.SUCCESS;
 				}
@@ -174,11 +170,13 @@ public class GourmettaInteractions implements LoopedEvent {
 
 			}
 
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-			return InternalStatusCodes.FAILURE;
 		} catch (IllegalArgumentException e) {
-			log.debug(e.getMessage(), e);
+			log.info(e.getMessage(), e);
+			return InternalStatusCodes.FAILURE;
+		}
+
+		catch (SQLException e) {
+			log.error(e.getMessage(), e);
 			return InternalStatusCodes.FAILURE;
 		}
 
@@ -272,7 +270,7 @@ public class GourmettaInteractions implements LoopedEvent {
 		}
 
 		if (meals.size() <= 0) {
-			return null;
+			return new JsonArray();
 		}
 
 		JsonArray ret = new JsonArray();
@@ -321,7 +319,6 @@ public class GourmettaInteractions implements LoopedEvent {
 		}
 
 		JsonObject jsonday = days.get(day.getValue() - 1).getAsJsonObject();
-
 		return jsonday.get("orderedMeals").getAsJsonArray();
 	}
 
@@ -340,28 +337,27 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		String url = generateOfferRequestURI();
 
-		final CloseableHttpClient httpclient = HttpClients.createSystem();
+		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-		final HttpGet httpget = new HttpGet(url);
+			final HttpGet httpget = new HttpGet(url);
 
-		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
-		httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+			httpget.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + this.token);
+			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-		try {
-			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+			try {
+				final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = new JsonParser().parse(response);
+				JsonElement elem = JsonParser.parseString(response);
+				return elem.getAsJsonObject().get("orderDays").getAsJsonArray();
 
-			httpclient.close();
+			} catch (HttpHostConnectException e1) {
+				log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
+			} catch (IOException | JsonSyntaxException e) {
+				log.error(e.getMessage(), e);
+			}
 
-			return elem.getAsJsonObject().get("orderDays").getAsJsonArray();
-
-		} catch (HttpHostConnectException e1) {
-			log.warn("Invalid response from bestellung-rest.gourmetta.de" + e1.getMessage());
-			httpclient.close(CloseMode.GRACEFUL);
-		} catch (IOException | JsonSyntaxException e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-			httpclient.close(CloseMode.GRACEFUL);
 		}
 
 		return null;
@@ -403,10 +399,9 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		if (day <= 5) {
 			return current.minusDays(day - 1);
-		} else {
-			return current.plusDays(8 - day);
 		}
 
+		return current.plusDays(8 - day);
 	}
 
 	/**
@@ -426,10 +421,9 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		if (day < 5) {
 			return current.plusDays(5 - day);
-		} else {
-			return current.plusDays(12 - day);
 		}
 
+		return current.plusDays(12 - day);
 	}
 
 	/**
@@ -449,10 +443,9 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		if (day >= 5) {
 			return cutime.plusDays(8 - day);
-		} else {
-			return cutime.plusDays(1);
 		}
 
+		return cutime.plusDays(1);
 	}
 
 	/**
@@ -484,7 +477,7 @@ public class GourmettaInteractions implements LoopedEvent {
 
 	@Override
 	public boolean isAvailable() {
-		return getWeekPlan() != null;
+		return login();
 	}
 
 	@Override

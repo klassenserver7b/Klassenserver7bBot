@@ -3,22 +3,8 @@ package de.k7bot.music.lavaplayer;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.time.OffsetDateTime;
 
-import org.apache.hc.core5.http.ParseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioTrack;
@@ -35,29 +21,10 @@ import de.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
-import net.dv8tion.jda.api.utils.FileUpload;
-import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
-import se.michaelthelin.spotify.model_objects.specification.Image;
-import se.michaelthelin.spotify.model_objects.specification.Track;
 
 public class TrackScheduler extends AudioEventAdapter {
 
-	private final Logger log;
 	public static boolean next = false;
-
-	public TrackScheduler() {
-		log = LoggerFactory.getLogger(this.getClass());
-	}
-
-	@Override
-	public void onPlayerPause(AudioPlayer player) {
-	}
-
-	@Override
-	public void onPlayerResume(AudioPlayer player) {
-
-	}
 
 	@Override
 	public void onTrackStart(AudioPlayer player, AudioTrack track) {
@@ -104,13 +71,7 @@ public class TrackScheduler extends AudioEventAdapter {
 									+ sekunden + "s"),
 					true);
 
-			FileUpload up = setIcons(track);
-
-			if (up == null) {
-				MusicUtil.sendEmbed(guildid, builder);
-			} else {
-				MusicUtil.sendEmbed(guildid, builder, up);
-			}
+			MusicUtil.sendIconEmbed(guildid, builder, track);
 
 		}
 	}
@@ -155,85 +116,4 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	}
 
-	private FileUpload setIcons(AudioTrack track) {
-
-		if (track instanceof YoutubeAudioTrack) {
-			return loadYT(track.getIdentifier());
-		}
-
-		if (track instanceof SpotifyAudioTrack) {
-			return loadSpotify(track.getIdentifier());
-		}
-		return null;
-
-	}
-
-	private FileUpload loadSpotify(String songid) {
-
-		final CloseableHttpClient client = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
-
-		try {
-
-			final CloseableHttpResponse response = client.execute(httpget);
-
-			if (response.getStatusLine().getStatusCode() != 200) {
-				return null;
-
-			}
-
-			JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
-
-			String token = resp.get("accessToken").getAsString();
-
-			SpotifyApi api = SpotifyApi.builder().setAccessToken(token).build();
-
-			Track t = api.getTrack(songid).build().execute();
-
-			Image[] images = t.getAlbum().getImages();
-
-			Image img = images[0];
-
-			for (Image imgs : images) {
-				if (imgs.getHeight() > img.getHeight()) {
-					img = imgs;
-				}
-			}
-
-			InputStream file = (new URL(img.getUrl())).openStream();
-			return FileUpload.fromData(file, "thumbnail.jpg");
-
-		} catch (IOException | ParseException | SpotifyWebApiException e) {
-			log.error(e.getMessage(), e);
-			return null;
-		}
-
-	}
-
-	private FileUpload loadYT(String videoId) {
-
-		try {
-
-			InputStream file;
-
-			try {
-
-				file = (new URL("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg")).openStream();
-
-			} catch (Exception ex) {
-
-				log.warn("No maxresdefault.jpg available");
-
-				file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg")).openStream();
-
-			}
-
-			return FileUpload.fromData(file, "thumbnail.jpg");
-
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
 }

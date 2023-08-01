@@ -9,6 +9,25 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ShutdownCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Fährt den Bot herunter.\n - kann nur vom Bot Owner ausgeführt werden!";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "shutdown" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -18,19 +37,24 @@ public class ShutdownCommand implements ServerCommand {
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
 			return;
 
-		} else {
-			PermissionError.onPermissionError(m, channel);
 		}
+
+		PermissionError.onPermissionError(m, channel);
+
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Fährt den Bot herunter.\n - kann nur vom Bot Owner ausgeführt werden!";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

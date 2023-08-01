@@ -3,9 +3,7 @@ package de.k7bot.commands.common;
 import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +21,22 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  *
- * @author Felix
+ * @author K7
  *
  */
 
 public class HelpCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		return "Shows the Help for the Bot!";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "help" };
 	}
 
 	@Override
@@ -133,8 +138,8 @@ public class HelpCommand implements ServerCommand {
 	 */
 	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
-		LinkedHashMap<String, ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).commands;
-		List<Entry<String, ServerCommand>> searchresults = new ArrayList<>();
+		ArrayList<ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).getCommands();
+		List<ServerCommand> searchresults = new ArrayList<>();
 
 		int limitmultiplicator = 1;
 		int buildlength = 0;
@@ -148,7 +153,8 @@ public class HelpCommand implements ServerCommand {
 
 			cat = HelpCategories.valueOf(catstr.trim().toUpperCase());
 
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 
 			ret.setColor(Color.red);
 			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
@@ -177,26 +183,29 @@ public class HelpCommand implements ServerCommand {
 					false);
 		}
 
-		commands.entrySet().forEach(key -> {
-			ServerCommand comm = key.getValue();
+		commands.forEach(servercommand -> {
+			;
 
-			if (comm.getcategory() != null && comm.getcategory() == cat) {
-				searchresults.add(key);
+			if (servercommand.getcategory() != null && servercommand.getcategory() == cat) {
+				searchresults.add(servercommand);
 			}
 		});
 
 		StringBuilder categoryHelpStr = new StringBuilder();
 
-		for (Entry<String, ServerCommand> entry : searchresults) {
+		for (ServerCommand servercommand : searchresults) {
 
 			StringBuilder inbuild = new StringBuilder();
 
 			inbuild.append("\r\n");
-			inbuild.append("`");
-			inbuild.append(prefix);
-			inbuild.append(entry.getKey());
-			inbuild.append("` - ");
-			inbuild.append(entry.getValue().gethelp() + " \r\n");
+			for (String s : servercommand.getCommandStrings()) {
+				inbuild.append("`");
+				inbuild.append(prefix);
+				inbuild.append(s);
+				inbuild.append("` ");
+			}
+			inbuild.append("- ");
+			inbuild.append(servercommand.gethelp() + " \r\n");
 
 			if (buildlength + inbuild.toString().length()
 					+ 5 >= (1024 * limitmultiplicator + ((limitmultiplicator - 1) * 3))) {
@@ -274,6 +283,21 @@ public class HelpCommand implements ServerCommand {
 	private void sendEmbedPrivate(MessageEmbed embed, @NotNull PrivateChannel ch) {
 		ch.sendMessageEmbeds(embed).queue();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

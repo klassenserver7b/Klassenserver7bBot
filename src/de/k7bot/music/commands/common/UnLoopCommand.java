@@ -17,10 +17,17 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class UnLoopCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		String help = "entloopt die aktuelle Queuelist";
 		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "unloop" };
 	}
 
 	@Override
@@ -47,6 +54,21 @@ public class UnLoopCommand implements ServerCommand {
 
 		Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildId).getQueue().unLoop();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

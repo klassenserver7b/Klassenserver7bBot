@@ -46,25 +46,33 @@ public class LoopedEventManager {
 	 */
 	public void checkForUpdates() {
 
+		List<LoopedEvent> change = new ArrayList<>();
+
+		for (LoopedEvent erroredEvent : erroredEvents) {
+
+			if (erroredEvent.isAvailable()) {
+				log.info(erroredEvent.getIdentifier() + " is available again");
+				change.add(erroredEvent);
+			}
+
+		}
+
+		erroredEvents.removeAll(change);
+		activeEvents.addAll(change);
+		change.clear();
+
 		for (LoopedEvent activeEvent : activeEvents) {
 			int status = activeEvent.checkforUpdates();
 
 			if (status != InternalStatusCodes.SUCCESS) {
 				log.warn(activeEvent.getIdentifier() + " had an error - will be checked next time only");
-				activeEvents.remove(activeEvent);
-				erroredEvents.add(activeEvent);
+				change.add(activeEvent);
 			}
 		}
 
-		for (LoopedEvent erroredEvent : erroredEvents) {
-
-			if (erroredEvent.isAvailable()) {
-				log.info(erroredEvent.getIdentifier() + "is available again");
-				erroredEvents.remove(erroredEvent);
-				activeEvents.add(erroredEvent);
-			}
-
-		}
+		activeEvents.removeAll(change);
+		erroredEvents.addAll(change);
+		change.clear();
 	}
 
 	/**

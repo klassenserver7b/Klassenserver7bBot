@@ -12,7 +12,7 @@ import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class SpotifyYTConvertedAudioTrack extends DelegatedAudioTrack {

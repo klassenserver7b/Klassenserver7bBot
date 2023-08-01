@@ -16,6 +16,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class TeacherCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt kompletten Namen (inkl. Anrede) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "teacher" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.UNKNOWN;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -64,15 +82,18 @@ public class TeacherCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Zeigt kompletten Namen (inkl. Doktortitel) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
-
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.session.SessionRecreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class JDAReconnectListener extends ListenerAdapter {

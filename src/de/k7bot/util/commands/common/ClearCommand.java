@@ -17,6 +17,23 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ClearCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		return "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "clear" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -64,12 +81,17 @@ public class ClearCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		return "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

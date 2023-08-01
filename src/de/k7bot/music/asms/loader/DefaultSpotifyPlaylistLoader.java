@@ -28,7 +28,7 @@ import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {

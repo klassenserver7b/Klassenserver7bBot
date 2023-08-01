@@ -18,14 +18,21 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
- * @author Felix
+ * @author K7
  *
  */
 public class NightcoreCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		return null;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "nightcore", "nc" };
 	}
 
 	@Override
@@ -46,5 +53,20 @@ public class NightcoreCommand implements ServerCommand {
 			timescale.setRate(1.25);
 			return Collections.singletonList(timescale);
 		});
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

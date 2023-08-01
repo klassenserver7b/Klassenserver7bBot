@@ -13,14 +13,21 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class OverallChartsCommand extends GenericChartsCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
-		return null;
+		return "Zeigt die Bot-Charts seit jeher über alle server an";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "charts" };
 	}
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
+		return HelpCategories.MUSIK;
 	}
 
 	@Override
@@ -31,6 +38,21 @@ public class OverallChartsCommand extends GenericChartsCommand implements Server
 
 		sendMessage(new GenericMessageSendHandler(channel), charts);
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

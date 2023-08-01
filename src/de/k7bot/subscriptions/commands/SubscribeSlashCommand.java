@@ -41,8 +41,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
 		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-					.setTimestamp(OffsetDateTime.now())
+			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 					.setDescription(
 							"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
 					.build()).queue();
@@ -62,11 +61,11 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 								.setDescription("The subscription was created successfull!").build())
 						.queue();
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 
 				log.error(e.getMessage(), e);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-						.setTimestamp(OffsetDateTime.now())
+				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
 						.setDescription(
 								"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 						.build()).queue();
@@ -80,19 +79,20 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 			if (!Klassenserver7bbot.getInstance().isDevMode()) {
 				switch (union.getType()) {
 
-				case TEXT: {
+				case TEXT -> {
 					delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
 					break;
 				}
-				case NEWS: {
+				case NEWS -> {
 					delivery = SubscriptionDeliveryType.NEWS;
 				}
-				default:
+				default -> {
 					delivery = SubscriptionDeliveryType.UNKNOWN;
-					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-							.setTimestamp(OffsetDateTime.now()).setDescription("Can't create subscription in "
-									+ union.getType() + "!\nPlease use a Text or News Channel")
+					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
+							.setDescription("Can't create subscription in " + union.getType()
+									+ "!\nPlease use a Text or News Channel")
 							.build()).queue();
+				}
 				}
 			} else {
 

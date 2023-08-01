@@ -39,11 +39,16 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 /**
- *
+ * @deprecated will be moved into DanceInterpreter soon
  * @author Klassenserver7b
  *
  */
+@Deprecated
 public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	// TODO port to Danceinterpreter
 	private String accessToken;
 	private Long isoexpiration;
 	private String clientId;
@@ -138,7 +143,8 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 
 			}
 
-		} catch (ParseException | SpotifyWebApiException | IOException e) {
+		}
+		catch (ParseException | SpotifyWebApiException | IOException e) {
 			logger.error(e.getMessage(), e);
 		}
 
@@ -165,7 +171,7 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 
 			String jsonstring = Files.readString(f.toPath());
 
-			JsonElement json = new JsonParser().parse(jsonstring);
+			JsonElement json = JsonParser.parseString(jsonstring);
 
 			if (json != null && !jsonstring.isBlank() && !jsonstring.isEmpty()) {
 
@@ -178,14 +184,13 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 			}
 
 			main.add("Songs", songs);
-			BufferedWriter stream = Files.newBufferedWriter(f.toPath(), StandardCharsets.UTF_8,
-					StandardOpenOption.TRUNCATE_EXISTING);
+			try (BufferedWriter stream = Files.newBufferedWriter(f.toPath(), StandardCharsets.UTF_8,
+					StandardOpenOption.TRUNCATE_EXISTING)) {
+				stream.write(main.toString());
+			}
 
-			stream.write(main.toString());
-
-			stream.close();
-
-		} catch (IOException e1) {
+		}
+		catch (IOException e1) {
 			logger.error(e1.getMessage(), e1);
 		}
 
@@ -199,16 +204,14 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 		if (accessToken == null || accessToken.equalsIgnoreCase("") || clientId == null
 				|| (isoexpiration != null && isoexpiration <= new Date().getTime())) {
 
-			final CloseableHttpClient client = HttpClients.createSystem();
 			final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
 
-			try {
-
-				final CloseableHttpResponse response = client.execute(httpget);
+			try (final CloseableHttpClient client = HttpClients.createSystem();
+					final CloseableHttpResponse response = client.execute(httpget)) {
 
 				if (response.getStatusLine().getStatusCode() == 200) {
 
-					JsonObject resp = new JsonParser().parse(EntityUtils.toString(response.getEntity()))
+					JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity()))
 							.getAsJsonObject();
 
 					String token = resp.get("accessToken").getAsString();
@@ -221,7 +224,8 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 				} else {
 					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
 
@@ -238,5 +242,25 @@ public class DanceInterpreterJsonGenerateCommand implements ServerCommand {
 		logger.debug("Spotify-Accesstoken refresh requested");
 		return accessToken;
 
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "diload" };
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

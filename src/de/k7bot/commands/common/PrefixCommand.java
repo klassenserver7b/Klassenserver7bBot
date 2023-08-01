@@ -16,6 +16,24 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class PrefixCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix]";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "prefix" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.ALLGEMEIN;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -41,12 +59,18 @@ public class PrefixCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix]";
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
+	public void disableCommand() {
+		isEnabled = false;
 	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
+	}
+
 }

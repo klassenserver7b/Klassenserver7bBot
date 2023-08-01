@@ -15,6 +15,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class RestartCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "restart" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.TOOLS;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -31,7 +49,8 @@ public class RestartCommand implements ServerCommand {
 					Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
 					log.info("Restarting Shard " + args[1]);
 
-				} catch (NumberFormatException e) {
+				}
+				catch (NumberFormatException e) {
 					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", m);
 				}
 
@@ -47,14 +66,18 @@ public class RestartCommand implements ServerCommand {
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.TOOLS;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

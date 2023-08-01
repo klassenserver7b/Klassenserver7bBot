@@ -13,9 +13,16 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 public class VTestCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		return null;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "vtest" };
 	}
 
 	@Override
@@ -39,6 +46,21 @@ public class VTestCommand implements ServerCommand {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "vtest [klasse] #channel", m);
 		}
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

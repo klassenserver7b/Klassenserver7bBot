@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class GenericMessageSendHandler {
@@ -61,7 +61,9 @@ public class GenericMessageSendHandler {
 	}
 
 	public FluentRestAction<Message, ?> sendMessage(@Nonnull CharSequence data) {
-		return sendMessage(new MessageCreateBuilder().addContent(data.toString()).build());
+		try (MessageCreateData messdata = new MessageCreateBuilder().addContent(data.toString()).build()) {
+			return sendMessage(messdata);
+		}
 	}
 
 	public FluentRestAction<Message, ?> sendMessage(@Nonnull MessageCreateData data) {
@@ -74,7 +76,8 @@ public class GenericMessageSendHandler {
 				return channel.sendMessage(data);
 			}
 			}
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -101,7 +104,8 @@ public class GenericMessageSendHandler {
 				return channel.sendMessageEmbeds(embeds);
 			}
 			}
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -123,7 +127,8 @@ public class GenericMessageSendHandler {
 				return channel.sendFiles(files);
 			}
 			}
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -139,7 +144,8 @@ public class GenericMessageSendHandler {
 				return channel.sendMessageFormat(format, objects);
 			}
 			}
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;

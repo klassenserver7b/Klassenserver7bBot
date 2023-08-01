@@ -19,7 +19,6 @@ import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerHints;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalSeekableInputStream;
@@ -32,10 +31,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
-public class ExtendedLocalAudioSourceManager extends LocalAudioSourceManager implements AudioSourceManager {
+public class ExtendedLocalAudioSourceManager extends LocalAudioSourceManager {
 
 	private final Logger log;
 

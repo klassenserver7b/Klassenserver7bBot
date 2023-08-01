@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class AutoRickroll extends ListenerAdapter {
 	private final AudioPlayerManager apm;
 
+	private static final String RickRollUrl = "https://www.youtube.com/watch?v=BBJa32lCaaY";
+
 	/**
 	 * @param apm
 	 */
@@ -31,8 +33,11 @@ public class AutoRickroll extends ListenerAdapter {
 
 	@Override
 	public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
+		
 		if (event.getChannelLeft() == null && event.getGuild().getIdLong() == 701341683325075477L
-				&& event.getMember().getIdLong() != 846296603139506187L && Math.random() >= 0.95D) {
+				&& event.getMember().getIdLong() != event.getGuild().getSelfMember().getUser().getIdLong()
+				&& Math.random() >= 0.95D) {
+			
 			AudioChannel vc = event.getChannelJoined();
 			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 					.getController(vc.getGuild().getIdLong());
@@ -41,16 +46,16 @@ public class AutoRickroll extends ListenerAdapter {
 			AudioPlayer player = controller.getPlayer();
 			Queue queue = controller.getQueue();
 
-			String url = "https://www.youtube.com/watch?v=BBJa32lCaaY";
-
 			if (player.getPlayingTrack() == null) {
+				
 				if (!queue.isemptyQueueList()) {
 					queue.clearQueue();
 				}
 				manager.openAudioConnection(vc);
-				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.REPLACE));
+				apm.loadItem(RickRollUrl, new AudioLoadResult(controller, RickRollUrl, AudioLoadOption.REPLACE));
 				player.setPaused(false);
 				queue.next(null);
+				
 			} else {
 
 				if (!queue.isemptyQueueList()) {
@@ -58,7 +63,7 @@ public class AutoRickroll extends ListenerAdapter {
 				}
 
 				player.stopTrack();
-				apm.loadItem(url, new AudioLoadResult(controller, url, AudioLoadOption.NEXT));
+				apm.loadItem(RickRollUrl, new AudioLoadResult(controller, RickRollUrl, AudioLoadOption.NEXT));
 				queue.next(null);
 				player.setPaused(false);
 			}

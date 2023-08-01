@@ -13,9 +13,16 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class EqualizerCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	@Override
 	public String gethelp() {
 		return "COMING SOON - read Bot-News or GitHub Commit-Message";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "eq" };
 	}
 
 	@Override
@@ -41,6 +48,21 @@ public class EqualizerCommand implements ServerCommand {
 				Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
 		eq.setEQMode(Integer.valueOf(args[1]));
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 
 }

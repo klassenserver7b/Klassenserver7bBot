@@ -4,7 +4,7 @@
 package de.k7bot.util;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class InternalStatusCodes {

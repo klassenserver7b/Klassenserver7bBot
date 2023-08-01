@@ -20,6 +20,7 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,14 +61,15 @@ public class VVOInteractions implements LoopedEvent {
 			return InternalStatusCodes.FAILURE;
 		}
 
-		MessageCreateData data = getMessage(getEmbed(lines));
+		try (MessageCreateData data = getMessage(getEmbed(lines))) {
 
-		if (data == null) {
-			return InternalStatusCodes.FAILURE;
+			if (data == null) {
+				return InternalStatusCodes.FAILURE;
+			}
+
+			Klassenserver7bbot.getInstance().getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.DVB, data);
 		}
-
-		Klassenserver7bbot.getInstance().getSubscriptionManager()
-				.provideSubscriptionNotification(SubscriptionTarget.DVB, data);
 
 		return InternalStatusCodes.SUCCESS;
 
@@ -186,6 +188,7 @@ public class VVOInteractions implements LoopedEvent {
 	}
 
 	public JsonElement downloadPlan(LocalDateTime time) {
+
 		HttpPost request = new HttpPost("https://webapi.vvo-online.de/dm");
 		JsonObject requestData = new JsonObject();
 		requestData.addProperty("format", "json");
@@ -198,16 +201,19 @@ public class VVOInteractions implements LoopedEvent {
 		EntityBuilder entityBuilder = EntityBuilder.create();
 		entityBuilder.setContentType(ContentType.APPLICATION_JSON);
 		entityBuilder.setText(requestData.toString());
-		request.setEntity(entityBuilder.build());
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+
+		try (HttpEntity entity = entityBuilder.build(); CloseableHttpClient httpClient = HttpClients.createDefault()) {
+
+			request.setEntity(entity);
 
 			String content = httpClient.execute(request, new BasicHttpClientResponseHandler());
-			return new JsonParser().parse(content);
+			return JsonParser.parseString(content);
 
 		} catch (IOException | JsonParseException e) {
 			log.error(e.getMessage(), e);
 			return null;
 		}
+
 	}
 
 	@Override

@@ -59,7 +59,8 @@ public class ConsoleReadThread implements Runnable {
 
 				Thread.sleep(5000);
 
-			} catch (InterruptedException | IOException e) {
+			}
+			catch (InterruptedException | IOException e) {
 
 				if (e.getMessage().equalsIgnoreCase("Stream closed")) {
 					t.interrupt();
@@ -131,7 +132,8 @@ public class ConsoleReadThread implements Runnable {
 					disableCommandbyObj((ServerCommand) obj, command_OR_CommandClassName);
 				}
 
-			} catch (IllegalArgumentException | SecurityException | ReflectiveOperationException e) {
+			}
+			catch (IllegalArgumentException | SecurityException | ReflectiveOperationException e) {
 				log.error(e.getMessage(), e);
 			}
 
@@ -161,46 +163,47 @@ public class ConsoleReadThread implements Runnable {
 		if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
 			log.info("successfully disabled " + name);
 			return;
-		} else {
-			log.warn("failed to disable " + name);
-			return;
 		}
+
+		log.warn("failed to disable " + name);
+		return;
 	}
 
 	private void enableCommandbyStr(String name) {
 		if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
 			log.info("successfully enabled " + name);
 			return;
-		} else {
-			log.warn("failed to enable " + name);
-			return;
 		}
+
+		log.warn("failed to enable " + name);
+		return;
 	}
 
 	private void disableCommandbyObj(ServerCommand obj, String name) {
 		if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(obj)) {
 			log.info("successfully disabled all types of " + name);
 			return;
-		} else {
-			log.warn("failed to disable all types of " + name);
-			return;
 		}
+
+		log.warn("failed to disable all types of " + name);
+		return;
 	}
 
 	private void enableCommandbyObj(ServerCommand obj, String name) {
 		if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(obj)) {
 			log.info("successfully enabled all types of " + name);
 			return;
-		} else {
-			log.warn("failed to enable all types of " + name);
-			return;
 		}
+
+		log.warn("failed to enable all types of " + name);
+		return;
 	}
 
 	public Class<?> getClassFromString(String s) {
 		try {
 			return Class.forName(s);
-		} catch (ClassNotFoundException e) {
+		}
+		catch (ClassNotFoundException e) {
 			return null;
 		}
 	}
@@ -243,14 +246,15 @@ public class ConsoleReadThread implements Runnable {
 			t.interrupt();
 			try {
 				reader.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log.error(e.getMessage(), e);
 			}
 			return;
 
-		} else {
-			log.info("ShardMan was null!");
 		}
+
+		log.info("ShardMan was null!");
 
 	}
 

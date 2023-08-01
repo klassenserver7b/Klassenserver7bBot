@@ -53,7 +53,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * @author felix
+ * @author K7
  * @since 1.14.0
  */
 public class Stundenplan24Vplan implements LoopedEvent {
@@ -89,10 +89,10 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
 
-		MessageCreateData d = getVplanMessage(force, klasse);
-
-		if (d != null) {
-			channel.sendMessage(d).queue();
+		try (MessageCreateData d = getVplanMessage(force, klasse)) {
+			if (d != null) {
+				channel.sendMessage(d).queue();
+			}
 		}
 
 	}
@@ -116,14 +116,15 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	public boolean VplanNotify(String klasse) {
 
-		MessageCreateData d = getVplanMessage(false, klasse);
+		try (MessageCreateData d = getVplanMessage(false, klasse)) {
 
-		if (d == null) {
-			return false;
+			if (d == null) {
+				return false;
+			}
+
+			Klassenserver7bbot.getInstance().getSubscriptionManager()
+					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		}
-
-		Klassenserver7bbot.getInstance().getSubscriptionManager()
-				.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
 		return true;
 	}
 
@@ -148,6 +149,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		if (sendApproved) {
 
+			putRoomsInDB(doc);
+
 			String info = "";
 
 			if (doc == null) {
@@ -158,7 +161,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 			}
 
-			log.debug("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
+			log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.getInstance().isDevMode());
 
 			EmbedBuilder embbuild = new EmbedBuilder();
@@ -251,6 +254,27 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 	}
 
+	private void putRoomsInDB(Document doc) {
+
+		NodeList stdlist = doc.getElementsByTagName("Std");
+
+		LiteSQL.onUpdate("DELETE FROM vplandata");
+
+		for (int i = 0; i < stdlist.getLength(); i++) {
+
+			Element n = (Element) stdlist.item(i);
+
+			int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
+			String room = n.getElementsByTagName("Ra").item(0).getTextContent();
+
+			if (room.contains("&amp;nbsp;") || room.contains("nbsp;") || room.isBlank()) {
+				continue;
+			}
+			LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room) VALUES(?, ?)", lesson, room);
+
+		}
+	}
+
 	/**
 	 *
 	 * @param e
@@ -341,49 +365,42 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		Integer dbhash = null;
 
-		if (plan != null) {
-			boolean synced = synchronizePlanDB(plan);
-
-			if (classPlan != null) {
-				int planhash = classPlan.getTextContent().hashCode();
-
-				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;");
-				try {
-					if (set.next()) {
-
-						dbhash = set.getInt("classeintraege");
-
-					}
-
-					String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
-					onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
-
-					if (dbhash != null) {
-
-						if (dbhash != planhash || synced) {
-
-							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", onlinedate);
-							return true;
-
-						} else {
-							return false;
-
-						}
-					} else {
-
-						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", onlinedate,
-								planhash);
-					}
-
-				} catch (SQLException e) {
-					log.error(e.getMessage(), e);
-				}
-				return true;
-
-			}
+		if (plan == null || classPlan == null) {
+			return false;
 		}
 
-		return false;
+		boolean synced = synchronizePlanDB(plan);
+
+		int planhash = classPlan.getTextContent().hashCode();
+
+		try (ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;")) {
+
+			if (set.next()) {
+
+				dbhash = set.getInt("classeintraege");
+
+			}
+
+			String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+
+			if (dbhash != null) {
+
+				if (dbhash != planhash || synced) {
+
+					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", onlinedate);
+					return true;
+
+				}
+				return false;
+			}
+			LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", onlinedate, planhash);
+
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+		return true;
+
 	}
 
 	/**
@@ -427,39 +444,40 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 * @since 1.14.0
 	 */
 	private boolean synchronizePlanDB(Document plan) {
-		if (plan != null) {
-			String dbdate = "";
-
-			String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
-			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
-
-			try {
-				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;");
-
-				if (next.next()) {
-					dbdate = next.getString("zieldatum");
-				}
-
-				if (!dbdate.equalsIgnoreCase(onlinedate)) {
-
-					LiteSQL.getdblog().info("Plan-DB-Sync");
-
-					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;");
-
-					if (old.next()) {
-						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
-								old.getString("zieldatum"), old.getInt("classeintraege"));
-						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
-					}
-					return true;
-
-				} else {
-					return false;
-				}
-			} catch (SQLException e) {
-				log.error(e.getMessage(), e);
-			}
+		if (plan == null) {
+			return false;
 		}
+		String dbdate = "";
+
+		String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+		onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+
+		try (ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;")) {
+
+			if (next.next()) {
+				dbdate = next.getString("zieldatum");
+			}
+
+			if (dbdate.equalsIgnoreCase(onlinedate)) {
+				return false;
+			}
+
+			LiteSQL.getdblog().info("Plan-DB-Sync");
+
+			try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
+
+				if (old.next()) {
+					LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
+							old.getString("zieldatum"), old.getInt("classeintraege"));
+					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
+				}
+			}
+			return true;
+
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+
 		return false;
 
 	}
@@ -476,9 +494,9 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		if (day >= 5) {
 			return cutime.plusDays(8 - day);
-		} else {
-			return cutime.plusDays(1);
 		}
+
+		return cutime.plusDays(1);
 
 	}
 
@@ -539,7 +557,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			return response;
 
 		} catch (HttpHostConnectException | HttpResponseException e1) {
-			log.warn("Vplan Connection failed!" + e1.getMessage());
+			log.debug("Vplan Connection failed!" + e1.getMessage());
 		} catch (IOException e) {
 			log.error("Vplan IO Exception - please check your connection and settings");
 			log.error(e.getMessage(), e);

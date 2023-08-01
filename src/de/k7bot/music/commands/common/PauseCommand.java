@@ -16,6 +16,25 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 public class PauseCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		String help = "Pausiert den aktuellen Track.";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "pause" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MUSIK;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -35,20 +54,25 @@ public class PauseCommand implements ServerCommand {
 			player.setPaused(true);
 			channel.sendMessage(":pause_button: paused").queue();
 		} else {
-			channel.sendMessage("the player is already paused!" + m.getAsMention()).complete().delete()
-					.queueAfter(10L, TimeUnit.SECONDS);
+			channel.sendMessage("the player is already paused!" + m.getAsMention()).complete().delete().queueAfter(10L,
+					TimeUnit.SECONDS);
 		}
 
 	}
 
 	@Override
-	public String gethelp() {
-		String help = "Pausiert den aktuellen Track.";
-		return help;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public void disableCommand() {
+		isEnabled = false;
 	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
+	}
+
 }

@@ -8,7 +8,7 @@ import de.k7bot.threads.TokenFetchThread;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class SpotifyInteractions {
@@ -57,7 +57,7 @@ public class SpotifyInteractions {
 	 */
 	public void startfetchcycle() {
 
-		this.fetchthread = TokenFetchThread.getINSTANCE(apienabled, cookie);
+		this.fetchthread = TokenFetchThread.getINSTANCE(cookie);
 
 	}
 

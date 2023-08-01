@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>klassenserver7bbot</artifactId>
-	<version>1.17.0-RC.3</version>
+	<version>1.17.1-RC.0</version>
 	<packaging>jar</packaging>
 	<name>Klassenserver7bbot</name>
 	<description>My Discord Bot</description>
@@ -16,52 +17,45 @@
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<pluginManagement>
-			<!-- lock down plugins versions to avoid using Maven defaults (may
+		<!-- lock down plugins versions to avoid using Maven defaults (may
 			be moved to parent pom) -->
-			<plugins>
-				<plugin>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.1.0</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.7.1</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-project-info-reports-plugin</artifactId>
-					<version>3.0.0</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
-					<configuration>
-						<source>17</source>
-						<target>17</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.1</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.2</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.2</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>
+										de.k7bot.Main
+									</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.3.1</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>17</release>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 	<reporting>
 		<plugins>
@@ -108,12 +102,12 @@
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>5.0.0-beta.8</version>
+			<version>5.0.0-beta.12</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.walkyst</groupId>
 			<artifactId>lavaplayer-fork</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.JustRed23</groupId>
@@ -124,7 +118,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.4.6</version>
+			<version>1.4.8</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
@@ -132,22 +126,16 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>2.0.7</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.41.2.1</version>
+			<version>3.42.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.hypixel</groupId>
 			<artifactId>hypixel-api-transport-apache</artifactId>
-			<version>4.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.konghq</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>4.0.0-RC2</version>
+			<version>4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
@@ -163,7 +151,13 @@
 		<dependency>
 			<groupId>org.kohsuke</groupId>
 			<artifactId>github-api</artifactId>
-			<version>1.314</version>
+			<version>1.315</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jagrosh</groupId>
@@ -174,7 +168,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.15.4</version>
+			<version>1.16.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
 		<dependency>
@@ -186,7 +180,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-youtube</artifactId>
-			<version>v3-rev20230319-2.0.0</version>
+			<version>v3-rev20230521-2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>se.michaelthelin.spotify</groupId>
@@ -201,7 +195,12 @@
 		<dependency>
 			<groupId>com.github.Konsl</groupId>
 			<artifactId>web-weaver-api</artifactId>
-			<version>-SNAPSHOT</version>
+			<version>cedbbc389b</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.Konsl</groupId>
+			<artifactId>web-weaver-scraper</artifactId>
+			<version>890ffd3810</version>
 		</dependency>
 		<dependency>
 			<groupId>io.seruco.encoding</groupId>
@@ -211,17 +210,18 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk18on</artifactId>
-			<version>1.73</version>
+			<version>1.76</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk18on</artifactId>
-			<version>1.73</version>
+			<version>1.76</version>
 		</dependency>
+		<!--https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.21.12</version>
+			<version>3.22.3</version>
 		</dependency>
 	</dependencies>
 </project>

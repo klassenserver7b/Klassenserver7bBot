@@ -35,7 +35,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 		EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8")).setTimestamp(OffsetDateTime.now())
 				.setTitle("1 track added to queue");
 
-		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
+		MusicUtil.sendIconEmbed(this.controller.getGuild().getIdLong(), builder, track);
 
 	}
 
@@ -74,7 +74,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 			EmbedBuilder builder = (new EmbedBuilder()).setColor(Color.decode("#4d05e8"))
 					.setTimestamp(OffsetDateTime.now()).setTitle(added + " tracks added to queue");
 
-			MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
+			MusicUtil.sendIconEmbed(this.controller.getGuild().getIdLong(), builder, playlist.getTracks().get(0));
 
 		} else {
 			noMatches();

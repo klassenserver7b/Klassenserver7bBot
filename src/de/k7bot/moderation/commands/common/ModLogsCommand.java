@@ -22,7 +22,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class ModLogsCommand extends GenericUserLogsCommand implements ServerCommand {
 
+	private boolean isEnabled;
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public String gethelp() {
+		return "Zeigt die Logs zu einem Moderator.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @moderator";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "modlogs" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
@@ -30,11 +47,12 @@ public class ModLogsCommand extends GenericUserLogsCommand implements ServerComm
 		if (!checkPermissions(m, channel)) {
 			return;
 		}
-		
+
 		List<Member> memb;
 		try {
 			memb = getMemberFromMessage(channel, message, m);
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			return;
 		}
 
@@ -46,11 +64,11 @@ public class ModLogsCommand extends GenericUserLogsCommand implements ServerComm
 
 		long guildid = channel.getGuild().getIdLong();
 		long reqid = memb.get(0).getIdLong();
-		ResultSet set = LiteSQL.onQuery(
-				"SELECT memberName, action, reason, date FROM modlogs  WHERE guildId = ? AND requesterId = ?", guildid,
-				reqid);
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery(
+				"SELECT memberName, action, reason, date FROM modlogs  WHERE guildId = ? AND requesterId = ?", guildid,
+				reqid)) {
+
 			ArrayList<String> membName = new ArrayList<>();
 			ArrayList<String> action = new ArrayList<>();
 			ArrayList<String> reason = new ArrayList<>();
@@ -81,19 +99,25 @@ public class ModLogsCommand extends GenericUserLogsCommand implements ServerComm
 				channel.sendMessage("This moderator hasn't a log!").complete().delete().queueAfter(20L,
 						TimeUnit.SECONDS);
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
 	}
 
 	@Override
-	public String gethelp() {
-		return "Zeigt die Logs zu einem Moderator.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @moderator";
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

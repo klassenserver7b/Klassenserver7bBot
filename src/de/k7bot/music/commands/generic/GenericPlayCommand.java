@@ -39,7 +39,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlashCommand {
@@ -76,6 +76,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 			return;
 		}
 
+		MusicUtil.updateChannel(hook);
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
 
@@ -101,6 +102,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		if (!performInternalChecks(m, vc, new GenericMessageSendHandler(channel))) {
 			return;
 		}
+		MusicUtil.updateChannel(channel);
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(vc.getGuild().getIdLong());
 
@@ -176,9 +178,8 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 	protected void setVolume(AudioPlayer player, Long guildId) {
 
-		ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId);
+		try (ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId)) {
 
-		try {
 			if (set.next()) {
 				int volume = set.getInt("volume");
 				if (volume != 0) {
@@ -220,8 +221,28 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 	}
 
 	@Override
+	public String[] getCommandStrings() {
+		return null;
+	}
+
+	@Override
 	public SlashCommandData getCommandData() {
 		return null;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public void disableCommand() {
+		// Nothing to do here
+	}
+
+	@Override
+	public void enableCommand() {
+		// Nothing to do here
 	}
 
 	@Override

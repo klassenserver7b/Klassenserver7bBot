@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class AddToQueueSlashCommand extends GenericPlayCommand implements SubSlashCommand {

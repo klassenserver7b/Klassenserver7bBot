@@ -16,10 +16,29 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * 
- * @author Felix
+ * @author K7
  *
  */
-public class ClientInfo implements ServerCommand {
+public class ClientInfo implements ServerCommand { 
+
+ 	private boolean isEnabled; 
+
+	@Override
+	public String gethelp() {
+		String help = "Zeigt die Informationen zum angegebenen User.\n - z.B. [prefix]memberinfo [@USER]";
+		return help;
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "memberinfo" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
@@ -35,17 +54,6 @@ public class ClientInfo implements ServerCommand {
 		} else {
 			PermissionError.onPermissionError(m, channel);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		String help = "Zeigt die Informationen zum angegebenen User.\n - z.B. [prefix]memberinfo [@USER]";
-		return help;
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
 	}
 
 	public void onInfo(Member requester, Member u, TextChannel channel) {
@@ -78,5 +86,20 @@ public class ClientInfo implements ServerCommand {
 		builder.setDescription(strBuilder);
 
 		channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

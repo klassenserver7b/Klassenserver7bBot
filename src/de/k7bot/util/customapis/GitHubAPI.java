@@ -24,6 +24,7 @@ import de.k7bot.util.InternalStatusCodes;
 import de.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  * @author Klassenserver7b
@@ -73,8 +74,10 @@ public class GitHubAPI implements LoopedEvent {
 			MessageCreateBuilder messb = new MessageCreateBuilder();
 			messb.setEmbeds(b.build());
 
-			Klassenserver7bbot.getInstance().getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.BOT_NEWS, messb.build());
+			try (MessageCreateData messdata = messb.build()) {
+				Klassenserver7bbot.getInstance().getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.BOT_NEWS, messdata);
+			}
 
 		}
 
@@ -84,13 +87,11 @@ public class GitHubAPI implements LoopedEvent {
 
 	private List<String> getNewCommits() {
 
-		ResultSet set = LiteSQL.onQuery("SELECT * FROM githubinteractions;");
-
 		GHRepository repo;
 		List<GHCommit> commitl;
 		String dbid;
 
-		try {
+		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM githubinteractions;")) {
 
 			repo = gh.getRepository("klassenserver7b/Klassenserver7bBot");
 			commitl = repo.listCommits().toList();

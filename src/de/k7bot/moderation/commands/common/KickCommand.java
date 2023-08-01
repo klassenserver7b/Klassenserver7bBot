@@ -20,6 +20,24 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class KickCommand implements ServerCommand {
+
+	private boolean isEnabled;
+
+	@Override
+	public String gethelp() {
+		return "Kickt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. kick @K7Bot [reason]";
+	}
+
+	@Override
+	public String[] getCommandStrings() {
+		return new String[] { "kick" };
+	}
+
+	@Override
+	public HelpCategories getcategory() {
+		return HelpCategories.MODERATION;
+	}
+
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
@@ -45,19 +63,10 @@ public class KickCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		} catch (StringIndexOutOfBoundsException e) {
+		}
+		catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "kick [@user] [reason]", m);
 		}
-	}
-
-	@Override
-	public String gethelp() {
-		return "Kickt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. kick @K7Bot [reason]";
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MODERATION;
 	}
 
 	public void onkick(Member requester, Member u, TextChannel channel, String grund) {
@@ -98,8 +107,24 @@ public class KickCommand implements ServerCommand {
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
-		} catch (HierarchyException e) {
+		}
+		catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	@Override
+	public void disableCommand() {
+		isEnabled = false;
+	}
+
+	@Override
+	public void enableCommand() {
+		isEnabled = true;
 	}
 }

@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class PlaySlashCommandSplitter implements TopLevelSlashCommand {

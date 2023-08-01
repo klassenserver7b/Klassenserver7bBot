@@ -7,7 +7,7 @@ import de.k7bot.Klassenserver7bbot;
 import de.k7bot.sql.SQLManager;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class RestartUtil {

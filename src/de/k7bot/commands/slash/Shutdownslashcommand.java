@@ -38,9 +38,9 @@ public class Shutdownslashcommand implements TopLevelSlashCommand {
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
 			return;
 
-		} else {
-			PermissionError.onPermissionError(m, channel);
 		}
+
+		PermissionError.onPermissionError(m, channel);
 
 	}
 

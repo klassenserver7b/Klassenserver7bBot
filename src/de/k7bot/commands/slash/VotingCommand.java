@@ -25,13 +25,13 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class VotingCommand implements TopLevelSlashCommand {
 
 	private static final String[] numbers = new String[] { "", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣",
-			"9️⃣" };
+			"9️⃣", "🔟" };
 
 	/**
 	 * 
@@ -95,7 +95,8 @@ public class VotingCommand implements TopLevelSlashCommand {
 
 		ArrayList<OptionData> options = new ArrayList<>();
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < Integer
+				.parseInt(Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("votinglimit")); i++) {
 			options.add(new OptionData(OptionType.USER, "user" + i, "an user"));
 		}
 

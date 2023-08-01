@@ -20,65 +20,64 @@ import org.bouncycastle.openssl.PEMParser;
 import com.google.protobuf.ByteString;
 
 public class CDMDevice {
-    private final boolean android;
-    private WvProto2.ClientIdentification clientId;
-    private final AsymmetricKeyParameter devicePrivateKey;
+	private final boolean android;
+	private WvProto2.ClientIdentification clientId;
+	private final AsymmetricKeyParameter devicePrivateKey;
 
-    public CDMDevice(boolean android, byte[] clientIdBlob, byte[] privateKey, byte[] vmpBlob) throws IOException {
-        this.android = android;
-        clientId = WvProto2.ClientIdentification.parseFrom(clientIdBlob);
+	public CDMDevice(boolean android, byte[] clientIdBlob, byte[] privateKey, byte[] vmpBlob) throws IOException {
+		this.android = android;
+		clientId = WvProto2.ClientIdentification.parseFrom(clientIdBlob);
 
-        try (StringReader reader = new StringReader(new String(privateKey, StandardCharsets.UTF_8))) {
-            PEMParser pemParser = new PEMParser(reader);
+		try (StringReader reader = new StringReader(new String(privateKey, StandardCharsets.UTF_8))) {
+			PEMParser pemParser = new PEMParser(reader);
 
-            PrivateKeyInfo privateKeyInfo = ((PEMKeyPair) pemParser.readObject()).getPrivateKeyInfo();
-            devicePrivateKey = PrivateKeyFactory.createKey(privateKeyInfo);
-        }
+			PrivateKeyInfo privateKeyInfo = ((PEMKeyPair) pemParser.readObject()).getPrivateKeyInfo();
+			devicePrivateKey = PrivateKeyFactory.createKey(privateKeyInfo);
+		}
 
-        if (vmpBlob != null)
-            clientId = WvProto2.ClientIdentification.newBuilder(clientId)
-                    .setVmpData(ByteString.copyFrom(vmpBlob))
-                    .build();
-    }
+		if (vmpBlob != null)
+			clientId = WvProto2.ClientIdentification.newBuilder(clientId).setVmpData(ByteString.copyFrom(vmpBlob))
+					.build();
+	}
 
-    public WvProto2.ClientIdentification getClientId() {
-        return clientId;
-    }
+	public WvProto2.ClientIdentification getClientId() {
+		return clientId;
+	}
 
-    public byte[] decrypt(byte[] encrypted) throws InvalidCipherTextException {
-        OAEPEncoding oaepEncoding = new OAEPEncoding(new RSAEngine());
-        oaepEncoding.init(false, devicePrivateKey);
+	public byte[] decrypt(byte[] encrypted) throws InvalidCipherTextException {
+		OAEPEncoding oaepEncoding = new OAEPEncoding(new RSAEngine());
+		oaepEncoding.init(false, devicePrivateKey);
 
-        int inputBlock = oaepEncoding.getInputBlockSize();
-        int outputBlock = oaepEncoding.getOutputBlockSize();
+		int inputBlock = oaepEncoding.getInputBlockSize();
+		int outputBlock = oaepEncoding.getOutputBlockSize();
 
-        int blocksCount = (encrypted.length + inputBlock - 1) / inputBlock;
-        byte[] result = new byte[blocksCount * outputBlock];
+		int blocksCount = (encrypted.length + inputBlock - 1) / inputBlock;
+		byte[] result = new byte[blocksCount * outputBlock];
 
-        int outputSize = 0;
+		int outputSize = 0;
 
-        for (int i = 0; i < blocksCount; i++) {
-            int inputBlockLength = Math.min(inputBlock, encrypted.length - i * inputBlock);
-            byte[] decryptedBlock = oaepEncoding.processBlock(encrypted, i * inputBlock, inputBlockLength);
-            outputSize += decryptedBlock.length;
+		for (int i = 0; i < blocksCount; i++) {
+			int inputBlockLength = Math.min(inputBlock, encrypted.length - i * inputBlock);
+			byte[] decryptedBlock = oaepEncoding.processBlock(encrypted, i * inputBlock, inputBlockLength);
+			outputSize += decryptedBlock.length;
 
-            System.arraycopy(decryptedBlock, 0, result, i * outputBlock, Math.min(outputBlock, decryptedBlock.length));
-        }
+			System.arraycopy(decryptedBlock, 0, result, i * outputBlock, Math.min(outputBlock, decryptedBlock.length));
+		}
 
-        return Arrays.copyOfRange(result, 0, outputSize);
-    }
+		return Arrays.copyOfRange(result, 0, outputSize);
+	}
 
-    public byte[] sign(byte[] data) throws CryptoException {
-        SHA1Digest digest = new SHA1Digest();
-        PSSSigner signer = new PSSSigner(new RSAEngine(), digest, digest.getDigestSize());
+	public byte[] sign(byte[] data) throws CryptoException {
+		SHA1Digest digest = new SHA1Digest();
+		PSSSigner signer = new PSSSigner(new RSAEngine(), digest, digest.getDigestSize());
 
-        signer.init(true, devicePrivateKey);
-        signer.update(data, 0, data.length);
+		signer.init(true, devicePrivateKey);
+		signer.update(data, 0, data.length);
 
-        return signer.generateSignature();
-    }
+		return signer.generateSignature();
+	}
 
-    public boolean isAndroid() {
-        return android;
-    }
+	public boolean isAndroid() {
+		return android;
+	}
 }

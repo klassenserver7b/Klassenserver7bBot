@@ -12,14 +12,28 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class DisabledAPI implements ServerCommand {
 
+	private final String[] commandstrings;
+
 	@Override
 	public String gethelp() {
 		return null;
 	}
 
 	@Override
+	public String[] getCommandStrings() {
+		return commandstrings;
+	}
+
+	@Override
 	public HelpCategories getcategory() {
 		return HelpCategories.UNKNOWN;
+	}
+
+	/**
+	 * @param commandStrings
+	 */
+	public DisabledAPI(String[] commandStrings) {
+		this.commandstrings = commandStrings;
 	}
 
 	@Override
@@ -32,6 +46,22 @@ public class DisabledAPI implements ServerCommand {
 						"We are sorry but you try to use an command which is currently disabled!\nPlease contact the Bot-Admin if you think that is an issue.")
 				.build()).queue();
 
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public void disableCommand() {
+		// nothing to do here
+
+	}
+
+	@Override
+	public void enableCommand() {
+		// nothing to do here
 	}
 
 }

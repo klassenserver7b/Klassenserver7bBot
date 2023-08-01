@@ -28,13 +28,10 @@ public class PropertiesManager {
 	public boolean loadProps() {
 
 		prop = new Properties();
-		FileInputStream in;
 
-		try {
+		try (FileInputStream in = new FileInputStream("resources/bot.properties");) {
 
-			in = new FileInputStream("resources/bot.properties");
 			prop.load(in);
-			in.close();
 			return true;
 
 		} catch (IOException e) {
@@ -83,11 +80,10 @@ public class PropertiesManager {
 
 	public void generateConfigFile(File f) {
 
-		try {
-			f.createNewFile();
+		try (BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
+				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);) {
 
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
-					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+			f.createNewFile();
 
 			Properties prop = new Properties();
 
@@ -106,7 +102,8 @@ public class PropertiesManager {
 			prop.setProperty("gourmettapassword", "");
 			prop.setProperty("discogs-token", "");
 			prop.setProperty("vppwold", "");
-			prop.setProperty("spotify-rtk", "");
+			prop.setProperty("spotify-cookie", "");
+			prop.setProperty("votinglimit", "");
 
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();
@@ -124,14 +121,17 @@ public class PropertiesManager {
 	}
 
 	private void flushConfig() {
-		try {
-			BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
-					Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);
+
+		try (BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
+				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING)) {
+
 			prop.store(stream, "Bot-Configfile\n 'token' is required!");
 			stream.close();
+
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
+
 	}
 
 	public String getProperty(String key) {

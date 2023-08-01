@@ -4,7 +4,7 @@
 package de.k7bot.music.utilities;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public enum AudioLoadOption {

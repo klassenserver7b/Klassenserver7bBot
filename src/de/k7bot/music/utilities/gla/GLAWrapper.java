@@ -5,10 +5,8 @@ package de.k7bot.music.utilities.gla;
 
 import java.io.IOException;
 
-import org.apache.hc.core5.http.ParseException;
-
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class GLAWrapper {
@@ -22,7 +20,7 @@ public class GLAWrapper {
 		super();
 	}
 
-	public GLACustomSongSearch search(String query) throws ParseException, IOException {
+	public GLACustomSongSearch search(String query) throws IOException {
 		return new GLACustomSongSearch(this, query);
 	}
 

@@ -38,10 +38,11 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  *
- * @author felix
+ * @author K7
  * @deprecated use {@link de.k7bot.util.customapis.Stundenplan24Vplan
  *             VplanNEW_XML instead}
  */
+@Deprecated
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_MANOS_OLD {
 
@@ -62,10 +63,10 @@ public class VPlan_MANOS_OLD {
 	 */
 	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
 
-		MessageCreateData d = getVplanMessage();
-
-		if (d != null) {
-			channel.sendMessage(d).queue();
+		try (MessageCreateData d = getVplanMessage()) {
+			if (d != null) {
+				channel.sendMessage(d).queue();
+			}
 		}
 
 	}
@@ -78,11 +79,11 @@ public class VPlan_MANOS_OLD {
 	 */
 	public void VplanNotify(String klasse) {
 
-		MessageCreateData d = getVplanMessage();
-
-		if (d != null) {
-			Klassenserver7bbot.getInstance().getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+		try (MessageCreateData d = getVplanMessage()) {
+			if (d != null) {
+				Klassenserver7bbot.getInstance().getSubscriptionManager()
+						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+			}
 		}
 	}
 
@@ -266,60 +267,57 @@ public class VPlan_MANOS_OLD {
 		Integer dbh = null;
 		List<JsonObject> finalentries = new ArrayList<>();
 
-		if (plan != null) {
-			boolean synced;
-
-			synced = synchronizePlanDB(plan);
-
-			List<JsonObject> getC = getyourC(plan);
-			if (getC != null) {
-				int h = getC.hashCode();
-
-				ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;");
-				try {
-					if (set.next()) {
-
-						dbh = set.getInt("classeintraege");
-
-					}
-					if (dbh != null) {
-						if (dbh != h || synced) {
-
-							finalentries = getC;
-
-							String date = plan.get("head").getAsJsonObject().get("title").getAsString()
-									.replaceAll(" ", "").replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "")
-									.replaceAll(",", "").replaceAll("Montag", "").replaceAll("Dienstag", "")
-									.replaceAll("Mittwoch", "").replaceAll("Donnerstag", "").replaceAll("Freitag", "")
-									.toLowerCase();
-							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", date);
-
-						} else {
-							return null;
-
-						}
-					} else {
-						finalentries = getC;
-						String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-								.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-								.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-								.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-						LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", date,
-								finalentries.hashCode());
-					}
-
-				} catch (SQLException e) {
-					log.error(e.getMessage(), e);
-				}
-				return finalentries;
-
-			} else {
-				return null;
-
-			}
-		} else {
+		if (plan == null) {
 			return null;
 		}
+		boolean synced;
+
+		synced = synchronizePlanDB(plan);
+
+		List<JsonObject> getC = getyourC(plan);
+		if (getC == null) {
+			return null;
+		}
+		int h = getC.hashCode();
+
+		try (ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;")) {
+
+			if (set.next()) {
+
+				dbh = set.getInt("classeintraege");
+
+			}
+
+			if (dbh != null) {
+				if (dbh != h || synced) {
+
+					finalentries = getC;
+
+					String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+							.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+							.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+							.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", date);
+
+				} else {
+					return null;
+
+				}
+			} else {
+				finalentries = getC;
+				String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+						.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+						.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+						.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+				LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", date,
+						finalentries.hashCode());
+			}
+
+		} catch (SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+		return finalentries;
+
 	}
 
 	/**
@@ -338,8 +336,7 @@ public class VPlan_MANOS_OLD {
 			String realdate = "" + time.getDayOfMonth() + "."
 					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
-			try {
-				ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;");
+			try (ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;")) {
 				if (next.next()) {
 
 					dbdate = next.getString("zieldatum");
@@ -349,12 +346,13 @@ public class VPlan_MANOS_OLD {
 
 					LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;");
+					try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
 
-					if (old.next()) {
-						LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
-								old.getString("zieldatum"), old.getInt("classeintraege"));
-						LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
+						if (old.next()) {
+							LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
+									old.getString("zieldatum"), old.getInt("classeintraege"));
+							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
+						}
 					}
 					return true;
 				}
@@ -384,10 +382,8 @@ public class VPlan_MANOS_OLD {
 
 			});
 			return classentries;
-		} else {
-			return null;
-
 		}
+		return null;
 
 	}
 
@@ -400,16 +396,17 @@ public class VPlan_MANOS_OLD {
 		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
 				new UsernamePasswordCredentials("manos", vplanpw));
+
+		final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
+
 		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
-				.build()) {
-			final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
-			final CloseableHttpResponse response = httpclient.execute(httpget);
+				.build(); final CloseableHttpResponse response = httpclient.execute(httpget);) {
+
 			if (response.getStatusLine().getStatusCode() == 200) {
 				JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
 				return elem.getAsJsonObject();
-			} else {
-				return null;
 			}
+			return null;
 
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);

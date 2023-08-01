@@ -12,7 +12,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.k7bot.music.utilities.spotify.SpotifyInteractions;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public interface SpotifyPlaylistLoader {
