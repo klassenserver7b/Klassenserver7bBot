@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily
+      interval: "daily"
     ignore:
     # ignore Maven APIs/SPIs
     - dependency-name: org.apache.maven:*
