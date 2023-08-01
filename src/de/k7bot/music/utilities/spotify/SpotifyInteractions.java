@@ -8,7 +8,7 @@ import de.k7bot.threads.TokenFetchThread;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class SpotifyInteractions {

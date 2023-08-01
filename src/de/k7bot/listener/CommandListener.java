@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
  * 
- * @author Felix
+ * @author K7
  *
  */
 public class CommandListener extends ListenerAdapter {

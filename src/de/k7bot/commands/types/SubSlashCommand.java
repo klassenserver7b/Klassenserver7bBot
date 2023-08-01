@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public interface SubSlashCommand extends SlashCommand {

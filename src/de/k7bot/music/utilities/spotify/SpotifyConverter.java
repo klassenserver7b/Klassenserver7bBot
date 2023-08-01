@@ -44,7 +44,7 @@ import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest
 
 /**
  *
- * @author Felix
+ * @author K7
  * @deprecated
  * @hidden
  *

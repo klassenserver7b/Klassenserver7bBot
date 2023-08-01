@@ -39,7 +39,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlashCommand {

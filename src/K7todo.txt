@@ -1,4 +1,4 @@
-random Gourmetta Generator
+Poll System
 
 move DanceInterpreterJSONGenerateCommand into Danceinterpreter
 

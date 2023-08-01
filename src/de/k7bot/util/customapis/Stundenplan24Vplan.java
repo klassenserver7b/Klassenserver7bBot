@@ -53,7 +53,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * @author felix
+ * @author K7
  * @since 1.14.0
  */
 public class Stundenplan24Vplan implements LoopedEvent {

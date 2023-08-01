@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  *
- * @author Felix
+ * @author K7
  *
  */
 

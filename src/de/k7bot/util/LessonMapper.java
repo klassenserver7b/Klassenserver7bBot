@@ -4,7 +4,7 @@
 package de.k7bot.util;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public enum LessonMapper {

@@ -6,7 +6,7 @@ package de.k7bot.music.utilities.gla;
 import java.io.IOException;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class GLAWrapper {

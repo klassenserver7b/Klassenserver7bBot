@@ -22,7 +22,7 @@ import com.google.gson.JsonSyntaxException;
 import de.k7bot.Klassenserver7bbot;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class TokenFetchThread implements Runnable {

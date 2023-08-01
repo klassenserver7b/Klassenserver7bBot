@@ -45,7 +45,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class StableDiffusionCommand implements TopLevelSlashCommand {

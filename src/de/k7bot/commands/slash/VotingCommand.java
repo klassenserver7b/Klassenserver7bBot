@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public class VotingCommand implements TopLevelSlashCommand {

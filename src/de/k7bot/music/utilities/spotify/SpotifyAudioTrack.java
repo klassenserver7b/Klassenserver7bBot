@@ -55,7 +55,7 @@ import de.k7bot.music.asms.SpotifyAudioSourceManager;
 import io.seruco.encoding.base62.Base62;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class SpotifyAudioTrack extends DelegatedAudioTrack {

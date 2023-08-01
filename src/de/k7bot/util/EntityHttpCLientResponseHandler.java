@@ -14,7 +14,7 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class EntityHttpCLientResponseHandler implements HttpClientResponseHandler<HttpEntity> {

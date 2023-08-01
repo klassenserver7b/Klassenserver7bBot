@@ -31,7 +31,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class ExtendedLocalAudioSourceManager extends LocalAudioSourceManager {

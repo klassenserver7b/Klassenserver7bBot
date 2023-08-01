@@ -21,7 +21,7 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class DefaultSpotifyTrackLoader implements SpotifyTrackLoader {

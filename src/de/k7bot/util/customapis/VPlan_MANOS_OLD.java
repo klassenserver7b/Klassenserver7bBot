@@ -38,7 +38,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  *
- * @author felix
+ * @author K7
  * @deprecated use {@link de.k7bot.util.customapis.Stundenplan24Vplan
  *             VplanNEW_XML instead}
  */

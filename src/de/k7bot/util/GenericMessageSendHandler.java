@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class GenericMessageSendHandler {

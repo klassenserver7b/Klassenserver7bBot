@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public abstract class GenericUserLogsCommand {

@@ -9,7 +9,7 @@ import de.k7bot.music.lavaplayer.MusicController;
 import de.k7bot.music.utilities.AudioLoadOption;
 
 /**
- * @author Felix
+ * @author K7
  *
  */
 public class PlayNextCommand extends GenericPlayCommand {

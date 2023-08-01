@@ -22,7 +22,7 @@ import de.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 /**
- * @author felix
+ * @author K7
  *
  */
 public abstract class GenericChartsCommand {
