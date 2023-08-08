@@ -4,10 +4,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
-	<artifactId>klassenserver7bbot</artifactId>
-	<version>1.17.1-RC.0</version>
+	<artifactId>k7bot</artifactId>
+	<version>1.19.0-RC.0</version>
 	<packaging>jar</packaging>
-	<name>Klassenserver7bbot</name>
+	<name>k7bot</name>
 	<description>My Discord Bot</description>
 	<url>https://github.com/klassenserver7b/Klassenserver7bbot</url>
 	<properties>
@@ -16,7 +16,6 @@
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -31,7 +30,7 @@
 							<archive>
 								<manifest>
 									<mainClass>
-										de.k7bot.Main
+										de.klassenserver7b.k7bot.Main
 									</mainClass>
 								</manifest>
 							</archive>
@@ -81,11 +80,6 @@
 			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
-			<id>central</id>
-			<name>bintray</name>
-			<url>https://jcenter.bintray.com</url>
-		</repository>
-		<repository>
 			<id>mandubian-mvn</id>
 			<url>
 				https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
@@ -107,10 +101,9 @@
 			<artifactId>lavadsp</artifactId>
 			<version>0.7.7-1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
+			<artifactId>logback-core</artifactId>
 			<version>1.4.8</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
@@ -118,6 +111,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>2.0.7</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.4.8</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>

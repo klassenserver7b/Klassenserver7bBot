@@ -8,20 +8,10 @@
 
 commit.txt
 bot.properties
-/resources/datenbank.db
-/resources/bot.properties
-/resources/dance.json
-/resources/sdk
-/resources/Bento4-SDK
-/resources/client_id.bin
-/resources/private_key.pem
-/resources/private_key.pem:Zone.Identifier
-/resources/client_id.bin:Zone.Identifier
+/resources
 .classpath
 .project
 /desktop.ini
 /localmaven.txt
 /Songs.csv
 /settings.xml
-/resources/
-/sound.raw
