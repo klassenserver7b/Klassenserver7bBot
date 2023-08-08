@@ -57,7 +57,8 @@ public class VoiceListener extends ListenerAdapter {
 			vc.getManager().setUserLimit(voice.getUserLimit()).queue();
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
-			LiteSQL.onUpdate("INSERT INTO createdprivatevcs(channelId) VALUES(?);", vc.getIdLong());
+			LiteSQL.onUpdate("INSERT INTO createdprivatevcs(guildId, channelId) VALUES(?, ?);",
+					vc.getGuild().getIdLong(), vc.getIdLong());
 			Klassenserver7bbot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: "
 					+ member.getEffectiveName() + " with the following Channel-ID: " + vc.getIdLong());
 		}
@@ -73,14 +74,14 @@ public class VoiceListener extends ListenerAdapter {
 				}
 				if (this.tempchannels.contains(audioChannel.getIdLong())) {
 					audioChannel.delete().queue();
-					LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ?;", audioChannel.getIdLong());
+					LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ? AND guildId=?;",
+							audioChannel.getIdLong(), audioChannel.getGuild().getIdLong());
 					this.tempchannels.clear();
 					Klassenserver7bbot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: "
 							+ audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
 				}
 
-			}
-			catch (SQLException e) {
+			} catch (SQLException e) {
 
 				log.error(e.getMessage(), e);
 			}

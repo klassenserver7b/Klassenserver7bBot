@@ -160,7 +160,7 @@ public class SubscriptionManager {
 	 * @return
 	 */
 	private Long calculateSubId(Subscription sub) {
-		return (sub.getTarget().getId() * 31 + sub.getDeliveryType().getId()) * 41 + sub.getTargetDiscordId();
+		return calculateSubId(sub.getDeliveryType(), sub.getTarget(), sub.getTargetDiscordId());
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class SubscriptionManager {
 	 * @return
 	 */
 	private Long calculateSubId(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
-		return (type.getId() * 32 + target.getId()) * 32 + deliverytargetid;
+		return (type.getId() * 31 + target.getId()) * 41 + deliverytargetid;
 	}
 
 }

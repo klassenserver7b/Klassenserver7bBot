@@ -35,6 +35,7 @@ import com.google.gson.JsonSyntaxException;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -209,7 +210,6 @@ public class GourmettaInteractions implements LoopedEvent {
 		}
 
 		MessageCreateBuilder builder = new MessageCreateBuilder();
-		EmbedBuilder embbuild = new EmbedBuilder();
 
 		StringBuilder descriptionbuild = new StringBuilder();
 
@@ -231,11 +231,8 @@ public class GourmettaInteractions implements LoopedEvent {
 
 		});
 
-		embbuild.setDescription(descriptionbuild.toString().trim());
-		embbuild.setColor(Color.decode("#038aff"));
+		EmbedBuilder embbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"), descriptionbuild);
 		embbuild.setTitle("Gourmetta-Plan für den " + provideDay.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-		embbuild.setFooter("Provided by @K7Bot");
-		embbuild.setTimestamp(OffsetDateTime.now());
 
 		builder.setEmbeds(embbuild.build());
 		return builder.build();

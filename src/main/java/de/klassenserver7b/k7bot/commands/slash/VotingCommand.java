@@ -4,13 +4,13 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.listener.VoteReactionListener;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -44,9 +44,8 @@ public class VotingCommand implements TopLevelSlashCommand {
 
 		if (!(event.getUser().getIdLong() == 675828196389683223L || event.getUser().getIdLong() == 672514862101954570L
 				|| event.getUser().getIdLong() == Klassenserver7bbot.getInstance().getOwnerId())) {
-			event.replyEmbeds(
-					new EmbedBuilder().setColor(Color.red).setDescription("You are not allowed to do this").build())
-					.setEphemeral(true).queue();
+			event.replyEmbeds(EmbedUtils.getErrorEmbed("You are not allowed to do this").build()).setEphemeral(true)
+					.queue();
 			return;
 		}
 		LinkedHashMap<String, User> names = new LinkedHashMap<>();
@@ -59,12 +58,6 @@ public class VotingCommand implements TopLevelSlashCommand {
 
 		}
 
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setTitle("Wer ist der dümmste?");
-		builder.setColor(Color.cyan);
-		builder.setFooter("GameMaster: " + event.getUser().getName());
-		builder.setTimestamp(OffsetDateTime.now());
-
 		StringBuilder strbuilder = new StringBuilder();
 		for (int i = 1; i <= names.size(); i++) {
 			strbuilder.append(i);
@@ -73,7 +66,9 @@ public class VotingCommand implements TopLevelSlashCommand {
 			strbuilder.append("\n");
 		}
 
-		builder.setDescription(strbuilder.toString());
+		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.cyan, strbuilder);
+		builder.setTitle("Wer ist der dümmste?");
+		builder.setFooter("GameMaster: " + event.getUser().getName());
 
 		InteractionHook hook = event.deferReply(false).complete();
 

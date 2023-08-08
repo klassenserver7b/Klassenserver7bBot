@@ -9,11 +9,11 @@ import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
-public class SystemchannelCommand implements ServerCommand { 
+public class SystemchannelCommand implements ServerCommand {
 
- 	private boolean isEnabled;
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
@@ -31,13 +31,13 @@ public class SystemchannelCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.MANAGE_SERVER)) {
 
-			if (!message.getMentions().getChannels(TextChannel.class).isEmpty()) {
+			if (!message.getMentions().getChannels(GuildMessageChannel.class).isEmpty()) {
 
-				TextChannel chan = message.getMentions().getChannels(TextChannel.class).get(0);
+				GuildMessageChannel chan = message.getMentions().getChannels(GuildMessageChannel.class).get(0);
 
 				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getsyschannell();
 				sys.insertChannel(chan);
@@ -51,7 +51,7 @@ public class SystemchannelCommand implements ServerCommand {
 		}
 
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return isEnabled;

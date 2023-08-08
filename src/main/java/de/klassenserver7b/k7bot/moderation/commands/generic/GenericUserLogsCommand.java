@@ -11,7 +11,7 @@ import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 /**
  * @author K7
@@ -25,7 +25,7 @@ public abstract class GenericUserLogsCommand {
 	 * @param channel
 	 * @return
 	 */
-	protected boolean checkPermissions(Member m, TextChannel channel) {
+	protected boolean checkPermissions(Member m, GuildMessageChannel channel) {
 		if (!m.hasPermission(Permission.KICK_MEMBERS)) {
 			PermissionError.onPermissionError(m, channel);
 			return false;
@@ -41,7 +41,7 @@ public abstract class GenericUserLogsCommand {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	protected List<Member> getMemberFromMessage(TextChannel channel, Message message, Member m)
+	protected List<Member> getMembersFromMessage(GuildMessageChannel channel, Message message, Member m)
 			throws IllegalArgumentException {
 		List<Member> memb = message.getMentions().getMembers();
 

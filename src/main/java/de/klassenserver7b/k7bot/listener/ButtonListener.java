@@ -1,8 +1,5 @@
 package de.klassenserver7b.k7bot.listener;
 
-import java.awt.Color;
-import java.time.OffsetDateTime;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -10,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
-import net.dv8tion.jda.api.EmbedBuilder;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -67,11 +64,9 @@ public class ButtonListener extends ListenerAdapter {
 
 		if (pvtch != null) {
 
-			MessageEmbed acceptmessage = new EmbedBuilder().setColor(Color.decode("#00ff00"))
-					.setFooter("Handeled by K7Bot")
-					.setDescription(
-							"Congratulations, you were accepted for 'HA3'. You will recieve a message when your whitelist is active.")
-					.setTimestamp(OffsetDateTime.now()).build();
+			MessageEmbed acceptmessage = EmbedUtils.getSuccessEmbed(
+					"Congratulations, you were accepted for 'HA3'. You will recieve a message when your whitelist is active.",
+					event.getGuild().getIdLong()).build();
 			pvtch.sendMessageEmbeds(acceptmessage).queue();
 
 		}
@@ -91,9 +86,8 @@ public class ButtonListener extends ListenerAdapter {
 
 		if (pvtch != null) {
 
-			MessageEmbed denymessage = new EmbedBuilder().setColor(Color.red).setFooter("Handeled by K7Bot")
-					.setDescription("Sorry, but you 'HA3' whitelistrequest has been denied")
-					.setTimestamp(OffsetDateTime.now()).build();
+			MessageEmbed denymessage = EmbedUtils.getErrorEmbed("Sorry, but you 'HA3' whitelistrequest has been denied",
+					event.getGuild().getIdLong()).build();
 			pvtch.sendMessageEmbeds(denymessage).queue();
 
 		}
@@ -115,10 +109,10 @@ public class ButtonListener extends ListenerAdapter {
 
 		if (pvtch != null) {
 
-			MessageEmbed acceptmessage = new EmbedBuilder().setColor(Color.decode("#00ff00"))
-					.setFooter("Handeled by K7Bot")
-					.setDescription("Congratulations, You are now whitelisted on the 'HA3' Server")
-					.setTimestamp(OffsetDateTime.now()).build();
+			MessageEmbed acceptmessage = EmbedUtils
+					.getSuccessEmbed("Congratulations, You are now whitelisted on the 'HA3' Server",
+							event.getGuild().getIdLong())
+					.build();
 			pvtch.sendMessageEmbeds(acceptmessage).queue();
 
 		}

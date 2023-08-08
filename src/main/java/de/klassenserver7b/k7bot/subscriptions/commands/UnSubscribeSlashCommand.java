@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.subscriptions.commands;
 
-import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
-import net.dv8tion.jda.api.EmbedBuilder;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -84,22 +83,19 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
 			Klassenserver7bbot.getInstance().getSubscriptionManager().removeSubscription(id);
 
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
-					.setDescription("Successfully removed subscription with id `" + id + "`").build()).queue();
-
-		}
-		catch (NumberFormatException e) {
-
 			hook.sendMessageEmbeds(
-					new EmbedBuilder().setColor(Color.red).setDescription("Error while removing subscription!").build())
+					EmbedUtils.getSuccessEmbed("Successfully removed subscription with id `" + id + "`").build())
 					.queue();
+
+		} catch (NumberFormatException e) {
+
+			hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Error while removing subscription!").build()).queue();
 
 		}
 	}
 
 	private void sendInvalidIdEmbed(InteractionHook hook) {
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-				.setDescription("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
+		hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
 	}
 
 	@Override
@@ -169,8 +165,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 								+ SubscriptionDeliveryType.fromId((int) set.getLong("type")));
 
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -188,8 +183,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 				subs.put(set.getLong("subscriptionId"), set.getLong("target"));
 
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 

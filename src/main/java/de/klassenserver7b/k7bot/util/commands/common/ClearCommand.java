@@ -1,19 +1,20 @@
 
 package de.klassenserver7b.k7bot.util.commands.common;
 
-import java.time.OffsetDateTime;
+import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.MessageClearUtil;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class ClearCommand implements ServerCommand {
 
@@ -35,7 +36,7 @@ public class ClearCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (m.hasPermission(channel, Permission.MESSAGE_MANAGE)) {
 
@@ -47,14 +48,13 @@ public class ClearCommand implements ServerCommand {
 
 				MessageClearUtil.onclear(amount, channel);
 
-				TextChannel system = Klassenserver7bbot.getInstance().getsyschannell()
+				GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell()
 						.getSysChannel(channel.getGuild());
 
-				EmbedBuilder builder = new EmbedBuilder();
-				builder.setColor(16345358);
+				EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.orange,
+						amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + channel.getName(),
+						channel.getGuild().getIdLong());
 				builder.setFooter("requested by @" + m.getEffectiveName());
-				builder.setTimestamp(OffsetDateTime.now());
-				builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#" + channel.getName());
 
 				if (system != null) {
 

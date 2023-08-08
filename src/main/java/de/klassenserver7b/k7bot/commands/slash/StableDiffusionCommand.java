@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,9 +31,11 @@ import com.google.gson.JsonParser;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -85,11 +86,9 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 			return;
 		}
 
-		try {
-			if (!event.getChannel().asTextChannel().isNSFW()) {
-				throw new IllegalStateException();
-			}
-		} catch (IllegalStateException e) {
+		if (!(event.getChannel() instanceof StandardGuildMessageChannel)
+				|| !((StandardGuildMessageChannel) event.getChannel()).isNSFW()) {
+
 			sendErrorEmbed(event, "You can only use this in a NSFW Channel", "Restricted");
 			return;
 		}
@@ -175,10 +174,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 	}
 
 	protected void sendErrorEmbed(SlashCommandInteraction event, String description, String title) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setColor(Color.red);
-		builder.setDescription(description);
-		builder.setTimestamp(OffsetDateTime.now());
+		EmbedBuilder builder = EmbedUtils.getErrorEmbed(description);
 
 		if (title != null) {
 			builder.setTitle(title);

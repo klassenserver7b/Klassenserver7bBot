@@ -1,10 +1,8 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +30,9 @@ import com.google.gson.JsonParser;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -82,11 +80,6 @@ public class VVOInteractions implements LoopedEvent {
 	}
 
 	private MessageEmbed getEmbed(List<String> fields) {
-		EmbedBuilder embedBuilder = new EmbedBuilder();
-		embedBuilder.setTitle("Die nächsten Abfahrten an der Mosenstraße");
-		embedBuilder.setFooter("Created by @K7Bot");
-		embedBuilder.setColor(Color.decode("#2fff00"));
-		embedBuilder.setTimestamp(OffsetDateTime.now());
 
 		StringBuilder builder = new StringBuilder();
 
@@ -95,8 +88,7 @@ public class VVOInteractions implements LoopedEvent {
 			builder.append("\n\n");
 		}
 
-		embedBuilder.setDescription(builder.toString().trim());
-		return embedBuilder.build();
+		return EmbedUtils.getSuccessEmbed(builder).setTitle("Die nächsten Abfahrten an der Mosenstraße").build();
 	}
 
 	private String getLineStringFromData(JsonElement departure) {

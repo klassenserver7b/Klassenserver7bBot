@@ -1,9 +1,7 @@
 
 package de.klassenserver7b.k7bot.music.lavaplayer;
 
-import java.awt.Color;
 import java.io.File;
-import java.time.OffsetDateTime;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -18,6 +16,7 @@ import de.klassenserver7b.k7bot.music.commands.common.SkipCommand;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyAudioTrack;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -43,14 +42,10 @@ public class TrackScheduler extends AudioEventAdapter {
 				jsinfo = queue.getCurrentSongData();
 			}
 
-			EmbedBuilder builder = new EmbedBuilder();
-
 			String author = (jsinfo == null ? info.author : jsinfo.getAuthorString());
 			String title = (jsinfo == null ? info.title : jsinfo.getTitle());
 
-			builder.setColor(Color.decode("#00e640"));
-			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(" Jetzt läuft: " + title);
+			EmbedBuilder builder = EmbedUtils.getSuccessEmbed(" Jetzt läuft: " + title);
 
 			long sekunden = info.length / 1000L;
 			long minuten = sekunden / 60L;

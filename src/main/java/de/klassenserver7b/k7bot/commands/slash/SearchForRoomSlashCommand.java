@@ -4,12 +4,11 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.VplanRoomChecker;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -38,9 +37,8 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 		List<String> rooms = VplanRoomChecker.checkDefaults(lesson);
 
 		if (rooms.isEmpty()) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#dd2222"))
-					.setDescription("I'm sorry but all rooms are already taken").setTimestamp(OffsetDateTime.now())
-					.build()).queue();
+			hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.decode("#bd7604"),
+					"I'm sorry but all rooms are already taken", event.getGuild().getIdLong()).build()).queue();
 			return;
 		}
 
@@ -50,12 +48,13 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 			strbuild.append(room);
 			strbuild.append(", ");
 		}
-		
+
 		strbuild.delete(strbuild.length() - 2, strbuild.length());
 
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
-				.setDescription("I'm happy to tell you that the rooms " + strbuild.toString() + " are free!")
-				.setTimestamp(OffsetDateTime.now()).build()).queue();
+		hook.sendMessageEmbeds(
+				EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + strbuild.toString() + " are free!",
+						event.getGuild().getIdLong()).build())
+				.queue();
 
 	}
 

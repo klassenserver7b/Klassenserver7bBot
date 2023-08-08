@@ -1,12 +1,11 @@
 package de.klassenserver7b.k7bot.listener;
 
-import java.time.OffsetDateTime;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -14,17 +13,16 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class JoinandLeaveListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
-		TextChannel def = event.getGuild().getDefaultChannel().asTextChannel();
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		GuildMessageChannel def = event.getGuild().getDefaultChannel().asStandardGuildMessageChannel();
 		String guildname = event.getGuild().getName();
 		Member memb = event.getGuild().getMember(event.getUser());
-		EmbedBuilder embbuild = new EmbedBuilder();
-		embbuild.setTimestamp(OffsetDateTime.now());
+
+		EmbedBuilder embbuild = EmbedUtils.getSuccessEmbed(memb.getAsMention() + " joined",
+				event.getGuild().getIdLong());
+
 		embbuild.setThumbnail(memb.getUser().getEffectiveAvatarUrl());
 		embbuild.setTitle("@" + memb.getEffectiveName() + " joined :thumbsup:");
-		embbuild.setFooter("Member joined");
-		embbuild.setColor(58944);
-		embbuild.setDescription(memb.getAsMention() + " joined");
 
 		system.sendMessageEmbeds(embbuild.build()).queue();
 
@@ -36,23 +34,22 @@ public class JoinandLeaveListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
 
-		TextChannel def = event.getGuild().getCommunityUpdatesChannel();
+		GuildMessageChannel def = event.getGuild().getCommunityUpdatesChannel();
 		if (def == null) {
-			def = event.getGuild().getDefaultChannel().asTextChannel();
+			def = event.getGuild().getDefaultChannel().asStandardGuildMessageChannel();
 		}
 
 		User usr = event.getUser();
-		EmbedBuilder embbuild = new EmbedBuilder();
-		embbuild.setTimestamp(OffsetDateTime.now());
+
+		EmbedBuilder embbuild = EmbedUtils.getErrorEmbed(
+				usr.getAsMention() + " known as " + usr.getEffectiveName() + " leaved", event.getGuild().getIdLong());
+
 		embbuild.setThumbnail(usr.getEffectiveAvatarUrl());
 		embbuild.setTitle("@" + usr.getName() + " leaved :sob:");
-		embbuild.setFooter("Member leaved");
-		embbuild.setColor(13565967);
-		embbuild.setDescription(usr.getAsMention() + " leaved");
 
 		system.sendMessageEmbeds(embbuild.build()).queue();
-		def.sendMessage("Schade, dass du gehst " + usr.getAsMention()).queue();
+		def.sendMessage("Schade, dass du gehst " + usr.getEffectiveName()).queue();
 	}
 }

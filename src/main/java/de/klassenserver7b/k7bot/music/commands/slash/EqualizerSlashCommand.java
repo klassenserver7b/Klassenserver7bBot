@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.music.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,8 @@ import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
 import de.klassenserver7b.k7bot.music.utilities.EqualizerPreset;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -43,26 +42,24 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
 			return;
 		}
 
-		BotAudioEffectsManager eq = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(event.getGuild().getIdLong()).getPlayer());
+		BotAudioEffectsManager eq = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
+				.getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
 
 		for (EqualizerPreset val : vals) {
 			if (val.toString().equalsIgnoreCase(preset)) {
 				eq.setEQMode(val);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#00ff00"))
-						.setFooter("Provided by @K7Bot").setTimestamp(OffsetDateTime.now())
-						.setDescription("Equalizer was sucessful set to preset '" + preset + "'").build()).queue();
+				hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.green,
+						"Equalizer was sucessful set to preset '" + preset + "'", event.getGuild().getIdLong()).build())
+						.queue();
 				return;
 			}
 		}
 
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setFooter("Provided by @K7Bot")
-				.setTimestamp(OffsetDateTime.now())
-				.setDescription(
-						"Something went wrong! Please try again and contact the bot support if this keeps happening.")
-				.build()).queue();
+		hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.red,
+				"Something went wrong! Please try again and contact the bot support if this keeps happening.",
+				event.getGuild().getIdLong()).build()).queue();
 
 	}
 

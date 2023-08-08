@@ -17,7 +17,7 @@ import me.kbrewster.exceptions.InvalidPlayerException;
 import me.kbrewster.mojangapi.MojangAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.hypixel.api.HypixelAPI;
 
 public class HypixelRankCommand implements HypixelCommand {
@@ -29,7 +29,7 @@ public class HypixelRankCommand implements HypixelCommand {
 	}
 
 	@Override
-	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
+	public void performHypixelCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 

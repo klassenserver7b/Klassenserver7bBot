@@ -8,6 +8,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -16,7 +17,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class TimeoutCommand implements ServerCommand {
@@ -41,7 +42,7 @@ public class TimeoutCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		List<Member> ment = message.getMentions().getMembers();
 		String[] args = message.getContentRaw().replaceAll("<@(\\d+)?>", "").split(" ");
@@ -66,19 +67,13 @@ public class TimeoutCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		}
-		catch (StringIndexOutOfBoundsException e) {
+		} catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
 					"timeout [time (in minutes)] [reason] @user", m);
 		}
 	}
 
-	public void onTimeout(Member requester, Member u, TextChannel channel, String time, String grund) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
-		builder.setColor(16711680);
+	public void onTimeout(Member requester, Member u, GuildMessageChannel channel, String time, String grund) {
 
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("**User: **" + u.getAsMention() + "\n");
@@ -86,13 +81,17 @@ public class TimeoutCommand implements ServerCommand {
 		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
 
 		Guild guild = channel.getGuild();
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+
+		EmbedBuilder builder = EmbedUtils.getErrorEmbed(strBuilder, channel.getGuild().getIdLong());
+
+		builder.setFooter("Requested by @" + requester.getEffectiveName());
+		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
 
 		try {
 			u.timeoutFor(Long.parseLong(time), TimeUnit.MINUTES).queue();
 			builder.setTitle(
 					"@" + u.getEffectiveName() + " has been timeouted for " + Long.parseLong(time) + " minutes");
-			builder.setDescription(strBuilder);
 
 			if (system != null) {
 
@@ -106,34 +105,22 @@ public class TimeoutCommand implements ServerCommand {
 
 			}
 
-			if (requester.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
-				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
-				builder.setFooter("");
-				builder.setDescription("**Case: **" + grund + "\n");
+			builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
 
-				u.getUser().openPrivateChannel().queue((ch) -> {
-					ch.sendMessageEmbeds(builder.build()).queue();
-				});
-			} else {
-				builder.setTitle("You have been timeouted for " + Long.parseLong(time) + " minutes");
-				builder.setDescription("**Case: **" + grund + "\n**Requester: **" + requester.getAsMention() + "\n");
-				u.getUser().openPrivateChannel().queue((ch) -> {
-					ch.sendMessageEmbeds(builder.build()).queue();
-				});
-			}
+			u.getUser().openPrivateChannel().queue((ch) -> {
+				ch.sendMessageEmbeds(builder.build()).queue();
+			});
 
 			String action = "timeout";
 			LiteSQL.onUpdate(
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
-		}
-		catch (HierarchyException e) {
+		} catch (HierarchyException e) {
 
 			PermissionError.onPermissionError(requester, channel);
 
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel),
 					"timeout [time (in minutes)] [reason] @user", requester);

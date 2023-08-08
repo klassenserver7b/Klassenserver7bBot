@@ -8,6 +8,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -16,7 +17,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class StopTimeoutCommand implements ServerCommand {
@@ -39,7 +40,7 @@ public class StopTimeoutCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
 		try {
 
@@ -60,22 +61,20 @@ public class StopTimeoutCommand implements ServerCommand {
 		}
 	}
 
-	public void stopTimeout(Member requester, Member u, TextChannel channel) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
-		builder.setColor(16711680);
-		builder.setTitle("@" + u.getEffectiveName() + " has been untimeouted");
+	public void stopTimeout(Member requester, Member u, GuildMessageChannel channel) {
 
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("**User: **" + u.getAsMention() + "\n");
-		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
-
-		builder.setDescription(strBuilder);
+		strBuilder.append("**Requester: **" + requester.getEffectiveName() + "\n");
+		
+		EmbedBuilder builder = EmbedUtils.getSuccessEmbed(strBuilder, channel.getGuild().getIdLong());
+		
+		builder.setTitle("@" + u.getEffectiveName() + " has been untimeouted");
+		builder.setFooter("Requested by @" + requester.getEffectiveName());
+		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
 
 		Guild guild = channel.getGuild();
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 		try {
 			u.removeTimeout().queue();

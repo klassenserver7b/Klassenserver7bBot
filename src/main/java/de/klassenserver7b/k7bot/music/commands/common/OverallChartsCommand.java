@@ -9,7 +9,7 @@ import de.klassenserver7b.k7bot.music.utilities.ChartList;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class OverallChartsCommand extends GenericChartsCommand implements ServerCommand {
 
@@ -31,7 +31,7 @@ public class OverallChartsCommand extends GenericChartsCommand implements Server
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		ChartList chartlist = new ChartList();
 		HashMap<String, Long> charts = chartlist.getcharts();

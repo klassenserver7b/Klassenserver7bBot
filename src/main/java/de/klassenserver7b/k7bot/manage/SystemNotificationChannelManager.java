@@ -13,11 +13,12 @@ import org.slf4j.LoggerFactory;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class SystemNotificationChannelManager {
 
-	private final ConcurrentHashMap<Guild, TextChannel> systemchannellist;
+	private final ConcurrentHashMap<Guild, GuildMessageChannel> systemchannellist;
 	private final Logger log;
 
 	public SystemNotificationChannelManager() {
@@ -45,36 +46,37 @@ public class SystemNotificationChannelManager {
 					continue;
 				}
 
-				TextChannel chan = g.getTextChannelById(systemchannel);
+				GuildChannel gchan = g.getGuildChannelById(systemchannel);
 
-				if (chan == null) {
+				if (gchan == null || !(gchan instanceof GuildMessageChannel)) {
 					systemchannellist.put(g, g.getSystemChannel());
 					LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ?;", g.getSystemChannel().getIdLong());
-				} else {
-					systemchannellist.put(g, chan);
 				}
 
+				GuildMessageChannel chan = (GuildMessageChannel) gchan;
+
+				systemchannellist.put(g, chan);
+
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
 
 	}
 
 	/**
-	 * Puts the given {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
+	 * Puts the given {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
 	 * into the Hashmap keyed by his {@link Guild}.
 	 *
 	 * @param channel <br>
-	 *                The {@link net.dv8tion.jda.api.entities.TextChannel
+	 *                The {@link net.dv8tion.jda.api.entities.GuildMessageChannel
 	 *                SystemChannel} wich u want to use in this {@link Guild}.
 	 *
 	 *
 	 *
 	 *
 	 */
-	public void insertChannel(TextChannel channel) {
+	public void insertChannel(GuildMessageChannel channel) {
 
 		reload();
 
@@ -99,7 +101,7 @@ public class SystemNotificationChannelManager {
 	/**
 	 * @param guild <br>
 	 *              The {@link Guild} for which you want the SystemChannel.
-	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
+	 * @return The {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
 	 *
 	 *
@@ -107,7 +109,7 @@ public class SystemNotificationChannelManager {
 	 *
 	 */
 	@Nullable
-	public TextChannel getSysChannel(@Nonnull Guild guild) {
+	public GuildMessageChannel getSysChannel(@Nonnull Guild guild) {
 
 		if (systemchannellist.get(guild) == null) {
 			return guild.getSystemChannel();
@@ -120,7 +122,7 @@ public class SystemNotificationChannelManager {
 	 * @param guildId <br>
 	 *                The Id of the {@link Guild} for which you want the
 	 *                SystemChannel.
-	 * @return The {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel}
+	 * @return The {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
 	 *         for the Guild or {@code null} if no channel is listed.
 	 *
 	 *
@@ -128,7 +130,7 @@ public class SystemNotificationChannelManager {
 	 *
 	 */
 	@Nullable
-	public TextChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
+	public GuildMessageChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
 		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
 
@@ -137,7 +139,7 @@ public class SystemNotificationChannelManager {
 
 	/**
 	 * Only used if you want the full ConcurrentHashMap! If you want only one
-	 * {@link net.dv8tion.jda.api.entities.TextChannel SystemChannel} please use
+	 * {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel} please use
 	 * {@link SystemNotificationChannelManager#getSysChannel()}
 	 *
 	 * @return The current HashMap of SystemChannels wich is used by the Bot.
@@ -145,7 +147,7 @@ public class SystemNotificationChannelManager {
 	 *
 	 *
 	 */
-	public ConcurrentHashMap<Guild, TextChannel> getHashMap() {
+	public ConcurrentHashMap<Guild, GuildMessageChannel> getHashMap() {
 		reload();
 		return systemchannellist;
 	}

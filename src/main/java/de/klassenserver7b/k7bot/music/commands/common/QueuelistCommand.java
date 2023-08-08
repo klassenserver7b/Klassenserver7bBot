@@ -12,10 +12,11 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class QueuelistCommand implements ServerCommand {
 
@@ -38,7 +39,7 @@ public class QueuelistCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		MusicController contr = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(channel.getGuild().getIdLong());
@@ -46,12 +47,6 @@ public class QueuelistCommand implements ServerCommand {
 		List<AudioTrack> queuelist = queue.getQueuelist();
 
 		if (!queuelist.isEmpty()) {
-
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setFooter("Requested by @" + m.getEffectiveName());
-			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " (" + queuelist.size() + " entrys)");
-			builder.setColor(Color.decode("#14cdc8"));
-			builder.setThumbnail("https://openclipart.org/image/800px/211805");
 
 			StringBuilder strbuild = new StringBuilder();
 
@@ -74,16 +69,19 @@ public class QueuelistCommand implements ServerCommand {
 
 			}
 
-			builder.setDescription(strbuild.toString().trim());
+			EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), strbuild,
+					channel.getGuild().getIdLong());
+
+			builder.setFooter("Requested by @" + m.getEffectiveName());
+			builder.setTitle("Queue for Guild: " + channel.getGuild().getName() + " (" + queuelist.size() + " entrys)");
+			builder.setThumbnail("https://openclipart.org/image/1200px/211805");
 
 			channel.sendMessageEmbeds(builder.build()).queue();
 
 		} else {
 
-			EmbedBuilder build = new EmbedBuilder();
-
-			build.setColor(16711680);
-			build.setDescription("The Queue for this guild is empty!");
+			EmbedBuilder build = EmbedUtils.getErrorEmbed("The Queue for this guild is empty!",
+					channel.getGuild().getIdLong());
 
 			channel.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 

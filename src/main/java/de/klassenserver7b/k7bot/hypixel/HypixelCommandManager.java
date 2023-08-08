@@ -5,15 +5,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.klassenserver7b.k7bot.commands.types.HypixelCommand;
 import de.klassenserver7b.k7bot.hypixel.commands.HypixelHelpCommand;
+import de.klassenserver7b.k7bot.hypixel.commands.HypixelOnlineCommand;
 import de.klassenserver7b.k7bot.hypixel.commands.HypixelRankCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.OnlineCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.PlayerCountCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.PlayerInfoCommand;
+import de.klassenserver7b.k7bot.hypixel.commands.HypixelPlayerCountCommand;
+import de.klassenserver7b.k7bot.hypixel.commands.HypixelPlayerInfoCommand;
 import de.klassenserver7b.k7bot.hypixel.commands.TestCommand;
 import de.klassenserver7b.k7bot.hypixel.commands.WatchdogCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class HypixelCommandManager {
 	public ConcurrentHashMap<String, HypixelCommand> commands;
@@ -24,13 +24,13 @@ public class HypixelCommandManager {
 		this.help = new ConcurrentHashMap<>();
 
 		this.commands.put("help", new HypixelHelpCommand());
-		this.commands.put("playercount", new PlayerCountCommand());
-		this.commands.put("pc", new PlayerCountCommand());
+		this.commands.put("playercount", new HypixelPlayerCountCommand());
+		this.commands.put("pc", new HypixelPlayerCountCommand());
 		this.commands.put("watchdog", new WatchdogCommand());
 		this.commands.put("rank", new HypixelRankCommand());
 		this.commands.put("test", new TestCommand());
-		this.commands.put("playerinfo", new PlayerInfoCommand());
-		this.commands.put("online", new OnlineCommand());
+		this.commands.put("playerinfo", new HypixelPlayerInfoCommand());
+		this.commands.put("online", new HypixelOnlineCommand());
 
 		this.help.put("help", "Zeigt diese Hilfe an.");
 		this.help.put("playercount", "Zeigt die Aktuelle Spieleranzahl auf Hypixel.");
@@ -48,7 +48,7 @@ public class HypixelCommandManager {
 						+ "hypixel online [playername]");
 	}
 
-	public boolean performHypixel(String command, Member m, TextChannel channel, Message message) {
+	public boolean performHypixel(String command, Member m, GuildMessageChannel channel, Message message) {
 		HypixelCommand cmd;
 		if ((cmd = this.commands.get(command.toLowerCase())) != null) {
 

@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.util.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 
 import org.jetbrains.annotations.NotNull;
 
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -29,10 +29,9 @@ public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
 			InteractionHook hook = event.deferReply().complete();
 
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setTimestamp(OffsetDateTime.now());
+			EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString(), event.getGuild().getIdLong());
+
 			builder.setTitle(title.getAsString());
-			builder.setDescription(description.getAsString());
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 
 			if (coloropt != null) {
@@ -53,7 +52,7 @@ public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
 		} else {
 
-			PermissionError.onPermissionError(event.getMember(), event.getChannel().asTextChannel());
+			PermissionError.onPermissionError(event.getMember(), event.getChannel().asGuildMessageChannel());
 		}
 
 	}

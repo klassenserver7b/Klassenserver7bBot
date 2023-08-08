@@ -2,18 +2,17 @@
 package de.klassenserver7b.k7bot.util.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 
 import org.jetbrains.annotations.NotNull;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.MessageClearUtil;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -41,23 +40,19 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 				return;
 			}
 
-			if (event.getChannel().getType() != ChannelType.TEXT) {
-				hook.sendMessageEmbeds(new EmbedBuilder().setDescription("Can't do this in this channel!")
-						.setTimestamp(OffsetDateTime.now()).setColor(Color.red).build()).queue();
-				return;
-			}
-
-			MessageClearUtil.onclear(amount - 1, event.getChannel().asTextChannel());
+			MessageClearUtil.onclear(amount - 1, event.getChannel().asGuildMessageChannel());
 
 			hook.sendMessage(amount + " messages deleted.").queue();
 
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setColor(16345358);
+			EmbedBuilder builder = EmbedUtils
+					.getBuilderOf(Color.orange,
+							amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
+									+ event.getChannel().asGuildMessageChannel().getName(),
+							event.getGuild().getIdLong());
+
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
-			builder.setTimestamp(OffsetDateTime.now());
-			builder.setDescription(amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
-					+ event.getChannel().asTextChannel().getName());
-			TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+			GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell()
+					.getSysChannel(event.getGuild());
 
 			if (system != null) {
 				system.sendMessageEmbeds(builder.build()).queue();
@@ -65,7 +60,7 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 
 		} else {
 
-			PermissionError.onPermissionError(event.getMember(), event.getChannel().asTextChannel());
+			PermissionError.onPermissionError(event.getMember(), event.getChannel().asGuildMessageChannel());
 		}
 	}
 

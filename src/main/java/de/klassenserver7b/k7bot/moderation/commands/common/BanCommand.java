@@ -8,6 +8,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -15,19 +16,18 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
-public class BanCommand implements ServerCommand { 
+public class BanCommand implements ServerCommand {
 
- 	private boolean isEnabled;
-	
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
 		return "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
 	}
-	
+
 	@Override
 	public String[] getCommandStrings() {
 		return new String[] { "ban" };
@@ -37,9 +37,9 @@ public class BanCommand implements ServerCommand {
 	public HelpCategories getcategory() {
 		return HelpCategories.MODERATION;
 	}
-	
+
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
 		try {
 
@@ -68,22 +68,19 @@ public class BanCommand implements ServerCommand {
 		}
 	}
 
-	public void onBan(Member requester, Member u, TextChannel channel, String grund) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
-		builder.setColor(16711680);
-		builder.setTitle("@" + u.getEffectiveName() + " was banned");
+	public void onBan(Member requester, Member u, GuildMessageChannel channel, String grund) {
 
 		StringBuilder strBuilder = new StringBuilder();
-		strBuilder.append("**User: **" + u.getAsMention() + "\n");
+		strBuilder.append("**User: **" + u.getUser().getAsMention() + "\n");
 		strBuilder.append("**Case: **" + grund + "\n");
-		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
+		strBuilder.append("**Requester: **" + requester.getEffectiveName() + "\n");
 
-		builder.setDescription(strBuilder);
+		EmbedBuilder builder = EmbedUtils.getErrorEmbed(strBuilder, channel.getGuild().getIdLong());
 
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
+		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
+		builder.setTitle("@" + u.getEffectiveName() + " was banned");
+
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
 
 		try {
 			u.ban(7, TimeUnit.DAYS).reason(grund).queue();
@@ -109,7 +106,7 @@ public class BanCommand implements ServerCommand {
 			PermissionError.onPermissionError(requester, channel);
 		}
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return isEnabled;

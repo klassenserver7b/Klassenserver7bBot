@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>k7bot</artifactId>
-	<version>1.18.0-RC.0</version>
+	<version>1.19.0-RC.0</version>
 	<packaging>jar</packaging>
 	<name>k7bot</name>
 	<description>My Discord Bot</description>

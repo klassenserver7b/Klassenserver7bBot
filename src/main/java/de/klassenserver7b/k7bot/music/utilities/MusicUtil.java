@@ -31,8 +31,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -54,21 +55,11 @@ public class MusicUtil {
 	 *
 	 * @param channel
 	 */
-	public static void updateChannel(TextChannel channel) {
+	public static void updateChannel(GuildMessageChannel channel) {
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM musicutil WHERE guildId = ?;",
-				channel.getGuild().getIdLong())) {
+		LiteSQL.onUpdate("INSERT OR REPLACE INTO musicutil(guildId, channelId) VALUES(?, ?);",
+				channel.getGuild().getIdLong(), channel.getIdLong());
 
-			if (set.next()) {
-				LiteSQL.onUpdate("UPDATE musicutil SET channelId = ? WHERE guildId = ?;", channel.getIdLong(),
-						channel.getGuild().getIdLong());
-			} else {
-				LiteSQL.onUpdate("INSERT INTO musicutil(guildId, channelId, volume) VALUES(?, ?, ?);",
-						channel.getGuild().getIdLong(), channel.getIdLong(), 10);
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
 	}
 
 	/**
@@ -77,7 +68,7 @@ public class MusicUtil {
 	 */
 	public static void updateChannel(InteractionHook hook) {
 
-		TextChannel channel = (TextChannel) hook.getInteraction().getMessageChannel();
+		GuildMessageChannel channel = (GuildMessageChannel) hook.getInteraction().getMessageChannel();
 
 		updateChannel(channel);
 	}
@@ -102,9 +93,11 @@ public class MusicUtil {
 				return;
 			}
 
-			TextChannel channel;
+			GuildChannel gchan = guild.getGuildChannelById(channelid);
+			GuildMessageChannel channel;
 
-			if ((channel = guild.getTextChannelById(channelid)) != null) {
+			if ((gchan) != null && (gchan instanceof GuildMessageChannel)
+					&& (channel = (GuildMessageChannel) gchan) != null) {
 
 				@SuppressWarnings("resource")
 				FileUpload up = setIcons(track);
@@ -143,8 +136,11 @@ public class MusicUtil {
 				return;
 			}
 
-			TextChannel channel;
-			if ((channel = guild.getTextChannelById(channelid)) != null) {
+			GuildChannel gchan = guild.getGuildChannelById(channelid);
+			GuildMessageChannel channel;
+
+			if ((gchan) != null && (gchan instanceof GuildMessageChannel)
+					&& (channel = (GuildMessageChannel) gchan) != null) {
 				channel.sendMessageEmbeds(builder.build()).queue();
 
 			}
@@ -298,7 +294,7 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static boolean isPlayingSong(TextChannel c, Member m) {
+	public static boolean isPlayingSong(GuildMessageChannel c, Member m) {
 
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(c.getGuild().getIdLong());

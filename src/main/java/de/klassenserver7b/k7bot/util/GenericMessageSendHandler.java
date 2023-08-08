@@ -14,9 +14,10 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.FluentRestAction;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -30,7 +31,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 public class GenericMessageSendHandler {
 
 	private final InteractionHook hook;
-	private final TextChannel channel;
+	private final GuildMessageChannel channel;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -43,7 +44,7 @@ public class GenericMessageSendHandler {
 	 * @param hook
 	 */
 	public GenericMessageSendHandler(@Nonnull InteractionHook hook) {
-		Objects.requireNonNull(hook, "@Nonnull required parameter is null: Textchannel");
+		Objects.requireNonNull(hook, "@Nonnull required parameter is null: GuildMessageChannel");
 		this.hook = hook;
 		this.channel = null;
 		selectedid = HookId;
@@ -53,8 +54,8 @@ public class GenericMessageSendHandler {
 	 *
 	 * @param channel
 	 */
-	public GenericMessageSendHandler(@Nonnull TextChannel channel) {
-		Objects.requireNonNull(channel, "@Nonnull required parameter is null: Textchannel");
+	public GenericMessageSendHandler(@Nonnull GuildMessageChannel channel) {
+		Objects.requireNonNull(channel, "@Nonnull required parameter is null: GuildMessageChannel");
 		this.channel = channel;
 		this.hook = null;
 		selectedid = ChannelId;
@@ -76,8 +77,7 @@ public class GenericMessageSendHandler {
 				return channel.sendMessage(data);
 			}
 			}
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -104,8 +104,7 @@ public class GenericMessageSendHandler {
 				return channel.sendMessageEmbeds(embeds);
 			}
 			}
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -127,8 +126,7 @@ public class GenericMessageSendHandler {
 				return channel.sendFiles(files);
 			}
 			}
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -144,8 +142,7 @@ public class GenericMessageSendHandler {
 				return channel.sendMessageFormat(format, objects);
 			}
 			}
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			onNPE(e);
 		}
 		return null;
@@ -159,6 +156,22 @@ public class GenericMessageSendHandler {
 		}
 		}
 		return;
+	}
+
+	public Guild getGuild() {
+
+		switch (selectedid) {
+		case HookId -> {
+			return hook.getInteraction().getGuild();
+		}
+		case ChannelId -> {
+			return channel.getGuild();
+		}
+		
+		default ->{
+			return null;
+		}
+		}
 	}
 
 	public void onNPE(NullPointerException e) {

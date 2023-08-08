@@ -31,8 +31,8 @@ import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -88,7 +88,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
 
@@ -190,8 +190,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
 				}
 			} else {
-				LiteSQL.onUpdate("INSERT INTO musicutil(volume, guildId) VALUES(?,?);", AudioPlayerUtil.STANDARDVOLUME,
-						guildId);
+				LiteSQL.onUpdate("INSERT OR REPLACE INTO musicutil(guildId) VALUES(?);",guildId);
 				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
 			}
 		} catch (SQLException e) {

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 /**
@@ -21,7 +21,7 @@ public class MessageClearUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(MessageClearUtil.class);
 
-	public static void onclear(int amount, TextChannel chan) {
+	public static void onclear(int amount, GuildMessageChannel chan) {
 		try {
 
 			chan.purgeMessages(getMessages(chan, amount));

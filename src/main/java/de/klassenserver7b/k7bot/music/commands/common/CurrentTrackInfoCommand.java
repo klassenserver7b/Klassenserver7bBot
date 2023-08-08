@@ -1,7 +1,5 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
-import java.time.OffsetDateTime;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
@@ -13,10 +11,11 @@ import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.music.utilities.SongJson;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class CurrentTrackInfoCommand implements ServerCommand {
 
@@ -39,12 +38,13 @@ public class CurrentTrackInfoCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
 				.getController(channel.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
-		EmbedBuilder builder = new EmbedBuilder();
+
+		EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
 		MusicUtil.updateChannel(channel);
 
 		if (player.getPlayingTrack() == null) {
@@ -68,7 +68,6 @@ public class CurrentTrackInfoCommand implements ServerCommand {
 			author = data.getAuthorString();
 		}
 
-		builder.setTimestamp(OffsetDateTime.now());
 		builder.setFooter("Requested by @" + m.getEffectiveName());
 		builder.setTitle("Es läuft: " + title);
 		builder.addField("URL: ", tinfo.uri, false);

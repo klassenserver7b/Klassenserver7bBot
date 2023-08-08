@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,11 +27,11 @@ import de.klassenserver7b.k7bot.listener.BotgetDC;
 import de.klassenserver7b.k7bot.listener.ButtonListener;
 import de.klassenserver7b.k7bot.listener.ChannelCreateRemoveListener;
 import de.klassenserver7b.k7bot.listener.CommandListener;
+import de.klassenserver7b.k7bot.listener.InviteListener;
 import de.klassenserver7b.k7bot.listener.JoinandLeaveListener;
 import de.klassenserver7b.k7bot.listener.MemesReact;
 import de.klassenserver7b.k7bot.listener.ReactionListener;
-import de.klassenserver7b.k7bot.listener.RoleEditListener;
-import de.klassenserver7b.k7bot.listener.Role_InviteListener;
+import de.klassenserver7b.k7bot.listener.RoleListener;
 import de.klassenserver7b.k7bot.listener.SlashCommandListener;
 import de.klassenserver7b.k7bot.listener.VoiceListener;
 import de.klassenserver7b.k7bot.manage.CommandManager;
@@ -51,7 +52,7 @@ import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -143,10 +144,8 @@ public class Klassenserver7bbot {
 
 		try {
 			buildBot(token, canaryToken, shardc);
-		}
-		catch (IllegalArgumentException | InvalidTokenException | ErrorResponseException e) {
-			logger.warn("Couldn't start Bot! - Please check the config -> Message='" + e.getMessage() + "'");
-			logger.error(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			invalidConfigExit("Couldn't start Bot! - EXITING", 1, e);
 		}
 
 		propMgr.checkAPIProps();
@@ -156,8 +155,7 @@ public class Klassenserver7bbot {
 		return true;
 	}
 
-	private void buildBot(String token, String canaryToken, int shardc)
-			throws IllegalArgumentException, InvalidTokenException, ErrorResponseException {
+	protected ShardManager buildBot(String token, String canaryToken, int shardc) throws IllegalArgumentException {
 
 		DefaultShardManagerBuilder builder;
 
@@ -176,8 +174,8 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new CommandListener());
 		builder.addEventListeners(new VoiceListener());
 		builder.addEventListeners(new ReactionListener());
-		builder.addEventListeners(new Role_InviteListener());
-		builder.addEventListeners(new RoleEditListener());
+		builder.addEventListeners(new RoleListener());
+		builder.addEventListeners(new InviteListener());
 		builder.addEventListeners(new BanListener());
 		builder.addEventListeners(new JoinandLeaveListener());
 		builder.addEventListeners(new ChannelCreateRemoveListener());
@@ -187,11 +185,20 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new BotgetDC());
 		builder.addEventListeners(new ButtonListener());
 
+		ShardManager initShardMgr = null;
+
 		try {
-			this.shardMgr = builder.build();
+			initShardMgr = builder.build();
+		} catch (InvalidTokenException e) {
+			invalidConfigExit("INVALID TOKEN - EXITING", 5, e);
+		} catch (IllegalArgumentException e) {
+			invalidConfigExit("ILLEGAL LOGIN ARGUMENT / EMPTY TOKEN - EXITING", 1, e);
 		}
-		catch (ErrorResponseException e) {
-			this.shardMgr = builder.build();
+
+		if (initShardMgr != null) {
+			return initShardMgr;
+		} else {
+			throw new IllegalArgumentException("BOT CREATION FAILED - EXITED", new Throwable().fillInStackTrace());
 		}
 	}
 
@@ -219,8 +226,7 @@ public class Klassenserver7bbot {
 		if (propMgr.isApiEnabled("github")) {
 			try {
 				this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				propMgr.getEnabledApis().put("github", false);
 				this.logger.error("couldn't start GitHub-Api");
 			}
@@ -253,8 +259,7 @@ public class Klassenserver7bbot {
 			try {
 				logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
 				jda.awaitReady();
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
 						+ jda.getSelfUser().getName());
 				logger.error(e.getMessage(), e);
@@ -268,7 +273,17 @@ public class Klassenserver7bbot {
 		}
 	}
 
-	private void runShutdown() {
+	protected void invalidConfigExit(String message, int exitCode, RuntimeException e) {
+		logger.error(message, e);
+		try {
+			Desktop.getDesktop().open(new File("resources/bot.properties"));
+		} catch (IOException e1) {
+			// EXIT AS USUAL;
+		}
+		System.exit(exitCode);
+	}
+
+	protected void runShutdown() {
 		this.shutdownT = new ConsoleReadThread();
 	}
 
@@ -296,8 +311,7 @@ public class Klassenserver7bbot {
 				JsonElement json = JsonParser.parseString(jsonstring);
 				teacherslist = json.getAsJsonObject();
 
-			}
-			catch (IOException e1) {
+			} catch (IOException e1) {
 
 				logger.error(e1.getMessage(), e1);
 
@@ -306,13 +320,23 @@ public class Klassenserver7bbot {
 		}
 	}
 
+	public String getSelfName(Long guildid) {
+
+		Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+
+		if (g != null) {
+			return g.getSelfMember().getEffectiveName();
+		}
+
+		return Klassenserver7bbot.getInstance().getShardManager().getShards().get(0).getSelfUser().getEffectiveName();
+	}
+
 	public static Klassenserver7bbot getInstance() {
 
 		if (INSTANCE == null) {
 			try {
 				return new Klassenserver7bbot(false);
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				LoggerFactory.getLogger("InstanceManager").error(e.getMessage(), e);
 			}
 		}

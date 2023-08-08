@@ -8,6 +8,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -16,7 +17,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class KickCommand implements ServerCommand {
@@ -39,7 +40,7 @@ public class KickCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 		List<Member> ment = message.getMentions().getMembers();
 
 		try {
@@ -63,29 +64,24 @@ public class KickCommand implements ServerCommand {
 			} else {
 				PermissionError.onPermissionError(m, channel);
 			}
-		}
-		catch (StringIndexOutOfBoundsException e) {
+		} catch (StringIndexOutOfBoundsException e) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "kick [@user] [reason]", m);
 		}
 	}
 
-	public void onkick(Member requester, Member u, TextChannel channel, String grund) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
-		builder.setColor(16711680);
-		builder.setTitle("@" + u.getEffectiveName() + " was kicked");
+	public void onkick(Member requester, Member u, GuildMessageChannel channel, String grund) {
 
 		StringBuilder strBuilder = new StringBuilder();
-		strBuilder.append("**User: **" + u.getAsMention() + "\n");
+		strBuilder.append("**User: **" + u.getUser().getAsMention() + "\n");
 		strBuilder.append("**Case: **" + grund + "\n");
-		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
+		strBuilder.append("**Requester: **" + requester.getEffectiveName() + "\n");
 
-		builder.setDescription(strBuilder);
+		EmbedBuilder builder = EmbedUtils.getErrorEmbed(strBuilder, channel.getGuild().getIdLong());
+		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
+		builder.setTitle("@" + u.getEffectiveName() + " was kicked");
 
 		Guild guild = channel.getGuild();
-		TextChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
 
 		try {
 			u.kick().reason(grund).queue();
@@ -107,8 +103,7 @@ public class KickCommand implements ServerCommand {
 					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
 					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
 					requester.getEffectiveName(), action, grund, OffsetDateTime.now());
-		}
-		catch (HierarchyException e) {
+		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(requester, channel);
 		}
 	}

@@ -4,11 +4,10 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.VplanRoomChecker;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -34,23 +33,20 @@ public class CheckRoomSlashCommand implements TopLevelSlashCommand {
 		long lesson = event.getOption("lesson").getAsLong();
 
 		if (lesson <= 0 || room.isBlank()) {
-			event.replyEmbeds(new EmbedBuilder().setColor(Color.red).setDescription("Invalid Data submitted!").build())
+			event.replyEmbeds(EmbedUtils.getErrorEmbed("Invalid Data submitted!").build())
 					.queue();
 		}
 
 		InteractionHook hook = event.deferReply().complete();
 
 		if (!VplanRoomChecker.isRoomFree(lesson, room)) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.decode("#dd2222"))
-					.setDescription("I'm sorry but this room is already taken").setTimestamp(OffsetDateTime.now())
-					.build()).queue();
+			hook.sendMessageEmbeds(EmbedUtils
+					.getBuilderOf(Color.decode("#bd7604"), "I'm sorry but this room is already taken").build()).queue();
 
 			return;
 		}
 
-		hook.sendMessageEmbeds(
-				new EmbedBuilder().setColor(Color.green).setDescription("I'm happy to tell you that this room is free!")
-						.setTimestamp(OffsetDateTime.now()).build())
+		hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("I'm happy to tell you that this room is free!").build())
 				.queue();
 
 	}

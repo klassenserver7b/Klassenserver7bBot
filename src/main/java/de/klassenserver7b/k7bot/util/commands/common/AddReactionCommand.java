@@ -9,7 +9,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 
 public class AddReactionCommand implements ServerCommand {
@@ -20,7 +20,7 @@ public class AddReactionCommand implements ServerCommand {
 
 	@Override
 	public String gethelp() {
-		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #textchannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
+		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #GuildMessageChannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
 	}
 
 	@Override
@@ -34,14 +34,14 @@ public class AddReactionCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
-		List<TextChannel> channels = message.getMentions().getChannels(TextChannel.class);
+		List<GuildMessageChannel> channels = message.getMentions().getChannels(GuildMessageChannel.class);
 		List<CustomEmoji> emotes = message.getMentions().getCustomEmojis();
 
 		if (!channels.isEmpty()) {
-			TextChannel tc = message.getMentions().getChannels(TextChannel.class).get(0);
+			GuildMessageChannel tc = message.getMentions().getChannels(GuildMessageChannel.class).get(0);
 			String MessageIdString = args[2];
 
 			try {

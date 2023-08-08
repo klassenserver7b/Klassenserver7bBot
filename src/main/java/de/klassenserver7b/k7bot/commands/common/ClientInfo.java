@@ -1,27 +1,28 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import java.time.OffsetDateTime;
+import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 /**
  * 
  * @author K7
  *
  */
-public class ClientInfo implements ServerCommand { 
+public class ClientInfo implements ServerCommand {
 
- 	private boolean isEnabled; 
+	private boolean isEnabled;
 
 	@Override
 	public String gethelp() {
@@ -40,7 +41,7 @@ public class ClientInfo implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		channel.sendTyping().queue();
 		List<Member> ment = message.getMentions().getMembers();
@@ -56,13 +57,7 @@ public class ClientInfo implements ServerCommand {
 		}
 	}
 
-	public void onInfo(Member requester, Member u, TextChannel channel) {
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
-		builder.setColor(16711680);
-		builder.setTitle("Info zu " + u.getAsMention());
+	public void onInfo(Member requester, Member u, GuildMessageChannel channel) {
 
 		StringBuilder strBuilder = new StringBuilder();
 		strBuilder.append("**User: **" + u.getAsMention() + "\n");
@@ -83,7 +78,11 @@ public class ClientInfo implements ServerCommand {
 
 		strBuilder.append(roleBuild.toString().trim() + "\n");
 
-		builder.setDescription(strBuilder);
+		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.red, strBuilder,
+				channel.getGuild().getIdLong());
+		builder.setTitle("Info zu " + u.getEffectiveName());
+		builder.setFooter("Requested by @" + requester.getEffectiveName());
+		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
 
 		channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 	}

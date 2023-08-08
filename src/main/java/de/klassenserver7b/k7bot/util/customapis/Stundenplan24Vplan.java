@@ -44,11 +44,12 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.Cell;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.TableMessage;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -87,7 +88,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 *
 	 * @since 1.15.0
 	 */
-	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
+	public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
 
 		try (MessageCreateData d = getVplanMessage(force, klasse)) {
 			if (d != null) {
@@ -164,7 +165,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
 					+ Klassenserver7bbot.getInstance().isDevMode());
 
-			EmbedBuilder embbuild = new EmbedBuilder();
+			EmbedBuilder embbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
@@ -216,9 +217,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 			}
 
-			embbuild.setColor(Color.decode("#038aff"));
-
-			LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", classPlan.getTextContent().hashCode());
+			LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
 
 			MessageCreateBuilder builder = new MessageCreateBuilder();
 
@@ -228,10 +227,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
 				embbuild.setFooter(null);
 				builder.addEmbeds(embbuild.build());
 
-				EmbedBuilder addbuild = new EmbedBuilder();
+				EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"), additionalmess.build());
 
-				addbuild.setDescription(additionalmess.build());
-				addbuild.setColor(Color.decode("#038aff"));
 				addbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
 				if (!(info.equalsIgnoreCase(""))) {
@@ -373,11 +370,11 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		int planhash = classPlan.getTextContent().hashCode();
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;")) {
+		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
 			if (set.next()) {
 
-				dbhash = set.getInt("classeintraege");
+				dbhash = set.getInt("classEntrys");
 
 			}
 
@@ -388,13 +385,13 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 				if (dbhash != planhash || synced) {
 
-					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", onlinedate);
+					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", onlinedate);
 					return true;
 
 				}
 				return false;
 			}
-			LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", onlinedate, planhash);
+			LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", onlinedate, planhash);
 
 		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
@@ -452,10 +449,10 @@ public class Stundenplan24Vplan implements LoopedEvent {
 		String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
 		onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
 
-		try (ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;")) {
+		try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
 
 			if (next.next()) {
-				dbdate = next.getString("zieldatum");
+				dbdate = next.getString("targetDate");
 			}
 
 			if (dbdate.equalsIgnoreCase(onlinedate)) {
@@ -467,9 +464,9 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
 
 				if (old.next()) {
-					LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
-							old.getString("zieldatum"), old.getInt("classeintraege"));
-					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
+					LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
+							old.getString("targetDate"), old.getInt("classEntrys"));
+					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
 				}
 			}
 			return true;

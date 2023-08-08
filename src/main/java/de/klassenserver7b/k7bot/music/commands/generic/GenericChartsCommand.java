@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.music.commands.generic;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import de.klassenserver7b.k7bot.util.Cell;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -104,17 +104,10 @@ public abstract class GenericChartsCommand {
 
 	public void sendEmbed(GenericMessageSendHandler sendHandler, String formatedcharts, Color col) {
 
-		EmbedBuilder builder = new EmbedBuilder();
+		EmbedBuilder builder = EmbedUtils.getBuilderOf((col != null ? col : Color.decode("#2c82c9")), formatedcharts,
+				sendHandler.getGuild().getIdLong());
 		builder.setFooter("requested by slashcommand");
-		builder.setTimestamp(OffsetDateTime.now());
 		builder.setTitle("Your requested Charts");
-
-		if (col != null) {
-			builder.setColor(col);
-		} else {
-			builder.setColor(Color.decode("#2c82c9"));
-		}
-
 		builder.setDescription(formatedcharts);
 
 		sendHandler.sendMessageEmbeds(builder.build()).queue();
