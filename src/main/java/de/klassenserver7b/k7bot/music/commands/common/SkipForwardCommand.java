@@ -9,7 +9,7 @@ import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class SkipForwardCommand implements ServerCommand {
 
@@ -31,7 +31,7 @@ public class SkipForwardCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;

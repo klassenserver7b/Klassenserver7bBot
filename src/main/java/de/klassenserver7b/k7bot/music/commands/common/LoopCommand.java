@@ -9,12 +9,12 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class LoopCommand implements ServerCommand {
 
@@ -37,7 +37,7 @@ public class LoopCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
@@ -50,14 +50,13 @@ public class LoopCommand implements ServerCommand {
 		if (controller.getPlayer().getPlayingTrack() != null || !(controller.getQueue().getQueuelist().isEmpty())) {
 
 			onLoop(controller);
-			channel.sendMessageEmbeds(
-					new EmbedBuilder().setColor(Color.decode("#4d05e8")).setDescription("Queue looped!").build())
+			channel.sendMessageEmbeds(EmbedUtils
+					.getBuilderOf(Color.decode("#4d05e8"), "Queue looped!", channel.getGuild().getIdLong()).build())
 					.queue();
 
 		} else {
 
-			channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red)
-					.setDescription("There isn't a song/playlist to loop!").build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("There isn't a song/playlist to loop!").build()).queue();
 
 		}
 

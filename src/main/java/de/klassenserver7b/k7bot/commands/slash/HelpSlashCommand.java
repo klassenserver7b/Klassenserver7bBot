@@ -1,6 +1,5 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.common.HelpCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
-import net.dv8tion.jda.api.EmbedBuilder;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -48,7 +47,7 @@ public class HelpSlashCommand implements TopLevelSlashCommand {
 
 		if (ch == null) {
 
-			MessageEmbed errorembed = new EmbedBuilder().setColor(Color.red).setDescription(
+			MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
 

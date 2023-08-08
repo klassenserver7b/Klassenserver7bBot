@@ -59,7 +59,7 @@ import de.klassenserver7b.k7bot.util.commands.common.StatsCategoryCommand;
 import de.klassenserver7b.k7bot.util.customapis.DisabledAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 /**
  *
@@ -165,7 +165,7 @@ public class CommandManager {
 	 * @param message
 	 * @return
 	 */
-	public int perform(String command, Member m, TextChannel channel, Message message) {
+	public int perform(String command, Member m, GuildMessageChannel channel, Message message) {
 		ServerCommand cmd;
 		if ((cmd = this.mappedCommands.get(command.toLowerCase())) != null) {
 

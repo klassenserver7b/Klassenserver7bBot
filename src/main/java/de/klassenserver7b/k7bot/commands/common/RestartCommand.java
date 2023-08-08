@@ -11,7 +11,7 @@ import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class RestartCommand implements ServerCommand {
 
@@ -34,7 +34,7 @@ public class RestartCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 			Logger log = Klassenserver7bbot.getInstance().getMainLogger();

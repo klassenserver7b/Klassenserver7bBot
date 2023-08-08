@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
@@ -42,19 +42,19 @@ public class ReactRolesCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 			String[] args = message.getContentDisplay().split(" ");
 
 			if (args.length == 5) {
 
-				List<TextChannel> channels = message.getMentions().getChannels(TextChannel.class);
+				List<GuildMessageChannel> channels = message.getMentions().getChannels(GuildMessageChannel.class);
 				List<Role> roles = message.getMentions().getRoles();
 				List<CustomEmoji> emotes = message.getMentions().getCustomEmojis();
 
 				if (!channels.isEmpty() && !roles.isEmpty()) {
-					TextChannel tc = channels.get(0);
+					GuildMessageChannel tc = channels.get(0);
 					Role role = roles.get(0);
 					String MessageIdString = args[2];
 

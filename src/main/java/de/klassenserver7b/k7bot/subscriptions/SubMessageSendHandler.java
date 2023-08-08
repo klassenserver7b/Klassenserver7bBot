@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.subscriptions.types.Subscription;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
-import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 public class SubMessageSendHandler {
@@ -27,16 +27,12 @@ public class SubMessageSendHandler {
 
 		switch (type) {
 
-		case TEXT_CHANNEL: {
-			sendTextChannelMessage(s, d);
+		case TEXT_CHANNEL, NEWS: {
+			sendGuildMessageChannelMessage(s, d);
 			break;
 		}
 		case PRIVATE_CHANNEL: {
 			sendPrivateMessage(s, d);
-			break;
-		}
-		case NEWS: {
-			sendNewsMessage(s, d);
 			break;
 		}
 		case CANARY: {
@@ -53,18 +49,20 @@ public class SubMessageSendHandler {
 
 	}
 
-	private void sendTextChannelMessage(Subscription s, MessageCreateData data) {
+	private void sendGuildMessageChannelMessage(Subscription s, MessageCreateData data) {
 		Long chanid = s.getTargetDiscordId();
 
-		TextChannel ch = Klassenserver7bbot.getInstance().getShardManager().getTextChannelById(chanid);
+		GuildChannel gchan = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(chanid);
+		GuildMessageChannel channel;
 
-		if (ch != null) {
+		if ((gchan) != null && (gchan instanceof GuildMessageChannel)
+				&& (channel = (GuildMessageChannel) gchan) != null) {
 
-			ch.sendMessage(data).queue();
+			channel.sendMessage(data).queue();
 
 		} else {
 			log.error("Could not find the Discord target for the Subscription\nSubscriptionId: " + s.getId()
-					+ "\nDiscord(TextChannel)Id: " + s.getTargetDiscordId());
+					+ "\nDiscord(GuildMessageChannel)Id: " + s.getTargetDiscordId());
 		}
 
 	}
@@ -86,23 +84,6 @@ public class SubMessageSendHandler {
 
 	}
 
-	private void sendNewsMessage(Subscription s, MessageCreateData data) {
-
-		Long chanid = s.getTargetDiscordId();
-
-		NewsChannel ch = Klassenserver7bbot.getInstance().getShardManager().getNewsChannelById(chanid);
-
-		if (ch != null) {
-
-			ch.sendMessage(data).queue();
-
-		} else {
-			log.error("Could not find the Discord target for the Subscription\nSubscriptionId: " + s.getId()
-					+ "\nDiscord(NewsChannel)Id: " + s.getTargetDiscordId());
-		}
-
-	}
-
 	private void sendCanaryMessage(Subscription s, MessageCreateData data) {
 
 		if (!Klassenserver7bbot.getInstance().isDevMode() || (s.getDeliveryType() != SubscriptionDeliveryType.CANARY)) {
@@ -111,15 +92,17 @@ public class SubMessageSendHandler {
 
 		Long chanid = s.getTargetDiscordId();
 
-		TextChannel ch = Klassenserver7bbot.getInstance().getShardManager().getTextChannelById(chanid);
+		GuildChannel gchan = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(chanid);
+		GuildMessageChannel channel;
 
-		if (ch != null) {
+		if ((gchan) != null && (gchan instanceof GuildMessageChannel)
+				&& (channel = (GuildMessageChannel) gchan) != null) {
 
-			ch.sendMessage(data).queue();
+			channel.sendMessage(data).queue();
 
 		} else {
 			log.error("Could not find the Discord target for the Subscription\nSubscriptionId: " + s.getId()
-					+ "\nDiscord(Canary TextChannel)Id: " + s.getTargetDiscordId());
+					+ "\nDiscord(Canary GuildMessageChannel)Id: " + s.getTargetDiscordId());
 		}
 
 	}

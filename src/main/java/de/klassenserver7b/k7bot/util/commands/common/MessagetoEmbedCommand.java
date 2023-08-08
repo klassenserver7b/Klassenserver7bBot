@@ -1,13 +1,12 @@
 package de.klassenserver7b.k7bot.util.commands.common;
 
-import java.time.OffsetDateTime;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class MessagetoEmbedCommand implements ServerCommand {
 
@@ -29,16 +28,13 @@ public class MessagetoEmbedCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		String mess = message.getContentRaw().substring(9);
 
-		EmbedBuilder builder = new EmbedBuilder();
+		EmbedBuilder builder = EmbedUtils.getSuccessEmbed(mess, channel.getGuild().getIdLong());
 		builder.setFooter("Requested by @" + m.getEffectiveName());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setColor(4128512);
 		builder.setTitle("@" + m.getEffectiveName() + "'s embed");
-		builder.setDescription(mess);
 
 		channel.sendMessageEmbeds(builder.build()).queue();
 	}

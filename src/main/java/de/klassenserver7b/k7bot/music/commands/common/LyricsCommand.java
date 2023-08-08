@@ -2,7 +2,6 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -23,12 +22,13 @@ import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import de.klassenserver7b.k7bot.music.utilities.gla.GLACustomSongSearch;
 import de.klassenserver7b.k7bot.music.utilities.gla.GLACustomSongSearch.Hit;
 import de.klassenserver7b.k7bot.music.utilities.gla.GLAWrapper;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class LyricsCommand implements ServerCommand {
 
@@ -57,7 +57,7 @@ public class LyricsCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)
 				|| !MusicUtil.isPlayingSong(channel, m)) {
@@ -107,18 +107,16 @@ public class LyricsCommand implements ServerCommand {
 
 	}
 
-	private void sendErrorEmbed(TextChannel c) {
+	private void sendErrorEmbed(GuildMessageChannel c) {
 
-		EmbedBuilder build = new EmbedBuilder();
-
-		build.setColor(16711680);
-		build.setDescription("Couldn't find the song you searched for");
+		EmbedBuilder build = EmbedUtils.getErrorEmbed("Couldn't find the song you searched for",
+				c.getGuild().getIdLong());
 
 		c.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
 	}
 
-	private void sendGeniusEmbed(GLACustomSongSearch data, TextChannel c, Member m) {
+	private void sendGeniusEmbed(GLACustomSongSearch data, GuildMessageChannel c, Member m) {
 
 		c.sendTyping().queue();
 
@@ -129,30 +127,26 @@ public class LyricsCommand implements ServerCommand {
 
 		Hit hit = data.getHits().getFirst();
 
-		EmbedBuilder builder = new EmbedBuilder();
+		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), hit.fetchLyrics(),
+				c.getGuild().getIdLong());
 
 		builder.setThumbnail(hit.getThumbnailUrl());
 		builder.setTitle("Lyrics of " + hit.getTitle() + " from " + hit.getArtist().getName());
 		builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by Genius");
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setColor(Color.decode("#14cdc8"));
-
-		builder.setDescription(hit.fetchLyrics());
 
 		c.sendMessageEmbeds(builder.build()).queue();
 
 	}
 
-	private void sendJLyricsEmbed(Lyrics data, TextChannel c, Member m) {
+	private void sendJLyricsEmbed(Lyrics data, GuildMessageChannel c, Member m) {
 
 		c.sendTyping().queue();
 
-		EmbedBuilder builder = new EmbedBuilder();
+		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), data.getContent(),
+				c.getGuild().getIdLong());
 
 		builder.setTitle("Lyrics of " + data.getTitle() + " from " + data.getAuthor());
 		builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by " + data.getSource());
-		builder.setTimestamp(OffsetDateTime.now());
-		builder.setColor(Color.decode("#14cdc8"));
 
 		builder.setDescription(data.getContent());
 

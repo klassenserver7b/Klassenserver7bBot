@@ -9,7 +9,7 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.HypixelCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.hypixel.api.HypixelAPI;
 import net.hypixel.api.reply.PunishmentStatsReply;
 
@@ -22,7 +22,7 @@ public class WatchdogCommand implements HypixelCommand {
 	}
 
 	@Override
-	public void performHypixelCommand(Member m, TextChannel channel, Message message) {
+	public void performHypixelCommand(Member m, GuildMessageChannel channel, Message message) {
 		HypixelAPI api = Klassenserver7bbot.getInstance().getHypixelAPI();
 
 		try {

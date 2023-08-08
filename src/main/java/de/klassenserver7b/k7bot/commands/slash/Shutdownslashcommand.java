@@ -1,16 +1,18 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
+import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -22,15 +24,12 @@ public class Shutdownslashcommand implements TopLevelSlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		Member m = event.getMember();
-		TextChannel channel = event.getChannel().asTextChannel();
+		GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
 
 		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 
-			EmbedBuilder build = new EmbedBuilder();
-
-			build.setColor(16711680);
-			build.setFooter("Requested by @" + event.getMember().getEffectiveName());
-			build.setDescription("Bot is shutting down!");
+			EmbedBuilder build = EmbedUtils.getBuilderOf(Color.orange,
+					"# Bot is shutting down! #" + "\n \n Requested by @" + event.getMember().getEffectiveName());
 
 			event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 

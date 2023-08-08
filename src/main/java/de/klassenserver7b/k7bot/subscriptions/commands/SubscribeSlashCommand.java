@@ -1,7 +1,5 @@
 package de.klassenserver7b.k7bot.subscriptions.commands;
 
-import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +11,7 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
-import net.dv8tion.jda.api.EmbedBuilder;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
@@ -41,9 +39,8 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
 		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
-			hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
-					.setDescription(
-							"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
+			hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+					"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
 					.build()).queue();
 			return;
 		}
@@ -56,18 +53,14 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 						SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
 						event.getUser().openPrivateChannel().complete().getIdLong());
 
-				hook.sendMessageEmbeds(
-						new EmbedBuilder().setColor(Color.decode("#00ff00")).setTimestamp(OffsetDateTime.now())
-								.setDescription("The subscription was created successfull!").build())
+				hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
 						.queue();
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 
 				log.error(e.getMessage(), e);
-				hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
-						.setDescription(
-								"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
+				hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+						"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 						.build()).queue();
 
 			}
@@ -88,9 +81,8 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 				}
 				default -> {
 					delivery = SubscriptionDeliveryType.UNKNOWN;
-					hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.red).setTimestamp(OffsetDateTime.now())
-							.setDescription("Can't create subscription in " + union.getType()
-									+ "!\nPlease use a Text or News Channel")
+					hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+							"Can't create subscription in " + union.getType() + "!\nPlease use a Text or News Channel")
 							.build()).queue();
 				}
 				}
@@ -104,9 +96,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
 				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
 						union.getIdLong());
-				hook.sendMessageEmbeds(
-						new EmbedBuilder().setColor(Color.decode("#00ff00")).setTimestamp(OffsetDateTime.now())
-								.setDescription("The subscription was created successfull!").build())
+				hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
 						.queue();
 			}
 
@@ -130,7 +120,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
 		}
 
-		SubcommandData textchannelsub = new SubcommandData("textchannel",
+		SubcommandData GuildMessageChannelsub = new SubcommandData("GuildMessageChannel",
 				"Use this if you want to recieve your messages in a Text-Channel")
 				.addOptions(
 						new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
@@ -144,7 +134,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
 		return Commands.slash("subscribe", "Addes a subscription for the given type in the given channel.")
-				.addSubcommands(textchannelsub, privatechannelsub)
+				.addSubcommands(GuildMessageChannelsub, privatechannelsub)
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
 	}
 

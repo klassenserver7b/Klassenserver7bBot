@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class ReactionListener extends ListenerAdapter {
+public class ReactionListener extends ListenerAdapter implements InitRequiringListener {
 
 	private final Logger log;
 
@@ -63,12 +63,14 @@ public class ReactionListener extends ListenerAdapter {
 						guild.removeRoleFromMember(member, guild.getRoleById(rollenid)).queue();
 					}
 				}
-			}
-			catch (SQLException |
-
-					IllegalArgumentException e) {
+			} catch (SQLException | IllegalArgumentException e) {
 				log.error(e.getMessage(), e);
 			}
 		}
+	}
+
+	@Override
+	public void initialize() {
+
 	}
 }

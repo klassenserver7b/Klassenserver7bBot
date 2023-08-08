@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -61,7 +61,7 @@ public class VoteReactionListener extends ListenerAdapter {
 
 			channel.sendMessage("Voting beendet!");
 			gameMaster.openPrivateChannel().complete()
-					.sendMessageEmbeds(new EmbedBuilder().setDescription(build.toString()).build()).queue();
+					.sendMessageEmbeds(EmbedUtils.getBuilderOf(build.toString()).build()).queue();
 
 			Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
 

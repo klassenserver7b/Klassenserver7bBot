@@ -8,7 +8,7 @@ import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -34,7 +34,7 @@ public class ReactRolesSlashCommand implements TopLevelSlashCommand {
 			OptionMapping emoteop = event.getOption("emoteid-oder-utfemote");
 			OptionMapping roleop = event.getOption("role");
 
-			TextChannel tc = channel.getAsChannel().asTextChannel();
+			GuildMessageChannel tc = channel.getAsChannel().asGuildMessageChannel();
 			Role role = roleop.getAsRole();
 			long MessageId = messageid.getAsLong();
 
@@ -61,7 +61,7 @@ public class ReactRolesSlashCommand implements TopLevelSlashCommand {
 			hook.sendMessage("Reactrole was successfull set for Message: " + MessageId).queue();
 
 		} else {
-			PermissionError.onPermissionError(m, event.getChannel().asTextChannel());
+			PermissionError.onPermissionError(m, event.getChannel().asGuildMessageChannel());
 		}
 
 	}

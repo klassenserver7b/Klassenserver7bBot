@@ -29,10 +29,11 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.Cell;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.TableMessage;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -61,7 +62,7 @@ public class VPlan_MANOS_OLD {
 	 *
 	 * @since 1.15.0
 	 */
-	public void sendVplanToChannel(boolean force, String klasse, TextChannel channel) {
+	public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
 
 		try (MessageCreateData d = getVplanMessage()) {
 			if (d != null) {
@@ -116,7 +117,7 @@ public class VPlan_MANOS_OLD {
 
 		}
 
-		LiteSQL.onUpdate("UPDATE vplannext SET classeintraege = ?;", fien.hashCode());
+		LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", fien.hashCode());
 
 		return new MessageCreateBuilder().setEmbeds(builder.build()).build();
 
@@ -226,7 +227,7 @@ public class VPlan_MANOS_OLD {
 
 	private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
 
-		EmbedBuilder builder = new EmbedBuilder();
+		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
 		String info = plan.get("info").toString();
 
@@ -245,8 +246,6 @@ public class VPlan_MANOS_OLD {
 			}
 		}
 
-		builder.setColor(Color.decode("#038aff"));
-		builder.setTimestamp(OffsetDateTime.now());
 		builder.setFooter("Stand vom ");
 
 		if (!(info.equalsIgnoreCase(""))) {
@@ -280,11 +279,11 @@ public class VPlan_MANOS_OLD {
 		}
 		int h = getC.hashCode();
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT classeintraege FROM vplannext;")) {
+		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
 			if (set.next()) {
 
-				dbh = set.getInt("classeintraege");
+				dbh = set.getInt("classEntrys");
 
 			}
 
@@ -297,7 +296,7 @@ public class VPlan_MANOS_OLD {
 							.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
 							.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
 							.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-					LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = ?;", date);
+					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", date);
 
 				} else {
 					return null;
@@ -309,7 +308,7 @@ public class VPlan_MANOS_OLD {
 						.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
 						.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
 						.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-				LiteSQL.onUpdate("INSERT INTO vplannext(zieldatum, classeintraege) VALUES(?, ?);", date,
+				LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", date,
 						finalentries.hashCode());
 			}
 
@@ -336,10 +335,10 @@ public class VPlan_MANOS_OLD {
 			String realdate = "" + time.getDayOfMonth() + "."
 					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
-			try (ResultSet next = LiteSQL.onQuery("SELECT zieldatum FROM vplannext;")) {
+			try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
 				if (next.next()) {
 
-					dbdate = next.getString("zieldatum");
+					dbdate = next.getString("targetDate");
 				}
 
 				if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
@@ -349,9 +348,9 @@ public class VPlan_MANOS_OLD {
 					try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
 
 						if (old.next()) {
-							LiteSQL.onUpdate("UPDATE vplancurrent SET zieldatum = ?, classeintraege = ?;",
-									old.getString("zieldatum"), old.getInt("classeintraege"));
-							LiteSQL.onUpdate("UPDATE vplannext SET zieldatum = '', classeintraege = '';");
+							LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
+									old.getString("targetDate"), old.getInt("classEntrys"));
+							LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
 						}
 					}
 					return true;

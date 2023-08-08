@@ -1,3 +1,5 @@
+Default Embed (Timestamp + Author, maybe color als param, maybe auch desc als param)
+
 Poll System
 
 move DanceInterpreterJSONGenerateCommand into Danceinterpreter

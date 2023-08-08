@@ -5,7 +5,7 @@ import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class PingCommand implements ServerCommand {
 
@@ -28,7 +28,7 @@ public class PingCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		long gatewayping = getGatewayping(channel.getJDA());
 		long time = getRESTping(channel.getJDA());

@@ -8,12 +8,12 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class UnLoopCommand implements ServerCommand {
 
@@ -36,7 +36,7 @@ public class UnLoopCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
 			return;
@@ -45,8 +45,9 @@ public class UnLoopCommand implements ServerCommand {
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
 		unLoop(vc.getGuild().getIdLong());
-		channel.sendMessageEmbeds(
-				new EmbedBuilder().setColor(Color.decode("#4d05e8")).setDescription("Queue unlooped!").build()).queue();
+		channel.sendMessageEmbeds(EmbedUtils
+				.getBuilderOf(Color.decode("#4d05e8"), "Queue unlooped!", channel.getGuild().getIdLong()).build())
+				.queue();
 
 	}
 

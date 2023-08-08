@@ -15,7 +15,7 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -30,10 +30,19 @@ public class CommandListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		if (!Klassenserver7bbot.getInstance().isInExit()) {
-			String message = event.getMessage().getContentStripped();
 
 			switch (event.getChannelType()) {
-			case TEXT: {
+
+			case PRIVATE -> {
+				privateMessageRecieved(event, event.getMessage());
+			}
+
+			case CATEGORY, GROUP, UNKNOWN -> {
+				throw new IllegalStateException("Message from illegal ChannelType" + event.getChannel(),
+						new Throwable().fillInStackTrace());
+			}
+
+			default -> {
 				try {
 					String prefix = Klassenserver7bbot.getInstance().getPrefixMgr()
 							.getPrefix(event.getGuild().getIdLong());
@@ -43,19 +52,12 @@ public class CommandListener extends ListenerAdapter {
 					}
 
 					prefix = prefix.toLowerCase();
-					guildMessageRecieved(event, message, prefix);
+					guildMessageRecieved(event, prefix);
 				} catch (IllegalStateException e) {
 					log.error(e.getMessage(), e);
 				}
-				break;
-			}
-			case PRIVATE: {
-				privateMessageRecieved(event, event.getMessage());
-				break;
-			}
 
-			default:
-				break;
+			}
 			}
 
 		}
@@ -72,11 +74,12 @@ public class CommandListener extends ListenerAdapter {
 		}
 	}
 
-	public void guildMessageRecieved(@NotNull MessageReceivedEvent event, String message, String prefix) {
+	public void guildMessageRecieved(@NotNull MessageReceivedEvent event, String prefix) {
 
-		TextChannel channel = event.getChannel().asTextChannel();
+		GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
+		String messstr = event.getMessage().getContentRaw();
 
-		switch (message) {
+		switch (messstr) {
 
 		case "-help" -> {
 			Klassenserver7bbot.getInstance().getCmdMan().perform("help", event.getMember(), channel,
@@ -95,11 +98,11 @@ public class CommandListener extends ListenerAdapter {
 
 		default -> {
 
-			if (!message.startsWith(prefix) || message.length() == 0) {
+			if (!messstr.startsWith(prefix) || messstr.length() == 0) {
 				return;
 			}
 
-			String[] args = message.substring(prefix.length()).split(" ");
+			String[] args = messstr.substring(prefix.length()).split(" ");
 
 			if (args.length < 1) {
 				return;
@@ -126,7 +129,7 @@ public class CommandListener extends ListenerAdapter {
 
 	}
 
-	private void sendDisabledCommand(TextChannel chan, String command) {
+	private void sendDisabledCommand(GuildMessageChannel chan, String command) {
 
 		String shortcommand = command;
 
@@ -139,7 +142,7 @@ public class CommandListener extends ListenerAdapter {
 				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
-	private void sendUnknownCommand(TextChannel chan, String command) {
+	private void sendUnknownCommand(GuildMessageChannel chan, String command) {
 
 		String nearestComm = Klassenserver7bbot.getInstance().getCmdMan().getNearestCommand(command);
 

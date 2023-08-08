@@ -42,13 +42,11 @@ public class PrefixManager {
 					continue;
 				}
 
-				if (prefix != null) {
-					prefixl.put(guildid, prefix);
-				} else {
-					prefixl.put(guildid, "-");
-				}
+				assert prefix != null; // SET as NOT NULL AND DEFAULT '-' in DB
 
+				prefixl.put(guildid, prefix);
 			}
+
 		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -58,7 +56,11 @@ public class PrefixManager {
 			for (Guild g : jda.getGuilds()) {
 
 				if (!prefixl.containsKey(g.getIdLong())) {
-					setInternalPrefix(g.getIdLong(), "-");
+					try {
+						setInternalPrefix(g.getIdLong(), "-");
+					} catch (IllegalArgumentException e) {
+						log.warn(e.getMessage(), e);
+					}
 				}
 
 			}
@@ -67,23 +69,30 @@ public class PrefixManager {
 
 	}
 
-	private void setInternalPrefix(Long guildid, String newprefix) throws IllegalArgumentException {
+	/**
+	 * 
+	 * @param guildid
+	 * @param newprefix
+	 * @throws IllegalArgumentException
+	 */
+	private void setInternalPrefix(long guildid, String newprefix) throws IllegalArgumentException {
 
 		if (newprefix == null || newprefix.isBlank()) {
-			throw new IllegalArgumentException("can't use a empty prefix", new Throwable().fillInStackTrace());
+			throw new IllegalArgumentException("can't use a empty prefix - guildid: " + guildid,
+					new Throwable().fillInStackTrace());
 		}
 
-		if (prefixl.containsKey(guildid)) {
-			LiteSQL.onUpdate("UPDATE botutil SET prefix = ?", newprefix);
-		} else {
-			LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(?, ?)", guildid, newprefix);
-		}
-
-		prefixl.put(guildid, newprefix);
+		applyPrefix(guildid, newprefix);
 
 	}
 
-	public void setPrefix(Long guildid, String newprefix) throws IllegalArgumentException {
+	/**
+	 * 
+	 * @param guildid
+	 * @param newprefix
+	 * @throws IllegalArgumentException
+	 */
+	public void setPrefix(long guildid, String newprefix) throws IllegalArgumentException {
 
 		reload();
 
@@ -91,14 +100,15 @@ public class PrefixManager {
 			throw new IllegalArgumentException("can't use a empty prefix", new Throwable().fillInStackTrace());
 		}
 
-		if (prefixl.containsKey(guildid)) {
-			LiteSQL.onUpdate("UPDATE botutil SET prefix = ?", newprefix);
-		} else {
-			LiteSQL.onUpdate("INSERT INTO botutil(guildId, prefix) VALUES(?, ?)", guildid, newprefix);
-		}
+		applyPrefix(guildid, newprefix);
 
-		prefixl.put(guildid, newprefix);
+	}
 
+	protected void applyPrefix(long guildid, String prefix) {
+
+		LiteSQL.onUpdate("INSERT OR REPLACE INTO botutil(guildId, prefix) VALUES(?, ?)", guildid, prefix);
+
+		prefixl.put(guildid, prefix);
 	}
 
 	public String getPrefix(Guild guild) {

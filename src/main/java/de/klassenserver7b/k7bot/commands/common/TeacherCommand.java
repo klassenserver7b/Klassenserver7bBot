@@ -1,18 +1,16 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import java.time.OffsetDateTime;
-
 import com.google.gson.JsonObject;
 
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class TeacherCommand implements ServerCommand {
 
@@ -35,19 +33,15 @@ public class TeacherCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentStripped().split(" ");
 
 		if (args.length > 1) {
 
-			EmbedBuilder builder = new EmbedBuilder();
 			StringBuilder strbuild = new StringBuilder();
 
 			JsonObject teacher = Klassenserver7bbot.getInstance().getTeacherList().get(args[1]).getAsJsonObject();
-
-			builder.setFooter("requested by @" + m.getEffectiveName());
-			builder.setTimestamp(OffsetDateTime.now());
 
 			strbuild.append("**Kürzel**: " + args[1]);
 			strbuild.append("\n");
@@ -70,9 +64,8 @@ public class TeacherCommand implements ServerCommand {
 
 			strbuild.append(teacher.get("full_name").getAsString().replaceAll("\"", ""));
 
-			builder.setDescription(strbuild.toString());
-
-			channel.sendMessageEmbeds(builder.build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getBuilderOf(strbuild.toString(), channel.getGuild().getIdLong())
+					.setFooter("requested by @" + m.getEffectiveName()).build()).queue();
 
 		} else {
 

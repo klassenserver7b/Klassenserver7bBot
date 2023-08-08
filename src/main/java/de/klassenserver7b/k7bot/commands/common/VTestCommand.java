@@ -8,8 +8,8 @@ import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class VTestCommand implements ServerCommand {
 
@@ -31,7 +31,7 @@ public class VTestCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message message) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
 
@@ -40,7 +40,7 @@ public class VTestCommand implements ServerCommand {
 			GuildChannel chan = message.getMentions().getChannels().get(0);
 
 			if (chan.getType() == ChannelType.TEXT) {
-				new Stundenplan24Vplan().sendVplanToChannel(true, args[1], (TextChannel) chan);
+				new Stundenplan24Vplan().sendVplanToChannel(true, args[1], (GuildMessageChannel) chan);
 			}
 		} else {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "vtest [klasse] #channel", m);

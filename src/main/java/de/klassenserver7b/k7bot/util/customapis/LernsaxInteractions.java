@@ -22,6 +22,7 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.manage.PropertiesManager;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import de.konsl.webweaverapi.WebWeaverClient;
@@ -33,7 +34,6 @@ import de.konsl.webweaverapi.model.messages.Message;
 import de.konsl.webweaverapi.model.messages.MessageType;
 import de.konsl.webweaverscraper.Popup;
 import de.konsl.webweaverscraper.WebWeaverScraper;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -248,7 +248,7 @@ public class LernsaxInteractions implements LoopedEvent {
 					// IGNORED
 				}
 
-				MessageEmbed messEmbed = new EmbedBuilder()
+				MessageEmbed messEmbed = EmbedUtils.getDefault()
 						.setTitle("Ein neuer Lernplan wurde bereitgestellt!",
 								"https://" + client.getRemoteHost() + "/l.php?" + linkURLQuery)
 						.addField("Name", msg.getData(), false)
@@ -265,18 +265,20 @@ public class LernsaxInteractions implements LoopedEvent {
 
 					WebWeaverScraper scraper = new WebWeaverScraper();
 					Popup popup = scraper.navigate(URI.create(autologinUrl), true);
-					
+
 					Element learningPlanContent = popup.document().selectFirst("#main_content > p.panel");
-					if (learningPlanContent == null) continue;
+					if (learningPlanContent == null)
+						continue;
 					String content = learningPlanContent.wholeText();
 
 					Element logoutLink = scraper.getDocument().selectFirst("a[href^=107480.php]");
 					if (logoutLink != null) {
-					    URI logoutUri = URI.create(logoutLink.attr("href"));
-					    scraper.navigate(logoutUri);
+						URI logoutUri = URI.create(logoutLink.attr("href"));
+						scraper.navigate(logoutUri);
 					}
 
-					try (FileUpload fup = FileUpload.fromData(content.getBytes(StandardCharsets.UTF_8),	"Learningplan_"+OffsetDateTime.now().toEpochSecond() + "-" + msg.getData().replace(" ", "_") + ".txt")) {
+					try (FileUpload fup = FileUpload.fromData(content.getBytes(StandardCharsets.UTF_8), "Learningplan_"
+							+ OffsetDateTime.now().toEpochSecond() + "-" + msg.getData().replace(" ", "_") + ".txt")) {
 						messageData.add(new MessageCreateBuilder().addFiles(fup).build());
 					}
 

@@ -3,17 +3,14 @@
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
-import java.awt.Color;
-import java.time.OffsetDateTime;
-
 import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -69,8 +66,8 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 			return timefilter;
 		}));
 
-		hook.sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
-				.setDescription("Successfully applied speed change").setTimestamp(OffsetDateTime.now()).build())
+		hook.sendMessageEmbeds(
+				EmbedUtils.getSuccessEmbed("Successfully applied speed change", event.getGuild().getIdLong()).build())
 				.queue();
 	}
 

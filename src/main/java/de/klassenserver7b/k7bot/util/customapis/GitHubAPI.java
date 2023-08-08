@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -59,17 +60,15 @@ public class GitHubAPI implements LoopedEvent {
 
 			String[] split = s.split("\n");
 
-			EmbedBuilder b = new EmbedBuilder();
-			b.setColor(Color.decode("#7289da"));
-			b.setTitle(split[0]);
-
-			String body = "";
+			StringBuilder body = new StringBuilder();
 
 			for (int i = 2; i < split.length; i++) {
-				body += split[i] + "\n";
+				body.append(split[i]);
+				body.append("\n");
 			}
 
-			b.setDescription(body);
+			EmbedBuilder b = EmbedUtils.getBuilderOf(Color.decode("#7289da"), body);
+			b.setTitle(split[0]);
 
 			MessageCreateBuilder messb = new MessageCreateBuilder();
 			messb.setEmbeds(b.build());

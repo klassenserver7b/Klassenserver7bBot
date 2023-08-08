@@ -1,7 +1,6 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -11,13 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 /**
  *
@@ -45,7 +45,7 @@ public class HelpCommand implements ServerCommand {
 	}
 
 	@Override
-	public void performCommand(Member m, TextChannel channel, Message mess) {
+	public void performCommand(Member m, GuildMessageChannel channel, Message mess) {
 		String[] args = mess.getContentDisplay().split(" ");
 
 		if (args.length > 1) {
@@ -55,7 +55,7 @@ public class HelpCommand implements ServerCommand {
 		}
 	}
 
-	public void performCommand(Member m, TextChannel channel, String mess) {
+	public void performCommand(Member m, GuildMessageChannel channel, String mess) {
 		String[] args = mess.split(" ");
 
 		if (args.length > 1) {
@@ -84,11 +84,8 @@ public class HelpCommand implements ServerCommand {
 	 */
 	public MessageEmbed generateHelpOverview(Guild guild) {
 
-		EmbedBuilder ret = new EmbedBuilder();
-
+		EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#33CC66"), (guild != null ? guild.getIdLong() : null));
 		ret.setTitle("Help for the K7Bot");
-		ret.setTimestamp(OffsetDateTime.now());
-		ret.setColor(3066993);
 
 		StringBuilder strbuild = new StringBuilder();
 
@@ -125,6 +122,8 @@ public class HelpCommand implements ServerCommand {
 
 		}
 
+		ret.setDescription(strbuild);
+
 		ret.addField("", strbuild.toString(), false);
 
 		return ret.build();
@@ -145,7 +144,7 @@ public class HelpCommand implements ServerCommand {
 		int buildlength = 0;
 		String prefix;
 
-		EmbedBuilder ret = new EmbedBuilder();
+		EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"));
 
 		HelpCategories cat;
 
@@ -153,8 +152,7 @@ public class HelpCommand implements ServerCommand {
 
 			cat = HelpCategories.valueOf(catstr.trim().toUpperCase());
 
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 
 			ret.setColor(Color.red);
 			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
@@ -233,8 +231,6 @@ public class HelpCommand implements ServerCommand {
 		}
 
 		ret.setTitle("Help for the K7Bot");
-		ret.setTimestamp(OffsetDateTime.now());
-		ret.setColor(Color.decode("#14cdc8"));
 
 		return ret.build();
 
@@ -248,12 +244,12 @@ public class HelpCommand implements ServerCommand {
 	 * @param embed The HelpEmbed to be sent to the user
 	 * @param m     The {@link Member} wich is used to get the
 	 *              {@link net.dv8tion.jda.api.entities.User User}
-	 * @param tc    The {@link TextChannel} in which the reference to the DM and the
+	 * @param tc    The {@link GuildMessageChannel} in which the reference to the DM and the
 	 *              error messages are to be sent.
 	 *
 	 *
 	 */
-	private void sendEmbedPrivate(MessageEmbed embed, Member m, TextChannel tc) {
+	private void sendEmbedPrivate(MessageEmbed embed, Member m, GuildMessageChannel tc) {
 
 		PrivateChannel ch = m.getUser().openPrivateChannel().complete();
 
@@ -268,7 +264,7 @@ public class HelpCommand implements ServerCommand {
 
 		} else {
 
-			MessageEmbed errorembed = new EmbedBuilder().setColor(16711680).setDescription(
+			MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
 
