@@ -80,11 +80,6 @@
 			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
-			<id>central</id>
-			<name>bintray</name>
-			<url>https://jcenter.bintray.com</url>
-		</repository>
-		<repository>
 			<id>mandubian-mvn</id>
 			<url>
 				https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
