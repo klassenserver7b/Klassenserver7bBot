@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -27,10 +29,11 @@ import de.klassenserver7b.k7bot.listener.BotgetDC;
 import de.klassenserver7b.k7bot.listener.ButtonListener;
 import de.klassenserver7b.k7bot.listener.ChannelCreateRemoveListener;
 import de.klassenserver7b.k7bot.listener.CommandListener;
+import de.klassenserver7b.k7bot.listener.InitRequiringListener;
 import de.klassenserver7b.k7bot.listener.InviteListener;
 import de.klassenserver7b.k7bot.listener.JoinandLeaveListener;
 import de.klassenserver7b.k7bot.listener.MemesReact;
-import de.klassenserver7b.k7bot.listener.ReactionListener;
+import de.klassenserver7b.k7bot.listener.ReactRoleListener;
 import de.klassenserver7b.k7bot.listener.RoleListener;
 import de.klassenserver7b.k7bot.listener.SlashCommandListener;
 import de.klassenserver7b.k7bot.listener.VoiceListener;
@@ -50,6 +53,7 @@ import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
@@ -113,10 +117,13 @@ public class Klassenserver7bbot {
 		awaitJDAReady();
 
 		runShutdown();
+
+		initListeners();
+
 		runLoop();
 	}
 
-	private boolean initializeBot() {
+	protected boolean initializeBot() {
 
 		loadTeacherList();
 		LiteSQL.connect();
@@ -143,7 +150,7 @@ public class Klassenserver7bbot {
 		this.ownerId = Long.valueOf(propMgr.getProperty("ownerId"));
 
 		try {
-			buildBot(token, canaryToken, shardc);
+			shardMgr = buildBot(token, canaryToken, shardc);
 		} catch (IllegalArgumentException e) {
 			invalidConfigExit("Couldn't start Bot! - EXITING", 1, e);
 		}
@@ -173,7 +180,7 @@ public class Klassenserver7bbot {
 
 		builder.addEventListeners(new CommandListener());
 		builder.addEventListeners(new VoiceListener());
-		builder.addEventListeners(new ReactionListener());
+		builder.addEventListeners(new ReactRoleListener());
 		builder.addEventListeners(new RoleListener());
 		builder.addEventListeners(new InviteListener());
 		builder.addEventListeners(new BanListener());
@@ -202,7 +209,7 @@ public class Klassenserver7bbot {
 		}
 	}
 
-	private void initializeObjects() {
+	protected void initializeObjects() {
 
 		this.prefixMgr = new PrefixManager();
 
@@ -273,6 +280,32 @@ public class Klassenserver7bbot {
 		}
 	}
 
+	protected void initListeners() {
+
+		HashMap<CompletableFuture<Integer>, InitRequiringListener> futures = new HashMap<>();
+
+		for (JDA jda : shardMgr.getShards()) {
+			for (Object eventlistener : jda.getEventManager().getRegisteredListeners()) {
+				if (eventlistener instanceof InitRequiringListener) {
+					InitRequiringListener listener = (InitRequiringListener) eventlistener;
+					futures.put(listener.initialize(), listener);
+				}
+			}
+		}
+
+		for (CompletableFuture<Integer> future : futures.keySet()) {
+			int code = future.join();
+
+			if (code != 0) {
+				logger.warn(futures.get(future).getClass().getName() + " failed to initialize, ExitCode: " + code);
+				continue;
+			}
+
+			logger.debug(futures.get(future).getClass().getName() + " successfully initialized");
+		}
+
+	}
+
 	protected void invalidConfigExit(String message, int exitCode, RuntimeException e) {
 		logger.error(message, e);
 		try {
@@ -322,9 +355,9 @@ public class Klassenserver7bbot {
 
 	public String getSelfName(Long guildid) {
 
-		Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+		Guild g;
 
-		if (g != null) {
+		if (guildid != null && (g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid)) != null) {
 			return g.getSelfMember().getEffectiveName();
 		}
 

@@ -73,7 +73,7 @@ public class TokenFetchThread implements Runnable {
 				Thread.sleep(29000);
 			}
 			catch (InterruptedException e) {
-				log.warn(e.getMessage(), e);
+				log.info("Sleep Thread interrupted");
 			}
 		}
 		if (Klassenserver7bbot.getInstance().isInExit()) {

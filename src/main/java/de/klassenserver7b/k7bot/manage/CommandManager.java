@@ -202,13 +202,14 @@ public class CommandManager {
 		return true;
 	}
 
-	public boolean disableCommand(Class<?> command) {
+	public boolean disableCommandsByClass(Class<?> command) {
 
 		boolean removed = false;
 		ArrayList<ServerCommand> rem = new ArrayList<>();
 
 		for (ServerCommand serverCommand : commands) {
-			if (serverCommand.getClass().isInstance(command)) {
+			if (serverCommand.getClass().isAssignableFrom(command)
+					|| serverCommand.getClass().getCanonicalName().equalsIgnoreCase(command.getCanonicalName())) {
 				rem.add(serverCommand);
 				removed = true;
 			}
@@ -234,13 +235,14 @@ public class CommandManager {
 		return true;
 	}
 
-	public boolean enableCommand(Class<?> command) {
+	public boolean enableCommandsByClass(Class<?> command) {
 
 		boolean added = false;
 		ArrayList<ServerCommand> add = new ArrayList<>();
 
 		for (ServerCommand serverCommand : commands) {
-			if (serverCommand.getClass().isInstance(command)) {
+			if (serverCommand.getClass().isAssignableFrom(command)
+					|| serverCommand.getClass().getCanonicalName().equalsIgnoreCase(command.getCanonicalName())) {
 				add.add(serverCommand);
 				added = true;
 			}

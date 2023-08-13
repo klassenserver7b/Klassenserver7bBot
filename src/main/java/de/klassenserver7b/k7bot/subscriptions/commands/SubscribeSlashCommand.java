@@ -120,11 +120,12 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
 		}
 
-		SubcommandData GuildMessageChannelsub = new SubcommandData("GuildMessageChannel",
+		SubcommandData GuildMessageChannelsub = new SubcommandData("messagechannel",
 				"Use this if you want to recieve your messages in a Text-Channel")
 				.addOptions(
 						new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
-								.setRequired(true).setChannelTypes(ChannelType.TEXT, ChannelType.NEWS))
+								.setRequired(true)
+								.setChannelTypes(ChannelType.TEXT, ChannelType.NEWS, ChannelType.FORUM))
 				.addOptions(new OptionData(OptionType.STRING, "target",
 						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
