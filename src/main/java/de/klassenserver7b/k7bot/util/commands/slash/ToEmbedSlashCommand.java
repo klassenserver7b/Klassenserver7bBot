@@ -29,7 +29,7 @@ public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
 			InteractionHook hook = event.deferReply().complete();
 
-			EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString(), event.getGuild().getIdLong());
+			EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString().replaceAll("<br>", "\n"), event.getGuild().getIdLong());
 
 			builder.setTitle(title.getAsString());
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());

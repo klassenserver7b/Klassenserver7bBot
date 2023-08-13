@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -119,7 +120,6 @@ public class Klassenserver7bbot {
 		runShutdown();
 
 		initListeners();
-
 		runLoop();
 	}
 
@@ -294,14 +294,21 @@ public class Klassenserver7bbot {
 		}
 
 		for (CompletableFuture<Integer> future : futures.keySet()) {
-			int code = future.join();
+			int code;
+			try {
+				code = future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				logger.error(e.getMessage(), e);
+				return;
+			}
 
 			if (code != 0) {
-				logger.warn(futures.get(future).getClass().getName() + " failed to initialize, ExitCode: " + code);
+				logger.warn(
+						futures.get(future).getClass().getSimpleName() + " failed to initialize, ExitCode: " + code);
 				continue;
 			}
 
-			logger.debug(futures.get(future).getClass().getName() + " successfully initialized");
+			logger.info(futures.get(future).getClass().getSimpleName() + " successfully initialized");
 		}
 
 	}

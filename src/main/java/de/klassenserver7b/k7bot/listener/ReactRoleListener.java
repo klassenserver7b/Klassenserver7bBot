@@ -54,6 +54,10 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 			long channelId = event.getChannel().getIdLong();
 			long messageId = event.getMessageIdLong();
 
+			if (event.getUser().isBot()) {
+				return;
+			}
+
 			EmojiUnion emote = event.getEmoji();
 
 			try (ResultSet set = LiteSQL.onQuery(
@@ -128,12 +132,10 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 		public void run() {
 
 			try {
-
 				// loop through all registered reactionroles
 				while (reactroles.next()) {
-
 					/*
-					 * retrieving the GuildCHannel which should always be a GuildMessageChannel
+					 * retrieving the GuildChannel which should always be a GuildMessageChannel
 					 * (can't create reactions in other than that)
 					 */
 					GuildChannel gchan = Klassenserver7bbot.getInstance().getShardManager()
@@ -145,7 +147,9 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
 					// get Objects from db data
 					long messageId = reactroles.getLong("messageId");
-					Message mess = messchan.getHistoryAfter(messageId, 1).complete().getMessageById(messageId);
+
+					Message mess = messchan.retrieveMessageById(messageId).complete();
+
 					Guild guild = mess.getGuild();
 					Role role = guild.getRoleById(reactroles.getLong("roleId"));
 
@@ -155,10 +159,12 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
 					List<Long> userIds = new ArrayList<>();
 					for (User u : reaction.retrieveUsers().complete()) {
-						userIds.add(u.getIdLong());
+						if (!u.isBot()) {
+							userIds.add(u.getIdLong());
+						}
 					}
 
-					String sqlstr = "SELECT userId, state from userreacts WHERE messageId = ? AND emote = ?;";
+					String sqlstr = "SELECT userId from userreacts WHERE messageId = ? AND emote = ?;";
 
 					try (ResultSet oldUserReactData = LiteSQL.onQuery(sqlstr, messageId, emoji);) {
 
@@ -176,16 +182,16 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 						}
 					}
 
-					//Add roles to every user which wasn't logged but has now reacted
+					// Add roles to every user which wasn't logged but has now reacted
 					addRoles(userIds, messageId, emoji, role, guild);
 
 				}
+
 			} catch (SQLException e) {
 				log.error(e.getMessage(), e);
 				completableFuture.complete(1);
 				return;
 			}
-
 			completableFuture.complete(0);
 
 		}
@@ -211,7 +217,7 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
 			if (!userIds.contains(dbUserId)) {
 				guild.removeRoleFromMember(UserSnowflake.fromId(dbUserId), role).queue();
-				LiteSQL.onUpdate("REMOVE FROM userreacts WHERE userId = ? AND messageId = ? AND emote=?", dbUserId,
+				LiteSQL.onUpdate("DELETE FROM userreacts WHERE userId = ? AND messageId = ? AND emote=?", dbUserId,
 						messageId, emoji);
 				return true;
 			}
