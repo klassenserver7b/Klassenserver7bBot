@@ -3,6 +3,8 @@
  */
 package de.klassenserver7b.k7bot.listener;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author K7
  */
@@ -10,6 +12,12 @@ package de.klassenserver7b.k7bot.listener;
 @FunctionalInterface
 public interface InitRequiringListener {
 
-	public void initialize();
+	/**
+	 * Initializes the Listener (usually checking stuff happened in off time)
+	 * 
+	 * @return {@link CompletableFuture} which retuns the "exit code" of the
+	 *         inmitialization
+	 */
+	public CompletableFuture<Integer> initialize();
 
 }
