@@ -58,6 +58,6 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR NOT NULL, state BOOLEAN, PRIMARY KEY(userId, guildId, messageId, emote));");
+				"CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR NOT NULL, PRIMARY KEY(userId, guildId, messageId, emote));");
 	}
 }

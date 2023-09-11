@@ -26,11 +26,10 @@ public class PrefixManager {
 	public PrefixManager() {
 		this.prefixl = new HashMap<>();
 		log = LoggerFactory.getLogger(this.getClass());
-
 		reload();
 	}
 
-	private void reload() {
+	protected void reload() {
 
 		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
 
@@ -75,7 +74,7 @@ public class PrefixManager {
 	 * @param newprefix
 	 * @throws IllegalArgumentException
 	 */
-	private void setInternalPrefix(long guildid, String newprefix) throws IllegalArgumentException {
+	protected void setInternalPrefix(long guildid, String newprefix) throws IllegalArgumentException {
 
 		if (newprefix == null || newprefix.isBlank()) {
 			throw new IllegalArgumentException("can't use a empty prefix - guildid: " + guildid,

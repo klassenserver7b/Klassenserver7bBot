@@ -1,10 +1,13 @@
 package de.klassenserver7b.k7bot.music.utilities;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.core5.http.ParseException;
@@ -100,8 +103,7 @@ public class MusicUtil {
 					&& (channel = (GuildMessageChannel) gchan) != null) {
 
 				@SuppressWarnings("resource")
-				FileUpload up = setIcons(track);
-
+				FileUpload up = FileUpload.fromData(setIcons(track),"thumbnail.jpg");
 				if (up == null) {
 					channel.sendMessageEmbeds(builder.build()).queue();
 				} else {
@@ -317,7 +319,7 @@ public class MusicUtil {
 
 	}
 
-	private static FileUpload setIcons(AudioTrack track) {
+	private static File setIcons(AudioTrack track) {
 
 		if (track instanceof YoutubeAudioTrack) {
 			return loadYTIcon(track.getIdentifier());
@@ -330,8 +332,7 @@ public class MusicUtil {
 
 	}
 
-	@SuppressWarnings("resource")
-	private static FileUpload loadSpotifyIcon(String songid) {
+	private static File loadSpotifyIcon(String songid) {
 
 		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
 
@@ -360,8 +361,18 @@ public class MusicUtil {
 				}
 			}
 
-			InputStream file = (new URL(img.getUrl())).openStream();
-			return FileUpload.fromData(file, "thumbnail.jpg");
+			File tempfile = File.createTempFile("spotifyicon_" + new Date().getTime(), ".tmp");
+
+			@SuppressWarnings("resource")
+			InputStream uin = (new URL(img.getUrl())).openStream();
+			@SuppressWarnings("resource")
+			FileOutputStream fout = new FileOutputStream(tempfile);
+
+			uin.transferTo(fout);
+			uin.close();
+			fout.close();
+
+			return tempfile;
 
 		} catch (IOException | ParseException | SpotifyWebApiException e) {
 			log.error(e.getMessage(), e);
@@ -370,13 +381,27 @@ public class MusicUtil {
 
 	}
 
-	@SuppressWarnings("resource")
-	private static FileUpload loadYTIcon(String videoId) {
+	private static File loadYTIcon(String videoId) {
 
+		File tempfile;
 		try {
-			InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg")).openStream();
+			tempfile = File.createTempFile("spotifyicon_" + new Date().getTime(), ".tmp");
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			return null;
+		}
 
-			return FileUpload.fromData(file, "thumbnail.jpg");
+		try (InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg"))
+				.openStream();) {
+
+			@SuppressWarnings("resource")
+			FileOutputStream fout = new FileOutputStream(tempfile);
+
+			file.transferTo(fout);
+			file.close();
+			fout.close();
+
+			return tempfile;
 
 		} catch (IOException e) {
 
@@ -385,7 +410,14 @@ public class MusicUtil {
 			try (InputStream file = (new URL("https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg"))
 					.openStream()) {
 
-				return FileUpload.fromData(file, "thumbnail.jpg");
+				@SuppressWarnings("resource")
+				FileOutputStream fout = new FileOutputStream(tempfile);
+
+				file.transferTo(fout);
+				file.close();
+				fout.close();
+
+				return tempfile;
 
 			} catch (IOException e1) {
 				log.error(e.getMessage(), e);
