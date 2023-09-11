@@ -249,7 +249,7 @@
 		<dependency>
 			<groupId>com.github.klassenserver7b</groupId>
 			<artifactId>widevine4j</artifactId>
-			<version>master-v1.1.0-g7cc039c-2</version>
+			<version>v1.1.0</version>
 		</dependency>
 	</dependencies>
 </project>
