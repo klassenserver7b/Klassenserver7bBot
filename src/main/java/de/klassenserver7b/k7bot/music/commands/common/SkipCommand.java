@@ -33,7 +33,7 @@ public class SkipCommand implements ServerCommand {
 
 	@Override
 	public String[] getCommandStrings() {
-		return new String[] { "skip" };
+		return new String[] { "skip", "s" };
 	}
 
 	@Override

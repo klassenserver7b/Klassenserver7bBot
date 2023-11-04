@@ -120,12 +120,10 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 	}
 
 	/**
-	 *
+	 * 
 	 * @param querytype
 	 * @param channel
 	 * @param query
-	 * @param hook
-	 * @param apm
 	 * @param controller
 	 */
 	private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
@@ -190,7 +188,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
 				}
 			} else {
-				LiteSQL.onUpdate("INSERT OR REPLACE INTO musicutil(guildId) VALUES(?);",guildId);
+				LiteSQL.onUpdate("INSERT OR REPLACE INTO musicutil(guildId) VALUES(?);", guildId);
 				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
 			}
 		} catch (SQLException e) {

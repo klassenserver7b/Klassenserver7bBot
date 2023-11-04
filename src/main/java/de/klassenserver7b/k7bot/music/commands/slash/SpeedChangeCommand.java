@@ -77,7 +77,8 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 				new OptionData(OptionType.NUMBER, "speedfactor", "factor to multyply the speed with e.g. 1.5", true)
 						.setRequiredRange(0, 2),
 				new OptionData(OptionType.BOOLEAN, "changepitch", "whether the pitch should be changed default: true",
-						false));
+						false))
+				.setGuildOnly(true);
 	}
 
 }

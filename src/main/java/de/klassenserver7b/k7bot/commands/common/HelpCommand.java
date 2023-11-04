@@ -182,7 +182,6 @@ public class HelpCommand implements ServerCommand {
 		}
 
 		commands.forEach(servercommand -> {
-			;
 
 			if (servercommand.getcategory() != null && servercommand.getcategory() == cat) {
 				searchresults.add(servercommand);

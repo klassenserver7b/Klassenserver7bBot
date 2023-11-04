@@ -21,9 +21,6 @@ public class AutoRickroll extends ListenerAdapter {
 
 	private static final String RickRollUrl = "https://www.youtube.com/watch?v=BBJa32lCaaY";
 
-	/**
-	 * @param apm
-	 */
 	public AutoRickroll() {
 		this.apm = new DefaultAudioPlayerManager();
 
@@ -36,7 +33,7 @@ public class AutoRickroll extends ListenerAdapter {
 		
 		if (event.getChannelLeft() == null && event.getGuild().getIdLong() == 701341683325075477L
 				&& event.getMember().getIdLong() != event.getGuild().getSelfMember().getUser().getIdLong()
-				&& Math.random() >= 0.95D) {
+				&& Math.random() >= 0.995D) {
 			
 			AudioChannel vc = event.getChannelJoined();
 			MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
