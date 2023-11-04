@@ -169,47 +169,39 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
 					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
+			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
-			TableMessage tablemess = new TableMessage();
-			tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
-
-			NodeList lessons = classPlan.getElementsByTagName("Std");
-
-			int limit = 6;
-			int ges = lessons.getLength();
-
-			if (lessons.getLength() < limit) {
-				limit = lessons.getLength();
-			}
-
-			for (int i = 0; i < limit; i++) {
-				Element e = (Element) lessons.item(i);
-				appendLesson(e, tablemess);
-
-			}
-			TableMessage additionalmess = new TableMessage();
-			additionalmess.setColums(5);
-
-			for (int i = limit; i < ges; i++) {
-				Element e = (Element) lessons.item(i);
-				appendLesson(e, additionalmess);
-
-			}
-
-			tablemess.automaticLineBreaks(4);
-			embbuild.setDescription("**Änderungen**\n" + tablemess.build());
-
-			boolean isextraembed = false;
-
-			if (additionalmess.hasData()) {
-				additionalmess.automaticLineBreaks(4);
-
-				if (additionalmess.build().length() <= 1020) {
-					embbuild.addField("", additionalmess.build(), false);
-				} else {
-					isextraembed = true;
-				}
-			}
+			/*
+			 * TableMessage tablemess = new TableMessage(); tablemess.addHeadline("Stunde",
+			 * "Fach", "Lehrer", "Raum", "Info");
+			 * 
+			 * NodeList lessons = classPlan.getElementsByTagName("Std");
+			 * 
+			 * int limit = 6; int ges = lessons.getLength();
+			 * 
+			 * if (lessons.getLength() < limit) { limit = lessons.getLength(); }
+			 * 
+			 * for (int i = 0; i < limit; i++) { Element e = (Element) lessons.item(i);
+			 * appendLesson(e, tablemess);
+			 * 
+			 * } TableMessage additionalmess = new TableMessage();
+			 * additionalmess.setColums(5);
+			 * 
+			 * for (int i = limit; i < ges; i++) { Element e = (Element) lessons.item(i);
+			 * appendLesson(e, additionalmess);
+			 * 
+			 * }
+			 * 
+			 * tablemess.automaticLineBreaks(4); embbuild.setDescription("**Änderungen**\n"
+			 * + tablemess.build());
+			 * 
+			 * boolean isextraembed = false;
+			 * 
+			 * if (additionalmess.hasData()) { additionalmess.automaticLineBreaks(4);
+			 * 
+			 * if (additionalmess.build().length() <= 1020) { embbuild.addField("",
+			 * additionalmess.build(), false); } else { isextraembed = true; } }
+			 */
 
 			if (!(info.equalsIgnoreCase(""))) {
 
@@ -220,28 +212,30 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
 
 			MessageCreateBuilder builder = new MessageCreateBuilder();
+			builder.setEmbeds(embbuild.build());
 
-			if (isextraembed) {
-
-				embbuild.clearFields();
-				embbuild.setFooter(null);
-				builder.addEmbeds(embbuild.build());
-
-				EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"), additionalmess.build());
-
-				addbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-
-				if (!(info.equalsIgnoreCase(""))) {
-
-					addbuild.addField("Sonstige Infos", info, false);
-
-				}
-
-				builder.addEmbeds(addbuild.build());
-
-			} else {
-				builder.setEmbeds(embbuild.build());
-			}
+			/*
+			 * if (isextraembed) {
+			 * 
+			 * embbuild.clearFields(); embbuild.setFooter(null);
+			 * 
+			 * 
+			 * EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"),
+			 * additionalmess.build());
+			 * 
+			 * addbuild.setFooter("Stand vom " +
+			 * doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
+			 * 
+			 * if (!(info.equalsIgnoreCase(""))) {
+			 * 
+			 * addbuild.addField("Sonstige Infos", info, false);
+			 * 
+			 * }
+			 * 
+			 * builder.addEmbeds(addbuild.build());
+			 * 
+			 * } else { builder.setEmbeds(embbuild.build()); }
+			 */
 
 			return builder.build();
 
@@ -278,6 +272,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 * @param tablemess
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private TableMessage appendLesson(Element e, TableMessage tablemess) {
 		TableMessage ret;
 

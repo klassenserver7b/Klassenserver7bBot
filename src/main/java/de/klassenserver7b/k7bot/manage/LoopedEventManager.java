@@ -77,7 +77,7 @@ public class LoopedEventManager {
 
 	/**
 	 *
-	 * @param identifier
+	 * @param event
 	 */
 	protected void removeEvent(LoopedEvent event) {
 		registeredEvents.remove(event);
@@ -148,7 +148,7 @@ public class LoopedEventManager {
 
 	/**
 	 * @param enable wether the api should be enabled
-	 * @param event
+	 * @param events
 	 */
 	public void registerEvents(boolean enable, LoopedEvent... events) {
 		registerEvents(enable, Arrays.asList(events));
@@ -156,7 +156,7 @@ public class LoopedEventManager {
 
 	/**
 	 * @param enable wether the api should be enabled
-	 * @param event
+	 * @param events
 	 */
 	public void registerEvents(boolean enable, Collection<? extends LoopedEvent> events) {
 		registeredEvents.addAll(events);

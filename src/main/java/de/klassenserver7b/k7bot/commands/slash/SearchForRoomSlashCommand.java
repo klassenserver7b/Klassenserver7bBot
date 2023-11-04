@@ -21,13 +21,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
  */
 public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 
-	/**
-	 * 
-	 */
-	public SearchForRoomSlashCommand() {
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 		InteractionHook hook = event.deferReply().complete();

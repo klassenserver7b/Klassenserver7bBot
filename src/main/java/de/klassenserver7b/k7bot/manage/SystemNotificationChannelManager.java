@@ -65,12 +65,12 @@ public class SystemNotificationChannelManager {
 	}
 
 	/**
-	 * Puts the given {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
-	 * into the Hashmap keyed by his {@link Guild}.
+	 * Puts the given {@link GuildMessageChannel SystemChannel} into the Hashmap
+	 * keyed by his {@link Guild}.
 	 *
 	 * @param channel <br>
-	 *                The {@link net.dv8tion.jda.api.entities.GuildMessageChannel
-	 *                SystemChannel} wich u want to use in this {@link Guild}.
+	 *                The {@link GuildMessageChannel SystemChannel} wich u want to
+	 *                use in this {@link Guild}.
 	 *
 	 *
 	 *
@@ -101,8 +101,8 @@ public class SystemNotificationChannelManager {
 	/**
 	 * @param guild <br>
 	 *              The {@link Guild} for which you want the SystemChannel.
-	 * @return The {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
-	 *         for the Guild or {@code null} if no channel is listed.
+	 * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
+	 *         {@code null} if no channel is listed.
 	 *
 	 *
 	 *
@@ -122,8 +122,8 @@ public class SystemNotificationChannelManager {
 	 * @param guildId <br>
 	 *                The Id of the {@link Guild} for which you want the
 	 *                SystemChannel.
-	 * @return The {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel}
-	 *         for the Guild or {@code null} if no channel is listed.
+	 * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
+	 *         {@code null} if no channel is listed.
 	 *
 	 *
 	 *
@@ -139,10 +139,10 @@ public class SystemNotificationChannelManager {
 
 	/**
 	 * Only used if you want the full ConcurrentHashMap! If you want only one
-	 * {@link net.dv8tion.jda.api.entities.GuildMessageChannel SystemChannel} please use
-	 * {@link SystemNotificationChannelManager#getSysChannel()}
+	 * {@link GuildMessageChannel SystemChannel} please use
+	 * {@link SystemNotificationChannelManager#getSysChannel(Guild)}
 	 *
-	 * @return The current HashMap of SystemChannels wich is used by the Bot.
+	 * @return The current HashMap of SystemChannels which is used by the Bot.
 	 *
 	 *
 	 *

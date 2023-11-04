@@ -8,7 +8,10 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 
 import org.apache.hc.core5.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -102,15 +105,22 @@ public class MusicUtil {
 			if ((gchan) != null && (gchan instanceof GuildMessageChannel)
 					&& (channel = (GuildMessageChannel) gchan) != null) {
 
-				@SuppressWarnings("resource")
-				FileUpload up = FileUpload.fromData(setIcons(track),"thumbnail.jpg");
-				if (up == null) {
-					channel.sendMessageEmbeds(builder.build()).queue();
-				} else {
-					builder.setImage("attachment://thumbnail.png");
-					channel.sendFiles(up).setEmbeds(builder.build()).queue();
-					up.close();
+				File f = setIcons(track);
+
+				if (f != null) {
+
+					try (FileUpload up = FileUpload.fromData(f, "thumbnail.jpg")) {
+
+						if (up != null) {
+							builder.setImage("attachment://thumbnail.png");
+							channel.sendFiles(up).setEmbeds(builder.build()).queue();
+							up.close();
+							return;
+						}
+					}
 				}
+
+				channel.sendMessageEmbeds(builder.build()).queue();
 
 			}
 
@@ -157,7 +167,11 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static boolean membHasVcConnection(Member m) {
+	public static boolean membHasVcConnection(@Nonnull Member m) {
+
+		if (Objects.isNull(m)) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
 
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
@@ -173,7 +187,11 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static AudioChannel getMembVcConnection(Member m) {
+	public static AudioChannel getMembVcConnection(@Nonnull Member m) {
+
+		if (Objects.isNull(m)) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
 
 		GuildVoiceState state;
 		if ((state = m.getVoiceState()) != null) {
@@ -210,7 +228,11 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static boolean checkDefaultConditions(GenericMessageSendHandler sendHandler, Member m) {
+	public static boolean checkDefaultConditions(GenericMessageSendHandler sendHandler, @Nonnull Member m) {
+
+		if (Objects.isNull(m)) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
 
 		if (!MusicUtil.membHasVcConnection(m)) {
 			sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
@@ -227,7 +249,11 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static boolean checkConditions(GenericMessageSendHandler sendHandler, Member m) {
+	public static boolean checkConditions(@Nonnull GenericMessageSendHandler sendHandler, @Nonnull Member m) {
+
+		if (Objects.isNull(m)) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
 
 		if (!MusicUtil.membHasVcConnection(m)) {
 			sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
@@ -270,7 +296,11 @@ public class MusicUtil {
 	 * @param m
 	 * @return
 	 */
-	public static boolean checkConditions(Member m) {
+	public static boolean checkConditions(@Nonnull Member m) {
+
+		if (Objects.isNull(m)) {
+			throw new IllegalArgumentException("member cannot be null");
+		}
 
 		if (!MusicUtil.membHasVcConnection(m)) {
 			return false;

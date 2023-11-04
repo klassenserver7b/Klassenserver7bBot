@@ -222,8 +222,10 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 	 * 
 	 * @param contentkey
 	 * @param fin
-	 * @param fout
-	 * @return
+	 * @param outpath
+	 * 
+	 * @return statuscode
+	 * 
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws OperationNotSupportedException
@@ -262,14 +264,22 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 		try {
 
 			final HttpGet httpget = new HttpGet(url);
-			httpget.addHeader("Authorization", "Bearer " + sasm.getSpotifyInteract().getSpotifyApi().getAccessToken());
+			httpget.addHeader(HttpHeaders.REFERER, "https://open.spotify.com");
+			httpget.addHeader("Origin", "https://open.spotify.com");
+			httpget.addHeader(HttpHeaders.HOST, url.split("/")[2]);
+			httpget.addHeader(HttpHeaders.USER_AGENT,
+					"Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0");
+			httpget.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_OCTET_STREAM);
+			httpget.addHeader(HttpHeaders.ACCEPT_LANGUAGE, "de,en-US;q=0.7,en;q=0.3");
+			httpget.addHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+			httpget.addHeader(HttpHeaders.CONNECTION, "keep-alive");
+			httpget.addHeader("Upgrade-Insecure-Requests", "1");
 
 			byte[] bresponse;
 			try {
 				bresponse = httpclient.execute(httpget, response -> EntityUtils.toByteArray(response.getEntity()));
 			} catch (HttpResponseException e) {
-				log.warn("Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive - "
-						+ e.getMessage());
+				log.warn("Invalid response from " + url + " - " + e.getMessage());
 				return null;
 			}
 
@@ -314,8 +324,9 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			return elem.getAsJsonObject().get("cdnurl").getAsJsonArray().get(0).getAsString();
 
 		} catch (HttpResponseException e) {
-			log.warn("Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive - "
-					+ e.getMessage());
+			log.warn(
+					"Invalid response from https://api.spotify.com/v1/storage-resolve/files/audio/interactive on fileid= "
+							+ fileid + " - " + e.getMessage());
 			return null;
 		} catch (IOException | JsonSyntaxException e) {
 
@@ -403,7 +414,15 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			final HttpGet httpget = new HttpGet(new URI(String.format(baseurl, fileid)));
 
-			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+			httpget.setHeader(HttpHeaders.USER_AGENT,
+					"Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0");
+			httpget.setHeader(HttpHeaders.HOST, "seektables.scdn.co");
+			httpget.setHeader(HttpHeaders.ACCEPT, "*/*");
+			httpget.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "en-US,en;q=0.5");
+			httpget.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+			httpget.setHeader(HttpHeaders.CONNECTION, "keep-alive");
+			httpget.setHeader(HttpHeaders.PRAGMA, "no-cache");
+			httpget.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
@@ -413,8 +432,8 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
 			return Base64.getDecoder().decode(resp);
 
-		} catch (HttpHostConnectException e1) {
-			log.warn("Invalid response from seektables.scdn.co" + e1.getMessage());
+		} catch (HttpHostConnectException | HttpResponseException e1) {
+			log.warn("Invalid response from seektables.scdn.co on fileid: " + fileid + " - " + e1.getMessage());
 		} catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
 		} catch (URISyntaxException e) {

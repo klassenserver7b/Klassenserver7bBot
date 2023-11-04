@@ -38,7 +38,7 @@ public class SubscriptionManager {
 	 * Provides the {@link Message} to every (target)-matching subscription
 	 *
 	 * @param target The target of the notification e.g a new Lernplan
-	 * @param data   The message which schould be send to all subscribers
+	 * @param data   The message which should be sent to all subscribers
 	 */
 	public void provideSubscriptionNotification(SubscriptionTarget target, MessageCreateData data) {
 

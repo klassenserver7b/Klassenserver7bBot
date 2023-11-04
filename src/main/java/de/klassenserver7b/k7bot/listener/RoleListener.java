@@ -46,12 +46,12 @@ public class RoleListener extends ListenerAdapter {
 
 		Guild guild = event.getGuild();
 		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
-		Role rolle = event.getRole();
+		Role role = event.getRole();
 
-		EmbedBuilder builder = EmbedUtils.getErrorEmbed("**Role: **\n @" + rolle.getName(),
+		EmbedBuilder builder = EmbedUtils.getErrorEmbed("**Role: **\n @" + role.getName(),
 				event.getGuild().getIdLong());
 
-		builder.setTitle("Role deleted: " + rolle.getName());
+		builder.setTitle("Role deleted: " + role.getName());
 		system.sendMessageEmbeds(builder.build()).queue();
 	}
 
@@ -62,9 +62,9 @@ public class RoleListener extends ListenerAdapter {
 
 		Guild guild = event.getGuild();
 		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
-		Role rolle = event.getRole();
+		Role role = event.getRole();
 
-		for (Permission perm : rolle.getPermissions()) {
+		for (Permission perm : role.getPermissions()) {
 			gen = String.valueOf(gen) + perm.getName() + ", ";
 		}
 
@@ -74,7 +74,7 @@ public class RoleListener extends ListenerAdapter {
 								+ "\n\n**New Rolename: **\n @" + event.getNewName() + "\n\n **Permissions: **\n" + gen,
 						event.getGuild().getIdLong());
 
-		builder.setTitle("Role(**Name**) edited: " + rolle.getName());
+		builder.setTitle("Role(**Name**) edited: " + role.getName());
 		system.sendMessageEmbeds(builder.build()).queue();
 	}
 
@@ -90,13 +90,13 @@ public class RoleListener extends ListenerAdapter {
 
 		event.getOldPermissions().forEach(perm -> {
 			if (!event.getNewPermissions().contains(perm))
-				add.add(perm.getName());
+				rem.add(perm.getName());
 		});
 
 		for (Permission perm : event.getNewPermissions()) {
-			gen = String.valueOf(gen) + perm.getName() + ", ";
+			gen += perm.getName() + ", ";
 			if (!event.getOldPermissions().contains(perm))
-				rem.add(perm.getName());
+				add.add(perm.getName());
 		}
 
 		for (String s : rem) {
@@ -109,14 +109,14 @@ public class RoleListener extends ListenerAdapter {
 
 		Guild guild = event.getGuild();
 		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
-		Role rolle = event.getRole();
+		Role role = event.getRole();
 
 		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"),
-				"**Role: **\n @" + rolle.getName() + "\n\n **Removed Permissions: **\n" + remove
-						+ "\n\n **Added Permissions: **\n" + added + "\n\n **Permissions: **\n" + gen,
+				"**Role: **\n @" + role.getName() + "\n\n**Executive user: ** " + "\n\nRemoved Permissions: **\n"
+						+ remove + "\n\n **Added Permissions: **\n" + added + "\n\n **Permissions: **\n" + gen,
 				event.getGuild().getIdLong());
 
-		builder.setTitle("Role(**Permissions**) edited: " + rolle.getName());
+		builder.setTitle("Role(**Permissions**) edited: " + role.getName());
 		system.sendMessageEmbeds(builder.build()).queue();
 	}
 }
