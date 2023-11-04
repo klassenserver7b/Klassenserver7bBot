@@ -242,7 +242,7 @@ public class GourmettaInteractions implements LoopedEvent {
 	 *
 	 * @param data The pregenerated {@link MessageCreateData} which is used to build
 	 *             the {@link Message} - usually obtained by
-	 *             {@link GourmettaInteractions#buildMessage(JsonArray)}
+	 *             {@link GourmettaInteractions#buildMessage(JsonArray, OffsetDateTime)}
 	 */
 	private void providePlanMessage(MessageCreateData data) {
 		Klassenserver7bbot.getInstance().getSubscriptionManager()

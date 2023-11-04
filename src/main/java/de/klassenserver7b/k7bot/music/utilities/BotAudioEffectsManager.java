@@ -34,7 +34,6 @@ public class BotAudioEffectsManager {
 	private final List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> filterfuncs;
 
 	/**
-	 *
 	 * @param player The {@link AudioPlayer} used for the {@link Guild}
 	 */
 	private BotAudioEffectsManager(AudioPlayer player) {
@@ -80,7 +79,7 @@ public class BotAudioEffectsManager {
 	 * Adds all provided {@link TriFunction AudioFilterFunction} to the currently
 	 * used filters and applys them
 	 * 
-	 * @param audioFilters The {@link TriFunction AudioFilterFunction} to add
+	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to add
 	 */
 	public void addAudioFilterFunctions(
 			List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
@@ -92,7 +91,7 @@ public class BotAudioEffectsManager {
 	 * Clears all previously used filters and applys all provided {@link TriFunction
 	 * AudioFilterFunction}
 	 * 
-	 * @param audioFilters The {@link TriFunction AudioFilterFunction} to use
+	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to use
 	 */
 	public void setAudioFilterFunctions(
 			List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {

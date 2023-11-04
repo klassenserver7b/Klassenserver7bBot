@@ -10,6 +10,7 @@ import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +82,10 @@ public class ExtendedLocalAudioSourceManager extends LocalAudioSourceManager {
 
 	public AudioPlaylist loadPlaylist(AudioPlayerManager manager, File folder) {
 		ArrayList<AudioTrack> audioFiles = new ArrayList<>();
+		File[] files = folder.listFiles();
+		Arrays.sort(files);
 
-		for (File af : folder.listFiles()) {
+		for (File af : files) {
 			try {
 				AudioTrack t = (AudioTrack) super.loadItem(manager,
 						new AudioReference(af.getAbsolutePath(), af.getName()));
