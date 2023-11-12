@@ -48,7 +48,7 @@ public class ClearCommand implements ServerCommand {
 
 				MessageClearUtil.onclear(amount, channel);
 
-				GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell()
+				GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr()
 						.getSysChannel(channel.getGuild());
 
 				EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.orange,

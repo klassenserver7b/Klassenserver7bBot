@@ -17,7 +17,7 @@ public class InviteListener extends ListenerAdapter {
 
 		Guild guild = event.getGuild();
 		GuildChannel channel = event.getChannel();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		Invite inv = event.getInvite();
 
 		EmbedBuilder builder = EmbedUtils.getSuccessEmbed("**Invite: **\n " + inv.getUrl() + "\n\n **Channel: **\n"

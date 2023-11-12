@@ -34,6 +34,7 @@ import de.klassenserver7b.k7bot.listener.InitRequiringListener;
 import de.klassenserver7b.k7bot.listener.InviteListener;
 import de.klassenserver7b.k7bot.listener.JoinandLeaveListener;
 import de.klassenserver7b.k7bot.listener.MemesReact;
+import de.klassenserver7b.k7bot.listener.MessageListener;
 import de.klassenserver7b.k7bot.listener.ReactRoleListener;
 import de.klassenserver7b.k7bot.listener.RoleListener;
 import de.klassenserver7b.k7bot.listener.SlashCommandListener;
@@ -75,7 +76,7 @@ public class Klassenserver7bbot {
 	private ShardManager shardMgr;
 	private CommandManager cmdMgr;
 
-	private SystemNotificationChannelManager syschannels;
+	private SystemNotificationChannelManager sysChannelMgr;
 	private PrefixManager prefixMgr;
 
 	private SubscriptionManager subMgr;
@@ -191,6 +192,7 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
 		builder.addEventListeners(new ButtonListener());
+		builder.addEventListeners(new MessageListener());
 
 		ShardManager initShardMgr = null;
 
@@ -216,7 +218,7 @@ public class Klassenserver7bbot {
 		this.subMgr = new SubscriptionManager();
 		this.loopedEventMgr = new LoopedEventManager();
 
-		this.syschannels = new SystemNotificationChannelManager();
+		this.sysChannelMgr = new SystemNotificationChannelManager();
 
 		this.audioPlayerManager = new DefaultAudioPlayerManager();
 		this.playerutil = new AudioPlayerUtil();
@@ -429,8 +431,8 @@ public class Klassenserver7bbot {
 		return this.hypixelApi;
 	}
 
-	public SystemNotificationChannelManager getsyschannell() {
-		return syschannels;
+	public SystemNotificationChannelManager getSysChannelMgr() {
+		return sysChannelMgr;
 	}
 
 	public boolean isInExit() {

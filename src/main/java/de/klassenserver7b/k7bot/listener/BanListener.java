@@ -17,7 +17,7 @@ public class BanListener extends ListenerAdapter {
 	@Override
 	public void onGuildBan(GuildBanEvent event) {
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		User user = event.getUser();
 		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.red, "**User: **\n @" + user.getName(), guild.getIdLong());
 		builder.setThumbnail(user.getEffectiveAvatarUrl());
@@ -28,7 +28,7 @@ public class BanListener extends ListenerAdapter {
 	@Override
 	public void onGuildUnban(GuildUnbanEvent event) {
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		User user = event.getUser();
 		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.green, "**User: **\n @" + user.getName(),
 				guild.getIdLong());

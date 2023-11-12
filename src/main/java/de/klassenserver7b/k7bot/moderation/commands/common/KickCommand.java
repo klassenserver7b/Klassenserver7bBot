@@ -81,7 +81,7 @@ public class KickCommand implements ServerCommand {
 		builder.setTitle("@" + u.getEffectiveName() + " was kicked");
 
 		Guild guild = channel.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
 		try {
 			u.kick().reason(grund).queue();
