@@ -171,7 +171,8 @@
 		</repository>
 		<repository>
 			<id>mandubian-mvn</id>
-			<url>https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
+			<url>
+				https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -241,9 +242,9 @@
 			<version>2.10.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.jagrosh</groupId>
+			<groupId>de.ree6</groupId>
 			<artifactId>JLyrics</artifactId>
-			<version>01cf4ee007</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
