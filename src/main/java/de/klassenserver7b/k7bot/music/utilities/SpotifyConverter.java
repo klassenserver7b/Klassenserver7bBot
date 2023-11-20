@@ -10,17 +10,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -90,30 +91,38 @@ public class SpotifyConverter {
 	@Deprecated
 	private String retrieveToken() {
 
-		final CloseableHttpClient client = HttpClients.createSystem();
-		final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
-		try {
+		try (final CloseableHttpClient client = HttpClients.createSystem()) {
 
-			final CloseableHttpResponse response = client.execute(httpget);
+			final HttpGet httpget = new HttpGet("https://open.spotify.com/get_access_token");
 
-			if (response.getStatusLine().getStatusCode() == 200) {
+			try (final CloseableHttpResponse response = client.execute(httpget)) {
 
-				JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+				if (response.getCode() == 200) {
 
-				String token = resp.get("accessToken").getAsString();
-				if (token != null && !token.equalsIgnoreCase("")) {
-					isoexpiration = resp.get("accessTokenExpirationTimestampMs").getAsLong();
-					clientId = resp.get("clientId").getAsString();
-					this.acctkn = token;
-					return token;
+					@SuppressWarnings("resource")
+					JsonObject resp = JsonParser.parseString(EntityUtils.toString(response.getEntity()))
+							.getAsJsonObject();
+
+					String token = resp.get("accessToken").getAsString();
+					if (token != null && !token.equalsIgnoreCase("")) {
+						isoexpiration = resp.get("accessTokenExpirationTimestampMs").getAsLong();
+						clientId = resp.get("clientId").getAsString();
+						this.acctkn = token;
+						return token;
+					}
+					response.close();
+
+				} else {
+					logger.debug("Couldn't request a new AccessToken -> bad statuscode");
 				}
-
-			} else {
-				logger.debug("Couldn't request a new AccessToken -> bad statuscode");
+			} catch (IOException | JsonSyntaxException | ParseException e) {
+				logger.error(e.getMessage(), e);
 			}
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
+
+		} catch (IOException e1) {
+			logger.error(e1.getMessage(), e1);
 		}
+
 		return acctkn;
 	}
 
@@ -313,6 +322,7 @@ public class SpotifyConverter {
 	 * @param searchquery
 	 * @param vc
 	 * @return
+	 * 
 	 */
 	@Deprecated
 	private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {

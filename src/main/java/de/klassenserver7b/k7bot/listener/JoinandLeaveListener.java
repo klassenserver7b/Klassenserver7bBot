@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class JoinandLeaveListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(event.getGuild());
 		GuildMessageChannel def = event.getGuild().getDefaultChannel().asStandardGuildMessageChannel();
 		String guildname = event.getGuild().getName();
 		Member memb = event.getGuild().getMember(event.getUser());
@@ -34,7 +34,7 @@ public class JoinandLeaveListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(event.getGuild());
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(event.getGuild());
 
 		GuildMessageChannel def = event.getGuild().getCommunityUpdatesChannel();
 		if (def == null) {

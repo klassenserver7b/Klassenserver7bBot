@@ -80,7 +80,7 @@ public class BanCommand implements ServerCommand {
 		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
 		builder.setTitle("@" + u.getEffectiveName() + " was banned");
 
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(channel.getGuild());
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(channel.getGuild());
 
 		try {
 			u.ban(7, TimeUnit.DAYS).reason(grund).queue();

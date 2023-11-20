@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
  *
  */
 public enum PredefinedMusicPlaylists {
+	
+	YTCharts(0, "https://music.youtube.com/playlist?list=PL0sHkSjKd2rpxgOMD-vlUlIDqvQ5ChYJh"),
 
-	Party(1, "https://www.youtube.com/playlist?list=PLAzC6gV-_NVO39WbWU5K76kczhRuKOV9F"),
+	HARDSTYLE(1, "https://open.spotify.com/playlist/7onTLV8yHFSBPLBE7QfAMd"),
 
 	ServerMix(2, "https://open.spotify.com/playlist/3QyqgTHQLvEVKEqRbSCLbV"),
-
-	YTCharts(0, "https://music.youtube.com/playlist?list=PL0sHkSjKd2rpxgOMD-vlUlIDqvQ5ChYJh"),
 
 	Nightcore(3, "https://www.youtube.com/playlist?list=PLAzC6gV-_NVM6uLLprtddVl4My07_CHtL");
 

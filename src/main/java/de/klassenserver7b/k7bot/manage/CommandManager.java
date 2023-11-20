@@ -16,7 +16,7 @@ import de.klassenserver7b.k7bot.commands.common.PingCommand;
 import de.klassenserver7b.k7bot.commands.common.PrefixCommand;
 import de.klassenserver7b.k7bot.commands.common.RestartCommand;
 import de.klassenserver7b.k7bot.commands.common.ShutdownCommand;
-import de.klassenserver7b.k7bot.commands.common.SystemchannelCommand;
+import de.klassenserver7b.k7bot.commands.common.SystemChannelCommand;
 import de.klassenserver7b.k7bot.commands.common.TeacherCommand;
 import de.klassenserver7b.k7bot.commands.common.TestCommand;
 import de.klassenserver7b.k7bot.commands.common.VTestCommand;
@@ -84,7 +84,7 @@ public class CommandManager {
 		this.commands.add(new HelpCommand());
 		this.commands.add(new PrefixCommand());
 		this.commands.add(new PingCommand());
-		this.commands.add(new SystemchannelCommand());
+		this.commands.add(new SystemChannelCommand());
 		this.commands.add(new RestartCommand());
 		this.commands.add(new ShutdownCommand());
 
