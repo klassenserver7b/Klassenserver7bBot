@@ -59,5 +59,9 @@ public class SQLManager {
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR NOT NULL, PRIMARY KEY(userId, guildId, messageId, emote));");
+		
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS messagelogs(messageId INTEGER NOT NULL PRIMARY KEY, guildId INTEGER, timestamp INTEGER, messageText STRING)");
+		
 	}
 }

@@ -27,7 +27,7 @@ public class RoleListener extends ListenerAdapter {
 		String gen = "";
 
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		Role role = event.getRole();
 
 		for (Permission perm : role.getPermissions()) {
@@ -45,7 +45,7 @@ public class RoleListener extends ListenerAdapter {
 	public void onRoleDelete(RoleDeleteEvent event) {
 
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		Role role = event.getRole();
 
 		EmbedBuilder builder = EmbedUtils.getErrorEmbed("**Role: **\n @" + role.getName(),
@@ -61,7 +61,7 @@ public class RoleListener extends ListenerAdapter {
 		String gen = "";
 
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		Role role = event.getRole();
 
 		for (Permission perm : role.getPermissions()) {
@@ -108,7 +108,7 @@ public class RoleListener extends ListenerAdapter {
 		}
 
 		Guild guild = event.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 		Role role = event.getRole();
 
 		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"),

@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
-public class SystemchannelCommand implements ServerCommand {
+public class SystemChannelCommand implements ServerCommand {
 
 	private boolean isEnabled;
 
@@ -39,7 +39,7 @@ public class SystemchannelCommand implements ServerCommand {
 
 				GuildMessageChannel chan = message.getMentions().getChannels(GuildMessageChannel.class).get(0);
 
-				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getsyschannell();
+				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
 				sys.insertChannel(chan);
 
 				channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();

@@ -41,12 +41,13 @@ public class LiteSQL {
 		}
 	}
 
-	public static void onUpdate(String sqlpattern, Object... parameters) {
+	public static int onUpdate(String sqlpattern, Object... parameters) {
 
 		if (parameters.length != countMatches(sqlpattern, "?")) {
 			IllegalArgumentException e = new IllegalArgumentException(
 					"Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
 			dblog.error(e.getMessage(), e);
+			return -5;
 		}
 
 		try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
@@ -55,10 +56,11 @@ public class LiteSQL {
 				p.setObject(i + 1, parameters[i]);
 			}
 
-			p.executeUpdate();
+			return p.executeUpdate();
 
 		} catch (SQLException e) {
 			dblog.error(e.getMessage(), e);
+			return -1;
 		}
 	}
 
@@ -91,15 +93,15 @@ public class LiteSQL {
 	private static int countMatches(String base, String pattern) {
 
 		int occurences = 0;
-		
+
 		if (0 == pattern.length()) {
 			return occurences;
 		}
-		
+
 		for (int index = base.indexOf(pattern, 0); index != -1; index = base.indexOf(pattern, index + 1)) {
 			occurences++;
 		}
-		
+
 		return occurences;
 
 	}

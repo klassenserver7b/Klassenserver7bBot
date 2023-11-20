@@ -81,7 +81,7 @@ public class TimeoutCommand implements ServerCommand {
 		strBuilder.append("**Requester: **" + requester.getAsMention() + "\n");
 
 		Guild guild = channel.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
 		EmbedBuilder builder = EmbedUtils.getErrorEmbed(strBuilder, channel.getGuild().getIdLong());
 

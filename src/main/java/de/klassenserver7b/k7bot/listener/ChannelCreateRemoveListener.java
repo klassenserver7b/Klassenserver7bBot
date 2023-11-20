@@ -21,7 +21,7 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 		if (!Klassenserver7bbot.getInstance().isEventBlocked()) {
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();
-			GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+			GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
 			EmbedBuilder builder = EmbedUtils.getSuccessEmbed(
 					"**Channel: **\n #" + channel.getName() + "\n\n **Type: **\n" + channel.getType().toString()
@@ -39,7 +39,7 @@ public class ChannelCreateRemoveListener extends ListenerAdapter {
 		if (!Klassenserver7bbot.getInstance().isEventBlocked()) {
 			Channel channel = event.getChannel();
 			Guild guild = event.getGuild();
-			GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell().getSysChannel(guild);
+			GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
 			EmbedBuilder builder = EmbedUtils.getErrorEmbed(
 					"**Channel: **\n #" + channel.getName() + "\n\n **ChannelId: ** \n" + channel.getIdLong(),

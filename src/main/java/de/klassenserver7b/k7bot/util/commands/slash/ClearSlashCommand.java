@@ -51,7 +51,7 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 							event.getGuild().getIdLong());
 
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
-			GuildMessageChannel system = Klassenserver7bbot.getInstance().getsyschannell()
+			GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr()
 					.getSysChannel(event.getGuild());
 
 			if (system != null) {
