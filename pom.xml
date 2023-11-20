@@ -166,13 +166,12 @@
 			<url>https://repo.hypixel.net/repository/Hypixel/</url>
 		</repository>
 		<repository>
-			<id>jitpack.io</id>
+			<id>jitpack</id>
 			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
 			<id>mandubian-mvn</id>
-			<url>
-				https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
+			<url>https://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -277,12 +276,12 @@
 		<dependency>
 			<groupId>com.github.Konsl</groupId>
 			<artifactId>web-weaver-api</artifactId>
-			<version>cedbbc389b</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.Konsl</groupId>
 			<artifactId>web-weaver-scraper</artifactId>
-			<version>890ffd3810</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.seruco.encoding</groupId>
