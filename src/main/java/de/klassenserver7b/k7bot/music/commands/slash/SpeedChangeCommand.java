@@ -53,6 +53,14 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
 				Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
 
+		if (speedrate == 1.0) {
+			effman.removeAudioFilterFunction(FilterTypes.SPEED);
+			hook.sendMessageEmbeds(EmbedUtils
+					.getSuccessEmbed("Successfully removed speed change", event.getGuild().getIdLong()).build())
+					.queue();
+			return;
+		}
+
 		effman.addAudioFilterFunction(FilterTypes.SPEED, ((track, format, output) -> {
 
 			TimescalePcmAudioFilter timefilter = new TimescalePcmAudioFilter(output, format.channelCount,

@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
-import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -23,16 +22,10 @@ import net.dv8tion.jda.api.entities.Guild;
  */
 public class BotAudioEffectsManager {
 
-	public static final int STANDARD = 0;
-	public static final int BASS_BOOST = 1;
-	public static final int LOW_BASS = 2;
-
-	private static final float[] BASS_BOOST_ARR = { 0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f,
-			-0.1f, -0.1f, -0.1f, -0.1f, -0.1f };
-
 	private final AudioPlayer player;
 
 	private final HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> filterfuncs;
+	private static final HashMap<AudioPlayer, BotAudioEffectsManager> effmans = new HashMap<>();
 
 	/**
 	 * @param player The {@link AudioPlayer} used for the {@link Guild}
@@ -48,7 +41,14 @@ public class BotAudioEffectsManager {
 	 *         guild/player
 	 */
 	public static BotAudioEffectsManager getAudioEffectsManager(AudioPlayer p) {
-		return new BotAudioEffectsManager(p);
+
+		BotAudioEffectsManager effman = effmans.get(p);
+		if (effman == null) {
+			effman = new BotAudioEffectsManager(p);
+			effmans.put(p, effman);
+		}
+
+		return effman;
 	}
 
 	/**
@@ -62,6 +62,7 @@ public class BotAudioEffectsManager {
 	public void addAudioFilterFunction(FilterTypes type,
 			TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> filter) {
 		filterfuncs.put(type, filter);
+
 		applyFilters();
 	}
 
@@ -146,6 +147,7 @@ public class BotAudioEffectsManager {
 	 * 
 	 */
 	protected void applyFilters() {
+
 		player.setFilterFactory((track, format, output) -> {
 
 			List<AudioFilter> audiofilters = new ArrayList<>();
@@ -159,100 +161,6 @@ public class BotAudioEffectsManager {
 
 			return audiofilters;
 		});
-	}
-
-	/**
-	 * Clears all previously used filters ann applys the provided
-	 * {@link EqualizerPreset}
-	 *
-	 * @param preset THe {@link EqualizerPreset} to use
-	 */
-	public void setEQMode(EqualizerPreset preset) {
-
-		if (preset == EqualizerPreset.OFF) {
-			clearFilters();
-			return;
-		}
-
-		addAudioFilterFunction(FilterTypes.EQ, ((track, format, output) -> {
-
-			float[] bands = preset.getBands();
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < bands.length; i++) {
-				eq.setGain(i, bands[i]);
-			}
-
-			return eq;
-		}));
-
-		applyFilters();
-
-	}
-
-	/**
-	 *
-	 * @param diff
-	 */
-	private void bassUp(float diff) {
-
-		addAudioFilterFunction(FilterTypes.EQ, ((track, format, output) -> {
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < BASS_BOOST_ARR.length; i++) {
-				eq.setGain(i, BASS_BOOST_ARR[i] + diff);
-			}
-
-			return eq;
-		}));
-		applyFilters();
-	}
-
-	/**
-	 *
-	 * @param diff
-	 */
-	private void bassDown(float diff) {
-
-		addAudioFilterFunction(FilterTypes.EQ, ((track, format, output) -> {
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < BASS_BOOST_ARR.length; i++) {
-				eq.setGain(i, -BASS_BOOST_ARR[i] + diff);
-			}
-
-			return eq;
-		}));
-		applyFilters();
-	}
-
-	/**
-	 *
-	 * @param mode
-	 */
-	public void setEQMode(int mode) {
-
-		switch (mode) {
-		case 0: {
-			clearFilters();
-			break;
-		}
-		case 1: {
-			bassUp(0);
-			break;
-		}
-		case 2: {
-			bassDown(0);
-			break;
-		}
-		default: {
-			clearFilters();
-		}
-		}
-
 	}
 
 	public enum FilterTypes {
