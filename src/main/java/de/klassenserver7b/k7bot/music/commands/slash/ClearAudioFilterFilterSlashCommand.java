@@ -53,7 +53,8 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
 
 	@Override
 	public SlashCommandData getCommandData() {
-		return Commands.slash("audiofilterclear", "removes all audio filters from the current player");
+		return Commands.slash("audiofilterclear", "removes all audio filters from the current player")
+				.setGuildOnly(true);
 	}
 
 }
