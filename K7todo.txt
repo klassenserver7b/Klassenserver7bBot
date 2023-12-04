@@ -1,8 +1,6 @@
 Logging Config embed
 Message Logging
 
-Command für Memes-Channels -> autoreact
-
 Poll System
 
 move DanceInterpreterJSONGenerateCommand into Danceinterpreter
@@ -13,7 +11,7 @@ Equalizer und Speedchange gleichzeitig erlauben
 
 Mehr Interactions auf SlashCommands und Buttons umstellen
 
-bot music charts für z.B. letzte woche/monat/jahr (vllt. später mit automatischer sprache aus silben und richtiger show lul)
+bot music charts für z.B. letzte woche/monat/jahr
 -> Tabelle fixen
 
 Language per Guild - German and English Version

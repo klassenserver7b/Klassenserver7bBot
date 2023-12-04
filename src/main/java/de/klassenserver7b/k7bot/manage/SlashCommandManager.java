@@ -28,6 +28,7 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ClearSlashCommand;
+import de.klassenserver7b.k7bot.util.commands.slash.MemesChannelSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ReactRolesSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ToEmbedSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -64,6 +65,7 @@ public class SlashCommandManager {
 		registerschedule.add(new StableDiffusionCommand());
 		registerschedule.add(new CheckRoomSlashCommand());
 		registerschedule.add(new SearchForRoomSlashCommand());
+		registerschedule.add(new MemesChannelSlashCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();

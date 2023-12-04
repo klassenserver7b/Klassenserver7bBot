@@ -37,7 +37,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(false).complete();
+		InteractionHook hook = event.deferReply(true).complete();
 
 		Member m = event.getMember();
 
