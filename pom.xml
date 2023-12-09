@@ -192,6 +192,11 @@
 			<version>0.7.7-1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.whya5448.lavaplayer-jda-nas</groupId>
+			<artifactId>jda-nas</artifactId>
+			<version>1.0.6.4</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>1.4.14</version>
