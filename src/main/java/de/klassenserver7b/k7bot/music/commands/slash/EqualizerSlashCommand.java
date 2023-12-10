@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
-import de.klassenserver7b.k7bot.music.utilities.EqualizerPreset;
+import de.klassenserver7b.k7bot.music.utilities.BotEqualizer;
+import de.klassenserver7b.k7bot.music.utilities.BotEqualizer.EqualizerPreset;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
@@ -42,14 +43,16 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
 			return;
 		}
 
-		BotAudioEffectsManager eq = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
+		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
 				.getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
 
 		EqualizerPreset[] vals = EqualizerPreset.values();
 
 		for (EqualizerPreset val : vals) {
 			if (val.toString().equalsIgnoreCase(preset)) {
-				eq.setEQMode(val);
+
+				BotEqualizer.setEQMode(val, effman);
+
 				hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.green,
 						"Equalizer was sucessful set to preset '" + preset + "'", event.getGuild().getIdLong()).build())
 						.queue();

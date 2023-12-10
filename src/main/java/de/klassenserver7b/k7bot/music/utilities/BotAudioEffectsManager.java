@@ -4,11 +4,11 @@
 package de.klassenserver7b.k7bot.music.utilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
-import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -22,22 +22,16 @@ import net.dv8tion.jda.api.entities.Guild;
  */
 public class BotAudioEffectsManager {
 
-	public static final int STANDARD = 0;
-	public static final int BASS_BOOST = 1;
-	public static final int LOW_BASS = 2;
-
-	private static final float[] BASS_BOOST_ARR = { 0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f,
-			-0.1f, -0.1f, -0.1f, -0.1f, -0.1f };
-
 	private final AudioPlayer player;
 
-	private final List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> filterfuncs;
+	private final HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> filterfuncs;
+	private static final HashMap<AudioPlayer, BotAudioEffectsManager> effmans = new HashMap<>();
 
 	/**
 	 * @param player The {@link AudioPlayer} used for the {@link Guild}
 	 */
 	private BotAudioEffectsManager(AudioPlayer player) {
-		this.filterfuncs = new ArrayList<>();
+		this.filterfuncs = new HashMap<>();
 		this.player = player;
 	}
 
@@ -47,18 +41,28 @@ public class BotAudioEffectsManager {
 	 *         guild/player
 	 */
 	public static BotAudioEffectsManager getAudioEffectsManager(AudioPlayer p) {
-		return new BotAudioEffectsManager(p);
+
+		BotAudioEffectsManager effman = effmans.get(p);
+		if (effman == null) {
+			effman = new BotAudioEffectsManager(p);
+			effmans.put(p, effman);
+		}
+
+		return effman;
 	}
 
 	/**
 	 * Adds the provided {@link TriFunction AudioFilterFunction} to the currently
 	 * used filters and applys them
 	 * 
+	 * @param type   the {@link FilterTypes} of the {@link TriFunction
+	 *               AudioFilterFunction}
 	 * @param filter The {@link TriFunction AudioFilterFunction} to add
 	 */
-	public void addAudioFilterFunction(
+	public void addAudioFilterFunction(FilterTypes type,
 			TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> filter) {
-		filterfuncs.add(filter);
+		filterfuncs.put(type, filter);
+
 		applyFilters();
 	}
 
@@ -66,24 +70,53 @@ public class BotAudioEffectsManager {
 	 * Clears all previously used filters and applys the provided {@link TriFunction
 	 * AudioFilterFunction}
 	 * 
+	 * @param type   the {@link FilterTypes} of the {@link TriFunction
+	 *               AudioFilterFunction}
 	 * @param filter The {@link TriFunction AudioFilterFunction} to use
 	 */
-	public void setAudioFilterFunction(
+	public void setAudioFilterFunction(FilterTypes type,
 			TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> filter) {
 		filterfuncs.clear();
-		filterfuncs.add(filter);
+		filterfuncs.put(type, filter);
 		applyFilters();
+	}
+
+	/**
+	 * Removes every {@link TriFunction AudioFilterFunction} matching the given
+	 * {@link FilterTypes}
+	 * 
+	 * @param type the {@link FilterTypes} to remove
+	 * @return statuscode <br>
+	 *         304 means nothing changed -> {@link FilterTypes} wasn't present in
+	 *         the current filters<br>
+	 *         200 means sucessfully removed the matching filter
+	 * 
+	 */
+	public int removeAudioFilterFunction(FilterTypes type) {
+		TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> oldfilter = filterfuncs
+				.remove(type);
+		applyFilters();
+
+		if (oldfilter == null) {
+			return 304;
+		}
+
+		return 200;
 	}
 
 	/**
 	 * Adds all provided {@link TriFunction AudioFilterFunction} to the currently
 	 * used filters and applys them
 	 * 
+	 * @param type         the {@link FilterTypes} of the {@link TriFunction
+	 *                     AudioFilterFunction}
 	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to add
+	 * 
 	 */
 	public void addAudioFilterFunctions(
-			List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
-		filterfuncs.addAll(audiofilters);
+			HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
+
+		filterfuncs.putAll(audiofilters);
 		applyFilters();
 	}
 
@@ -91,12 +124,14 @@ public class BotAudioEffectsManager {
 	 * Clears all previously used filters and applys all provided {@link TriFunction
 	 * AudioFilterFunction}
 	 * 
+	 * @param type         the {@link FilterTypes} of the {@link TriFunction
+	 *                     AudioFilterFunction}
 	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to use
 	 */
 	public void setAudioFilterFunctions(
-			List<TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
+			HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
 		filterfuncs.clear();
-		filterfuncs.addAll(audiofilters);
+		filterfuncs.putAll(audiofilters);
 		applyFilters();
 	}
 
@@ -112,11 +147,13 @@ public class BotAudioEffectsManager {
 	 * 
 	 */
 	protected void applyFilters() {
+
 		player.setFilterFactory((track, format, output) -> {
 
 			List<AudioFilter> audiofilters = new ArrayList<>();
 
-			for (TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> func : filterfuncs) {
+			for (TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> func : filterfuncs
+					.values()) {
 
 				audiofilters.add(func.apply(track, format, output));
 
@@ -126,96 +163,22 @@ public class BotAudioEffectsManager {
 		});
 	}
 
-	/**
-	 * Clears all previously used filters ann applys the provided
-	 * {@link EqualizerPreset}
-	 *
-	 * @param preset THe {@link EqualizerPreset} to use
-	 */
-	public void setEQMode(EqualizerPreset preset) {
+	public enum FilterTypes {
 
-		if (preset == EqualizerPreset.OFF) {
-			clearFilters();
-			return;
+		EQ(0), SPEED(1);
+
+		private final int id;
+
+		private FilterTypes(int id) {
+			this.id = id;
 		}
 
-		setAudioFilterFunction(((track, format, output) -> {
-
-			float[] bands = preset.getBands();
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < bands.length; i++) {
-				eq.setGain(i, bands[i]);
+		public static FilterTypes fromId(int id) {
+			for (FilterTypes type : values()) {
+				if (type.id == id)
+					return type;
 			}
-
-			return eq;
-		}));
-
-		applyFilters();
-
-	}
-
-	/**
-	 *
-	 * @param diff
-	 */
-	private void bassUp(float diff) {
-
-		setAudioFilterFunction(((track, format, output) -> {
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < BASS_BOOST_ARR.length; i++) {
-				eq.setGain(i, BASS_BOOST_ARR[i] + diff);
-			}
-
-			return eq;
-		}));
-		applyFilters();
-	}
-
-	/**
-	 *
-	 * @param diff
-	 */
-	private void bassDown(float diff) {
-
-		setAudioFilterFunction(((track, format, output) -> {
-
-			Equalizer eq = new Equalizer(format.channelCount, output);
-
-			for (int i = 0; i < BASS_BOOST_ARR.length; i++) {
-				eq.setGain(i, -BASS_BOOST_ARR[i] + diff);
-			}
-
-			return eq;
-		}));
-		applyFilters();
-	}
-
-	/**
-	 *
-	 * @param mode
-	 */
-	public void setEQMode(int mode) {
-
-		switch (mode) {
-		case 0: {
-			clearFilters();
-			break;
-		}
-		case 1: {
-			bassUp(0);
-			break;
-		}
-		case 2: {
-			bassDown(0);
-			break;
-		}
-		default: {
-			clearFilters();
-		}
+			throw new IllegalArgumentException("Invalid FilterType Id");
 		}
 
 	}

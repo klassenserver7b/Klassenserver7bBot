@@ -19,6 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -173,6 +174,7 @@ public class Klassenserver7bbot {
 			builder = DefaultShardManagerBuilder.create(canaryToken, EnumSet.allOf(GatewayIntent.class));
 		}
 
+		builder.setAudioSendFactory(new NativeAudioSendFactory(400));
 		builder.setShardsTotal(shardc);
 		builder.setMemberCachePolicy(MemberCachePolicy.ALL);
 		builder.setActivity(Activity.listening("-help"));

@@ -176,7 +176,7 @@ public class SongDataUtils {
 
 	}
 
-	private SongJson parseViaDiscogs(String title, String channel) {
+	public SongJson parseViaDiscogs(String title, String channel) {
 
 		log.debug("Parsing Online");
 		String newtitle = title;
@@ -205,7 +205,7 @@ public class SongDataUtils {
 
 	}
 
-	private boolean titleContainsAuthor(String title) {
+	public boolean titleContainsAuthor(String title) {
 
 		String[] parts = title.split(" - ");
 
@@ -213,7 +213,7 @@ public class SongDataUtils {
 
 	}
 
-	private SongJson parseOffline(String title, String channel) {
+	public SongJson parseOffline(String title, String channel) {
 		log.debug("Parsing Offline");
 
 		if (titleContainsAuthor(title)) {
@@ -225,30 +225,30 @@ public class SongDataUtils {
 
 	}
 
-	private SongJson parseTitleWithAuthor(String title) {
+	public SongJson parseTitleWithAuthor(String title) {
 
 		String[] parts = title.split(" - ");
 
 		try {
 			SongJson json = SongJson.ofUnvalidated(parts[1], parts[0], "0",
 					"https://www.discogs.com/de/search/?q=" + parts[1] + "+" + parts[0], "");
-			log.info("Successfully Parsed Offline");
+			log.debug("Successfully Parsed Offline");
 			return json;
 		} catch (IllegalArgumentException e) {
-			log.info("Couldn't Parse");
+			log.warn("Couldn't Parse");
 			return null;
 		}
 
 	}
 
-	private SongJson parseTitleWithoutAuthor(String title, String channel) {
+	public SongJson parseTitleWithoutAuthor(String title, String channel) {
 		try {
 			SongJson json = SongJson.ofUnvalidated(title, channel, "0",
 					"https://www.discogs.com/de/search/?q=" + title + "+" + channel, "");
-			log.info("Successfully Parsed Offline");
+			log.debug("Successfully Parsed Offline");
 			return json;
 		} catch (IllegalArgumentException e) {
-			log.info("Couldn't Parse");
+			log.warn("Couldn't Parse");
 			return null;
 		}
 

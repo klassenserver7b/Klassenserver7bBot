@@ -20,6 +20,7 @@ import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
 import de.klassenserver7b.k7bot.commands.slash.WhitelistSlashCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.ChartsSlashCommand;
+import de.klassenserver7b.k7bot.music.commands.slash.ClearAudioFilterFilterSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.EqualizerSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.PlaySlashCommandSplitter;
 import de.klassenserver7b.k7bot.music.commands.slash.SpeedChangeCommand;
@@ -27,6 +28,7 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ClearSlashCommand;
+import de.klassenserver7b.k7bot.util.commands.slash.MemesChannelSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ReactRolesSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ToEmbedSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -59,9 +61,11 @@ public class SlashCommandManager {
 		registerschedule.add(new HA3MembersCommand());
 		registerschedule.add(new VotingCommand());
 		registerschedule.add(new SpeedChangeCommand());
+		registerschedule.add(new ClearAudioFilterFilterSlashCommand());
 		registerschedule.add(new StableDiffusionCommand());
 		registerschedule.add(new CheckRoomSlashCommand());
 		registerschedule.add(new SearchForRoomSlashCommand());
+		registerschedule.add(new MemesChannelSlashCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
