@@ -8,6 +8,7 @@ import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
+import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager.FilterTypes;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
@@ -36,7 +37,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(false).complete();
+		InteractionHook hook = event.deferReply(true).complete();
 
 		Member m = event.getMember();
 
@@ -52,7 +53,15 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
 				Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
 
-		effman.setAudioFilterFunction(((track, format, output) -> {
+		if (speedrate == 1.0) {
+			effman.removeAudioFilterFunction(FilterTypes.SPEED);
+			hook.sendMessageEmbeds(EmbedUtils
+					.getSuccessEmbed("Successfully removed speed change", event.getGuild().getIdLong()).build())
+					.queue();
+			return;
+		}
+
+		effman.addAudioFilterFunction(FilterTypes.SPEED, ((track, format, output) -> {
 
 			TimescalePcmAudioFilter timefilter = new TimescalePcmAudioFilter(output, format.channelCount,
 					format.sampleRate);

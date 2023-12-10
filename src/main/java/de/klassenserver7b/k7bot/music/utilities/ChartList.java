@@ -160,7 +160,7 @@ public class ChartList {
 
 					String author = set.getString("songauthor");
 
-					SongJson js = new SongDataUtils().parseYtTitle(title, author);
+					SongJson js = new SongDataUtils().parseOffline(title, author);
 
 					String songhead = js.getAuthorString() + " - " + js.getTitle();
 

@@ -4,6 +4,8 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
+import de.klassenserver7b.k7bot.music.utilities.BotEqualizer;
+import de.klassenserver7b.k7bot.music.utilities.BotEqualizer.EqualizerPreset;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -44,9 +46,10 @@ public class EqualizerCommand implements ServerCommand {
 			return;
 		}
 
-		BotAudioEffectsManager eq = BotAudioEffectsManager.getAudioEffectsManager(
+		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
 				Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
-		eq.setEQMode(Integer.valueOf(args[1]));
+
+		BotEqualizer.setEQMode(EqualizerPreset.fromId(Integer.valueOf(args[1])), effman);
 
 	}
 

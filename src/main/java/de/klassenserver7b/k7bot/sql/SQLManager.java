@@ -63,5 +63,8 @@ public class SQLManager {
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS messagelogs(messageId INTEGER NOT NULL PRIMARY KEY, guildId INTEGER, timestamp INTEGER, messageText STRING)");
 		
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS memechannels(channelId INTEGER NOT NULL PRIMARY KEY)");
+		
 	}
 }
