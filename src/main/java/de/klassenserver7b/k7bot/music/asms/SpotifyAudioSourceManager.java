@@ -46,7 +46,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 	/**
 	 *
 	 */
-	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
+	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(?:intl-.{2}/)?(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
 	private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
 	private final ExtendedHttpConfigurable combinedHttpConfiguration;

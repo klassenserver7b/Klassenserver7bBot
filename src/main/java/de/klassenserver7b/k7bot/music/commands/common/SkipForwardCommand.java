@@ -22,7 +22,7 @@ public class SkipForwardCommand implements ServerCommand {
 
 	@Override
 	public String[] getCommandStrings() {
-		return new String[] { "forward" };
+		return new String[] { "forward", "f"};
 	}
 
 	@Override

@@ -173,6 +173,11 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			return false;
 		}
 
+		if(license == null || license.length == 0) {
+			log.error("empty license - abort");
+			return false;
+		}
+		
 		List<ContentKey> keys;
 
 		try {
