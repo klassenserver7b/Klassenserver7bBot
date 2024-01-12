@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import de.klassenserver7b.k7bot.HelpCategories;
@@ -51,12 +50,7 @@ public class QueuelistCommand implements ServerCommand {
 			StringBuilder strbuild = new StringBuilder();
 
 			for (AudioTrack t : queuelist) {
-				String content;
-				if (t instanceof YoutubeAudioTrack) {
-					content = "- " + t.getInfo().title.replaceAll("\\|", "-") + "\n";
-				} else {
-					content = "- " + t.getInfo().author + " - " + t.getInfo().title.replaceAll("\\|", "-") + "\n";
-				}
+				String content = "- " + t.getInfo().author + " - " + t.getInfo().title.replaceAll("\\|", "-") + "\n";
 
 				if (!((strbuild.toString().length() + content.length()) >= 4000)) {
 					strbuild.append(content);

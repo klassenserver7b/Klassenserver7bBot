@@ -65,7 +65,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 		OptionMapping predef = event.getOption("playlist");
 		String url = PredefinedMusicPlaylists.fromId(predef.getAsInt()).getUrl();
 
-		super.performItemLoad(url, controller, vc.getName());
+		super.loadURL(url, controller, vc.getName());
 
 		hook.sendMessage("Successfully Loaded").queue();
 	}
