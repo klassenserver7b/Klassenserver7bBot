@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.util.StatsCategorieUtil;
+import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.entities.Activity;
 
 /**
@@ -69,7 +69,7 @@ public class LoopThread implements Runnable {
 				// vpold.VplanNotify("10b");
 
 				if ((!this.hasstarted)) {
-					StatsCategorieUtil.onStartup(instance.isDevMode());
+					StatsCategoryUtil.onStartup(instance.isDevMode());
 					this.hasstarted = true;
 				}
 				Random rand = new Random();

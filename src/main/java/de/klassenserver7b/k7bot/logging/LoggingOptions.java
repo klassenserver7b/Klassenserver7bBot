@@ -47,8 +47,8 @@ public enum LoggingOptions {
 	ROLE_CREATE(31),
 	ROLE_DELETE(32),
 	ROLE_NAME(33),
-	ROLE_PERMISSIONS(33),
-	ROLE_POSITION(34),
+	ROLE_PERMISSIONS(34),
+	ROLE_POSITION(35),
 	
 	/**
 	 * Log channel events

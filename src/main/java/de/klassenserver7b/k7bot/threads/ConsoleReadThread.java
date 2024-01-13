@@ -20,7 +20,7 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
-import de.klassenserver7b.k7bot.util.StatsCategorieUtil;
+import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -173,7 +173,7 @@ public class ConsoleReadThread implements Runnable {
 			Klassenserver7bbot.getInstance().getHypixelAPI().shutdown();
 			Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
-			StatsCategorieUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
+			StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
 
 			shardMgr.setStatus(OnlineStatus.OFFLINE);
 
