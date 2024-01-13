@@ -19,6 +19,7 @@ import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
 import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
 import de.klassenserver7b.k7bot.commands.slash.WhitelistSlashCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.ChartsSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.ClearAudioFilterFilterSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.EqualizerSlashCommand;
@@ -66,6 +67,7 @@ public class SlashCommandManager {
 		registerschedule.add(new CheckRoomSlashCommand());
 		registerschedule.add(new SearchForRoomSlashCommand());
 		registerschedule.add(new MemesChannelSlashCommand());
+		registerschedule.add(new LoggingConfigSlashCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();
