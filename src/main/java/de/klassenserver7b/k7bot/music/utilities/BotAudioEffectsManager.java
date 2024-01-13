@@ -106,11 +106,11 @@ public class BotAudioEffectsManager {
 
 	/**
 	 * Adds all provided {@link TriFunction AudioFilterFunction} to the currently
-	 * used filters and applys them
+	 * used filters and applies them
 	 * 
-	 * @param type         the {@link FilterTypes} of the {@link TriFunction
-	 *                     AudioFilterFunction}
-	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to add
+	 * @param audiofilters A Hashmap respresenting the {@link FilterTypes
+	 *                     FilterTypes} and coresponding {@link TriFunction
+	 *                     AudioFilterFunctions}
 	 * 
 	 */
 	public void addAudioFilterFunctions(
@@ -124,9 +124,9 @@ public class BotAudioEffectsManager {
 	 * Clears all previously used filters and applys all provided {@link TriFunction
 	 * AudioFilterFunction}
 	 * 
-	 * @param type         the {@link FilterTypes} of the {@link TriFunction
-	 *                     AudioFilterFunction}
-	 * @param audiofilters The {@link TriFunction AudioFilterFunction} to use
+	 * @param audiofilters A Hashmap respresenting the {@link FilterTypes
+	 *                     FilterTypes} and coresponding {@link TriFunction
+	 *                     AudioFilterFunctions}
 	 */
 	public void setAudioFilterFunctions(
 			HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {

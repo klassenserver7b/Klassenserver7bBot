@@ -7,6 +7,10 @@ de.klassenserver7b.k7bot.commands.types
 de.klassenserver7b.k7bot.hypixel
 de.klassenserver7b.k7bot.hypixel.commands
 de.klassenserver7b.k7bot.listener
+de.klassenserver7b.k7bot.logging
+de.klassenserver7b.k7bot.logging.commands.common
+de.klassenserver7b.k7bot.logging.commands.slash
+de.klassenserver7b.k7bot.logging.commands.subcommandchain
 de.klassenserver7b.k7bot.manage
 de.klassenserver7b.k7bot.moderation.commands.common
 de.klassenserver7b.k7bot.moderation.commands.generic
