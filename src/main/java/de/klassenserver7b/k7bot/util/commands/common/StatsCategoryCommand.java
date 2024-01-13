@@ -11,7 +11,7 @@ import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
-import de.klassenserver7b.k7bot.util.StatsCategorieUtil;
+import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -59,7 +59,7 @@ public class StatsCategoryCommand implements ServerCommand {
 					LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(?, ?);", guild.getIdLong(),
 							catid);
 
-					StatsCategorieUtil.fillCategory(cat, Klassenserver7bbot.getInstance().isDevMode());
+					StatsCategoryUtil.fillCategory(cat, Klassenserver7bbot.getInstance().isDevMode());
 
 				} else {
 
@@ -69,7 +69,7 @@ public class StatsCategoryCommand implements ServerCommand {
 					cat.getChannels().forEach(chan -> {
 						chan.delete().complete();
 					});
-					StatsCategorieUtil.fillCategory(guild.getCategoryById(catid),
+					StatsCategoryUtil.fillCategory(guild.getCategoryById(catid),
 							Klassenserver7bbot.getInstance().isDevMode());
 
 				}
