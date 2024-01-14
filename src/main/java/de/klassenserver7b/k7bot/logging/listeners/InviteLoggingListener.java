@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class InviteListener extends ListenerAdapter {
+public class InviteLoggingListener extends ListenerAdapter {
 
 	@Override
 	public void onGuildInviteCreate(GuildInviteCreateEvent event) {

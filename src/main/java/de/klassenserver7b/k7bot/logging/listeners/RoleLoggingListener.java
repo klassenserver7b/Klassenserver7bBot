@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdateNameEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class RoleListener extends ListenerAdapter {
+public class RoleLoggingListener extends ListenerAdapter {
 
 	@Override
 	public void onRoleCreate(RoleCreateEvent event) {

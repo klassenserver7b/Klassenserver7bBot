@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class ChannelCreateRemoveListener extends ListenerAdapter {
+public class ChannelLoggingListener extends ListenerAdapter {
 
 	@Override
 	public void onChannelCreate(@Nonnull ChannelCreateEvent event) {

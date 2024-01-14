@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class BanListener extends ListenerAdapter {
+public class ModerationLoggingListener extends ListenerAdapter {
 	@Override
 	public void onGuildBan(GuildBanEvent event) {
 		Guild guild = event.getGuild();
