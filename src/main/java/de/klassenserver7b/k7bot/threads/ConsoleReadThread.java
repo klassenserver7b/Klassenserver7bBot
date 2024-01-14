@@ -3,6 +3,18 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
+import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,20 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
-import de.klassenserver7b.k7bot.commands.types.ServerCommand;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
-import de.klassenserver7b.k7bot.util.StatsCategorieUtil;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.sharding.ShardManager;
 
 /**
  * @author Klassenserver7b
@@ -81,7 +79,6 @@ public class ConsoleReadThread implements Runnable {
 		switch (commandargs[0].toLowerCase()) {
 		case "exit", "stop" -> {
 
-			Klassenserver7bbot.getInstance().setEventBlocking(true);
 			Klassenserver7bbot.getInstance().setexit(true);
 			t.interrupt();
 			reader.close();
@@ -152,8 +149,6 @@ public class ConsoleReadThread implements Runnable {
 
 		ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
 
-		Klassenserver7bbot.getInstance().setEventBlocking(true);
-
 		for (AudioSourceManager m : Klassenserver7bbot.getInstance().getAudioPlayerManager().getSourceManagers()) {
 			m.shutdown();
 		}
@@ -173,7 +168,7 @@ public class ConsoleReadThread implements Runnable {
 			Klassenserver7bbot.getInstance().getHypixelAPI().shutdown();
 			Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
-			StatsCategorieUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
+			StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
 
 			shardMgr.setStatus(OnlineStatus.OFFLINE);
 

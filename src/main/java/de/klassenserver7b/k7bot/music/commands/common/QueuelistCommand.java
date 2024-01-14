@@ -1,11 +1,6 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
@@ -16,6 +11,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+
+import java.awt.*;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class QueuelistCommand implements ServerCommand {
 

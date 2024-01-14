@@ -1,10 +1,10 @@
 package de.klassenserver7b.k7bot.subscriptions.types;
 
-import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+
+import javax.annotation.Nonnull;
 
 /**
  *

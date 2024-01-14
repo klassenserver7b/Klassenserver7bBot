@@ -3,21 +3,6 @@
  */
 package de.klassenserver7b.k7bot.music.asms;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.http.ExtendedHttpConfigurable;
@@ -27,7 +12,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyTrackLoader;
@@ -35,7 +19,20 @@ import de.klassenserver7b.k7bot.music.asms.loader.SpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.asms.loader.SpotifyTrackLoader;
 import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyInteractions;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+
+import javax.annotation.Nonnull;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Klassenserver7b

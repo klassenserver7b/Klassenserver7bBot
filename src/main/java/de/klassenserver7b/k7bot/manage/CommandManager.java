@@ -1,65 +1,24 @@
 
 package de.klassenserver7b.k7bot.manage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.commands.common.ClientInfo;
-import de.klassenserver7b.k7bot.commands.common.GithubRepoCommand;
-import de.klassenserver7b.k7bot.commands.common.HelpCommand;
-import de.klassenserver7b.k7bot.commands.common.PingCommand;
-import de.klassenserver7b.k7bot.commands.common.PrefixCommand;
-import de.klassenserver7b.k7bot.commands.common.RestartCommand;
-import de.klassenserver7b.k7bot.commands.common.ShutdownCommand;
-import de.klassenserver7b.k7bot.commands.common.TeacherCommand;
-import de.klassenserver7b.k7bot.commands.common.TestCommand;
-import de.klassenserver7b.k7bot.commands.common.VTestCommand;
+import de.klassenserver7b.k7bot.commands.common.*;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.hypixel.commands.SCtoHC;
 import de.klassenserver7b.k7bot.logging.commands.common.SystemChannelCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.BanCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.KickCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.MemberLogsCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.ModLogsCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.StopTimeoutCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.TimeoutCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.WarnCommand;
-import de.klassenserver7b.k7bot.music.commands.common.AddQueueTrackCommand;
-import de.klassenserver7b.k7bot.music.commands.common.ClearQueueCommand;
-import de.klassenserver7b.k7bot.music.commands.common.CurrentTrackInfoCommand;
-import de.klassenserver7b.k7bot.music.commands.common.EqualizerCommand;
-import de.klassenserver7b.k7bot.music.commands.common.LoopCommand;
-import de.klassenserver7b.k7bot.music.commands.common.LyricsCommand;
-import de.klassenserver7b.k7bot.music.commands.common.NightcoreCommand;
-import de.klassenserver7b.k7bot.music.commands.common.OverallChartsCommand;
-import de.klassenserver7b.k7bot.music.commands.common.PauseCommand;
-import de.klassenserver7b.k7bot.music.commands.common.PlayCommand;
-import de.klassenserver7b.k7bot.music.commands.common.PlayNextCommand;
-import de.klassenserver7b.k7bot.music.commands.common.QueuelistCommand;
-import de.klassenserver7b.k7bot.music.commands.common.ResumeCommand;
-import de.klassenserver7b.k7bot.music.commands.common.SeekCommand;
-import de.klassenserver7b.k7bot.music.commands.common.ShuffleCommand;
-import de.klassenserver7b.k7bot.music.commands.common.SkipBackCommand;
-import de.klassenserver7b.k7bot.music.commands.common.SkipCommand;
-import de.klassenserver7b.k7bot.music.commands.common.SkipForwardCommand;
-import de.klassenserver7b.k7bot.music.commands.common.StopCommand;
-import de.klassenserver7b.k7bot.music.commands.common.UebersteuerungAdmin;
-import de.klassenserver7b.k7bot.music.commands.common.UnLoopCommand;
-import de.klassenserver7b.k7bot.music.commands.common.VolumeCommand;
-import de.klassenserver7b.k7bot.util.commands.common.AddReactionCommand;
-import de.klassenserver7b.k7bot.util.commands.common.ClearCommand;
-import de.klassenserver7b.k7bot.util.commands.common.MessagetoEmbedCommand;
-import de.klassenserver7b.k7bot.util.commands.common.ReactRolesCommand;
-import de.klassenserver7b.k7bot.util.commands.common.StatsCategoryCommand;
+import de.klassenserver7b.k7bot.moderation.commands.common.*;
+import de.klassenserver7b.k7bot.music.commands.common.*;
+import de.klassenserver7b.k7bot.util.commands.common.*;
 import de.klassenserver7b.k7bot.util.customapis.DisabledAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *

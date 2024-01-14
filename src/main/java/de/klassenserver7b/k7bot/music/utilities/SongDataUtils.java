@@ -1,11 +1,9 @@
 package de.klassenserver7b.k7bot.music.utilities;
 
+import com.vdurmont.emoji.EmojiParser;
+import de.klassenserver7b.k7bot.util.customapis.DiscogsAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vdurmont.emoji.EmojiParser;
-
-import de.klassenserver7b.k7bot.util.customapis.DiscogsAPI;
 
 public class SongDataUtils {
 
