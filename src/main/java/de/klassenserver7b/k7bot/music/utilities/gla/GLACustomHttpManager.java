@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.music.utilities.gla;
 
-import java.io.IOException;
-
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
@@ -10,8 +10,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHeaders;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.io.IOException;
 
 public class GLACustomHttpManager {
 

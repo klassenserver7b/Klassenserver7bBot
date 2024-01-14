@@ -1,7 +1,5 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import org.slf4j.Logger;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
@@ -12,6 +10,7 @@ import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import org.slf4j.Logger;
 
 public class RestartCommand implements ServerCommand {
 

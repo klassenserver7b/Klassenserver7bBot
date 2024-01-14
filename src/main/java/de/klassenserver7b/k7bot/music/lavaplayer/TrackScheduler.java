@@ -1,8 +1,6 @@
 
 package de.klassenserver7b.k7bot.music.lavaplayer;
 
-import java.io.File;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioTrack;
@@ -10,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.commands.common.SkipCommand;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -20,6 +17,8 @@ import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
+
+import java.io.File;
 
 public class TrackScheduler extends AudioEventAdapter {
 

@@ -1,10 +1,5 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
-import org.jetbrains.annotations.NotNull;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.common.HelpCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
@@ -19,6 +14,10 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class HelpSlashCommand implements TopLevelSlashCommand {
 

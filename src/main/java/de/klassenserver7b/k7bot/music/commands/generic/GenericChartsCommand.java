@@ -3,23 +3,16 @@
  */
 package de.klassenserver7b.k7bot.music.commands.generic;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
 import de.klassenserver7b.k7bot.util.Cell;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author K7

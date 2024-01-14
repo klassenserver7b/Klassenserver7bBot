@@ -1,26 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd" name="k7bot">
 
-<project name="k7bot" xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 http://maven.apache.org/xsd/decoration-1.8.0.xsd">
-  <bannerLeft>
-    <name>k7bot</name>
-    <src>https://maven.apache.org/images/apache-maven-project.png</src>
-    <href>https://www.apache.org/</href>
+  <bannerLeft name="K7Bot" href="https://github.com/klassenserver7b/Klassenserver7bBot">
+     <image src="https://avatars.githubusercontent.com/u/79657220?v=4" alt="logo" width="55px" height="55px" />
   </bannerLeft>
-
-  <bannerRight>
-    <src>https://maven.apache.org/images/maven-logo-black-on-white.png</src>
-    <href>https://maven.apache.org/</href>
-  </bannerRight>
 
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
-    <version>1.7</version>
+    <version>2.0.0-M8</version>
   </skin>
 
   <body>
     <menu ref="parent" />
     <menu ref="reports" />
   </body>
-</project>
+</site>

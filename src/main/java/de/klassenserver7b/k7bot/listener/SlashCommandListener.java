@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.listener;
 
-import java.util.concurrent.TimeUnit;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.common.HelpCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.concurrent.TimeUnit;
 
 public class SlashCommandListener extends ListenerAdapter {
 	HelpCommand help = new HelpCommand();

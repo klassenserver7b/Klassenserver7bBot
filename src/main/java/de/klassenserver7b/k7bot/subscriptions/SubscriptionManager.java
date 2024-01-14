@@ -1,18 +1,17 @@
 package de.klassenserver7b.k7bot.subscriptions;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.Subscription;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *

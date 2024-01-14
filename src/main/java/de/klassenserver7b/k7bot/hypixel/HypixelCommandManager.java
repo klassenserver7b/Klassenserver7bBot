@@ -1,19 +1,13 @@
 
 package de.klassenserver7b.k7bot.hypixel;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.klassenserver7b.k7bot.commands.types.HypixelCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.HypixelHelpCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.HypixelOnlineCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.HypixelPlayerCountCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.HypixelPlayerInfoCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.HypixelRankCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.TestCommand;
-import de.klassenserver7b.k7bot.hypixel.commands.WatchdogCommand;
+import de.klassenserver7b.k7bot.hypixel.commands.*;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HypixelCommandManager {
 	public ConcurrentHashMap<String, HypixelCommand> commands;

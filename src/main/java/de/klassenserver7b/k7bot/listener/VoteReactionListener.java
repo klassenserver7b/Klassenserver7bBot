@@ -1,14 +1,14 @@
 package de.klassenserver7b.k7bot.listener;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class VoteReactionListener extends ListenerAdapter {
 
