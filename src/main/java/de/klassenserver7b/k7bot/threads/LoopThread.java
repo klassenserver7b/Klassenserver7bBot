@@ -3,14 +3,13 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
-import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.entities.Activity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Random;
 
 /**
  * @author Klassenserver7b

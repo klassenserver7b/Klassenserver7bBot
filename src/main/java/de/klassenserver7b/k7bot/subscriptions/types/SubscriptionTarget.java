@@ -1,9 +1,9 @@
 package de.klassenserver7b.k7bot.subscriptions.types;
 
-import javax.annotation.Nonnull;
-
 import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
 import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
+
+import javax.annotation.Nonnull;
 
 /**
  *

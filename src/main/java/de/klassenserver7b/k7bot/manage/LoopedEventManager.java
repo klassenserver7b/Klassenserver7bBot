@@ -3,16 +3,6 @@
  */
 package de.klassenserver7b.k7bot.manage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.GitHubAPI;
@@ -20,6 +10,14 @@ import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
 import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
 import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Klassenserver7b

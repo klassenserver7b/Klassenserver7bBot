@@ -3,11 +3,10 @@
  */
 package de.klassenserver7b.k7bot.music.utilities;
 
-import javax.annotation.Nonnull;
-
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
-
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager.FilterTypes;
+
+import javax.annotation.Nonnull;
 
 /**
  * 

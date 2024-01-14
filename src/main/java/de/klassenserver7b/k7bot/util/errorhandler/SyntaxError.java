@@ -1,9 +1,9 @@
 package de.klassenserver7b.k7bot.util.errorhandler;
 
-import java.util.concurrent.TimeUnit;
-
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
+
+import java.util.concurrent.TimeUnit;
 
 public class SyntaxError {
 	public static void oncmdSyntaxError(GenericMessageSendHandler channel, String syntax, Member memb) {

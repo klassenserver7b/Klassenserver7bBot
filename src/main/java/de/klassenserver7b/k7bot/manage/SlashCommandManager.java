@@ -1,30 +1,11 @@
 package de.klassenserver7b.k7bot.manage;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.commands.slash.CheckRoomSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.HelpSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.PingSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.SearchForRoomSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.Shutdownslashcommand;
-import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
-import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
-import de.klassenserver7b.k7bot.commands.slash.WhitelistSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.*;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.SystemChannelSlashCommand;
-import de.klassenserver7b.k7bot.music.commands.slash.ChartsSlashCommand;
-import de.klassenserver7b.k7bot.music.commands.slash.ClearAudioFilterFilterSlashCommand;
-import de.klassenserver7b.k7bot.music.commands.slash.EqualizerSlashCommand;
-import de.klassenserver7b.k7bot.music.commands.slash.PlaySlashCommandSplitter;
-import de.klassenserver7b.k7bot.music.commands.slash.SpeedChangeCommand;
+import de.klassenserver7b.k7bot.music.commands.slash.*;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
@@ -35,6 +16,13 @@ import de.klassenserver7b.k7bot.util.commands.slash.ToEmbedSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SlashCommandManager {
 

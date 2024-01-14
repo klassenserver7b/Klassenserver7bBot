@@ -3,10 +3,9 @@
  */
 package de.klassenserver7b.k7bot.util.customapis;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
+import com.google.gson.*;
+import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -18,14 +17,9 @@ import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.music.utilities.SongJson;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Klassenserver7b

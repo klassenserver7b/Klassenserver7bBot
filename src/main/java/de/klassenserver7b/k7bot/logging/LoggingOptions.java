@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.logging;
 
@@ -7,12 +7,11 @@ package de.klassenserver7b.k7bot.logging;
  * Enum representing every logging option which can be toggled by the logging
  * config. <br>
  * Used for guild specific logging selection.
- * 
+ *
  * @author Klassenserver7b
- * 
  */
 public enum LoggingOptions {
-	// @formatter:off
+    // @formatter:off
 	
 	ALL(1),
 	
@@ -23,9 +22,8 @@ public enum LoggingOptions {
 	MEMBER_JOIN(11),
 	MEMBER_LEAVE(12),
 	MEMBER_UPDATE_NICKNAME(13),
-	MEMBER_UPDATE_GLOBALNAME(14),
-	MEMBER_ROLE_ADD(15),
-	MEMBER_ROLE_REMOVE(16),
+	MEMBER_ROLE_ADD(14),
+	MEMBER_ROLE_REMOVE(15),
 	
 	/**
 	 * Log moderation events
@@ -34,11 +32,12 @@ public enum LoggingOptions {
 	BAN(21),
 	UNBAN(22),
 	TIMEOUT(23),
-	AUTOMOD_EXECUTED(24),
-	AUTOMOD_RULE_CREATE(25),
-	AUTOMOD_RULE_DELETE(26),
-	AUTOMOD_RULE_UPDATE(27),
-	AUDITLOG_ENTRY_CREATE(28),
+
+	AUDITLOG_ENTRY_CREATE(24),
+	AUTOMOD_EXECUTED(25),
+	AUTOMOD_RULE_CREATE(26),
+	AUTOMOD_RULE_DELETE(27),
+	AUTOMOD_RULE_UPDATE(28),
 	
 	/**
 	 * Log channel events
@@ -103,7 +102,7 @@ public enum LoggingOptions {
      */
 	EVENTS(90),
 	EVENT_CREATE(91),
-	EVENT_REMOVE(92),
+	EVENT_DELETE(92),
 	EVENT_UPDATE_STATUS(93),
 	EVENT_UPDATE_NAME(94),
 	EVENT_UPDATE_STARTTIME(95),
@@ -118,42 +117,42 @@ public enum LoggingOptions {
 	UNKNOWN(-1);
 	
 	// @formatter:on
-	private final int id;
+    private final int id;
 
-	/**
-	 * Constructs a LoggingOptions with the specified ID.
-	 *
-	 * @param id The identifier for the logging option.
-	 */
-	private LoggingOptions(int id) {
-		this.id = id;
-	}
+    /**
+     * Constructs a LoggingOptions with the specified ID.
+     *
+     * @param id The identifier for the logging option.
+     */
+    private LoggingOptions(int id) {
+        this.id = id;
+    }
 
-	/**
-	 * Gets the ID associated with the logging option.
-	 *
-	 * @return id The ID of the logging option.
-	 */
-	public int getId() {
-		return id;
-	}
+    /**
+     * Gets the ID associated with the logging option.
+     *
+     * @return id The ID of the logging option.
+     */
+    public int getId() {
+        return id;
+    }
 
-	/**
-	 * Retrieves the LoggingOptions enum constant associated with the given ID.
-	 *
-	 * @param id The ID to look up.
-	 * @return The LoggingOptions enum constant with the specified ID, or UNKNOWN if
-	 *         not found.
-	 */
-	public static LoggingOptions byId(int id) {
-		for (LoggingOptions opt : values()) {
-			if (opt.id == id) {
-				return opt;
-			}
-		}
+    /**
+     * Retrieves the LoggingOptions enum constant associated with the given ID.
+     *
+     * @param id The ID to look up.
+     * @return The LoggingOptions enum constant with the specified ID, or UNKNOWN if
+     * not found.
+     */
+    public static LoggingOptions byId(int id) {
+        for (LoggingOptions opt : values()) {
+            if (opt.id == id) {
+                return opt;
+            }
+        }
 
-		return UNKNOWN;
+        return UNKNOWN;
 
-	}
+    }
 
 }

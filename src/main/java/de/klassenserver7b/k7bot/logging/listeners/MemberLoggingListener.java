@@ -1,55 +1,144 @@
 package de.klassenserver7b.k7bot.logging.listeners;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
+import de.klassenserver7b.k7bot.logging.LoggingOptions;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 
-public class MemberLoggingListener extends ListenerAdapter {
-	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(event.getGuild());
-		GuildMessageChannel def = event.getGuild().getDefaultChannel().asStandardGuildMessageChannel();
-		String guildname = event.getGuild().getName();
-		Member memb = event.getGuild().getMember(event.getUser());
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.util.stream.Collectors;
 
-		EmbedBuilder embbuild = EmbedUtils.getSuccessEmbed(memb.getAsMention() + " joined",
-				event.getGuild().getIdLong());
+public class MemberLoggingListener extends LoggingListener {
 
-		embbuild.setThumbnail(memb.getUser().getEffectiveAvatarUrl());
-		embbuild.setTitle("@" + memb.getEffectiveName() + " joined :thumbsup:");
+    public MemberLoggingListener() {
+        super();
+    }
 
-		system.sendMessageEmbeds(embbuild.build()).queue();
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
-		if (def != null) {
-			def.sendMessage("Willkommen auf dem " + guildname + " Server " + memb.getAsMention()).queue();
-		}
-	}
+        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_JOIN, event.getGuild())) {
+            return;
+        }
 
-	@Override
-	public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+        GuildMessageChannel system = getSystemChannel(event);
+        GuildMessageChannel def = getDefaultChannel(event);
+        String guildname = event.getGuild().getName();
+        Member memb = event.getMember();
 
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(event.getGuild());
+        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+        embbuild.setColor(Color.green);
 
-		GuildMessageChannel def = event.getGuild().getCommunityUpdatesChannel();
-		if (def == null) {
-			def = event.getGuild().getDefaultChannel().asStandardGuildMessageChannel();
-		}
+        embbuild.setTitle("@" + memb.getEffectiveName() + " joined :thumbsup:");
+        embbuild.setDescription(memb.getAsMention() + " joined");
+        embbuild.setThumbnail(memb.getUser().getEffectiveAvatarUrl());
 
-		User usr = event.getUser();
+        system.sendMessageEmbeds(embbuild.build()).queue();
 
-		EmbedBuilder embbuild = EmbedUtils.getErrorEmbed(
-				usr.getAsMention() + " known as " + usr.getEffectiveName() + " leaved", event.getGuild().getIdLong());
+        if (def != null) {
+            def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
+        }
+    }
 
-		embbuild.setThumbnail(usr.getEffectiveAvatarUrl());
-		embbuild.setTitle("@" + usr.getName() + " leaved :sob:");
+    @Override
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
-		system.sendMessageEmbeds(embbuild.build()).queue();
-		def.sendMessage("Schade, dass du gehst " + usr.getEffectiveName()).queue();
-	}
+        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_LEAVE, event.getGuild())) {
+            return;
+        }
+
+        GuildMessageChannel system = getSystemChannel(event);
+
+        GuildMessageChannel def = getDefaultChannel(event);
+
+        User usr = event.getUser();
+
+        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+        embbuild.setColor(Color.red);
+
+        embbuild.setTitle("@" + usr.getName() + " leaved :sob:");
+        embbuild.setDescription(usr.getAsMention() + " known as " + usr.getEffectiveName() + " leaved");
+        embbuild.setThumbnail(usr.getEffectiveAvatarUrl());
+
+        system.sendMessageEmbeds(embbuild.build()).queue();
+        def.sendMessage("It's a pity you're leaving " + usr.getEffectiveName()).queue();
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent event) {
+
+        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
+            return;
+        }
+
+        GuildMessageChannel system = getSystemChannel(event);
+
+        Member memb = event.getMember();
+
+        EmbedBuilder embbuild = EmbedUtils.getDefault();
+        embbuild.setColor(Color.yellow);
+
+        embbuild.setThumbnail(memb.getUser().getEffectiveAvatarUrl());
+        embbuild.setTitle(memb.getEffectiveName() + "'s nickname changed");
+        embbuild.setDescription(
+                "**Old Nickname: **" + event.getOldNickname() + "\n**New Nickname: **" + event.getNewNickname());
+
+        system.sendMessageEmbeds(embbuild.build()).queue();
+
+    }
+
+    @Override
+    public void onGuildMemberRoleAdd(@Nonnull GuildMemberRoleAddEvent event) {
+
+        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
+            return;
+        }
+
+        GuildMessageChannel system = getSystemChannel(event);
+
+        Member memb = event.getMember();
+
+        EmbedBuilder embbuild = EmbedUtils.getDefault();
+        embbuild.setColor(Color.yellow);
+
+        embbuild.setTitle(memb.getEffectiveName() + "'s roles changed");
+        embbuild.setDescription(memb.getAsMention() + "\n**Added Roles: **"
+                + event.getRoles().stream().map(Role::getName).collect(Collectors.joining(", ")));
+
+        system.sendMessageEmbeds(embbuild.build()).queue();
+
+    }
+
+    @Override
+    public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
+
+        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
+            return;
+        }
+
+        GuildMessageChannel system = getSystemChannel(event);
+
+        Member memb = event.getMember();
+
+        EmbedBuilder embbuild = EmbedUtils.getDefault();
+        embbuild.setColor(Color.yellow);
+
+        embbuild.setTitle(memb.getEffectiveName() + "'s roles changed");
+        embbuild.setDescription(memb.getAsMention() + "\n**Removed Roles: **"
+                + event.getRoles().stream().map(Role::getName).collect(Collectors.joining(", ")));
+
+        system.sendMessageEmbeds(embbuild.build()).queue();
+
+    }
+
 }

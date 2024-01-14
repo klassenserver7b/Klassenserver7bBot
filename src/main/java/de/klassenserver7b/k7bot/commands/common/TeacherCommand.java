@@ -1,7 +1,6 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import com.google.gson.JsonObject;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;

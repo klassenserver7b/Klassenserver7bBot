@@ -3,18 +3,17 @@
  */
 package de.klassenserver7b.k7bot.music.utilities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import de.klassenserver7b.k7bot.util.TriFunction;
 import net.dv8tion.jda.api.entities.Guild;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Klassenserver7b

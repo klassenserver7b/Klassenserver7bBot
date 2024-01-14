@@ -3,10 +3,6 @@
  */
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.listener.VoteReactionListener;
@@ -23,6 +19,11 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * @author K7
@@ -85,7 +86,8 @@ public class VotingCommand implements TopLevelSlashCommand {
 
 	}
 
-	@Override
+	@NotNull
+    @Override
 	public SlashCommandData getCommandData() {
 
 		ArrayList<OptionData> options = new ArrayList<>();

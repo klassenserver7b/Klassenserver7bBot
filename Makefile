@@ -15,8 +15,14 @@ copy:
 restart:
 	sudo systemctl restart k7bot
 
-start: default
+start:
 	sudo systemctl start k7bot
 
 stop:
 	sudo systemctl stop k7bot
+
+restartb: default
+	sudo systemctl restart k7bot
+
+startb: default
+	sudo systemctl start k7bot
