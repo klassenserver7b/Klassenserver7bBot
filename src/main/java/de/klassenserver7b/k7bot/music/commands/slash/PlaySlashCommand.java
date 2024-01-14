@@ -3,8 +3,6 @@
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
-import java.util.ArrayList;
-
 import de.klassenserver7b.k7bot.commands.types.SubSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.generic.GenericPlayCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
@@ -15,6 +13,9 @@ import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 /**
  * @author K7
@@ -22,7 +23,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  */
 public class PlaySlashCommand extends GenericPlayCommand implements SubSlashCommand {
 
-	@Override
+	@NotNull
+    @Override
 	public SubcommandData getSubCommandData() {
 		ArrayList<Choice> targets = new ArrayList<>();
 		for (SupportedPlayQueries q : SupportedPlayQueries.values()) {

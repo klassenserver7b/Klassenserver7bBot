@@ -3,9 +3,6 @@
  */
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.awt.Color;
-import java.util.List;
-
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.VplanRoomChecker;
@@ -15,6 +12,10 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.List;
 
 /**
  * 
@@ -51,7 +52,8 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 
 	}
 
-	@Override
+	@NotNull
+    @Override
 	public SlashCommandData getCommandData() {
 		return Commands.slash("searchroom", "Searchs for a free room in the selected lesson")
 				.addOptions(new OptionData(OptionType.INTEGER, "lesson", "the lesson to check", true));

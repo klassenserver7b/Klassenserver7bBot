@@ -3,14 +3,13 @@
  */
 package de.klassenserver7b.k7bot.listener;
 
-import java.util.Date;
-
-import javax.annotation.Nonnull;
-
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import javax.annotation.Nonnull;
+import java.util.Date;
 
 /**
  * 
@@ -25,7 +24,7 @@ public class MessageListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
-		// FIXME enable logging
+		// TODO IRGENDWANN enable logging
 		boolean loggingenabled = false;
 
 		if (loggingenabled) {

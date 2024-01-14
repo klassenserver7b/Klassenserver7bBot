@@ -1,7 +1,5 @@
 package de.klassenserver7b.k7bot.subscriptions;
 
-import org.slf4j.Logger;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.subscriptions.types.Subscription;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
@@ -9,6 +7,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.slf4j.Logger;
 
 public class SubMessageSendHandler {
 

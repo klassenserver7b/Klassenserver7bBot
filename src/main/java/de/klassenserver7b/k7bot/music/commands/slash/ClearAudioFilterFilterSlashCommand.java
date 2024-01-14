@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 
@@ -34,9 +35,11 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
 		InteractionHook hook = event.deferReply(false).complete();
 
 		Member m = event.getMember();
+        assert m != null;
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(hook), m)) {
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
+
+		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(hook), m) || vc == null) {
 			return;
 		}
 
@@ -45,13 +48,17 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
 
 		effman.clearFilters();
 
+
+		assert event.getGuild() != null;
+
 		hook.sendMessageEmbeds(EmbedUtils
 				.getSuccessEmbed("Successfully removed all AudioFilters", event.getGuild().getIdLong()).build())
 				.queue();
 
 	}
 
-	@Override
+	@NotNull
+    @Override
 	public SlashCommandData getCommandData() {
 		return Commands.slash("audiofilterclear", "removes all audio filters from the current player")
 				.setGuildOnly(true);

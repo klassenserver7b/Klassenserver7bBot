@@ -3,16 +3,6 @@
  */
 package de.klassenserver7b.k7bot.manage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.GitHubAPI;
@@ -20,6 +10,14 @@ import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
 import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
 import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Klassenserver7b
@@ -79,7 +77,7 @@ public class LoopedEventManager {
 	 *
 	 * @param event
 	 */
-	protected void removeEvent(LoopedEvent event) {
+	public void removeEvent(LoopedEvent event) {
 		registeredEvents.remove(event);
 	}
 
@@ -136,7 +134,7 @@ public class LoopedEventManager {
 	/**
 	 * 
 	 * @param event
-	 * @param enable wether the api should be enabled
+	 * @param enable if the api should be enabled
 	 */
 	public void registerEvent(LoopedEvent event, boolean enable) {
 		registeredEvents.add(event);
@@ -171,14 +169,18 @@ public class LoopedEventManager {
 	 * @param identifier
 	 */
 	public void removeEvent(String identifier) {
+		List<LoopedEvent> change = new ArrayList<>();
 
 		for (LoopedEvent event : registeredEvents) {
 
 			if (event.getIdentifier().equalsIgnoreCase(identifier)) {
-				registeredEvents.remove(event);
+				change.add(event);
 			}
 
 		}
+
+		registeredEvents.removeAll(change);
+		activeEvents.removeAll(change);
 	}
 
 	/**
@@ -191,13 +193,18 @@ public class LoopedEventManager {
 
 	public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
 
+		List<LoopedEvent> change = new ArrayList<>();
+
 		for (LoopedEvent event : registeredEvents) {
 
 			if (identifiers.contains(event.getIdentifier())) {
-				registeredEvents.remove(event);
+				change.add(event);
 			}
 
 		}
+
+		registeredEvents.removeAll(change);
+		activeEvents.removeAll(change);
 	}
 
 	/**

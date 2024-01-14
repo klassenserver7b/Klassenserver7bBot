@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.music.utilities.gla;
 
-import java.io.IOException;
-
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+
+import java.io.IOException;
 
 public class GLALyricsParser {
 

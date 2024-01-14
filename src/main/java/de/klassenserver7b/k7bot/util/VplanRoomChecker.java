@@ -3,15 +3,14 @@
  */
 package de.klassenserver7b.k7bot.util;
 
+import de.klassenserver7b.k7bot.sql.LiteSQL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.klassenserver7b.k7bot.sql.LiteSQL;
 
 /**
  * 

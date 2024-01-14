@@ -3,9 +3,10 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
-import java.io.IOException;
-import java.util.Date;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
@@ -15,11 +16,8 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author K7

@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.music.commands.slash;
 
 import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
@@ -21,6 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author K7
@@ -80,6 +80,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
 				.queue();
 	}
 
+	@NotNull
 	@Override
 	public SlashCommandData getCommandData() {
 		return Commands.slash("speedchange", "changes the speed of the currently played audio track").addOptions(
