@@ -37,6 +37,15 @@ public class LoggingConfigDBHandler {
 		return 0;
 	}
 
+	public static int disableOption(LoggingOptions option, long guildId) {
+
+		insertGuild(guildId);
+
+		return LiteSQL.onUpdate(
+				"UPDATE loggingConfig SET optionJson = (SELECT json_group_array(value) FROM json_each(optionJson) WHERE value != ?) WHERE guildId = ?;",
+				option.getId(), guildId);
+	}
+
 	public static boolean isOptionEnabled(LoggingOptions option, long guildId) {
 
 		insertGuild(guildId);
@@ -53,15 +62,6 @@ public class LoggingConfigDBHandler {
 
 		return false;
 
-	}
-
-	public static int disableOption(LoggingOptions option, long guildId) {
-
-		insertGuild(guildId);
-
-		return LiteSQL.onUpdate(
-				"UPDATE loggingConfig SET optionJson = (SELECT json_group_array(value) FROM json_each(optionJson) WHERE value != ?) WHERE guildId = ?;",
-				option.getId(), guildId);
 	}
 
 	/**

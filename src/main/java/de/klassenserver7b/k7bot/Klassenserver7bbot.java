@@ -26,20 +26,19 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import de.klassenserver7b.k7bot.hypixel.HypixelCommandManager;
 import de.klassenserver7b.k7bot.listener.AutoRickroll;
-import de.klassenserver7b.k7bot.listener.BanListener;
 import de.klassenserver7b.k7bot.listener.BotgetDC;
-import de.klassenserver7b.k7bot.listener.ButtonListener;
-import de.klassenserver7b.k7bot.listener.ChannelCreateRemoveListener;
 import de.klassenserver7b.k7bot.listener.CommandListener;
 import de.klassenserver7b.k7bot.listener.InitRequiringListener;
-import de.klassenserver7b.k7bot.listener.InviteListener;
-import de.klassenserver7b.k7bot.listener.JoinandLeaveListener;
 import de.klassenserver7b.k7bot.listener.MemesReact;
 import de.klassenserver7b.k7bot.listener.MessageListener;
 import de.klassenserver7b.k7bot.listener.ReactRoleListener;
-import de.klassenserver7b.k7bot.listener.RoleListener;
 import de.klassenserver7b.k7bot.listener.SlashCommandListener;
 import de.klassenserver7b.k7bot.listener.VoiceListener;
+import de.klassenserver7b.k7bot.logging.listeners.BanListener;
+import de.klassenserver7b.k7bot.logging.listeners.ChannelCreateRemoveListener;
+import de.klassenserver7b.k7bot.logging.listeners.InviteListener;
+import de.klassenserver7b.k7bot.logging.listeners.JoinandLeaveListener;
+import de.klassenserver7b.k7bot.logging.listeners.RoleListener;
 import de.klassenserver7b.k7bot.manage.CommandManager;
 import de.klassenserver7b.k7bot.manage.LoopedEventManager;
 import de.klassenserver7b.k7bot.manage.PrefixManager;
@@ -193,7 +192,6 @@ public class Klassenserver7bbot {
 		builder.addEventListeners(new AutoRickroll());
 		builder.addEventListeners(new MemesReact());
 		builder.addEventListeners(new BotgetDC());
-		builder.addEventListeners(new ButtonListener());
 		builder.addEventListeners(new MessageListener());
 
 		ShardManager initShardMgr = null;

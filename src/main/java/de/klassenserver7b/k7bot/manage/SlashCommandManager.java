@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.slash.CheckRoomSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.HA3MembersCommand;
 import de.klassenserver7b.k7bot.commands.slash.HelpSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.PingSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.SearchForRoomSlashCommand;
@@ -20,6 +19,7 @@ import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
 import de.klassenserver7b.k7bot.commands.slash.WhitelistSlashCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
+import de.klassenserver7b.k7bot.logging.commands.slash.SystemChannelSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.ChartsSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.ClearAudioFilterFilterSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.slash.EqualizerSlashCommand;
@@ -59,7 +59,6 @@ public class SlashCommandManager {
 		registerschedule.add(new UnSubscribeSlashCommand());
 		registerschedule.add(new EqualizerSlashCommand());
 		registerschedule.add(new WhitelistSlashCommand());
-		registerschedule.add(new HA3MembersCommand());
 		registerschedule.add(new VotingCommand());
 		registerschedule.add(new SpeedChangeCommand());
 		registerschedule.add(new ClearAudioFilterFilterSlashCommand());
@@ -68,6 +67,7 @@ public class SlashCommandManager {
 		registerschedule.add(new SearchForRoomSlashCommand());
 		registerschedule.add(new MemesChannelSlashCommand());
 		registerschedule.add(new LoggingConfigSlashCommand());
+		registerschedule.add(new SystemChannelSlashCommand());
 
 		Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(shard -> {
 			CommandListUpdateAction commup = shard.updateCommands();

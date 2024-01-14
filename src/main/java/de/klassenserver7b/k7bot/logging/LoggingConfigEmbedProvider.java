@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.klassenserver7b.k7bot.logging.commands.subcommandchain;
+package de.klassenserver7b.k7bot.logging;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -11,9 +11,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
-import de.klassenserver7b.k7bot.logging.LoggingOptions;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -35,6 +34,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 	private InteractionHook hook;
 	private final long guildId;
 	private LoggingOptions category;
+	private final LoopedEvent timeoutCheckEvent;
 
 	/**
 	 * 
@@ -44,6 +44,9 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 		this.guildId = hook.getInteraction().getGuild().getIdLong();
 
 		hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
+
+		timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
+		Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
 	}
 
 	@Override
@@ -126,6 +129,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 	protected void exit() {
 		hook.deleteOriginal().queue();
 		Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
+		Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
 	}
 
 	protected void sendCatSelectEmbed() {
@@ -209,6 +213,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
 			LoggingOptions opt = LoggingOptions.byId(catid);
 
+			strbuild.append("`");
 			strbuild.append(opt.toString());
 
 			for (int i = 0; i < 30 - opt.toString().toCharArray().length; i++) {
@@ -216,6 +221,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 			}
 
 			strbuild.append(" - ");
+			strbuild.append("`");
 
 			boolean enabled = LoggingConfigDBHandler.isOptionEnabled(opt, guildId);
 			strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
@@ -266,6 +272,54 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 				}
 			}
 
+		}
+
+	}
+
+	class HookTimeoutLoop implements LoopedEvent {
+
+		private final String identifier;
+		private final LoggingConfigEmbedProvider listener;
+
+		public HookTimeoutLoop(String identifier, LoggingConfigEmbedProvider listener) {
+			this.identifier = identifier;
+			this.listener = listener;
+
+		}
+
+		private void exit() {
+			Klassenserver7bbot.getInstance().getShardManager().removeEventListener(listener);
+			Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(this);
+		}
+
+		@Override
+		public int checkforUpdates() {
+
+			if (listener.hook.isExpired()) {
+				exit();
+			}
+
+			return 0;
+		}
+
+		@Override
+		public boolean isAvailable() {
+			return true;
+		}
+
+		@Override
+		public void shutdown() {
+			exit();
+		}
+
+		@Override
+		public boolean restart() {
+			return false;
+		}
+
+		@Override
+		public String getIdentifier() {
+			return identifier;
 		}
 
 	}

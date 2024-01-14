@@ -40,9 +40,6 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, userId INTEGER, timestamp INTEGER, commandstring STRING);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS ha3users(ingamename STRING NOT NULL, realname STRING, dcname STRING, dcId INTEGER NOT NULL, approved INTEGER, PRIMARY KEY(ingamename, dcId));");
-
-		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lernplanId STRING);");
 
 		LiteSQL.onUpdate(

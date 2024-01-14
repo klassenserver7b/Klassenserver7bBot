@@ -79,7 +79,7 @@ public class LoopedEventManager {
 	 *
 	 * @param event
 	 */
-	protected void removeEvent(LoopedEvent event) {
+	public void removeEvent(LoopedEvent event) {
 		registeredEvents.remove(event);
 	}
 
@@ -136,7 +136,7 @@ public class LoopedEventManager {
 	/**
 	 * 
 	 * @param event
-	 * @param enable wether the api should be enabled
+	 * @param enable if the api should be enabled
 	 */
 	public void registerEvent(LoopedEvent event, boolean enable) {
 		registeredEvents.add(event);
@@ -171,14 +171,18 @@ public class LoopedEventManager {
 	 * @param identifier
 	 */
 	public void removeEvent(String identifier) {
+		List<LoopedEvent> change = new ArrayList<>();
 
 		for (LoopedEvent event : registeredEvents) {
 
 			if (event.getIdentifier().equalsIgnoreCase(identifier)) {
-				registeredEvents.remove(event);
+				change.add(event);
 			}
 
 		}
+
+		registeredEvents.removeAll(change);
+		activeEvents.removeAll(change);
 	}
 
 	/**
@@ -191,13 +195,18 @@ public class LoopedEventManager {
 
 	public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
 
+		List<LoopedEvent> change = new ArrayList<>();
+
 		for (LoopedEvent event : registeredEvents) {
 
 			if (identifiers.contains(event.getIdentifier())) {
-				registeredEvents.remove(event);
+				change.add(event);
 			}
 
 		}
+
+		registeredEvents.removeAll(change);
+		activeEvents.removeAll(change);
 	}
 
 	/**

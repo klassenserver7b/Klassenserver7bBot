@@ -1,4 +1,4 @@
-package de.klassenserver7b.k7bot.listener;
+package de.klassenserver7b.k7bot.logging.listeners;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;

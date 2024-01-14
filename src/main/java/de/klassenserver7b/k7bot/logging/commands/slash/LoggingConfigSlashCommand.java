@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
-import de.klassenserver7b.k7bot.logging.commands.subcommandchain.LoggingConfigEmbedProvider;
+import de.klassenserver7b.k7bot.logging.LoggingConfigEmbedProvider;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;

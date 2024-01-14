@@ -1,4 +1,4 @@
-package de.klassenserver7b.k7bot.listener;
+package de.klassenserver7b.k7bot.logging.listeners;
 
 import java.awt.Color;
 import java.util.ArrayList;
