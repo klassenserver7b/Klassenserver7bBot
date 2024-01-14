@@ -24,7 +24,7 @@ public class MessageListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
-		// FIXME enable logging
+		// TODO IRGENDWANN enable logging
 		boolean loggingenabled = false;
 
 		if (loggingenabled) {

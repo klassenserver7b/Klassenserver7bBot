@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * 
@@ -28,9 +27,11 @@ public class DBAutodelete implements LoopedEvent {
 	@Override
 	public int checkforUpdates() {
 
-		// TODO get timeout for each guild
+		/*
+		  		See {{@link de.klassenserver7b.k7bot.listener.MessageListener} something like TODO
+ 		 */
 
-		Long mindate = OffsetDateTime.now().minus(1, ChronoUnit.WEEKS).toEpochSecond();
+		Long mindate = OffsetDateTime.now().minusWeeks(1).toEpochSecond();
 		Long guildId = 0L;
 
 		int status = LiteSQL.onUpdate("DELETE * FROM messagelogs WHERE guildId=? AND date < ?", guildId, mindate);
