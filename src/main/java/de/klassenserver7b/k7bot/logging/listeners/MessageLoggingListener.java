@@ -3,33 +3,44 @@
  */
 package de.klassenserver7b.k7bot.logging.listeners;
 
+import java.awt.Color;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.klassenserver7b.k7bot.logging.LoggingBlocker;
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
 import de.klassenserver7b.k7bot.logging.LoggingOptions;
+import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
-
-import java.awt.*;
 
 /**
  *
  */
 public class MessageLoggingListener extends LoggingListener {
 
+    private final Logger log;
+
     /**
      *
      */
     public MessageLoggingListener() {
         super();
+        log = LoggerFactory.getLogger(getClass());
     }
 
     @Override
     public void onMessageUpdate(MessageUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MESSAGE_EDITED, event.getGuild())) {
+        if (isIgnoredEvent(LoggingOptions.MESSAGE_EDITED, event.getMessageIdLong(), event.getGuild())) {
             return;
         }
 
@@ -48,10 +59,9 @@ public class MessageLoggingListener extends LoggingListener {
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MESSAGE_DELETED, event.getGuild())) {
+        if (isIgnoredEvent(LoggingOptions.MESSAGE_DELETED, event.getMessageIdLong(), event.getGuild())) {
             return;
         }
-
         GuildMessageChannel system = getSystemChannel(event.getGuild());
 
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
@@ -81,5 +91,36 @@ public class MessageLoggingListener extends LoggingListener {
 
         system.sendMessageEmbeds(embbuild.build()).queue();
 
+    }
+
+    protected boolean isIgnoredEvent(LoggingOptions option, long messageId, Guild guild) {
+
+        if (LoggingBlocker.getInstance().isBlocked(messageId)) {
+            LoggingBlocker.getInstance().unblock(messageId);
+            return true;
+        }
+
+        if (!LoggingConfigDBHandler.isOptionEnabled(option, guild)) {
+            return true;
+        }
+
+        return isBotMessage(messageId, guild);
+
+    }
+
+    protected boolean isBotMessage(long messageId, Guild guild) {
+
+        try (ResultSet set = LiteSQL.onQuery("SELECT authorId FROM messagelogs WHERE messageId = ? AND guildId = ?;", messageId, guild.getIdLong())) {
+
+            assert set != null;
+            if (set.next()) {
+                return set.getLong("authorId") == guild.getSelfMember().getUser().getIdLong();
+            }
+
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return false;
     }
 }

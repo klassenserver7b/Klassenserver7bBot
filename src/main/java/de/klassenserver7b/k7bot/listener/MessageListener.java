@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.listener;
 
@@ -12,31 +12,26 @@ import javax.annotation.Nonnull;
 import java.util.Date;
 
 /**
- * 
+ *
  */
 public class MessageListener extends ListenerAdapter {
 
-	@Override
-	public void onMessageDelete(@Nonnull MessageDeleteEvent event) {
+    @Override
+    public void onMessageDelete(@Nonnull MessageDeleteEvent event) {
 
-	}
+    }
 
-	@Override
-	public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+    @Override
+    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
-		// TODO IRGENDWANN enable logging
-		boolean loggingenabled = false;
+        LiteSQL.onUpdate("INSERT INTO messagelogs(messageId, guildId, timestamp, authorId, messageText) VALUES(?,?,?,?,?)",
+                event.getMessageIdLong(),
+                (event.getGuild() == null ? -1 : event.getGuild().getIdLong()),
+                new Date().getTime(),
+                event.getAuthor().getIdLong(),
+                event.getMessage().getContentRaw());
 
-		if (loggingenabled) {
 
-			LiteSQL.onUpdate("INSERT INTO messagelogs(messageId, guildId, date, messageText) VALUES(?,?,?)",
-					event.getMessageIdLong(),
-					(event.getGuild() == null ? 0 : event.getGuild().getIdLong()),
-					new Date().getTime(),
-					event.getMessage().getContentRaw());
-
-		}
-
-	}
+    }
 
 }

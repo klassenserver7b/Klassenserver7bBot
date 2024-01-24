@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.logging;
 
@@ -8,6 +8,7 @@ import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -26,301 +27,303 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 
+ *
  */
 public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
-	private InteractionHook hook;
-	private final long guildId;
-	private LoggingOptions category;
-	private final LoopedEvent timeoutCheckEvent;
+    private InteractionHook hook;
+    private final long guildId;
+    private LoggingOptions category;
+    private final LoopedEvent timeoutCheckEvent;
 
-	/**
-	 * 
-	 */
-	public LoggingConfigEmbedProvider(InteractionHook hook) {
-		this.hook = hook;
-		this.guildId = hook.getInteraction().getGuild().getIdLong();
+    /**
+     *
+     */
+    public LoggingConfigEmbedProvider(InteractionHook hook) {
+        this.hook = hook;
+        this.guildId = hook.getInteraction().getGuild().getIdLong();
 
-		hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
+        Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
+        LoggingBlocker.getInstance().block(m.getIdLong());
 
-		timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
-		Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
-	}
+        timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
+        Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
+    }
 
-	@Override
-	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+    @Override
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            return;
+        }
+
+        hook = event.deferEdit().complete();
+        String compId = event.getComponentId();
+        String matcher = compId.replaceAll("(.*)-(\\d+)?$", "$1");
+        int optId = Integer.parseInt(event.getSelectedOptions().get(0).getValue().replace("logging-catid-", ""));
+
+        switch (matcher) {
 
-		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-			return;
-		}
+            case "logging-single-select" -> {
+                LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
+            }
 
-		hook = event.deferEdit().complete();
-		String compId = event.getComponentId();
-		String matcher = compId.replaceAll("(.*)-(\\d+)?$", "$1");
-		int optId = Integer.parseInt(event.getSelectedOptions().get(0).getValue().replace("logging-catid-", ""));
+            case "logging-choose-category" -> {
+                category = LoggingOptions.byId(optId);
+            }
 
-		switch (matcher) {
+            default -> {
+                return;
+            }
+        }
 
-		case "logging-single-select" -> {
-			LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
-		}
+        sendCatOptionsEmbed();
 
-		case "logging-choose-category" -> {
-			category = LoggingOptions.byId(optId);
-		}
+    }
 
-		default -> {
-			return;
-		}
-		}
+    @Override
+    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
 
-		sendCatOptionsEmbed();
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            return;
+        }
 
-	}
+        hook = event.deferEdit().complete();
+        String compId = event.getComponentId();
 
-	@Override
-	public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+        if (compId.equalsIgnoreCase("logging-conf-exit")) {
+            exit();
+            return;
+        }
 
-		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-			return;
-		}
+        if (!compId.startsWith("logging-cat-")) {
+            return;
+        }
 
-		hook = event.deferEdit().complete();
-		String compId = event.getComponentId();
+        compId = compId.replace("logging-cat-", "");
+        LoggingOptions option = LoggingOptions.byId(Integer.parseInt(compId.split("-")[1]));
 
-		if (compId.equalsIgnoreCase("logging-conf-exit")) {
-			exit();
-			return;
-		}
+        switch (compId.split("-")[0]) {
 
-		if (!compId.startsWith("logging-cat-")) {
-			return;
-		}
+            case "disableall" -> {
+                changeCat(option, false);
+            }
 
-		compId = compId.replace("logging-cat-", "");
-		LoggingOptions option = LoggingOptions.byId(Integer.parseInt(compId.split("-")[1]));
+            case "enableall" -> {
+                changeCat(option, true);
+            }
 
-		switch (compId.split("-")[0]) {
+            case "back" -> {
+                sendCatSelectEmbed();
+                return;
+            }
 
-		case "disableall" -> {
-			changeCat(option, false);
-		}
+            default -> {
+                return;
+            }
+        }
 
-		case "enableall" -> {
-			changeCat(option, true);
-		}
+        sendCatOptionsEmbed();
 
-		case "back" -> {
-			sendCatSelectEmbed();
-			return;
-		}
+    }
 
-		default -> {
-			return;
-		}
-		}
+    protected void exit() {
+        LoggingBlocker.getInstance().block(hook.retrieveOriginal().complete().getIdLong());
+        hook.deleteOriginal().queue();
+        Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
+        Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
+    }
 
-		sendCatOptionsEmbed();
+    protected void sendCatSelectEmbed() {
+        hook.editOriginalEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
+    }
 
-	}
+    protected MessageEmbed buildCatSelectEmbed() {
+        EmbedBuilder embbuild = EmbedUtils.getDefault();
+        embbuild.setTitle("Logging Config");
+        embbuild.setColor(Color.blue);
 
-	protected void exit() {
-		hook.deleteOriginal().queue();
-		Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
-		Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
-	}
+        StringBuilder strbuild = new StringBuilder();
+        strbuild.append("Please select the type of Logging you want to configure");
+        strbuild.append("\n\n");
+        strbuild.append("Available are:");
+        strbuild.append("\n");
 
-	protected void sendCatSelectEmbed() {
-		hook.editOriginalEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
-	}
+        for (LoggingOptions option : LoggingOptions.values()) {
+            if (option.getId() % 10 == 0) {
+                strbuild.append(option.toString());
+                strbuild.append(",");
+                strbuild.append("\n");
+            }
+        }
 
-	protected MessageEmbed buildCatSelectEmbed() {
-		EmbedBuilder embbuild = EmbedUtils.getDefault();
-		embbuild.setTitle("Logging Config");
-		embbuild.setColor(Color.blue);
+        embbuild.setDescription(strbuild);
 
-		StringBuilder strbuild = new StringBuilder();
-		strbuild.append("Please select the type of Logging you want to configure");
-		strbuild.append("\n\n");
-		strbuild.append("Available are:");
-		strbuild.append("\n");
+        return embbuild.build();
+    }
 
-		for (LoggingOptions option : LoggingOptions.values()) {
-			if (option.getId() % 10 == 0) {
-				strbuild.append(option.toString());
-				strbuild.append(",");
-				strbuild.append("\n");
-			}
-		}
+    protected List<LayoutComponent> buildCatSelectActionRows() {
 
-		embbuild.setDescription(strbuild);
+        List<LayoutComponent> rows = new LinkedList<>();
+        List<ItemComponent> strSelect = new LinkedList<>();
 
-		return embbuild.build();
-	}
+        StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
 
-	protected List<LayoutComponent> buildCatSelectActionRows() {
+        for (LoggingOptions option : LoggingOptions.values()) {
+            if (option.getId() % 10 == 0) {
+                strSelectBuilder.addOption(option.toString(), "logging-catid-" + option.getId());
+            }
+        }
 
-		List<LayoutComponent> rows = new LinkedList<>();
-		List<ItemComponent> strSelect = new LinkedList<>();
+        strSelect.add(strSelectBuilder.build());
 
-		StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
+        rows.add(ActionRow.of(strSelect));
+        rows.add(ActionRow.of(Button.danger("logging-conf-exit", "Exit")));
 
-		for (LoggingOptions option : LoggingOptions.values()) {
-			if (option.getId() % 10 == 0) {
-				strSelectBuilder.addOption(option.toString(), "logging-catid-" + option.getId());
-			}
-		}
+        return rows;
+    }
 
-		strSelect.add(strSelectBuilder.build());
+    protected void sendCatOptionsEmbed() {
 
-		rows.add(ActionRow.of(strSelect));
-		rows.add(ActionRow.of(Button.danger("logging-conf-exit", "Exit")));
+        int idRange = category.getId();
 
-		return rows;
-	}
+        List<Integer> catids = Arrays.asList(LoggingOptions.values()).stream()
+                .filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(opt -> opt.getId()).toList();
 
-	protected void sendCatOptionsEmbed() {
+        hook.editOriginalEmbeds(buildCatOptionsEmbed(catids)).setComponents(buildCatOptionsActionRows(catids)).queue();
+    }
 
-		int idRange = category.getId();
+    protected MessageEmbed buildCatOptionsEmbed(List<Integer> catids) {
 
-		List<Integer> catids = Arrays.asList(LoggingOptions.values()).stream()
-				.filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(opt -> opt.getId()).toList();
+        String catname = category.toString();
 
-		hook.editOriginalEmbeds(buildCatOptionsEmbed(catids)).setComponents(buildCatOptionsActionRows(catids)).queue();
-	}
+        EmbedBuilder embbuild = EmbedUtils.getDefault();
+        embbuild.setColor(Color.blue);
+        embbuild.setTitle("LoggingConfig - " + catname);
 
-	protected MessageEmbed buildCatOptionsEmbed(List<Integer> catids) {
+        StringBuilder strbuild = new StringBuilder();
+        strbuild.append("Option");
 
-		String catname = category.toString();
+        for (int i = 0; i < 30; i++) {
+            strbuild.append(" ");
+        }
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault();
-		embbuild.setColor(Color.blue);
-		embbuild.setTitle("LoggingConfig - " + catname);
+        strbuild.append(" - State");
+        strbuild.append("\n\n");
 
-		StringBuilder strbuild = new StringBuilder();
-		strbuild.append("Option");
+        for (int catid : catids) {
 
-		for (int i = 0; i < 30; i++) {
-			strbuild.append(" ");
-		}
+            LoggingOptions opt = LoggingOptions.byId(catid);
 
-		strbuild.append(" - State");
-		strbuild.append("\n\n");
+            strbuild.append("`");
+            strbuild.append(opt.toString());
 
-		for (int catid : catids) {
+            for (int i = 0; i < 30 - opt.toString().toCharArray().length; i++) {
+                strbuild.append(" ");
+            }
 
-			LoggingOptions opt = LoggingOptions.byId(catid);
+            strbuild.append(" - ");
+            strbuild.append("`");
 
-			strbuild.append("`");
-			strbuild.append(opt.toString());
+            boolean enabled = LoggingConfigDBHandler.isOptionEnabled(opt, guildId);
+            strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
 
-			for (int i = 0; i < 30 - opt.toString().toCharArray().length; i++) {
-				strbuild.append(" ");
-			}
+            strbuild.append("\n");
 
-			strbuild.append(" - ");
-			strbuild.append("`");
+        }
 
-			boolean enabled = LoggingConfigDBHandler.isOptionEnabled(opt, guildId);
-			strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
+        embbuild.setDescription(strbuild);
 
-			strbuild.append("\n");
+        return embbuild.build();
+    }
 
-		}
+    protected List<LayoutComponent> buildCatOptionsActionRows(List<Integer> catIds) {
 
-		embbuild.setDescription(strbuild);
+        int idRange = category.getId();
 
-		return embbuild.build();
-	}
+        List<ItemComponent> buttonRow = new LinkedList<>();
 
-	protected List<LayoutComponent> buildCatOptionsActionRows(List<Integer> catIds) {
+        buttonRow.add(Button.primary("logging-cat-enableall-" + idRange, "Enable All"));
+        buttonRow.add(Button.primary("logging-cat-disableall-" + idRange, "Disable All"));
+        buttonRow.add(Button.danger("logging-cat-back-00", "Back"));
 
-		int idRange = category.getId();
+        StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
 
-		List<ItemComponent> buttonRow = new LinkedList<>();
+        for (int catid : catIds) {
+            strSelectBuilder.addOption(LoggingOptions.byId(catid).toString(), "logging-catid-" + catid);
+        }
 
-		buttonRow.add(Button.primary("logging-cat-enableall-" + idRange, "Enable All"));
-		buttonRow.add(Button.primary("logging-cat-disableall-" + idRange, "Disable All"));
-		buttonRow.add(Button.danger("logging-cat-back-00", "Back"));
+        List<LayoutComponent> rows = new LinkedList<>();
+        rows.add(ActionRow.of(buttonRow));
+        rows.add(ActionRow.of(strSelectBuilder.build()));
 
-		StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
+        return rows;
+    }
 
-		for (int catid : catIds) {
-			strSelectBuilder.addOption(LoggingOptions.byId(catid).toString(), "logging-catid-" + catid);
-		}
+    protected void changeCat(LoggingOptions cat, boolean enable) {
 
-		List<LayoutComponent> rows = new LinkedList<>();
-		rows.add(ActionRow.of(buttonRow));
-		rows.add(ActionRow.of(strSelectBuilder.build()));
+        for (int optId = cat.getId() + 1; optId < cat.getId() + 10; optId++) {
 
-		return rows;
-	}
+            LoggingOptions option;
+            if ((option = LoggingOptions.byId(optId)) != LoggingOptions.UNKNOWN) {
 
-	protected void changeCat(LoggingOptions cat, boolean enable) {
+                if (enable) {
+                    LoggingConfigDBHandler.enableOption(option, guildId);
+                } else {
+                    LoggingConfigDBHandler.disableOption(option, guildId);
+                }
+            }
 
-		for (int optId = cat.getId() + 1; optId < cat.getId() + 10; optId++) {
+        }
 
-			LoggingOptions option;
-			if ((option = LoggingOptions.byId(optId)) != LoggingOptions.UNKNOWN) {
+    }
 
-				if (enable) {
-					LoggingConfigDBHandler.enableOption(option, guildId);
-				} else {
-					LoggingConfigDBHandler.disableOption(option, guildId);
-				}
-			}
+    class HookTimeoutLoop implements LoopedEvent {
 
-		}
+        private final String identifier;
+        private final LoggingConfigEmbedProvider listener;
 
-	}
+        public HookTimeoutLoop(String identifier, LoggingConfigEmbedProvider listener) {
+            this.identifier = identifier;
+            this.listener = listener;
 
-	class HookTimeoutLoop implements LoopedEvent {
+        }
 
-		private final String identifier;
-		private final LoggingConfigEmbedProvider listener;
+        private void exit() {
+            Klassenserver7bbot.getInstance().getShardManager().removeEventListener(listener);
+            Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(this);
+        }
 
-		public HookTimeoutLoop(String identifier, LoggingConfigEmbedProvider listener) {
-			this.identifier = identifier;
-			this.listener = listener;
+        @Override
+        public int checkforUpdates() {
 
-		}
+            if (listener.hook.isExpired()) {
+                exit();
+            }
 
-		private void exit() {
-			Klassenserver7bbot.getInstance().getShardManager().removeEventListener(listener);
-			Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(this);
-		}
+            return 0;
+        }
 
-		@Override
-		public int checkforUpdates() {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
 
-			if (listener.hook.isExpired()) {
-				exit();
-			}
+        @Override
+        public void shutdown() {
+            exit();
+        }
 
-			return 0;
-		}
+        @Override
+        public boolean restart() {
+            return false;
+        }
 
-		@Override
-		public boolean isAvailable() {
-			return true;
-		}
+        @Override
+        public String getIdentifier() {
+            return identifier;
+        }
 
-		@Override
-		public void shutdown() {
-			exit();
-		}
-
-		@Override
-		public boolean restart() {
-			return false;
-		}
-
-		@Override
-		public String getIdentifier() {
-			return identifier;
-		}
-
-	}
+    }
 
 }

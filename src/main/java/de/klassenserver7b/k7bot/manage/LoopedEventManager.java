@@ -5,10 +5,7 @@ package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
-import de.klassenserver7b.k7bot.util.customapis.GitHubAPI;
-import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
-import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
-import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
+import de.klassenserver7b.k7bot.util.customapis.*;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,6 +274,8 @@ public class LoopedEventManager {
 			registerEvent(new GitHubAPI(), true);
 			log.info("GitHubAPI registered");
 		}
+
+		registerEvent(new DBAutodelete(), true);
 
 		// registerAPI(new VVOInteractions());
 
