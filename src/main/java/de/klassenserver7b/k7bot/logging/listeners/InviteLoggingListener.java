@@ -35,10 +35,10 @@ public class InviteLoggingListener extends LoggingListener {
 
         embbuild.setDescription(
                 "**Invite: **" + inv.getUrl()
-                        + "\n*Channel: **" + event.getChannel().getAsMention()
+                        + "\n**Channel: **" + event.getChannel().getAsMention()
                         + (inv.getInviter() != null ? "\n**Inviter: **" + inv.getInviter().getAsMention() : "")
                         + "\n**Is Expanded: **" + inv.isExpanded()
-                        + "\n**Expands: **<t:" + OffsetDateTime.now().plusSeconds(inv.getMaxAge()).toEpochSecond() + ">"
+                        + "\n**Expires: **<t:" + OffsetDateTime.now().plusSeconds(inv.getMaxAge()).toEpochSecond() + ">"
                         + "\n**Users are temporary: **" + inv.isTemporary()
         );
 
@@ -59,7 +59,7 @@ public class InviteLoggingListener extends LoggingListener {
         embbuild.setTitle("Invite deleted for " + event.getChannel().getName());
         embbuild.setColor(Color.red);
         embbuild.setDescription("**Invite: **" + event.getUrl()
-                + "\n*Channel: **" + event.getChannel().getAsMention());
+                + "\n**Channel: **" + event.getChannel().getAsMention());
 
         system.sendMessageEmbeds(embbuild.build()).queue();
     }

@@ -30,7 +30,7 @@ public class DBAutodelete implements LoopedEvent {
         Long mindate = OffsetDateTime.now().minusDays(2).toEpochSecond();
         Long guildId = 0L;
 
-        int status = LiteSQL.onUpdate("DELETE * FROM messagelogs WHERE guildId=? AND timestamp < ?", guildId, mindate);
+        int status = LiteSQL.onUpdate("DELETE FROM messagelogs WHERE guildId=? AND timestamp < ?", guildId, mindate);
 
         if (status >= 0) {
             log.debug("Removed " + status + "lines from messagelogs");

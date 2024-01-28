@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.20.0-RC.0</version>
+    <version>1.21.0-RC.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -32,8 +32,8 @@
 
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -220,11 +220,6 @@
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.hypixel</groupId>
-            <artifactId>hypixel-api-transport-apache</artifactId>
-            <version>4.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
