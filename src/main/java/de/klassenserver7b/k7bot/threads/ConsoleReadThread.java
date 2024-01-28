@@ -31,8 +31,8 @@ public class ConsoleReadThread implements Runnable {
 
 	private final Thread t;
 	private final Logger log;
-	private BufferedReader reader;
-	private InputStreamReader sysinr;
+	private final BufferedReader reader;
+	private final InputStreamReader sysinr;
 
 	public ConsoleReadThread() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -83,28 +83,17 @@ public class ConsoleReadThread implements Runnable {
 			t.interrupt();
 			reader.close();
 			this.onShutdown();
-			return;
 		}
 
-		case "enablecommand" -> {
-			changeCommandState(true, commandargs[1]);
-		}
+		case "enablecommand" -> changeCommandState(true, commandargs[1]);
 
-		case "disablecommand" -> {
-			changeCommandState(false, commandargs[1]);
-		}
+		case "disablecommand" -> changeCommandState(false, commandargs[1]);
 
-		case "addaiuser" -> {
-			addAIUser(commandargs[1]);
-		}
+		case "addaiuser" -> addAIUser(commandargs[1]);
 
-		case "rmaiuser" -> {
-			removeAIUser(commandargs[1]);
-		}
+		case "rmaiuser" -> removeAIUser(commandargs[1]);
 
-		default -> {
-			System.out.println("Use exit/stop to Shutdown");
-		}
+		default -> System.out.println("Use exit/stop to Shutdown");
 
 		}
 
@@ -165,7 +154,6 @@ public class ConsoleReadThread implements Runnable {
 
 			Klassenserver7bbot.getInstance().stopLoop();
 
-			Klassenserver7bbot.getInstance().getHypixelAPI().shutdown();
 			Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
 			StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
@@ -209,7 +197,6 @@ public class ConsoleReadThread implements Runnable {
 		}
 
 		log.warn("failed to disable " + name);
-		return;
 	}
 
 	protected void enableCommandByStr(String name) {
@@ -219,7 +206,6 @@ public class ConsoleReadThread implements Runnable {
 		}
 
 		log.warn("failed to enable " + name);
-		return;
 	}
 
 
@@ -233,7 +219,7 @@ public class ConsoleReadThread implements Runnable {
 
 	protected static Set<Class<?>> getAllExtendedOrImplementedInterfacesRecursively(Class<?> clazz) {
 
-		Set<Class<?>> res = new HashSet<Class<?>>();
+		Set<Class<?>> res = new HashSet<>();
 		Class<?>[] interfaces = clazz.getInterfaces();
 
 		if (interfaces.length > 0) {

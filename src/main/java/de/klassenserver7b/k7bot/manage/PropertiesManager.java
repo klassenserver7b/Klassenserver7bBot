@@ -7,7 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -16,137 +16,133 @@ import java.util.Properties;
 
 public class PropertiesManager {
 
-	private HashMap<String, Boolean> apienabled;
-	private Properties prop;
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final HashMap<String, Boolean> apienabled;
+    private Properties prop;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	public PropertiesManager() {
-		apienabled = new HashMap<>();
-		prop = null;
-	}
+    public PropertiesManager() {
+        apienabled = new HashMap<>();
+        prop = null;
+    }
 
-	public boolean loadProps() {
+    public boolean loadProps() {
 
-		prop = new Properties();
+        prop = new Properties();
 
-		try (FileInputStream in = new FileInputStream("resources/bot.properties");) {
+        try (FileInputStream in = new FileInputStream("resources/bot.properties")) {
 
-			prop.load(in);
-			return true;
+            prop.load(in);
+            return true;
 
-		} catch (IOException e) {
+        } catch (IOException e) {
 
-			log.error("No valid config File found! generating a new one");
-			File f = new File("resources/bot.properties");
+            log.error("No valid config File found! generating a new one");
+            File f = new File("resources/bot.properties");
 
-			if (!f.exists()) {
-				generateConfigFile(f);
-			}
-			return false;
+            if (!f.exists()) {
+                generateConfigFile(f);
+            }
+            return false;
 
-		}
-	}
+        }
+    }
 
-	public void checkAPIProps() {
+    public void checkAPIProps() {
 
-		this.apienabled.put("hypixel", prop.getProperty("hypixel-api-key") != null);
+        this.apienabled.put("github", prop.getProperty("github-oauth-token") != null);
 
-		this.apienabled.put("github", prop.getProperty("github-oauth-token") != null);
+        this.apienabled.put("vplan", (prop.getProperty("vplanpw") != null) && prop.getProperty("schoolID") != null);
 
-		this.apienabled.put("vplan", (prop.getProperty("vplanpw") != null) && prop.getProperty("schoolID") != null);
+        this.apienabled.put("lernsax", (prop.getProperty("lsaxemail") != null)
+                && (prop.getProperty("lsaxtoken") != null) && (prop.getProperty("lsaxappid") != null));
 
-		this.apienabled.put("lernsax", (prop.getProperty("lsaxemail") != null)
-				&& (prop.getProperty("lsaxtoken") != null) && (prop.getProperty("lsaxappid") != null));
+        this.apienabled.put("gourmetta",
+                (prop.getProperty("gourmettauserid") != null) && (prop.getProperty("gourmettapassword") != null));
 
-		this.apienabled.put("gourmetta",
-				(prop.getProperty("gourmettauserid") != null) && (prop.getProperty("gourmettapassword") != null));
+        this.apienabled.put("discogs", prop.getProperty("discogs-token") != null);
 
-		this.apienabled.put("discogs", prop.getProperty("discogs-token") != null);
+    }
 
-	}
+    public boolean isBotTokenValid() {
+        String token = prop.getProperty("token");
 
-	public boolean isBotTokenValid() {
-		String token = prop.getProperty("token");
+        if (token != null && !token.isBlank()) {
 
-		if (token != null && !token.isBlank()) {
+            return token.split("\\.").length == 3;
+        }
 
-			if (token.split("\\.").length == 3) {
-				return true;
-			}
-		}
+        return false;
+    }
 
-		return false;
-	}
+    public void generateConfigFile(File f) {
 
-	public void generateConfigFile(File f) {
+        try (BufferedWriter stream = Files.newBufferedWriter(f.toPath(),
+                StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING)) {
 
-		try (BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
-				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING);) {
+            if (!f.createNewFile()) {
+                log.error("Could not create new config file!");
+                return;
+            }
 
-			f.createNewFile();
+            Properties prop = new Properties();
 
-			Properties prop = new Properties();
+            prop.setProperty("token", "");
+            prop.setProperty("canary-token", "");
+            prop.setProperty("github-oauth-token", "");
+            prop.setProperty("ownerId", "");
+            prop.setProperty("shardCount", "");
+            prop.setProperty("vplanpw", "");
+            prop.setProperty("schoolID", "");
+            prop.setProperty("lsaxemail", "");
+            prop.setProperty("lsaxtoken", "");
+            prop.setProperty("lsaxappid", "");
+            prop.setProperty("gourmettauserid", "");
+            prop.setProperty("gourmettapassword", "");
+            prop.setProperty("discogs-token", "");
+            prop.setProperty("vppwold", "");
+            prop.setProperty("spotify-cookie", "");
+            prop.setProperty("votinglimit", "");
 
-			prop.setProperty("token", "");
-			prop.setProperty("canary-token", "");
-			prop.setProperty("hypixel-api-key", "");
-			prop.setProperty("github-oauth-token", "");
-			prop.setProperty("ownerId", "");
-			prop.setProperty("shardCount", "");
-			prop.setProperty("vplanpw", "");
-			prop.setProperty("schoolID", "");
-			prop.setProperty("lsaxemail", "");
-			prop.setProperty("lsaxtoken", "");
-			prop.setProperty("lsaxappid", "");
-			prop.setProperty("gourmettauserid", "");
-			prop.setProperty("gourmettapassword", "");
-			prop.setProperty("discogs-token", "");
-			prop.setProperty("vppwold", "");
-			prop.setProperty("spotify-cookie", "");
-			prop.setProperty("votinglimit", "");
+            prop.store(stream, "Bot-Configfile\n 'token' is required!");
 
-			prop.store(stream, "Bot-Configfile\n 'token' is required!");
-			stream.close();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
+    }
 
-	}
+    public void setProperty(String id, String value) {
+        prop.setProperty(id, value);
 
-	public void setProperty(String id, String value) {
-		prop.setProperty(id, value);
+        flushConfig();
+    }
 
-		flushConfig();
-	}
+    private void flushConfig() {
 
-	private void flushConfig() {
+        try (BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
+                StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING)) {
 
-		try (BufferedWriter stream = Files.newBufferedWriter(Path.of("resources/bot.properties"),
-				Charset.forName("UTF-8"), StandardOpenOption.TRUNCATE_EXISTING)) {
+            prop.store(stream, "Bot-Configfile\n 'token' is required!");
 
-			prop.store(stream, "Bot-Configfile\n 'token' is required!");
-			stream.close();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
+    }
 
-	}
+    public String getProperty(String key) {
+        return prop.getProperty(key);
+    }
 
-	public String getProperty(String key) {
-		return prop.getProperty(key);
-	}
+    public Properties getProperties() {
+        return this.prop;
+    }
 
-	public Properties getProperties() {
-		return this.prop;
-	}
+    public boolean isApiEnabled(String api) {
+        return apienabled.get(api);
+    }
 
-	public boolean isApiEnabled(String api) {
-		return apienabled.get(api);
-	}
-
-	public HashMap<String, Boolean> getEnabledApis() {
-		return this.apienabled;
-	}
+    public HashMap<String, Boolean> getEnabledApis() {
+        return this.apienabled;
+    }
 }

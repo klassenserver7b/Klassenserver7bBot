@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import de.klassenserver7b.k7bot.hypixel.HypixelCommandManager;
 import de.klassenserver7b.k7bot.listener.*;
 import de.klassenserver7b.k7bot.logging.listeners.LoggingListener;
 import de.klassenserver7b.k7bot.manage.*;
@@ -31,8 +30,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.hypixel.api.HypixelAPI;
-import net.hypixel.api.apache.ApacheHttpClient;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.slf4j.Logger;
@@ -44,7 +41,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -63,7 +59,6 @@ public class Klassenserver7bbot {
     private SubscriptionManager subMgr;
 
     private SlashCommandManager slashMgr;
-    private HypixelCommandManager hypMgr;
 
     private final PropertiesManager propMgr;
     private LoopedEventManager loopedEventMgr;
@@ -75,7 +70,6 @@ public class Klassenserver7bbot {
     private ConsoleReadThread shutdownT;
 
     private GitHub github;
-    private HypixelAPI hypixelApi;
     private LyricsClient lyricsapi;
     private GLAWrapper lyricsapiold;
     private SpotifyInteractions spotifyinteractions;
@@ -202,11 +196,6 @@ public class Klassenserver7bbot {
         // this.lyricsapiold = new GLA();
         this.lyricsapiold = new GLAWrapper();
 
-        if (propMgr.isApiEnabled("hypixel")) {
-            this.hypixelApi = new HypixelAPI(
-                    new ApacheHttpClient(UUID.fromString(propMgr.getProperty("hypixel-api-key"))));
-        }
-
         if (propMgr.isApiEnabled("github")) {
             try {
                 this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
@@ -217,7 +206,6 @@ public class Klassenserver7bbot {
 
         }
 
-        this.hypMgr = new HypixelCommandManager();
         this.spotifyinteractions = new SpotifyInteractions();
 
         InitializeMusic(this.audioPlayerManager);
@@ -373,10 +361,6 @@ public class Klassenserver7bbot {
         return this.cmdMgr;
     }
 
-    public HypixelCommandManager gethypMan() {
-        return this.hypMgr;
-    }
-
     public SlashCommandManager getslashMan() {
         return this.slashMgr;
     }
@@ -399,10 +383,6 @@ public class Klassenserver7bbot {
 
     public Long getOwnerId() {
         return this.ownerId;
-    }
-
-    public HypixelAPI getHypixelAPI() {
-        return this.hypixelApi;
     }
 
     public SystemNotificationChannelManager getSysChannelMgr() {
