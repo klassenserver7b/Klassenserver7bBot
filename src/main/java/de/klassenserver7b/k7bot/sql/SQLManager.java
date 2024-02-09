@@ -40,9 +40,6 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, command STRING, guildId INTEGER, userId INTEGER, timestamp INTEGER, commandstring STRING);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS ha3users(ingamename STRING NOT NULL, realname STRING, dcname STRING, dcId INTEGER NOT NULL, approved INTEGER, PRIMARY KEY(ingamename, dcId));");
-
-		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, lernplanId STRING);");
 
 		LiteSQL.onUpdate(
@@ -55,16 +52,19 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL, target INTEGER NOT NULL, targetDcId INTEGER NOT NULL, subscriptionId INTEGER);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING);");
+				"CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING, teacher STRING);");
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR NOT NULL, PRIMARY KEY(userId, guildId, messageId, emote));");
 		
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS messagelogs(messageId INTEGER NOT NULL PRIMARY KEY, guildId INTEGER, timestamp INTEGER, messageText STRING)");
+				"CREATE TABLE IF NOT EXISTS messagelogs(messageId INTEGER NOT NULL PRIMARY KEY, guildId INTEGER, timestamp INTEGER, authorId INTEGER, messageText STRING)");
 		
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS memechannels(channelId INTEGER NOT NULL PRIMARY KEY)");
+		
+		LiteSQL.onUpdate(
+				"CREATE TABLE IF NOT EXISTS loggingConfig (guildId INTEGER NOT NULL, optionJson TEXT NOT NULL DEFAULT '[]', PRIMARY KEY(guildId))");
 		
 	}
 }

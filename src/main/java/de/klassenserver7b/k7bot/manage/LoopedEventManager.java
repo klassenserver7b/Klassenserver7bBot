@@ -3,277 +3,266 @@
  */
 package de.klassenserver7b.k7bot.manage;
 
+import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.util.InternalStatusCodes;
+import de.klassenserver7b.k7bot.util.customapis.DBAutodelete;
+import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
+import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
+import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
+import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.util.InternalStatusCodes;
-import de.klassenserver7b.k7bot.util.customapis.GitHubAPI;
-import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
-import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
-import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
-import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
-
 /**
  * @author Klassenserver7b
- *
  */
 public class LoopedEventManager {
 
-	private final List<LoopedEvent> registeredEvents;
-	private final List<LoopedEvent> activeEvents;
-	private final List<LoopedEvent> erroredEvents;
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final List<LoopedEvent> registeredEvents;
+    private final List<LoopedEvent> activeEvents;
+    private final List<LoopedEvent> erroredEvents;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	/**
-	 *
-	 */
-	public LoopedEventManager() {
-		registeredEvents = new ArrayList<>();
-		activeEvents = new ArrayList<>();
-		erroredEvents = new ArrayList<>();
-	}
+    /**
+     *
+     */
+    public LoopedEventManager() {
+        registeredEvents = new ArrayList<>();
+        activeEvents = new ArrayList<>();
+        erroredEvents = new ArrayList<>();
+    }
 
-	/**
-	 *
-	 */
-	public void checkForUpdates() {
+    /**
+     *
+     */
+    public void checkForUpdates() {
 
-		List<LoopedEvent> change = new ArrayList<>();
+        List<LoopedEvent> change = new ArrayList<>();
 
-		for (LoopedEvent erroredEvent : erroredEvents) {
+        for (LoopedEvent erroredEvent : erroredEvents) {
 
-			if (erroredEvent.isAvailable()) {
-				log.info(erroredEvent.getIdentifier() + " is available again");
-				change.add(erroredEvent);
-			}
+            if (erroredEvent.isAvailable()) {
+                log.info(erroredEvent.getIdentifier() + " is available again");
+                change.add(erroredEvent);
+            }
 
-		}
+        }
 
-		erroredEvents.removeAll(change);
-		activeEvents.addAll(change);
-		change.clear();
+        erroredEvents.removeAll(change);
+        activeEvents.addAll(change);
+        change.clear();
 
-		for (LoopedEvent activeEvent : activeEvents) {
-			int status = activeEvent.checkforUpdates();
+        for (LoopedEvent activeEvent : activeEvents) {
+            int status = activeEvent.checkforUpdates();
 
-			if (status != InternalStatusCodes.SUCCESS) {
-				log.warn(activeEvent.getIdentifier() + " had an error - will be checked next time only");
-				change.add(activeEvent);
-			}
-		}
+            if (status != InternalStatusCodes.SUCCESS) {
+                log.warn(activeEvent.getIdentifier() + " had an error - will be checked next time only");
+                change.add(activeEvent);
+            }
+        }
 
-		activeEvents.removeAll(change);
-		erroredEvents.addAll(change);
-		change.clear();
-	}
+        activeEvents.removeAll(change);
+        erroredEvents.addAll(change);
+        change.clear();
+    }
 
-	/**
-	 *
-	 * @param event
-	 */
-	protected void removeEvent(LoopedEvent event) {
-		registeredEvents.remove(event);
-	}
+    /**
+     * @param event the event to be removed
+     */
+    public void removeEvent(LoopedEvent event) {
+        registeredEvents.remove(event);
+    }
 
-	/**
-	 *
-	 * @param identifier
-	 */
-	public void enableEvent(String identifier) {
+    /**
+     * @param identifier the identifier of the event to be removed
+     */
+    public void enableEvent(String identifier) {
 
-		LoopedEvent selectedevent = null;
+        LoopedEvent selectedevent = null;
 
-		for (LoopedEvent event : registeredEvents) {
+        for (LoopedEvent event : registeredEvents) {
 
-			if (event.getIdentifier().equalsIgnoreCase(identifier)) {
-				selectedevent = event;
-				break;
-			}
+            if (event.getIdentifier().equalsIgnoreCase(identifier)) {
+                selectedevent = event;
+                break;
+            }
 
-		}
+        }
 
-		if (selectedevent == null) {
-			return;
-		}
+        if (selectedevent == null) {
+            return;
+        }
 
-		if (!activeEvents.contains(selectedevent)) {
-			activeEvents.add(selectedevent);
-		}
+        if (!activeEvents.contains(selectedevent)) {
+            activeEvents.add(selectedevent);
+        }
 
-	}
+    }
 
-	/**
-	 *
-	 * @param identifier
-	 */
-	public void disableEvent(String identifier) {
-		LoopedEvent selectedevent = null;
+    /**
+     * @param identifier the identifier of the event to be removed
+     */
+    public void disableEvent(String identifier) {
+        LoopedEvent selectedevent = null;
 
-		for (LoopedEvent event : registeredEvents) {
+        for (LoopedEvent event : registeredEvents) {
 
-			if (event.getIdentifier().equalsIgnoreCase(identifier)) {
-				selectedevent = event;
-				break;
-			}
+            if (event.getIdentifier().equalsIgnoreCase(identifier)) {
+                selectedevent = event;
+                break;
+            }
 
-		}
+        }
 
-		if (selectedevent == null) {
-			return;
-		}
+        if (selectedevent == null) {
+            return;
+        }
 
-		activeEvents.remove(selectedevent);
-	}
+        activeEvents.remove(selectedevent);
+    }
 
-	/**
-	 * 
-	 * @param event
-	 * @param enable wether the api should be enabled
-	 */
-	public void registerEvent(LoopedEvent event, boolean enable) {
-		registeredEvents.add(event);
+    /**
+     * @param event  the event to be registered
+     * @param enable if the event should be enabled
+     */
+    public void registerEvent(LoopedEvent event, boolean enable) {
+        registeredEvents.add(event);
 
-		if (enable) {
-			activeEvents.add(event);
-		}
-	}
+        if (enable) {
+            activeEvents.add(event);
+        }
+    }
 
-	/**
-	 * @param enable wether the api should be enabled
-	 * @param events
-	 */
-	public void registerEvents(boolean enable, LoopedEvent... events) {
-		registerEvents(enable, Arrays.asList(events));
-	}
+    /**
+     * @param events the events to be registered
+     * @param enable wether the api should be enabled
+     */
+    public void registerEvents(Collection<? extends LoopedEvent> events, boolean enable) {
+        registeredEvents.addAll(events);
 
-	/**
-	 * @param enable wether the api should be enabled
-	 * @param events
-	 */
-	public void registerEvents(boolean enable, Collection<? extends LoopedEvent> events) {
-		registeredEvents.addAll(events);
+        if (enable) {
+            activeEvents.addAll(events);
+        }
+    }
 
-		if (enable) {
-			activeEvents.addAll(events);
-		}
-	}
+    /**
+     * @param identifier the identifier of the event to be removed
+     */
+    public void removeEvent(String identifier) {
+        List<LoopedEvent> change = new ArrayList<>();
 
-	/**
-	 *
-	 * @param identifier
-	 */
-	public void removeEvent(String identifier) {
+        for (LoopedEvent event : registeredEvents) {
 
-		for (LoopedEvent event : registeredEvents) {
+            if (event.getIdentifier().equalsIgnoreCase(identifier)) {
+                change.add(event);
+            }
 
-			if (event.getIdentifier().equalsIgnoreCase(identifier)) {
-				registeredEvents.remove(event);
-			}
+        }
 
-		}
-	}
+        registeredEvents.removeAll(change);
+        activeEvents.removeAll(change);
+    }
 
-	/**
-	 *
-	 * @param identifiers
-	 */
-	public void removeEvents(@Nonnull String... identifiers) {
-		removeEvents(Arrays.asList(identifiers));
-	}
+    /**
+     * @param identifiers the identifiers of the events to be removed
+     */
+    public void removeEvents(@Nonnull String... identifiers) {
+        removeEvents(Arrays.asList(identifiers));
+    }
 
-	public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
+    public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
 
-		for (LoopedEvent event : registeredEvents) {
+        List<LoopedEvent> change = new ArrayList<>();
 
-			if (identifiers.contains(event.getIdentifier())) {
-				registeredEvents.remove(event);
-			}
+        for (LoopedEvent event : registeredEvents) {
 
-		}
-	}
+            if (identifiers.contains(event.getIdentifier())) {
+                change.add(event);
+            }
 
-	/**
-	 * restarts only all ACTIVE {@link LoopedEvent LoopedEvents}
-	 */
-	public void restart() {
+        }
 
-		for (LoopedEvent activeEvent : activeEvents) {
-			activeEvent.restart();
-		}
+        registeredEvents.removeAll(change);
+        activeEvents.removeAll(change);
+    }
 
-	}
+    /**
+     * restarts only all ACTIVE {@link LoopedEvent LoopedEvents}
+     */
+    public void restart() {
 
-	/**
-	 * restarts every registered {@link LoopedEvent LoopedEvents}
-	 */
-	public void restartAll() {
+        for (LoopedEvent activeEvent : activeEvents) {
+            activeEvent.restart();
+        }
 
-		for (LoopedEvent event : registeredEvents) {
-			event.restart();
-		}
+    }
 
-	}
+    /**
+     * restarts every registered {@link LoopedEvent LoopedEvents}
+     */
+    public void restartAll() {
 
-	/**
-	 * 
-	 */
-	public void shutdownLoopedEvents() {
+        for (LoopedEvent event : registeredEvents) {
+            event.restart();
+        }
 
-		try {
+    }
 
-			for (LoopedEvent event : registeredEvents) {
+    /**
+     *
+     */
+    public void shutdownLoopedEvents() {
 
-				event.shutdown();
+        try {
 
-			}
+            for (LoopedEvent event : registeredEvents) {
 
-			registeredEvents.clear();
+                event.shutdown();
 
-		} catch (Exception e) {
-			log.warn("Forced APIs to shut down");
-		}
+            }
 
-	}
+            registeredEvents.clear();
 
-	/**
-	 *
-	 */
-	public void initializeDefaultEvents() {
+        } catch (Exception e) {
+            log.warn("Forced APIs to shut down");
+        }
 
-		log.info("Await API-ready");
-		PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
+    }
 
-		if (propMgr.isApiEnabled("lernsax")) {
-			registerEvent(new LernsaxInteractions(), true);
-			log.info("LernsaxAPI registered");
-		}
+    /**
+     *
+     */
+    public void initializeDefaultEvents() {
 
-		if (propMgr.isApiEnabled("vplan")) {
-			registerEvent(new Stundenplan24Vplan("10b"), true);
-			log.info("VplanAPI registered");
-		}
+        log.info("Await API-ready");
+        PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
 
-		if (propMgr.isApiEnabled("gourmetta")) {
-			registerEvent(new GourmettaInteractions(), true);
-			log.info("GourmettaAPI registered");
-		}
+        if (propMgr.isApiEnabled("lernsax")) {
+            registerEvent(new LernsaxInteractions(), true);
+            log.info("LernsaxAPI registered");
+        }
 
-		if (propMgr.isApiEnabled("github")) {
-			registerEvent(new GitHubAPI(), true);
-			log.info("GitHubAPI registered");
-		}
+        if (propMgr.isApiEnabled("vplan")) {
+            registerEvent(new Stundenplan24Vplan("JG11"), true);
+            log.info("VplanAPI registered");
+        }
 
-		// registerAPI(new VVOInteractions());
+        if (propMgr.isApiEnabled("gourmetta")) {
+            registerEvent(new GourmettaInteractions(), true);
+            log.info("GourmettaAPI registered");
+        }
 
-		log.info("APIs are initialized");
-	}
+        registerEvent(new DBAutodelete(), true);
+
+        // registerAPI(new VVOInteractions());
+
+        log.info("APIs are initialized");
+    }
 
 }

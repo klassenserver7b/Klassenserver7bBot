@@ -3,18 +3,11 @@
  */
 package de.klassenserver7b.k7bot.music.commands.generic;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
@@ -23,6 +16,7 @@ import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
+import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.AudioPlayerUtil;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -31,12 +25,21 @@ import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author K7
@@ -46,6 +49,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 	private final Logger log;
 	private final AudioPlayerManager apm;
+	private final String SUPPORTED_AUDIO_FORMATS = "(mp4|mp3|wav|ogg|m4a)";
 
 	/**
 	 *
@@ -92,7 +96,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 		String[] args = message.getContentDisplay().split(" ");
 
-		if (args.length <= 1) {
+		if (args.length <= 1 && message.getAttachments().size() <= 0) {
 			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), gethelp(), m);
 			return;
 		}
@@ -108,6 +112,19 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 		StringBuilder strBuilder = new StringBuilder();
 
+		if (message.getAttachments().size() > 0) {
+			int status = loadAttachments(message.getAttachments(), controller, gethelp());
+
+			if (status == 0) {
+				return;
+			}
+
+			channel.sendMessage(
+					"Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
+					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+			return;
+		}
+
 		for (int i = 1; i < args.length; i++) {
 			strBuilder.append(args[i]);
 			strBuilder.append(" ");
@@ -115,7 +132,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 		String url = strBuilder.toString().trim();
 
-		performItemLoad(url, controller, vc.getName());
+		loadURL(url, controller, vc.getName());
 
 	}
 
@@ -133,11 +150,11 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		String url = suffix + " " + query;
 		url = url.trim();
 
-		performItemLoad(url, controller, channel.getName());
+		loadURL(url, controller, channel.getName());
 
 	}
 
-	protected void performItemLoad(String url, MusicController controller, String vcname) {
+	protected int loadURL(String url, MusicController controller, String vcname) {
 		url = formatQuerry(url);
 
 		log.info("Bot startet searching a track: no current track -> new Track(channelName = " + vcname + ", url = "
@@ -145,9 +162,40 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
 		try {
 			apm.loadItem(url, generateAudioLoadResult(controller, url));
+			return 0;
 		} catch (FriendlyException e) {
 			log.error(e.getMessage(), e);
+			return 1;
 		}
+	}
+
+	protected int loadAttachments(List<Attachment> attachments, MusicController controller, String vcname) {
+
+		boolean err = false;
+		for (int i = 0; i < attachments.size(); i++) {
+
+			try (Attachment song = attachments.get(i)) {
+				if (!song.getFileExtension().matches(SUPPORTED_AUDIO_FORMATS)) {
+					err = true;
+					continue;
+				}
+
+				AudioLoadResult alr = generateAudioLoadResult(controller, song.getProxyUrl());
+
+				if (i != 0) {
+					alr.setLoadoption(AudioLoadOption.APPEND);
+				}
+
+				apm.loadItem(song.getProxyUrl(), alr);
+			}
+		}
+
+		if (err) {
+			return 1;
+
+		}
+		return 0;
+
 	}
 
 	protected boolean tryLoad(String identifyer, AudioLoadResult ares, AudioPlayerManager apm) {
@@ -222,6 +270,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 		return null;
 	}
 
+	@NotNull
 	@Override
 	public SlashCommandData getCommandData() {
 		return null;

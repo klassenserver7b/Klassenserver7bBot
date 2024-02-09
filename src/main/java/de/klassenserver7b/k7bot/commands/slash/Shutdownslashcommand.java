@@ -1,10 +1,5 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
-import java.awt.Color;
-import java.util.concurrent.TimeUnit;
-
-import org.jetbrains.annotations.NotNull;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -17,6 +12,10 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class Shutdownslashcommand implements TopLevelSlashCommand {
 

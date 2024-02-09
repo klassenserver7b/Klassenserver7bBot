@@ -30,7 +30,7 @@
 ### You can contact me via
 
 - This [GitHub-Repo](https://github.com/klassenserver7b/Klassenserver7bBot/) and my [GitHub Account](https://github.com/klassenserver7b/)
-- Discord: "Klassenserver 7b#0380"
+- Discord: "Klassenserver7b"
 - [Discord Server](https://discord.gg/EdKD5FE)
 - E-Mail: "klassenserver7bwin10@gmail.com"
 

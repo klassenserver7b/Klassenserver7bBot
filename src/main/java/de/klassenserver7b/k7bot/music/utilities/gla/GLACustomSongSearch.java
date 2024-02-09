@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.music.utilities.gla;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 public class GLACustomSongSearch {
 

@@ -3,18 +3,25 @@
  */
 package de.klassenserver7b.k7bot.music.utilities.spotify;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-
-import javax.naming.OperationNotSupportedException;
-
+import com.google.common.io.Files;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.sedmelluq.discord.lavaplayer.container.mpeg.MpegAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.local.LocalSeekableInputStream;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
+import com.sedmelluq.discord.lavaplayer.tools.io.SeekableInputStream;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
+import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
+import de.klassenserver7b.widevine4j.CDMDevice;
+import de.klassenserver7b.widevine4j.CDMSession;
+import de.klassenserver7b.widevine4j.ContentKey;
+import io.seruco.encoding.base62.Base62;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.HttpResponseException;
@@ -33,26 +40,16 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.sedmelluq.discord.lavaplayer.container.mpeg.MpegAudioTrack;
-import com.sedmelluq.discord.lavaplayer.source.local.LocalSeekableInputStream;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
-import com.sedmelluq.discord.lavaplayer.tools.io.SeekableInputStream;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
-
-import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
-import de.klassenserver7b.widevine4j.CDMDevice;
-import de.klassenserver7b.widevine4j.CDMSession;
-import de.klassenserver7b.widevine4j.ContentKey;
-import io.seruco.encoding.base62.Base62;
+import javax.naming.OperationNotSupportedException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author K7
@@ -173,6 +170,11 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 			return false;
 		}
 
+		if(license == null || license.length == 0) {
+			log.error("empty license - abort");
+			return false;
+		}
+		
 		List<ContentKey> keys;
 
 		try {

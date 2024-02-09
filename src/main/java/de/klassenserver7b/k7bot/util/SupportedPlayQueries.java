@@ -3,9 +3,9 @@
  */
 package de.klassenserver7b.k7bot.util;
 
-import javax.annotation.Nonnull;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Klassenserver7b

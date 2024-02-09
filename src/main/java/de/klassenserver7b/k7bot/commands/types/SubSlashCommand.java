@@ -3,9 +3,9 @@
  */
 package de.klassenserver7b.k7bot.commands.types;
 
-import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author K7
@@ -13,8 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  */
 public interface SubSlashCommand extends SlashCommand {
 	@Nonnull
-	public SubcommandData getSubCommandData();
+    SubcommandData getSubCommandData();
 
-	public String getSubPath();
+	String getSubPath();
 
 }

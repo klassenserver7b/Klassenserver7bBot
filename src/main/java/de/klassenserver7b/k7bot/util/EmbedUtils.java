@@ -3,11 +3,12 @@
  */
 package de.klassenserver7b.k7bot.util;
 
-import java.awt.Color;
-import java.time.OffsetDateTime;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+
+import java.awt.*;
+import java.time.OffsetDateTime;
 
 /**
  * @author K7
@@ -62,12 +63,17 @@ public class EmbedUtils {
 	}
 
 	public static EmbedBuilder getDefault() {
-		return getDefault(null);
+		return getDefault((Long) null);
 	}
 
 	public static EmbedBuilder getDefault(Long guildId) {
 		return new EmbedBuilder().setTimestamp(OffsetDateTime.now())
 				.setFooter("@" + Klassenserver7bbot.getInstance().getSelfName(guildId));
+	}
+
+	public static EmbedBuilder getDefault(Guild guild) {
+		return new EmbedBuilder().setTimestamp(OffsetDateTime.now())
+				.setFooter("@" + guild.getSelfMember().getEffectiveName());
 	}
 
 }

@@ -3,8 +3,6 @@
  */
 package de.klassenserver7b.k7bot.moderation.commands.generic;
 
-import java.util.List;
-
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -12,6 +10,8 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+
+import java.util.List;
 
 /**
  * @author K7

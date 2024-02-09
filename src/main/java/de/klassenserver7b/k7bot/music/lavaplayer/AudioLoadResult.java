@@ -1,17 +1,16 @@
 package de.klassenserver7b.k7bot.music.lavaplayer;
 
-import java.awt.Color;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+
+import java.awt.*;
 
 public class AudioLoadResult implements AudioLoadResultHandler {
 
@@ -123,8 +122,37 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
 	@Override
 	public void loadFailed(FriendlyException exception) {
-		Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item.");
+		Klassenserver7bbot.getInstance().getMainLogger().info(
+				"Bot AudioLoadResult failed to load the requested item. - error: " + exception.getLocalizedMessage());
 		EmbedBuilder builder = EmbedUtils.getErrorEmbed(exception.getMessage(), controller.getGuild().getIdLong());
 		MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
+	}
+
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return uri;
+	}
+
+	/**
+	 * @return the controller
+	 */
+	public MusicController getController() {
+		return controller;
+	}
+
+	/**
+	 * @return the loadoption
+	 */
+	public AudioLoadOption getLoadoption() {
+		return loadoption;
+	}
+
+	/**
+	 * @param loadoption the loadoption to set
+	 */
+	public void setLoadoption(AudioLoadOption loadoption) {
+		this.loadoption = loadoption;
 	}
 }

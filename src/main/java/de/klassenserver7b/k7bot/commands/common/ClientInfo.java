@@ -1,9 +1,5 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -14,6 +10,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+
+import java.awt.*;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
