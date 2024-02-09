@@ -4,8 +4,8 @@ clean:
 	mvn clean
 	
 package:
-	mvn -B package
-	
+	mvn package
+
 copy:
 	cp target/k7bot-*-full.jar /home/felix/Desktop/Bot/Bot_pvt.jar
 	

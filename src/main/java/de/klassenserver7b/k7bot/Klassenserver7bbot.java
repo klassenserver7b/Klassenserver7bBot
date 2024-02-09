@@ -30,8 +30,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +66,6 @@ public class Klassenserver7bbot {
 
     private LoopThread loop;
     private ConsoleReadThread shutdownT;
-
-    private GitHub github;
     private LyricsClient lyricsapi;
     private GLAWrapper lyricsapiold;
     private SpotifyInteractions spotifyinteractions;
@@ -195,16 +191,6 @@ public class Klassenserver7bbot {
         this.lyricsapi = new LyricsClient("Genius");
         // this.lyricsapiold = new GLA();
         this.lyricsapiold = new GLAWrapper();
-
-        if (propMgr.isApiEnabled("github")) {
-            try {
-                this.github = new GitHubBuilder().withOAuthToken(propMgr.getProperty("github-oauth-token")).build();
-            } catch (IOException e) {
-                propMgr.getEnabledApis().put("github", false);
-                this.logger.error("couldn't start GitHub-Api");
-            }
-
-        }
 
         this.spotifyinteractions = new SpotifyInteractions();
 
@@ -363,10 +349,6 @@ public class Klassenserver7bbot {
 
     public SlashCommandManager getslashMan() {
         return this.slashMgr;
-    }
-
-    public GitHub getGitapi() {
-        return this.github;
     }
 
     public LyricsClient getLyricsAPI() {

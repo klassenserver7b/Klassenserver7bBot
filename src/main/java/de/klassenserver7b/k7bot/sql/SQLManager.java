@@ -52,7 +52,7 @@ public class SQLManager {
 				"CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type INTEGER NOT NULL, target INTEGER NOT NULL, targetDcId INTEGER NOT NULL, subscriptionId INTEGER);");
 
 		LiteSQL.onUpdate(
-				"CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING);");
+				"CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room STRING, teacher STRING);");
 
 		LiteSQL.onUpdate(
 				"CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR NOT NULL, PRIMARY KEY(userId, guildId, messageId, emote));");

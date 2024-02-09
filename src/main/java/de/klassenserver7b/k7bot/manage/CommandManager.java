@@ -8,7 +8,6 @@ import de.klassenserver7b.k7bot.logging.commands.common.SystemChannelCommand;
 import de.klassenserver7b.k7bot.moderation.commands.common.*;
 import de.klassenserver7b.k7bot.music.commands.common.*;
 import de.klassenserver7b.k7bot.util.commands.common.*;
-import de.klassenserver7b.k7bot.util.customapis.DisabledAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -88,12 +87,6 @@ public class CommandManager {
         // Private
         this.commands.add(new UebersteuerungAdmin());
         this.commands.add(new TeacherCommand());
-
-        if (Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("github")) {
-            this.commands.add(new GithubRepoCommand());
-        } else {
-            this.commands.add(new DisabledAPI(new String[]{"repo"}));
-        }
 
         if (Klassenserver7bbot.getInstance().isDevMode()) {
             this.commands.add(new TestCommand());

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.21.0-RC.0</version>
+    <version>1.22.0-RC.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -96,7 +96,7 @@
                 <artifactId>maven-site-plugin</artifactId>
                 <version>4.0.0-M13</version>
                 <configuration>
-                    <outputDirectory>mvn-site</outputDirectory>
+                    <outputDirectory>${project.build.directory}/mvn-site</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -230,12 +230,6 @@
             <groupId>com.github.KevinPriv</groupId>
             <artifactId>MojangAPI</artifactId>
             <version>1.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.kohsuke/github-api -->
-        <dependency>
-            <groupId>org.kohsuke</groupId>
-            <artifactId>github-api</artifactId>
-            <version>1.318</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
