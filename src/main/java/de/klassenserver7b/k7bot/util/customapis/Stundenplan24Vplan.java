@@ -147,7 +147,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		if (sendApproved) {
 
-			putRoomsInDB(doc);
+			putInDB(doc);
 
 			String info = "";
 
@@ -242,7 +242,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 	}
 
-	private void putRoomsInDB(Document doc) {
+	private void putInDB(Document doc) {
 
 		NodeList stdlist = doc.getElementsByTagName("Std");
 
@@ -254,11 +254,12 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 			int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
 			String room = n.getElementsByTagName("Ra").item(0).getTextContent();
+			String teacher = n.getElementsByTagName("Le").item(0).getTextContent();
 
 			if (room.contains("&amp;nbsp;") || room.contains("nbsp;") || room.isBlank()) {
 				continue;
 			}
-			LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room) VALUES(?, ?)", lesson, room);
+			LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room, teacher) VALUES(?, ?, ?)", lesson, room, teacher);
 
 		}
 	}

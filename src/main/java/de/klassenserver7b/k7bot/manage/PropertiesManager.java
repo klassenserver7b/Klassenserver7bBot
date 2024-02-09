@@ -49,8 +49,6 @@ public class PropertiesManager {
 
     public void checkAPIProps() {
 
-        this.apienabled.put("github", prop.getProperty("github-oauth-token") != null);
-
         this.apienabled.put("vplan", (prop.getProperty("vplanpw") != null) && prop.getProperty("schoolID") != null);
 
         this.apienabled.put("lernsax", (prop.getProperty("lsaxemail") != null)
@@ -88,7 +86,6 @@ public class PropertiesManager {
 
             prop.setProperty("token", "");
             prop.setProperty("canary-token", "");
-            prop.setProperty("github-oauth-token", "");
             prop.setProperty("ownerId", "");
             prop.setProperty("shardCount", "");
             prop.setProperty("vplanpw", "");
