@@ -5,7 +5,7 @@ package de.klassenserver7b.k7bot.commands.slash;
 
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
-import de.klassenserver7b.k7bot.util.VplanRoomChecker;
+import de.klassenserver7b.k7bot.util.VplanDBUtils;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * 
@@ -30,8 +31,8 @@ public class CheckRoomSlashCommand implements TopLevelSlashCommand {
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
-		String room = event.getOption("room").getAsString().replaceAll("[Rr]", "");
-		long lesson = event.getOption("lesson").getAsLong();
+		String room = Objects.requireNonNull(event.getOption("room")).getAsString().replaceAll("[Rr]", "");
+		long lesson = Objects.requireNonNull(event.getOption("lesson")).getAsLong();
 
 		if (lesson <= 0 || room.isBlank()) {
 			event.replyEmbeds(EmbedUtils.getErrorEmbed("Invalid Data submitted!").build())
@@ -40,7 +41,7 @@ public class CheckRoomSlashCommand implements TopLevelSlashCommand {
 
 		InteractionHook hook = event.deferReply().complete();
 
-		if (!VplanRoomChecker.isRoomFree(lesson, room)) {
+		if (!VplanDBUtils.isRoomFree(lesson, room)) {
 			hook.sendMessageEmbeds(EmbedUtils
 					.getBuilderOf(Color.decode("#bd7604"), "I'm sorry but this room is already taken").build()).queue();
 

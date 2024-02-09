@@ -5,7 +5,7 @@ package de.klassenserver7b.k7bot.commands.slash;
 
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
-import de.klassenserver7b.k7bot.util.VplanRoomChecker;
+import de.klassenserver7b.k7bot.util.VplanDBUtils;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 
@@ -26,13 +27,13 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 		InteractionHook hook = event.deferReply().complete();
 
-		long lesson = event.getOption("lesson").getAsLong();
+		long lesson = Objects.requireNonNull(event.getOption("lesson")).getAsLong();
 
-		List<String> rooms = VplanRoomChecker.checkDefaults(lesson);
+		List<String> rooms = VplanDBUtils.checkDefaultRooms(lesson);
 
 		if (rooms.isEmpty()) {
 			hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.decode("#bd7604"),
-					"I'm sorry but all rooms are already taken", event.getGuild().getIdLong()).build()).queue();
+					"I'm sorry but all rooms are already taken", Objects.requireNonNull(event.getGuild()).getIdLong()).build()).queue();
 			return;
 		}
 
@@ -46,8 +47,8 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 		strbuild.delete(strbuild.length() - 2, strbuild.length());
 
 		hook.sendMessageEmbeds(
-				EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + strbuild.toString() + " are free!",
-						event.getGuild().getIdLong()).build())
+				EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + strbuild + " are free!",
+						Objects.requireNonNull(event.getGuild()).getIdLong()).build())
 				.queue();
 
 	}
