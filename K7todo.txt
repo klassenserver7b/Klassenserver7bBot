@@ -1,4 +1,4 @@
-Logging Config embed
+File delete spotify
 Message Logging
 
 Poll System

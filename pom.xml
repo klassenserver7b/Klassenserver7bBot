@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress MavenModelInspection -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.klassenserver7b</groupId>
 	<artifactId>k7bot</artifactId>
-	<version>1.23.0-RC.0</version>
+	<version>1.23.1-RC.0</version>
 	<packaging>jar</packaging>
 	<name>k7bot</name>
 	<description>My Discord Bot</description>

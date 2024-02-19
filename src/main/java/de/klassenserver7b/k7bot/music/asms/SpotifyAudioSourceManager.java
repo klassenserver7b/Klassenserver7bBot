@@ -13,12 +13,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyPlaylistLoader;
-import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyTrackLoader;
-import de.klassenserver7b.k7bot.music.asms.loader.SpotifyPlaylistLoader;
-import de.klassenserver7b.k7bot.music.asms.loader.SpotifyTrackLoader;
-import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyAudioTrack;
-import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyInteractions;
+import de.klassenserver7b.k7bot.music.spotify.SpotifyAudioTrack;
+import de.klassenserver7b.k7bot.music.spotify.SpotifyInteractions;
+import de.klassenserver7b.k7bot.music.spotify.loader.DefaultSpotifyPlaylistLoader;
+import de.klassenserver7b.k7bot.music.spotify.loader.DefaultSpotifyTrackLoader;
+import de.klassenserver7b.k7bot.music.spotify.loader.SpotifyPlaylistLoader;
+import de.klassenserver7b.k7bot.music.spotify.loader.SpotifyTrackLoader;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -54,12 +54,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private File tempdir;
 
-    private SpotifyInteractions spotifyInteract;
+    private final SpotifyInteractions spotifyInteract;
 
     /**
-     * @param combinedHttpConfiguration
-     * @param playlistLoader
-     * @param spotifyInteract
+     * @param combinedHttpConfiguration the http configuration to use
+     * @param playlistLoader            the playlist loader to use
+     * @param spotifyInteract           the spotify interactions to use
      */
     public SpotifyAudioSourceManager(ExtendedHttpConfigurable combinedHttpConfiguration,
                                      SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
@@ -72,12 +72,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         this.spotifyInteract = spotifyInteract;
 
         try {
-            this.tempdir = Files.createTempDirectory("k7bot_spotify_"+System.currentTimeMillis()).toFile();
+            this.tempdir = Files.createTempDirectory("k7bot_spotify_" + System.currentTimeMillis()).toFile();
         } catch (IOException e) {
             this.tempdir = new File(".cache");
+            tempdir.delete();
+            tempdir.mkdirs();
         }
-        tempdir.delete();
-        tempdir.mkdirs();
 
 
     }
@@ -85,7 +85,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     /**
      *
      */
-    @SuppressWarnings("resource")
     public SpotifyAudioSourceManager() {
 
         this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
@@ -151,8 +150,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     /**
-     * @param trackid
-     * @return
+     * @param trackid the track id
+     * @return the audio item
      */
     private AudioItem loadTrack(String trackid) {
 
@@ -163,8 +162,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     /**
-     * @param playlistid
-     * @return
+     * @param playlistid the playlist id
+     * @return the audio item
      */
     private AudioItem loadPlaylist(String playlistid) {
 
@@ -176,8 +175,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     /**
-     * @param info
-     * @return
+     * @param info the track info
+     * @return the audio track
      */
     private SpotifyAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
         return new SpotifyAudioTrack(info, this);
@@ -189,12 +188,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
+    public void encodeTrack(AudioTrack track, DataOutput output) {
         // No custom values that need saving
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
         return new SpotifyAudioTrack(trackInfo, this);
     }
 
@@ -204,19 +203,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     public static String getArtistString(ArtistSimplified[] artists) {
-        String artist = "";
+        StringBuilder artist = new StringBuilder();
 
         for (ArtistSimplified a : artists) {
-            artist += ", " + a.getName();
+            artist.append(", ").append(a.getName());
         }
 
-        artist = artist.substring(2);
+        artist = new StringBuilder(artist.substring(2));
 
-        return artist;
-    }
-
-    public SpotifyInteractions getSpotifyInteract() {
-        return spotifyInteract;
+        return artist.toString();
     }
 
     public File getTempdir() {

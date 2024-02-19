@@ -58,7 +58,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 
 		AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		if (!super.performInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
+		if (super.membFailsInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
 			return;
 		}
 		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
