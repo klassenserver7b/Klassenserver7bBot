@@ -3,6 +3,22 @@
  */
 package de.klassenserver7b.k7bot.music.asms;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.http.ExtendedHttpConfigurable;
@@ -12,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.asms.loader.DefaultSpotifyTrackLoader;
@@ -19,198 +36,189 @@ import de.klassenserver7b.k7bot.music.asms.loader.SpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.asms.loader.SpotifyTrackLoader;
 import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyInteractions;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
-
-import javax.annotation.Nonnull;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
-	/**
-	 *
-	 */
-	private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(?:intl-.{2}/)?(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
-	private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+    /**
+     *
+     */
+    private static final String URL_REGEX = "^(https?://(?:[^.]+\\.|)spotify\\.com)/(?:intl-.{2}/)?(track|playlist)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$";
+    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
-	private final ExtendedHttpConfigurable combinedHttpConfiguration;
-	private final SpotifyPlaylistLoader playlistLoader;
-	private final SpotifyTrackLoader trackLoader;
-	private final Logger log;
+    private final ExtendedHttpConfigurable combinedHttpConfiguration;
+    private final SpotifyPlaylistLoader playlistLoader;
+    private final SpotifyTrackLoader trackLoader;
+    private final Logger log;
 
-	private SpotifyInteractions spotifyInteract;
+    private File tempdir;
 
-	/**
-	 *
-	 * @param combinedHttpConfiguration
-	 * @param playlistLoader
-	 * @param spotifyInteract
-	 */
-	public SpotifyAudioSourceManager(ExtendedHttpConfigurable combinedHttpConfiguration,
-			SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
-			@Nonnull SpotifyInteractions spotifyInteract) {
+    private SpotifyInteractions spotifyInteract;
 
-		this.combinedHttpConfiguration = combinedHttpConfiguration;
-		this.playlistLoader = playlistLoader;
-		this.trackLoader = trackLoader;
-		this.spotifyInteract = spotifyInteract;
-		log = LoggerFactory.getLogger(this.getClass());
-	}
+    /**
+     * @param combinedHttpConfiguration
+     * @param playlistLoader
+     * @param spotifyInteract
+     */
+    public SpotifyAudioSourceManager(ExtendedHttpConfigurable combinedHttpConfiguration,
+                                     SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
+                                     @Nonnull SpotifyInteractions spotifyInteract) {
 
-	/**
-	 *
-	 */
-	@SuppressWarnings("resource")
-	public SpotifyAudioSourceManager() {
+        log = LoggerFactory.getLogger(this.getClass());
+        this.combinedHttpConfiguration = combinedHttpConfiguration;
+        this.playlistLoader = playlistLoader;
+        this.trackLoader = trackLoader;
+        this.spotifyInteract = spotifyInteract;
 
-		this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
-				new DefaultSpotifyTrackLoader(), Klassenserver7bbot.getInstance().getSpotifyinteractions());
+        this.tempdir = new File(".cache");
+        tempdir.delete();
+        tempdir.mkdirs();
 
-	}
 
-	/**
-	 *
-	 */
-	@Override
-	public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
-		combinedHttpConfiguration.configureRequests(configurator);
-	}
+    }
 
-	/**
-	 *
-	 */
-	@Override
-	public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
-		combinedHttpConfiguration.configureBuilder(configurator);
-	}
+    /**
+     *
+     */
+    @SuppressWarnings("resource")
+    public SpotifyAudioSourceManager() {
 
-	/**
-	 *
-	 */
-	@Override
-	public String getSourceName() {
-		return "spotify";
-	}
+        this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
+                new DefaultSpotifyTrackLoader(), Klassenserver7bbot.getInstance().getSpotifyinteractions());
 
-	/**
-	 *
-	 */
-	@Override
-	public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
+    }
 
-		if (reference == null || reference.identifier == null || !spotifyInteract.isApienabled()) {
-			return null;
-		}
+    /**
+     *
+     */
+    @Override
+    public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
+        combinedHttpConfiguration.configureRequests(configurator);
+    }
 
-		String url = reference.identifier;
-		Matcher matcher = URL_PATTERN.matcher(url);
+    /**
+     *
+     */
+    @Override
+    public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
+        combinedHttpConfiguration.configureBuilder(configurator);
+    }
 
-		if (matcher.matches()) {
-			String type = matcher.group(2);
-			String id = matcher.group(3);
+    /**
+     *
+     */
+    @Override
+    public String getSourceName() {
+        return "spotify";
+    }
 
-			log.debug("Try SpotifyLoad on trackid: '" + id + "' with url: '" + reference.identifier + "'");
+    /**
+     *
+     */
+    @Override
+    public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
 
-			switch (type) {
-			case "track" -> {
-				return loadTrack(id);
-			}
-			case "playlist" -> {
-				return loadPlaylist(id);
-			}
+        if (reference == null || reference.identifier == null || !spotifyInteract.isApienabled()) {
+            return null;
+        }
 
-			}
-		}
+        String url = reference.identifier;
+        Matcher matcher = URL_PATTERN.matcher(url);
 
-		return null;
-	}
+        if (matcher.matches()) {
+            String type = matcher.group(2);
+            String id = matcher.group(3);
 
-	/**
-	 *
-	 * @param trackid
-	 * @return
-	 */
-	private AudioItem loadTrack(String trackid) {
+            log.debug("Try SpotifyLoad on trackid: '" + id + "' with url: '" + reference.identifier + "'");
 
-		Function<AudioTrackInfo, AudioTrack> trackfactory = SpotifyAudioSourceManager.this::buildTrackFromInfo;
+            switch (type) {
+                case "track" -> {
+                    return loadTrack(id);
+                }
+                case "playlist" -> {
+                    return loadPlaylist(id);
+                }
 
-		return trackLoader.load(spotifyInteract, trackid, trackfactory);
+            }
+        }
 
-	}
+        return null;
+    }
 
-	/**
-	 *
-	 * @param playlistid
-	 * @return
-	 */
-	private AudioItem loadPlaylist(String playlistid) {
+    /**
+     * @param trackid
+     * @return
+     */
+    private AudioItem loadTrack(String trackid) {
 
-		assert spotifyInteract.isApienabled();
+        Function<AudioTrackInfo, AudioTrack> trackfactory = SpotifyAudioSourceManager.this::buildTrackFromInfo;
 
-		Function<AudioTrackInfo, AudioTrack> trackfactory = SpotifyAudioSourceManager.this::buildTrackFromInfo;
+        return trackLoader.load(spotifyInteract, trackid, trackfactory);
 
-		return playlistLoader.load(spotifyInteract, playlistid, null, trackfactory);
+    }
 
-		// BasicAudioPlaylist playlist = new BasicAudioPlaylist(trackid, null, null,
-		// false);
-	}
+    /**
+     * @param playlistid
+     * @return
+     */
+    private AudioItem loadPlaylist(String playlistid) {
 
-	/**
-	 *
-	 * @param info
-	 * @return
-	 */
-	private SpotifyAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
-		return new SpotifyAudioTrack(info, this);
-	}
+        assert spotifyInteract.isApienabled();
 
-	@Override
-	public boolean isTrackEncodable(AudioTrack track) {
-		return true;
-	}
+        Function<AudioTrackInfo, AudioTrack> trackfactory = SpotifyAudioSourceManager.this::buildTrackFromInfo;
 
-	@Override
-	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-		// No custom values that need saving
-	}
+        return playlistLoader.load(spotifyInteract, playlistid, null, trackfactory);
+    }
 
-	@Override
-	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-		return new SpotifyAudioTrack(trackInfo, this);
-	}
+    /**
+     * @param info
+     * @return
+     */
+    private SpotifyAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
+        return new SpotifyAudioTrack(info, this);
+    }
 
-	@Override
-	public void shutdown() {
-		spotifyInteract.shutdown();
-	}
+    @Override
+    public boolean isTrackEncodable(AudioTrack track) {
+        return true;
+    }
 
-	public static String getArtistString(ArtistSimplified[] artists) {
-		String artist = "";
+    @Override
+    public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
+        // No custom values that need saving
+    }
 
-		for (ArtistSimplified a : artists) {
-			artist += ", " + a.getName();
-		}
+    @Override
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+        return new SpotifyAudioTrack(trackInfo, this);
+    }
 
-		artist = artist.substring(2);
+    @Override
+    public void shutdown() {
+        spotifyInteract.shutdown();
+    }
 
-		return artist;
-	}
+    public static String getArtistString(ArtistSimplified[] artists) {
+        String artist = "";
 
-	public SpotifyInteractions getSpotifyInteract() {
-		return spotifyInteract;
-	}
+        for (ArtistSimplified a : artists) {
+            artist += ", " + a.getName();
+        }
+
+        artist = artist.substring(2);
+
+        return artist;
+    }
+
+    public SpotifyInteractions getSpotifyInteract() {
+        return spotifyInteract;
+    }
+
+    public File getTempdir() {
+        return tempdir;
+    }
 
 }

@@ -28,7 +28,6 @@ public class TokenFetchThread implements Runnable {
 	private Thread t;
 	private final Logger log;
 	private long expires;
-	private final String cookie;
 	private static TokenFetchThread INSTANCE;
 	private int errorcount;
 	private int errorstage;
@@ -36,13 +35,12 @@ public class TokenFetchThread implements Runnable {
 	/**
 	 *
 	 */
-	private TokenFetchThread(String cookie) {
+	private TokenFetchThread() {
 
 		errorcount = 0;
 		errorstage = 1;
 		INSTANCE = this;
 		log = LoggerFactory.getLogger(this.getClass());
-		this.cookie = cookie;
 		t = new Thread(this, "Spotify_Token_Fetch");
 		t.start();
 
@@ -100,7 +98,6 @@ public class TokenFetchThread implements Runnable {
 
 			final HttpGet httpget = new HttpGet(url);
 
-			httpget.setHeader("Cookie", cookie);
 			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
 			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
@@ -119,13 +116,11 @@ public class TokenFetchThread implements Runnable {
 		catch (HttpHostConnectException e1) {
 			log.warn("Invalid response from " + url);
 			timeoutFetch();
-			return;
 
 		}
 		catch (IOException | JsonSyntaxException e) {
 			log.error(e.getMessage(), e);
 			timeoutFetch();
-			return;
 
 		}
 	}
@@ -142,20 +137,11 @@ public class TokenFetchThread implements Runnable {
 	}
 
 	public static TokenFetchThread getINSTANCE() {
-
-		if (INSTANCE == null) {
-			throw new NullPointerException();
-		}
-
-		return INSTANCE;
-	}
-
-	public static TokenFetchThread getINSTANCE(String cookie) {
 		if (INSTANCE != null) {
 			return INSTANCE;
 		}
 
-		return INSTANCE = new TokenFetchThread(cookie);
+		return INSTANCE = new TokenFetchThread();
 	}
 
 }

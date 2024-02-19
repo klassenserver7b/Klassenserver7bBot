@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.music.utilities.spotify;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.threads.TokenFetchThread;
 import se.michaelthelin.spotify.SpotifyApi;
 
@@ -13,7 +12,6 @@ import se.michaelthelin.spotify.SpotifyApi;
  */
 public class SpotifyInteractions {
 
-	private String cookie;
 	private boolean apienabled;
 	private SpotifyApi spotifyApi;
 	public TokenFetchThread fetchthread;
@@ -37,19 +35,8 @@ public class SpotifyInteractions {
 	public boolean initialize() {
 
 		this.spotifyApi = new SpotifyApi.Builder().build();
-
-		cookie = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("spotify-cookie");
-
-		if (cookie == null || cookie.isBlank()) {
-			return false;
-		}
-
-		if (cookie != null && !cookie.isBlank()) {
-			apienabled = true;
-			return true;
-		}
-
-		return false;
+		this.apienabled = true;
+		return true;
 	}
 
 	/**
@@ -57,7 +44,7 @@ public class SpotifyInteractions {
 	 */
 	public void startfetchcycle() {
 
-		this.fetchthread = TokenFetchThread.getINSTANCE(cookie);
+		this.fetchthread = TokenFetchThread.getINSTANCE();
 
 	}
 
