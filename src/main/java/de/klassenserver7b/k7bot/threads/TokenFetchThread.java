@@ -59,6 +59,10 @@ public class TokenFetchThread implements Runnable {
 	@Override
 	public void run() {
 
+		if (Klassenserver7bbot.getInstance().isInExit()) {
+			return;
+		}
+
 		while (!Klassenserver7bbot.getInstance().isInExit() && !t.isInterrupted()) {
 
 			if (!(this.expires >= new Date().getTime() - 30000)) {
@@ -71,9 +75,6 @@ public class TokenFetchThread implements Runnable {
 			catch (InterruptedException e) {
 				log.info("Sleep Thread interrupted");
 			}
-		}
-		if (Klassenserver7bbot.getInstance().isInExit()) {
-			return;
 		}
 
 	}
@@ -129,7 +130,7 @@ public class TokenFetchThread implements Runnable {
 		errorcount++;
 
 		if (errorcount >= 10) {
-			long add = 120000 * errorstage;
+			long add = 120000L * errorstage;
 			expires = new Date().getTime() + add;
 			log.warn("TokenFetch failed - retrying in " + (add / 1000) + "s");
 			errorstage++;

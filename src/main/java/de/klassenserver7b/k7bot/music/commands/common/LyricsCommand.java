@@ -47,7 +47,7 @@ public class LyricsCommand implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+		return HelpCategories.MUSIC;
 	}
 
 	public LyricsCommand() {

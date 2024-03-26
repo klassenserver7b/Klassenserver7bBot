@@ -31,7 +31,7 @@ public class PauseCommand implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+		return HelpCategories.MUSIC;
 	}
 
 	@Override

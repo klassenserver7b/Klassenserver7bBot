@@ -10,24 +10,25 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
 /**
  *
  */
-public class VoiceLoggingListener extends LoggingListener {
+public class VoiceLoggingListener extends ListenerAdapter {
 
     private final Logger log;
 
     public VoiceLoggingListener() {
-        super();
         log = LoggerFactory.getLogger(getClass());
     }
 
-    @Override
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
         AudioChannel joinedChannel = event.getChannelJoined();
         AudioChannel leftChannel = event.getChannelLeft();
@@ -54,7 +55,7 @@ public class VoiceLoggingListener extends LoggingListener {
     @Override
     public void onGuildVoiceMute(GuildVoiceMuteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.GUILD_MUTE, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.GUILD_MUTE, event.getGuild())) {
             return;
         }
 
@@ -70,7 +71,7 @@ public class VoiceLoggingListener extends LoggingListener {
     @Override
     public void onGuildVoiceDeafen(GuildVoiceDeafenEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.GUILD_DEAF, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.GUILD_DEAF, event.getGuild())) {
             return;
         }
 
@@ -107,7 +108,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onVideoStart(GuildVoiceVideoEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.VIDEO_START, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.VIDEO_START, event.getGuild())) {
             return;
         }
 
@@ -131,7 +132,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onVideoStop(GuildVoiceVideoEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.VIDEO_STOP, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.VIDEO_STOP, event.getGuild())) {
             return;
         }
 
@@ -155,7 +156,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onStreamStart(GuildVoiceStreamEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.STREAM_START, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.STREAM_START, event.getGuild())) {
             return;
         }
 
@@ -179,7 +180,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onStreamStop(GuildVoiceStreamEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.STREAM_STOP, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.STREAM_STOP, event.getGuild())) {
             return;
         }
 
@@ -203,7 +204,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onChannelJoin(AudioChannel joinedChannel, GuildMessageChannel sysChannel, GuildVoiceUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.VOICE_JOIN, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.VOICE_JOIN, event.getGuild())) {
             return;
         }
 
@@ -219,7 +220,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onChannelLeave(AudioChannel leftChannel, GuildMessageChannel sysChannel, GuildVoiceUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.VOICE_LEAVE, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.VOICE_LEAVE, event.getGuild())) {
             return;
         }
 
@@ -235,7 +236,7 @@ public class VoiceLoggingListener extends LoggingListener {
 
     protected void onChannelMove(AudioChannel joinedChannel, AudioChannel leftChannel, GuildMessageChannel sysChannel, GuildVoiceUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.VOICE_MOVE, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.VOICE_MOVE, event.getGuild())) {
             return;
         }
 

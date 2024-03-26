@@ -31,7 +31,7 @@ public class StopCommand implements ServerCommand {
 
     @Override
     public HelpCategories getcategory() {
-        return HelpCategories.MUSIK;
+        return HelpCategories.MUSIC;
     }
 
     @Override

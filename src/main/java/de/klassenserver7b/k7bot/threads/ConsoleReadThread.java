@@ -25,212 +25,206 @@ import java.util.Set;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class ConsoleReadThread implements Runnable {
 
-	private final Thread t;
-	private final Logger log;
-	private final BufferedReader reader;
-	private final InputStreamReader sysinr;
+    private final Thread t;
+    private final Logger log;
+    private final BufferedReader reader;
+    private final InputStreamReader sysinr;
 
-	public ConsoleReadThread() {
-		log = LoggerFactory.getLogger(this.getClass());
+    public ConsoleReadThread() {
+        log = LoggerFactory.getLogger(this.getClass());
 
-		sysinr = new InputStreamReader(System.in);
-		reader = new BufferedReader(sysinr);
-		t = new Thread(this, "ConsoleReadThread");
-		t.start();
-	}
+        sysinr = new InputStreamReader(System.in);
+        reader = new BufferedReader(sysinr);
+        t = new Thread(this, "ConsoleReadThread");
+        t.start();
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		while (!t.isInterrupted()) {
-			try {
+        while (!t.isInterrupted()) {
+            try {
 
-				String line;
+                String line;
 
-				if (System.in.available() == 0 || !sysinr.ready()) {
-					continue;
-				}
-				if ((line = reader.readLine()) != null) {
-					interpretConsoleContent(line);
-				}
+                if ((line = reader.readLine()) != null) {
+                    interpretConsoleContent(line);
+                }
 
-				Thread.sleep(5000);
+            } catch (IOException e) {
 
-			} catch (InterruptedException | IOException e) {
+                if (e.getMessage().equalsIgnoreCase("Stream closed")) {
+                    t.interrupt();
+                    break;
+                }
+                log.info("ConsoleRead Thread interrupted");
+            }
+        }
 
-				if (e.getMessage().equalsIgnoreCase("Stream closed")) {
-					t.interrupt();
-					break;
-				}
-				log.info("ConsoleRead Thread interrupted");
-			}
-		}
+    }
 
-	}
+    public void interpretConsoleContent(String s) throws IOException {
 
-	public void interpretConsoleContent(String s) throws IOException {
+        String[] commandargs = s.split(" ");
 
-		String[] commandargs = s.split(" ");
+        switch (commandargs[0].toLowerCase()) {
+            case "exit", "stop" -> {
 
-		switch (commandargs[0].toLowerCase()) {
-		case "exit", "stop" -> {
+                Klassenserver7bbot.getInstance().setexit(true);
+                t.interrupt();
+                reader.close();
+                this.onShutdown();
+            }
 
-			Klassenserver7bbot.getInstance().setexit(true);
-			t.interrupt();
-			reader.close();
-			this.onShutdown();
-		}
+            case "enablecommand" -> changeCommandState(true, commandargs[1]);
 
-		case "enablecommand" -> changeCommandState(true, commandargs[1]);
+            case "disablecommand" -> changeCommandState(false, commandargs[1]);
 
-		case "disablecommand" -> changeCommandState(false, commandargs[1]);
+            case "addaiuser" -> addAIUser(commandargs[1]);
 
-		case "addaiuser" -> addAIUser(commandargs[1]);
+            case "rmaiuser" -> removeAIUser(commandargs[1]);
 
-		case "rmaiuser" -> removeAIUser(commandargs[1]);
+            default -> System.out.println("Use exit/stop to Shutdown");
 
-		default -> System.out.println("Use exit/stop to Shutdown");
+        }
 
-		}
+    }
 
-	}
+    public void changeCommandState(boolean enable, String command_OR_CommandClassName) {
 
-	public void changeCommandState(boolean enable, String command_OR_CommandClassName) {
+        Class<?> insertedClassName = getClassFromString(command_OR_CommandClassName);
 
-		Class<?> insertedClassName = getClassFromString(command_OR_CommandClassName);
+        if (insertedClassName != null) {
 
-		if (insertedClassName != null) {
+            try {
 
-			try {
+                if (!ServerCommand.class.isAssignableFrom(insertedClassName)) {
+                    log.warn("Invalid CommandClassName");
+                    return;
+                }
 
-				if (!ServerCommand.class.isAssignableFrom(insertedClassName)) {
-					log.warn("Invalid CommandClassName");
-					return;
-				}
+                if (enable) {
+                    Klassenserver7bbot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
+                } else {
+                    Klassenserver7bbot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
+                }
 
-				if (enable) {
-					Klassenserver7bbot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
-				} else {
-					Klassenserver7bbot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
-				}
+            } catch (IllegalArgumentException | SecurityException e) {
+                log.error(e.getMessage(), e);
+            }
 
-			} catch (IllegalArgumentException | SecurityException  e) {
-				log.error(e.getMessage(), e);
-			}
+        } else {
 
-		} else {
+            if (enable) {
+                enableCommandByStr(command_OR_CommandClassName);
+            } else {
+                disableCommandByStr(command_OR_CommandClassName);
+            }
+        }
+    }
 
-			if (enable) {
-				enableCommandByStr(command_OR_CommandClassName);
-			} else {
-				disableCommandByStr(command_OR_CommandClassName);
-			}
-		}
-	}
+    public void onShutdown() {
 
-	public void onShutdown() {
+        log.info("Bot is shutting down!");
 
-		log.info("Bot is shutting down!");
+        ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
 
-		ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
+        for (AudioSourceManager m : Klassenserver7bbot.getInstance().getAudioPlayerManager().getSourceManagers()) {
+            m.shutdown();
+        }
 
-		for (AudioSourceManager m : Klassenserver7bbot.getInstance().getAudioPlayerManager().getSourceManagers()) {
-			m.shutdown();
-		}
+        if (shardMgr != null) {
 
-		if (shardMgr != null) {
+            ArrayList<Object> listeners = new ArrayList<>();
 
-			ArrayList<Object> listeners = new ArrayList<>();
+            for (JDA jda : shardMgr.getShards()) {
+                listeners.addAll(jda.getEventManager().getRegisteredListeners());
+            }
 
-			for (JDA jda : shardMgr.getShards()) {
-				listeners.addAll(jda.getEventManager().getRegisteredListeners());
-			}
+            shardMgr.removeEventListener(listeners.toArray());
 
-			shardMgr.removeEventListener(listeners.toArray());
+            Klassenserver7bbot.getInstance().stopLoop();
 
-			Klassenserver7bbot.getInstance().stopLoop();
+            Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
-			Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
+            StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
 
-			StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
+            shardMgr.setStatus(OnlineStatus.OFFLINE);
 
-			shardMgr.setStatus(OnlineStatus.OFFLINE);
+            shardMgr.shutdown();
+            log.info("Bot offline");
 
-			shardMgr.shutdown();
-			log.info("Bot offline");
+            LiteSQL.disconnect();
+            t.interrupt();
+            try {
+                reader.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+            return;
 
-			LiteSQL.disconnect();
-			t.interrupt();
-			try {
-				reader.close();
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
-			return;
+        }
 
-		}
+        log.info("ShardMan was null!");
 
-		log.info("ShardMan was null!");
+    }
 
-	}
+    protected void addAIUser(String uid) {
+        Long userid = Long.valueOf(uid);
+        StableDiffusionCommand.addAIUser(userid);
+        log.info("successfully added " + uid + "to ai allowlist");
+    }
 
-	protected void addAIUser(String uid) {
-		Long userid = Long.valueOf(uid);
-		StableDiffusionCommand.addAIUser(userid);
-		log.info("successfully added " + uid + "to ai allowlist");
-	}
+    protected void removeAIUser(String uid) {
+        Long userid = Long.valueOf(uid);
+        StableDiffusionCommand.removeAIUser(userid);
+        log.info("successfully removed " + uid + "from ai allowlist");
+    }
 
-	protected void removeAIUser(String uid) {
-		Long userid = Long.valueOf(uid);
-		StableDiffusionCommand.removeAIUser(userid);
-		log.info("successfully removed " + uid + "from ai allowlist");
-	}
+    protected void disableCommandByStr(String name) {
+        if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
+            log.info("successfully disabled " + name);
+            return;
+        }
 
-	protected void disableCommandByStr(String name) {
-		if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
-			log.info("successfully disabled " + name);
-			return;
-		}
+        log.warn("failed to disable " + name);
+    }
 
-		log.warn("failed to disable " + name);
-	}
+    protected void enableCommandByStr(String name) {
+        if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
+            log.info("successfully enabled " + name);
+            return;
+        }
 
-	protected void enableCommandByStr(String name) {
-		if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
-			log.info("successfully enabled " + name);
-			return;
-		}
-
-		log.warn("failed to enable " + name);
-	}
+        log.warn("failed to enable " + name);
+    }
 
 
-	public Class<?> getClassFromString(String s) {
-		try {
-			return Class.forName(s);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-	}
+    public Class<?> getClassFromString(String s) {
+        try {
+            return Class.forName(s);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
 
-	protected static Set<Class<?>> getAllExtendedOrImplementedInterfacesRecursively(Class<?> clazz) {
+    protected static Set<Class<?>> getAllExtendedOrImplementedInterfacesRecursively(Class<?> clazz) {
 
-		Set<Class<?>> res = new HashSet<>();
-		Class<?>[] interfaces = clazz.getInterfaces();
+        Set<Class<?>> res = new HashSet<>();
+        Class<?>[] interfaces = clazz.getInterfaces();
 
-		if (interfaces.length > 0) {
-			res.addAll(Arrays.asList(interfaces));
+        if (interfaces.length > 0) {
+            res.addAll(Arrays.asList(interfaces));
 
-			for (Class<?> interfaze : interfaces) {
-				res.addAll(getAllExtendedOrImplementedInterfacesRecursively(interfaze));
-			}
-		}
+            for (Class<?> interfaze : interfaces) {
+                res.addAll(getAllExtendedOrImplementedInterfacesRecursively(interfaze));
+            }
+        }
 
-		return res;
-	}
+        return res;
+    }
 
 }

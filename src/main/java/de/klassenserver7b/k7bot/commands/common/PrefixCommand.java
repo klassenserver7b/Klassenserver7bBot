@@ -31,7 +31,7 @@ public class PrefixCommand implements ServerCommand {
 
 	@Override
 	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
+		return HelpCategories.GENERIC;
 	}
 
 	@Override

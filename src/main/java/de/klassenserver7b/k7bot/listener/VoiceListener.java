@@ -2,8 +2,9 @@
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.logging.LoggingBlocker;
+import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -53,8 +54,18 @@ public class VoiceListener extends ListenerAdapter {
         if (audioChannel.getIdLong() == 841212695259775027L) {
             VoiceChannel voice = (VoiceChannel) audioChannel;
             Category cat = voice.getParentCategory();
-            VoiceChannel vc = cat.createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
-            LoggingBlocker.getInstance().block(vc.getIdLong());
+
+            VoiceChannel vc;
+
+            try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+
+                if (cat != null) {
+                    vc = cat.createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
+                } else {
+                    vc = voice.getGuild().createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
+                }
+                LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
+            }
 
             vc.getManager().setUserLimit(voice.getUserLimit()).queue();
             Guild controller = vc.getGuild();
@@ -69,8 +80,8 @@ public class VoiceListener extends ListenerAdapter {
     }
 
     public void onLeave(AudioChannel audioChannel) {
-        if (audioChannel.getMembers().size() <= 0) {
 
+        if (audioChannel.getMembers().size() == 0) {
             try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;")) {
 
                 while (set.next()) {
@@ -78,9 +89,11 @@ public class VoiceListener extends ListenerAdapter {
                 }
                 if (this.tempchannels.contains(audioChannel.getIdLong())) {
 
-                    LoggingBlocker.getInstance().block(audioChannel.getIdLong());
+                    try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+                        LoggingFilter.getInstance().getLoggingBlocker().block(audioChannel.getIdLong());
+                        audioChannel.delete().queue();
+                    }
 
-                    audioChannel.delete().queue();
                     LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ? AND guildId=?;",
                             audioChannel.getIdLong(), audioChannel.getGuild().getIdLong());
                     this.tempchannels.clear();
@@ -89,7 +102,6 @@ public class VoiceListener extends ListenerAdapter {
                 }
 
             } catch (SQLException e) {
-
                 log.error(e.getMessage(), e);
             }
         }

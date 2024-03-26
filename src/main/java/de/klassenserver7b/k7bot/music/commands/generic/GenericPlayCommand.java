@@ -229,7 +229,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
     @Override
     public HelpCategories getcategory() {
-        return HelpCategories.MUSIK;
+        return HelpCategories.MUSIC;
     }
 
     @Override

@@ -5,6 +5,7 @@ package de.klassenserver7b.k7bot.logging;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -43,8 +44,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         this.hook = hook;
         this.guildId = hook.getInteraction().getGuild().getIdLong();
 
-        Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
-        LoggingBlocker.getInstance().block(m.getIdLong());
+        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+            Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
+            LoggingFilter.getInstance().getLoggingBlocker().block(m.getIdLong());
+        }
 
         timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
         Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
@@ -128,8 +131,9 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
     }
 
     protected void exit() {
-        LoggingBlocker.getInstance().block(hook.retrieveOriginal().complete().getIdLong());
-        hook.deleteOriginal().queue();
+        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
+            hook.deleteOriginal().queue();
+        }
         Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
         Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
     }
@@ -225,7 +229,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
             strbuild.append(" - ");
             strbuild.append("`");
 
-            boolean enabled = LoggingConfigDBHandler.isOptionEnabled(opt, guildId);
+            boolean enabled = LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
             strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
 
             strbuild.append("\n");

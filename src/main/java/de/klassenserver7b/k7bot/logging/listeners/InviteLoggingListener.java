@@ -8,11 +8,14 @@ import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
 
-public class InviteLoggingListener extends LoggingListener {
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+public class InviteLoggingListener extends ListenerAdapter {
 
     public InviteLoggingListener() {
         super();
@@ -21,7 +24,7 @@ public class InviteLoggingListener extends LoggingListener {
     @Override
     public void onGuildInviteCreate(GuildInviteCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.INVITE_CREATE, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_CREATE, event.getGuild())) {
             return;
         }
 
@@ -48,7 +51,7 @@ public class InviteLoggingListener extends LoggingListener {
     @Override
     public void onGuildInviteDelete(GuildInviteDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.INVITE_DELETE, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_DELETE, event.getGuild())) {
             return;
         }
 

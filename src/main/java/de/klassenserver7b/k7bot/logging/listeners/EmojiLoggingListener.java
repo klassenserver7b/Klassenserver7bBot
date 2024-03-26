@@ -11,13 +11,16 @@ import net.dv8tion.jda.api.events.emoji.EmojiAddedEvent;
 import net.dv8tion.jda.api.events.emoji.EmojiRemovedEvent;
 import net.dv8tion.jda.api.events.sticker.GuildStickerAddedEvent;
 import net.dv8tion.jda.api.events.sticker.GuildStickerRemovedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
+
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
 
 /**
  *
  */
-public class EmojiLoggingListener extends LoggingListener {
+public class EmojiLoggingListener extends ListenerAdapter {
     public EmojiLoggingListener() {
         super();
     }
@@ -25,7 +28,7 @@ public class EmojiLoggingListener extends LoggingListener {
     @Override
     public void onEmojiAdded(EmojiAddedEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EMOJI_ADD, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EMOJI_ADD, event.getGuild())) {
             return;
         }
 
@@ -42,7 +45,7 @@ public class EmojiLoggingListener extends LoggingListener {
     @Override
     public void onEmojiRemoved(EmojiRemovedEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EMOJI_REMOVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EMOJI_REMOVE, event.getGuild())) {
             return;
         }
 
@@ -59,7 +62,7 @@ public class EmojiLoggingListener extends LoggingListener {
     @Override
     public void onGuildStickerAdded(GuildStickerAddedEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.STICKER_ADD, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.STICKER_ADD, event.getGuild())) {
             return;
         }
 
@@ -77,7 +80,7 @@ public class EmojiLoggingListener extends LoggingListener {
     @Override
     public void onGuildStickerRemoved(GuildStickerRemovedEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.STICKER_REMOVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.STICKER_REMOVE, event.getGuild())) {
             return;
         }
 

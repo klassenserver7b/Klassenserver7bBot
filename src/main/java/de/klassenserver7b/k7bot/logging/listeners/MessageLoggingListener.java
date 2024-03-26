@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.logging.listeners;
 
-import de.klassenserver7b.k7bot.logging.LoggingBlocker;
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
 import de.klassenserver7b.k7bot.logging.LoggingOptions;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -14,6 +13,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +21,12 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
 /**
  *
  */
-public class MessageLoggingListener extends LoggingListener {
+public class MessageLoggingListener extends ListenerAdapter {
 
     private final Logger log;
 
@@ -76,7 +78,7 @@ public class MessageLoggingListener extends LoggingListener {
     @Override
     public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
             return;
         }
 
@@ -94,12 +96,7 @@ public class MessageLoggingListener extends LoggingListener {
 
     protected boolean isIgnoredEvent(LoggingOptions option, long messageId, Guild guild) {
 
-        if (LoggingBlocker.getInstance().isBlocked(messageId)) {
-            LoggingBlocker.getInstance().unblock(messageId);
-            return true;
-        }
-
-        if (!LoggingConfigDBHandler.isOptionEnabled(option, guild)) {
+        if (!LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
             return true;
         }
 
