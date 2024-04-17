@@ -9,21 +9,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class PingSlashCommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply().complete();
+        InteractionHook hook = event.deferReply().complete();
 
-		long gatewayping = getGatewayping(event.getJDA());
-		long time = getRESTping(event.getJDA());
+        long gatewayPing = event.getJDA().getGatewayPing();
+        long time = event.getJDA().getRestPing().complete();
 
-		hook.sendMessageFormat("Pong! %dms", time, gatewayping, "s").queue();
+        hook.sendMessageFormat("Pong! %dms", time, gatewayPing, "s").queue();
 
-	}
+    }
 
-	@Override
-	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("ping", "Zeigt den aktuellen Ping des Bots");
-	}
+    @Override
+    public @NotNull SlashCommandData getCommandData() {
+        return Commands.slash("ping", "Zeigt den aktuellen Ping des Bots");
+    }
 
 }
