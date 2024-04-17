@@ -24,7 +24,7 @@ public class VolumeCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Legt das Volume für den Bot auf diesem Server fest.\n - z.B. [prefix]volume [Zahl von 1 bis 100]";
 		return help;
 	}
@@ -35,7 +35,7 @@ public class VolumeCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

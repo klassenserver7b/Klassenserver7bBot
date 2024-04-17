@@ -19,7 +19,7 @@ public class ResumeCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Setzt den aktuellen Track fort.";
 		return help;
 	}
@@ -30,7 +30,7 @@ public class ResumeCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

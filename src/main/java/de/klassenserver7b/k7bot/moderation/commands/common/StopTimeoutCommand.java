@@ -25,7 +25,7 @@ public class StopTimeoutCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
 	}
 
@@ -35,7 +35,7 @@ public class StopTimeoutCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MODERATION;
 	}
 

@@ -23,7 +23,7 @@ public class SkipCommand implements ServerCommand {
     public static boolean onskip = false;
 
     @Override
-    public String gethelp() {
+    public String getHelp() {
         return "Überspringt den aktuellen Song.";
     }
 
@@ -33,7 +33,7 @@ public class SkipCommand implements ServerCommand {
     }
 
     @Override
-    public HelpCategories getcategory() {
+    public HelpCategories getCategory() {
         return HelpCategories.MUSIC;
     }
 

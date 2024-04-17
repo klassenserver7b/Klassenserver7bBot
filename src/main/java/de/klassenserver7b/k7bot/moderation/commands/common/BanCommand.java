@@ -24,7 +24,7 @@ public class BanCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Bannt den ausgewählten Nutzer vom Server und übermitelt den angegebenen Grund.\n - kann nur von Personen mit der Berechtigung 'Mitglieder bannen' ausgeführt werden!\n - z.B. [prefix]ban [@USER] [reason]";
 	}
 
@@ -34,7 +34,7 @@ public class BanCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MODERATION;
 	}
 

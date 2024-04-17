@@ -114,11 +114,9 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
         private final CompletableFuture<Integer> completableFuture;
 
-		public ReactRoleRunnable(CompletableFuture<Integer> future) {
-			this.completableFuture = future;
-			this.reactroles = LiteSQL.onQuery("SELECT channelId, messageId, emote, roleId FROM reactroles;");
-
-		}
+        public ReactRoleRunnable(CompletableFuture<Integer> future) {
+            this.completableFuture = future;
+        }
 
         @Override
         public void run() {

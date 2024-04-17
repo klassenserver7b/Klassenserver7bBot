@@ -24,7 +24,7 @@ public class PlayCommand extends GenericPlayCommand {
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Spielt den/die ausgewählte/-n Track / Livestream / Playlist.\n - z.B. [prefix]play [url / YouTube Suchbegriff]";
 	}
 

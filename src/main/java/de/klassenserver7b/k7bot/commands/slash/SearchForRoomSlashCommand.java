@@ -37,10 +37,10 @@ public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
             return;
         }
 
-		hook.sendMessageEmbeds(
-				EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + strbuild + " are free!",
-						Objects.requireNonNull(event.getGuild()).getIdLong()).build())
-				.queue();
+        hook.sendMessageEmbeds(
+                        EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + String.join(", ", rooms) + " are free!",
+                                Objects.requireNonNull(event.getGuild()).getIdLong()).build())
+                .queue();
 
     }
 

@@ -23,7 +23,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 
@@ -33,7 +33,7 @@ public class UebersteuerungAdmin implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.UNKNOWN;
 	}
 

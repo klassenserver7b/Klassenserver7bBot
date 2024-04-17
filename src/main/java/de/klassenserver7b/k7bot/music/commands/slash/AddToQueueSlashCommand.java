@@ -45,7 +45,7 @@ public class AddToQueueSlashCommand extends GenericPlayCommand implements SubSla
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 

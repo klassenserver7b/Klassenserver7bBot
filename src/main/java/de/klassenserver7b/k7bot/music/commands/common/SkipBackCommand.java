@@ -16,7 +16,7 @@ public class SkipBackCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Spult zur um die gewählte Anzahl an Sekunden zurück.\n - z.B. [prefix]back [time in seconds]";
 	}
 
@@ -26,7 +26,7 @@ public class SkipBackCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

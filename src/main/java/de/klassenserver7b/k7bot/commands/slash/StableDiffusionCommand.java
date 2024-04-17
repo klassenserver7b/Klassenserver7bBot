@@ -39,10 +39,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author K7
@@ -68,13 +65,12 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 		allowedUsers.add(Klassenserver7bbot.getInstance().getOwnerId());
 		try {
-			for (Member m : Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L)
+			for (Member m : Objects.requireNonNull(Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L))
 					.getMembers()) {
 				allowedUsers.add(m.getUser().getIdLong());
 			}
-		} catch (NullPointerException e) {
-			return;
-		}
+		} catch (NullPointerException ignored) {
+        }
 	}
 
 	@Override
@@ -193,7 +189,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
 		if (time != null) {
 
-			Long current = Instant.now().toEpochMilli();
+			long current = Instant.now().toEpochMilli();
 
 			if ((time + DEFAULT_RATE_LIMIT) >= current) {
 				return false;

@@ -18,7 +18,7 @@ public class EqualizerCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "COMING SOON - read Bot-News or GitHub Commit-Message";
 	}
 
@@ -28,7 +28,7 @@ public class EqualizerCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

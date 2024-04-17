@@ -16,7 +16,7 @@ public class ClearQueueCommand implements ServerCommand {
  	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Löscht die aktuelle Queuelist.";
 		return help;
 	}
@@ -27,7 +27,7 @@ public class ClearQueueCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

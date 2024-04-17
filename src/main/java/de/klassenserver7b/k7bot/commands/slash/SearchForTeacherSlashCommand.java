@@ -30,16 +30,16 @@ public class SearchForTeacherSlashCommand implements TopLevelSlashCommand {
 
         String teacher = Objects.requireNonNull(event.getOption("teacher")).getAsString();
 
-        OptionMapping lessonmap = event.getOption("lesson");
-        CharSequence sendstr;
+        OptionMapping lessonMapping = event.getOption("lesson");
+        CharSequence result;
 
-        if (lessonmap != null) {
-            sendstr = VplanDBUtils.getTeacherRoomByLesson(teacher, lessonmap.getAsLong());
+        if (lessonMapping != null) {
+            result = VplanDBUtils.getTeacherRoomByLesson(teacher, lessonMapping.getAsLong());
         } else {
-            sendstr = findAllRooms(teacher);
+            result = findAllRooms(teacher);
         }
 
-        if (sendstr == null || sendstr.isEmpty()) {
+        if (result == null || result.isEmpty()) {
             hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.decode("#bd7604"),
                     "I'm sorry but the teacher has no lessons today", Objects.requireNonNull(hook.getInteraction().getGuild()).getIdLong()).build()).queue();
             return;
@@ -47,7 +47,7 @@ public class SearchForTeacherSlashCommand implements TopLevelSlashCommand {
         }
 
         hook.sendMessageEmbeds(
-                        EmbedUtils.getSuccessEmbed("Found teacher " + teacher + " in the following rooms: " + sendstr,
+                        EmbedUtils.getSuccessEmbed("Found teacher " + teacher + " in the following rooms: " + result,
                                 Objects.requireNonNull(event.getGuild()).getIdLong()).build())
                 .queue();
 
@@ -57,17 +57,16 @@ public class SearchForTeacherSlashCommand implements TopLevelSlashCommand {
 
         HashMap<String, Long> rooms = VplanDBUtils.getTeacherRooms(teacher);
 
-        StringBuilder strbuild = new StringBuilder();
+        StringBuilder output = new StringBuilder();
 
-        rooms.forEach((lesson, room) -> {
-            strbuild.append("Lesson: ");
-            strbuild.append(lesson);
-            strbuild.append("; Room: ");
-            strbuild.append(room);
-            strbuild.append("\n");
-        });
+        rooms.forEach((lesson, room) -> output
+                .append("Lesson: ")
+                .append(lesson)
+                .append("; Room: ")
+                .append(room)
+                .append("\n"));
 
-        return strbuild;
+        return output;
 
     }
 

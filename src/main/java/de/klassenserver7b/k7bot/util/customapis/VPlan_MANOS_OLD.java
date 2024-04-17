@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.Cell;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.TableMessage;
+import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;

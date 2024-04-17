@@ -18,7 +18,7 @@ public class AddReactionCommand implements ServerCommand {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #GuildMessageChannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
 	}
 
@@ -28,7 +28,7 @@ public class AddReactionCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 

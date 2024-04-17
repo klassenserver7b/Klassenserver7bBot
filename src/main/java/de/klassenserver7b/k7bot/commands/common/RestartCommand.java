@@ -17,9 +17,8 @@ public class RestartCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
-		String help = "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
-		return help;
+	public String getHelp() {
+        return "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
 	}
 
 	@Override
@@ -28,14 +27,14 @@ public class RestartCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+		if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 			Logger log = Klassenserver7bbot.getInstance().getMainLogger();
 			String[] args = message.getContentDisplay().split(" ");
 
@@ -50,7 +49,7 @@ public class RestartCommand implements ServerCommand {
 
 				}
 				catch (NumberFormatException e) {
-					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", m);
+					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", caller);
 				}
 
 			} else {
@@ -59,7 +58,7 @@ public class RestartCommand implements ServerCommand {
 			}
 
 		} else {
-			PermissionError.onPermissionError(m, channel);
+			PermissionError.onPermissionError(caller, channel);
 		}
 
 	}

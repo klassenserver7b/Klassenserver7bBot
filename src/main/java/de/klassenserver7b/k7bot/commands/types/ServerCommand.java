@@ -17,14 +17,14 @@ public interface ServerCommand {
 	 * @return The Help for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
 	 *         ServerCommand}
 	 */
-	String gethelp();
+	String getHelp();
 
 	/**
 	 *
 	 * @return The Category for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
 	 *         ServerCommand}
 	 */
-	HelpCategories getcategory();
+	HelpCategories getCategory();
 
 	/**
 	 * 
@@ -32,7 +32,7 @@ public interface ServerCommand {
 	 */
 	String[] getCommandStrings();
 
-	void performCommand(Member m, GuildMessageChannel channel, Message message);
+	void performCommand(Member caller, GuildMessageChannel channel, Message message);
 
 	boolean isEnabled();
 

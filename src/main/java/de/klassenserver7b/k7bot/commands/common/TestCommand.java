@@ -11,7 +11,7 @@ public class TestCommand implements ServerCommand {
  	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 
@@ -21,12 +21,12 @@ public class TestCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.UNKNOWN;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 		//Test command is only used when I have something to test......
 	}
 	

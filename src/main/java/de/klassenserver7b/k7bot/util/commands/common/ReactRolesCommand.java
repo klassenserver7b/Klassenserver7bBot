@@ -25,7 +25,7 @@ public class ReactRolesCommand implements ServerCommand {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Erstellt eine Reactionrole für die ausgewählte Nachricht mit dem ausgewählten Emote.\n - z.B. [prefix]reactrole #channel [messageId] :emote: @role";
 		return help;
 	}
@@ -36,7 +36,7 @@ public class ReactRolesCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 

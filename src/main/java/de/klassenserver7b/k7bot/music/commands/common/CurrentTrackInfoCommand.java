@@ -21,7 +21,7 @@ public class CurrentTrackInfoCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Zeigt die Info zum aktuellen Track.";
 		return help;
 	}
@@ -32,7 +32,7 @@ public class CurrentTrackInfoCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

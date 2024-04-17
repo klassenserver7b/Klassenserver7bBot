@@ -26,7 +26,7 @@ public class ModLogsCommand extends GenericUserLogsCommand implements ServerComm
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Zeigt die Logs zu einem Moderator.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]modlogs @moderator";
 	}
 
@@ -36,7 +36,7 @@ public class ModLogsCommand extends GenericUserLogsCommand implements ServerComm
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MODERATION;
 	}
 

@@ -40,16 +40,16 @@ public class LiteSQL {
         }
     }
 
-	public static int onUpdate(String sqlpattern, Object... parameters) {
+    public static int onUpdate(String sqlpattern, Object... parameters) {
 
-		if (parameters.length != countMatches(sqlpattern, "?")) {
-			IllegalArgumentException e = new IllegalArgumentException(
-					"Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
-			dblog.error(e.getMessage(), e);
-			return -5;
-		}
+        try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
 
-		try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
+            if (parameters.length != p.getParameterMetaData().getParameterCount()) {
+                IllegalArgumentException e = new IllegalArgumentException(
+                        "Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
+                dblog.error(e.getMessage(), e);
+                return InternalStatusCodes.ERROR;
+            }
 
             for (int i = 0; i < parameters.length; i++) {
                 p.setObject(i + 1, parameters[i]);
@@ -67,7 +67,13 @@ public class LiteSQL {
 
         try {
 
-			PreparedStatement p = conn.prepareStatement(sqlpattern);
+            PreparedStatement p = conn.prepareStatement(sqlpattern);
+
+            if (parameters.length != p.getParameterMetaData().getParameterCount()) {
+                IllegalArgumentException e = new IllegalArgumentException(
+                        "Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
+                dblog.error(e.getMessage(), e);
+            }
 
             for (int i = 0; i < parameters.length; i++) {
                 p.setObject(i + 1, parameters[i]);

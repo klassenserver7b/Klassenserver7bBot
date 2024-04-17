@@ -19,7 +19,7 @@ public class UnLoopCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "entloopt die aktuelle Queuelist";
 		return help;
 	}
@@ -30,7 +30,7 @@ public class UnLoopCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

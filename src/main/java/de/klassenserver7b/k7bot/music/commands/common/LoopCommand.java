@@ -20,7 +20,7 @@ public class LoopCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "loopt die aktuelle Queuelist";
 		return help;
 	}
@@ -31,7 +31,7 @@ public class LoopCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

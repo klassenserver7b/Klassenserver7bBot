@@ -25,14 +25,14 @@ public class MemesReact extends ListenerAdapter {
 		if (event.isFromType(ChannelType.TEXT)) {
 
 			GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
-			long chanid = chan.getIdLong();
+			long channelId = chan.getIdLong();
 
-			try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM memechannels WHERE channelId=?", chanid)) {
+			try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
 
-				long messid = event.getMessage().getIdLong();
+				long msgId = event.getMessage().getIdLong();
 
 				if (set.next()) {
-					react(messid, chan);
+					react(msgId, chan);
 				}
 
 			} catch (SQLException e) {
@@ -42,10 +42,10 @@ public class MemesReact extends ListenerAdapter {
 		}
 	}
 
-	public void react(long messid, GuildMessageChannel chan) {
+	public void react(long msgId, GuildMessageChannel chan) {
 
-		chan.addReactionById(messid, Emoji.fromFormatted("U+2B06")).queue();
+		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B06")).queue();
 
-		chan.addReactionById(messid, Emoji.fromFormatted("U+2B07")).queue();
+		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B07")).queue();
 	}
 }

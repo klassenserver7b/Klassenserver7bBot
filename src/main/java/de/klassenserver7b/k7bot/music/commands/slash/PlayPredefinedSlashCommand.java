@@ -52,7 +52,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 		Member m = event.getMember();
 
 		if (event.getOptions().isEmpty()) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), gethelp(), m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), this.getHelp(), m);
 			return;
 		}
 
@@ -78,7 +78,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 

@@ -21,7 +21,7 @@ public class ShuffleCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Spielt die aktuelle Playlist in zufälliger Reihenfolge.";
 		return help;
 	}
@@ -32,7 +32,7 @@ public class ShuffleCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

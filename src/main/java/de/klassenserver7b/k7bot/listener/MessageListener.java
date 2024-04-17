@@ -24,13 +24,16 @@ public class MessageListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 
+        if (!event.isFromGuild()) {
+            return;
+        }
+
         LiteSQL.onUpdate("INSERT INTO messagelogs(messageId, guildId, timestamp, authorId, messageText) VALUES(?,?,?,?,?)",
                 event.getMessageIdLong(),
-                (event.getGuild() == null ? -1 : event.getGuild().getIdLong()),
+                event.getGuild().getIdLong(),
                 new Date().getTime(),
                 event.getAuthor().getIdLong(),
                 event.getMessage().getContentRaw());
-
 
     }
 

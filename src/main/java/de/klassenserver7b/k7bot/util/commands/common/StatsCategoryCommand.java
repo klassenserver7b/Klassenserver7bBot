@@ -26,7 +26,7 @@ public class StatsCategoryCommand implements ServerCommand {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Legt eine Kategorie mit dem Bot-Status (Online/Offline) an.\n - kann nur von Mitgliedern mit der Berechtigung 'Administrator' ausgeführt werden!";
 		return help;
 	}
@@ -37,7 +37,7 @@ public class StatsCategoryCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 

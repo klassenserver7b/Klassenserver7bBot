@@ -19,7 +19,7 @@ public class PauseCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Pausiert den aktuellen Track.";
 		return help;
 	}
@@ -30,7 +30,7 @@ public class PauseCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

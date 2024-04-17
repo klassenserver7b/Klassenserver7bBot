@@ -49,7 +49,7 @@ public class CommandManager {
         this.commands.add(new ReactRolesCommand());
         this.commands.add(new AddReactionCommand());
         this.commands.add(new MessagetoEmbedCommand());
-        this.commands.add(new ClientInfo());
+        this.commands.add(new MemberInfoCommand());
         this.commands.add(new StatsCategoryCommand());
 
         // Moderation Commands
@@ -197,13 +197,13 @@ public class CommandManager {
 
     public String getNearestCommand(String str) {
 
-        LevenshteinDistance levdis = LevenshteinDistance.getDefaultInstance();
+        LevenshteinDistance dist = LevenshteinDistance.getDefaultInstance();
         String comm = "";
         int l = Integer.MAX_VALUE;
 
         for (String s : mappedCommands.keySet()) {
 
-            Integer distance = levdis.apply(s, str);
+            Integer distance = dist.apply(s, str);
 
             if (distance < l) {
 

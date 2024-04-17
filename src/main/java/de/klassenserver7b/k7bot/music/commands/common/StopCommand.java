@@ -20,7 +20,7 @@ public class StopCommand implements ServerCommand {
     private boolean isEnabled;
 
     @Override
-    public String gethelp() {
+    public String getHelp() {
         return "Stoppt den aktuellen Track und der Bot verlässt den VoiceChannel.";
     }
 
@@ -30,7 +30,7 @@ public class StopCommand implements ServerCommand {
     }
 
     @Override
-    public HelpCategories getcategory() {
+    public HelpCategories getCategory() {
         return HelpCategories.MUSIC;
     }
 

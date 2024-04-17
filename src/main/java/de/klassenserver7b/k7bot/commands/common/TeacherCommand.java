@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import com.google.gson.JsonObject;
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import de.klassenserver7b.k7bot.util.TeacherDB;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,9 +16,8 @@ public class TeacherCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
-		String help = "Zeigt kompletten Namen (inkl. Anrede) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
-		return help;
+	public String getHelp() {
+        return "Zeigt kompletten Namen (inkl. Anrede) zum gewählten Lehrer an. \n - z.B. [prefix]teacher [Lehrerkürzel]";
 	}
 
 	@Override
@@ -27,48 +26,35 @@ public class TeacherCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.UNKNOWN;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentStripped().split(" ");
 
 		if (args.length > 1) {
 
-			StringBuilder strbuild = new StringBuilder();
-
-			JsonObject teacher = Klassenserver7bbot.getInstance().getTeacherList().get(args[1]).getAsJsonObject();
-
-			strbuild.append("**Kürzel**: " + args[1]);
-			strbuild.append("\n");
-			strbuild.append("**Name: **");
-
-			switch (teacher.get("gender").getAsString()) {
-			case "female" -> {
-				strbuild.append("Frau ");
-			}
-			case "male" -> {
-				strbuild.append("Herr ");
-			}
+			TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(args[1]);
+			if (teacher == null) {
+				channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Lehrer mit Kürzel " + args[1] + " konnte nicht gefunden werden!",
+										channel.getGuild().getIdLong())
+								.setFooter("requested by @" + caller.getEffectiveName())
+								.build()).queue();
+				return;
 			}
 
-			if (teacher.get("is_doctor").getAsBoolean()) {
+            String description = "**Kürzel**: " + args[1] + "\n" +
+                    "**Name: **" + teacher.getDecoratedName();
 
-				strbuild.append("Dr. ");
-
-			}
-
-			strbuild.append(teacher.get("full_name").getAsString().replaceAll("\"", ""));
-
-			channel.sendMessageEmbeds(EmbedUtils.getBuilderOf(strbuild.toString(), channel.getGuild().getIdLong())
-					.setFooter("requested by @" + m.getEffectiveName()).build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getBuilderOf(description, channel.getGuild().getIdLong())
+					.setFooter("requested by @" + caller.getEffectiveName()).build()).queue();
 
 		} else {
 
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "teacher [Lehrerkürzel]", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "teacher [Lehrerkürzel]", caller);
 
 		}
 	}

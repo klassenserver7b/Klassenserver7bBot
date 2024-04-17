@@ -73,7 +73,7 @@ public class ConsoleReadThread implements Runnable {
         switch (commandargs[0].toLowerCase()) {
             case "exit", "stop" -> {
 
-                Klassenserver7bbot.getInstance().setexit(true);
+                Klassenserver7bbot.getInstance().setExit(true);
                 t.interrupt();
                 reader.close();
                 this.onShutdown();

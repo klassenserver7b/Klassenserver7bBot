@@ -66,7 +66,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
 
         if (event.getOptions().isEmpty()) {
             assert m != null;
-            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), gethelp(), m);
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), getHelp(), m);
             return;
         }
 
@@ -96,7 +96,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
         String[] args = message.getContentDisplay().split(" ");
 
         if (args.length <= 1 && message.getAttachments().isEmpty()) {
-            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), gethelp(), m);
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), getHelp(), m);
             return;
         }
 
@@ -228,7 +228,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
     }
 
     @Override
-    public HelpCategories getcategory() {
+    public HelpCategories getCategory() {
         return HelpCategories.MUSIC;
     }
 
@@ -259,7 +259,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
     }
 
     @Override
-    abstract public String gethelp();
+    abstract public String getHelp();
 
     abstract protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url);
 

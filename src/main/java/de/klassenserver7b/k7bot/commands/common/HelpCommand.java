@@ -29,7 +29,7 @@ public class HelpCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Shows the Help for the Bot!";
 	}
 
@@ -39,7 +39,7 @@ public class HelpCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.GENERIC;
 	}
 
@@ -182,7 +182,7 @@ public class HelpCommand implements ServerCommand {
 
 		commands.forEach(servercommand -> {
 
-			if (servercommand.getcategory() != null && servercommand.getcategory() == cat) {
+			if (servercommand.getCategory() != null && servercommand.getCategory() == cat) {
 				searchresults.add(servercommand);
 			}
 		});
@@ -201,7 +201,7 @@ public class HelpCommand implements ServerCommand {
 				inbuild.append("` ");
 			}
 			inbuild.append("- ");
-			inbuild.append(servercommand.gethelp() + " \r\n");
+			inbuild.append(servercommand.getHelp() + " \r\n");
 
 			if (buildlength + inbuild.toString().length()
 					+ 5 >= (1024 * limitmultiplicator + ((limitmultiplicator - 1) * 3))) {

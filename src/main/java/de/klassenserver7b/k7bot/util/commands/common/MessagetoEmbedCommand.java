@@ -13,7 +13,7 @@ public class MessagetoEmbedCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Sendet die eingegebene Nachricht als Embed.\n - z.B. [prefix]toembed [nachricht]";
 	}
 
@@ -23,7 +23,7 @@ public class MessagetoEmbedCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 

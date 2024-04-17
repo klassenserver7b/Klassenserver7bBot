@@ -65,7 +65,7 @@ public class LoopThread implements Runnable {
 				Klassenserver7bbot instance = Klassenserver7bbot.getInstance();
 
 				instance.getLoopedEventManager().checkForUpdates();
-				// vpold.VplanNotify("10b");
+				// vpold.vplanNotify("10b");
 
 				if ((!this.hasstarted)) {
 					StatsCategoryUtil.onStartup(instance.isDevMode());

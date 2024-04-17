@@ -25,7 +25,7 @@ public class AddQueueTrackCommand extends GenericPlayCommand {
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie der aktuellen Queue hinzu.\n - z.B. [prefix]addtoqueue [url / YouTube Suchbegriff]";
 	}
 

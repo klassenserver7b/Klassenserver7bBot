@@ -16,7 +16,7 @@ public class VTestCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 
@@ -26,12 +26,12 @@ public class VTestCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.UNKNOWN;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
 
@@ -43,7 +43,7 @@ public class VTestCommand implements ServerCommand {
 				new Stundenplan24Vplan().sendVplanToChannel(true, args[1], (GuildMessageChannel) chan);
 			}
 		} else {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "vtest [klasse] #channel", m);
+			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "vtest [klasse] #channel", caller);
 		}
 
 	}

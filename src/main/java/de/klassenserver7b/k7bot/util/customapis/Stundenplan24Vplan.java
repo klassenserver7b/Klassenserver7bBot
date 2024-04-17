@@ -3,15 +3,10 @@
  */
 package de.klassenserver7b.k7bot.util.customapis;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
-import de.klassenserver7b.k7bot.util.Cell;
-import de.klassenserver7b.k7bot.util.EmbedUtils;
-import de.klassenserver7b.k7bot.util.InternalStatusCodes;
-import de.klassenserver7b.k7bot.util.TableMessage;
+import de.klassenserver7b.k7bot.util.*;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -48,6 +43,8 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,24 +54,19 @@ import java.util.List;
 public class Stundenplan24Vplan implements LoopedEvent {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	private List<String> klassen;
+	private final List<String> classes;
 
 	public Stundenplan24Vplan() {
-		klassen = new ArrayList<>();
+		classes = new ArrayList<>();
 	}
 
 	public Stundenplan24Vplan(String... klassen) {
-		this.klassen = new ArrayList<>();
-
-		for (String klasse : klassen) {
-			this.klassen.add(klasse);
-		}
+		this.classes = new ArrayList<>();
+        Collections.addAll(this.classes, klassen);
 	}
 
 	public void registerKlassen(String... klassen) {
-		for (String klasse : klassen) {
-			this.klassen.add(klasse);
-		}
+        this.classes.addAll(Arrays.asList(klassen));
 	}
 
 	/**
@@ -100,8 +92,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	@Override
 	public int checkforUpdates() {
-		for (String klasse : klassen) {
-			VplanNotify(klasse);
+		for (String klasse : classes) {
+			vplanNotify(klasse);
 		}
 		return InternalStatusCodes.SUCCESS;
 	}
@@ -112,7 +104,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 *
 	 * @since 1.15.0
 	 */
-	public boolean VplanNotify(String klasse) {
+	public boolean vplanNotify(String klasse) {
 
 		try (MessageCreateData d = getVplanMessage(false, klasse)) {
 
@@ -135,122 +127,106 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	private MessageCreateData getVplanMessage(boolean force, String klasse) {
 
-		OffsetDateTime d = checkdate();
+		OffsetDateTime d = checkDate();
 		Document doc = read(d);
 
-		Element classPlan = getyourClass(doc, klasse);
-		boolean sendApproved = true;
+		Element classPlan = getYourClass(doc, klasse);
+		boolean sendApproved = force || (doc != null && checkPlanChanges(doc, classPlan));
 
-		if (!force && (doc == null || !checkPlanChanges(doc, classPlan))) {
-			sendApproved = false;
+		if (!sendApproved || doc == null) return null;
+
+		putInDB(doc);
+		String info = "";
+
+		if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
+			info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
 		}
 
-		if (sendApproved) {
+		log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
+				+ Klassenserver7bbot.getInstance().isDevMode());
 
-			putInDB(doc);
+		EmbedBuilder embed = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
-			String info = "";
+		embed.setTitle("Es gibt einen neuen Stundenplan für "
+				+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
+		embed.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
-			if (doc == null) {
-				return null;
-			}
+		/*
+		 * TableMessage tablemess = new TableMessage(); tablemess.addHeadline("Stunde",
+		 * "Fach", "Lehrer", "Raum", "Info");
+		 *
+		 * NodeList lessons = classPlan.getElementsByTagName("Std");
+		 *
+		 * int limit = 6; int ges = lessons.getLength();
+		 *
+		 * if (lessons.getLength() < limit) { limit = lessons.getLength(); }
+		 *
+		 * for (int i = 0; i < limit; i++) { Element e = (Element) lessons.item(i);
+		 * appendLesson(e, tablemess);
+		 *
+		 * } TableMessage additionalmess = new TableMessage();
+		 * additionalmess.setColums(5);
+		 *
+		 * for (int i = limit; i < ges; i++) { Element e = (Element) lessons.item(i);
+		 * appendLesson(e, additionalmess);
+		 *
+		 * }
+		 *
+		 * tablemess.automaticLineBreaks(4); embed.setDescription("**Änderungen**\n"
+		 * + tablemess.build());
+		 *
+		 * boolean isextraembed = false;
+		 *
+		 * if (additionalmess.hasData()) { additionalmess.automaticLineBreaks(4);
+		 *
+		 * if (additionalmess.build().length() <= 1020) { embed.addField("",
+		 * additionalmess.build(), false); } else { isextraembed = true; } }
+		 */
 
-			if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
-				info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
-			}
-
-			log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
-					+ Klassenserver7bbot.getInstance().isDevMode());
-
-			EmbedBuilder embbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
-
-			embbuild.setTitle("Es gibt einen neuen Stundenplan für "
-					+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
-			embbuild.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-
-			/*
-			 * TableMessage tablemess = new TableMessage(); tablemess.addHeadline("Stunde",
-			 * "Fach", "Lehrer", "Raum", "Info");
-			 * 
-			 * NodeList lessons = classPlan.getElementsByTagName("Std");
-			 * 
-			 * int limit = 6; int ges = lessons.getLength();
-			 * 
-			 * if (lessons.getLength() < limit) { limit = lessons.getLength(); }
-			 * 
-			 * for (int i = 0; i < limit; i++) { Element e = (Element) lessons.item(i);
-			 * appendLesson(e, tablemess);
-			 * 
-			 * } TableMessage additionalmess = new TableMessage();
-			 * additionalmess.setColums(5);
-			 * 
-			 * for (int i = limit; i < ges; i++) { Element e = (Element) lessons.item(i);
-			 * appendLesson(e, additionalmess);
-			 * 
-			 * }
-			 * 
-			 * tablemess.automaticLineBreaks(4); embbuild.setDescription("**Änderungen**\n"
-			 * + tablemess.build());
-			 * 
-			 * boolean isextraembed = false;
-			 * 
-			 * if (additionalmess.hasData()) { additionalmess.automaticLineBreaks(4);
-			 * 
-			 * if (additionalmess.build().length() <= 1020) { embbuild.addField("",
-			 * additionalmess.build(), false); } else { isextraembed = true; } }
-			 */
-
-			if (!(info.equalsIgnoreCase(""))) {
-
-				embbuild.addField("Sonstige Infos", info, false);
-
-			}
-
-			LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
-
-			MessageCreateBuilder builder = new MessageCreateBuilder();
-			builder.setEmbeds(embbuild.build());
-
-			/*
-			 * if (isextraembed) {
-			 * 
-			 * embbuild.clearFields(); embbuild.setFooter(null);
-			 * 
-			 * 
-			 * EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"),
-			 * additionalmess.build());
-			 * 
-			 * addbuild.setFooter("Stand vom " +
-			 * doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-			 * 
-			 * if (!(info.equalsIgnoreCase(""))) {
-			 * 
-			 * addbuild.addField("Sonstige Infos", info, false);
-			 * 
-			 * }
-			 * 
-			 * builder.addEmbeds(addbuild.build());
-			 * 
-			 * } else { builder.setEmbeds(embbuild.build()); }
-			 */
-
-			return builder.build();
-
+		if (!(info.equalsIgnoreCase(""))) {
+			embed.addField("Sonstige Infos", info, false);
 		}
 
-		return null;
+		LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
 
+		MessageCreateBuilder builder = new MessageCreateBuilder();
+		builder.setEmbeds(embed.build());
+
+		/*
+		 * if (isextraembed) {
+		 *
+		 * embed.clearFields(); embed.setFooter(null);
+		 *
+		 *
+		 * EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"),
+		 * additionalmess.build());
+		 *
+		 * addbuild.setFooter("Stand vom " +
+		 * doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
+		 *
+		 * if (!(info.equalsIgnoreCase(""))) {
+		 *
+		 * addbuild.addField("Sonstige Infos", info, false);
+		 *
+		 * }
+		 *
+		 * builder.addEmbeds(addbuild.build());
+		 *
+		 * } else { builder.setEmbeds(embed.build()); }
+		 */
+
+		return builder.build();
 	}
 
 	private void putInDB(Document doc) {
 
-		NodeList stdlist = doc.getElementsByTagName("Std");
+		NodeList stdList = doc.getElementsByTagName("Std");
 
 		LiteSQL.onUpdate("DELETE FROM vplandata");
 
-		for (int i = 0; i < stdlist.getLength(); i++) {
+		for (int i = 0; i < stdList.getLength(); i++) {
 
-			Element n = (Element) stdlist.item(i);
+			Element n = (Element) stdList.item(i);
 
 			int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
 			String room = n.getElementsByTagName("Ra").item(0).getTextContent();
@@ -274,52 +250,28 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	private TableMessage appendLesson(Element e, TableMessage tablemess) {
 		TableMessage ret;
 
-		boolean subjectchange = e.getElementsByTagName("Fa").item(0).hasAttributes();
-		boolean teacherchange = e.getElementsByTagName("Le").item(0).hasAttributes();
-		boolean roomchange = e.getElementsByTagName("Ra").item(0).hasAttributes();
+		boolean subjectChanged = e.getElementsByTagName("Fa").item(0).hasAttributes();
+		boolean teacherChanged = e.getElementsByTagName("Le").item(0).hasAttributes();
+		boolean roomChanged = e.getElementsByTagName("Ra").item(0).hasAttributes();
 		String lesson = e.getElementsByTagName("St").item(0).getTextContent();
 
 		if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
 
 			Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
-					(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+					(subjectChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 			Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
-					(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+					(teacherChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-			StringBuilder strbuild = new StringBuilder();
-			String teacher = e.getElementsByTagName("Le").item(0).getTextContent();
+			String teacherId = e.getElementsByTagName("Le").item(0).getTextContent();
+			TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
 
-			if (teacher != null && !teacher.equalsIgnoreCase("")) {
-				JsonObject teachobj = Klassenserver7bbot.getInstance().getTeacherList();
-				JsonElement teachelem;
-
-				if (teachobj != null && (teachelem = teachobj.get(teacher)) != null) {
-
-					JsonObject teach = teachelem.getAsJsonObject();
-
-					String gender = teach.get("gender").getAsString();
-					if (gender.equalsIgnoreCase("female")) {
-						strbuild.append("Frau ");
-					} else if (gender.equalsIgnoreCase("male")) {
-						strbuild.append("Herr ");
-					}
-
-					if (teach.get("is_doctor").getAsBoolean()) {
-
-						strbuild.append("Dr. ");
-
-					}
-
-					strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-
-				}
+			if (teacher != null) {
+				teachercell.setLinkTitle(teacher.getDecoratedName());
+				teachercell.setLinkURL("https://manos-dresden.de/lehrer");
 			}
 
-			teachercell.setLinkTitle(strbuild.toString());
-			teachercell.setLinkURL("https://manos-dresden.de/lehrer");
-
 			Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
-					(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+					(roomChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
 			tablemess.addRow(lesson, subjectcell, teachercell, room);
 
@@ -361,7 +313,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 		boolean synced = synchronizePlanDB(plan);
 
-		int planhash = classPlan.getTextContent().hashCode();
+		int planHash = classPlan.getTextContent().hashCode();
 
 		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
@@ -376,7 +328,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 
 			if (dbhash != null) {
 
-				if (dbhash != planhash || synced) {
+				if (dbhash != planHash || synced) {
 
 					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", onlinedate);
 					return true;
@@ -384,7 +336,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 				}
 				return false;
 			}
-			LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", onlinedate, planhash);
+			LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", onlinedate, planHash);
 
 		} catch (SQLException e) {
 			log.error(e.getMessage(), e);
@@ -396,11 +348,11 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	/**
 	 *
 	 * @param obj
-	 * @param klasse
+	 * @param clazz
 	 * @return
 	 * @since 1.14.0
 	 */
-	private Element getyourClass(Document obj, String klasse) {
+	private Element getYourClass(Document obj, String clazz) {
 
 		if (obj == null) {
 			return null;
@@ -415,7 +367,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 			if (n.getNodeType() == Node.ELEMENT_NODE) {
 				Element e = (Element) n;
 
-				if (e.getElementsByTagName("Kurz").item(0).getTextContent().equalsIgnoreCase("10b")) {
+				if (e.getElementsByTagName("Kurz").item(0).getTextContent().equalsIgnoreCase(clazz)) {
 					yourclass = e;
 					break;
 				}
@@ -477,16 +429,16 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 * @return
 	 * @since 1.14.0
 	 */
-	private OffsetDateTime checkdate() {
+	private OffsetDateTime checkDate() {
 
-		OffsetDateTime cutime = OffsetDateTime.now();
-		int day = cutime.getDayOfWeek().getValue();
+		OffsetDateTime now = OffsetDateTime.now();
+		int day = now.getDayOfWeek().getValue();
 
 		if (day >= 5) {
-			return cutime.plusDays(8 - day);
+			return now.plusDays(8 - day);
 		}
 
-		return cutime.plusDays(1);
+		return now.plusDays(1);
 
 	}
 
@@ -505,12 +457,12 @@ public class Stundenplan24Vplan implements LoopedEvent {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 		try {
 
-			String xmlstr = getVplanXML(date);
+			String xml = getVplanXML(date);
 
-			if (xmlstr != null) {
+			if (xml != null) {
 
-				DocumentBuilder docbuild = factory.newDocumentBuilder();
-				Document doc = docbuild.parse(new ByteArrayInputStream(xmlstr.getBytes(StandardCharsets.UTF_8)));
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 
 				doc.getDocumentElement();
 				return doc;
@@ -530,12 +482,12 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	private String getVplanXML(OffsetDateTime date) {
 
-		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
+		final BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
+		credProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
 				new UsernamePasswordCredentials("schueler",
 						Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
 
-		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
+		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credProvider)
 				.build()) {
 
 			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
@@ -561,7 +513,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
 	 */
 	@Override
 	public void shutdown() {
-		klassen.clear();
+		classes.clear();
 
 	}
 

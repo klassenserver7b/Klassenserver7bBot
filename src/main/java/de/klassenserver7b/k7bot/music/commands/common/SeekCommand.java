@@ -23,7 +23,7 @@ public class SeekCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Spult zur gewählten Position im Song vor.\n - z.B. [prefix]seek [position in seconds]";
 	}
 
@@ -33,7 +33,7 @@ public class SeekCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

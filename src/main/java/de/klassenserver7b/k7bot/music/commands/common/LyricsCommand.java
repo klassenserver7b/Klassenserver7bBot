@@ -35,7 +35,7 @@ public class LyricsCommand implements ServerCommand {
 	private final Logger log;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
 		return help;
 	}
@@ -46,7 +46,7 @@ public class LyricsCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 

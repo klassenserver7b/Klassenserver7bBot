@@ -16,7 +16,7 @@ public class SkipForwardCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Spult zur um die gewählte Anzahl an Sekunden vor.\n - z.B. [prefix]forward [time in seconds]";
 	}
 
@@ -26,7 +26,7 @@ public class SkipForwardCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.MUSIC;
 	}
 
