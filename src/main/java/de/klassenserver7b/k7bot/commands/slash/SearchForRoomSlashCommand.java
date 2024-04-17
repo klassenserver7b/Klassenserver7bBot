@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.commands.slash;
 
@@ -19,45 +19,36 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 
+ *
  */
 public class SearchForRoomSlashCommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
-		InteractionHook hook = event.deferReply().complete();
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
+        InteractionHook hook = event.deferReply().complete();
 
-		long lesson = Objects.requireNonNull(event.getOption("lesson")).getAsLong();
+        long lesson = Objects.requireNonNull(event.getOption("lesson")).getAsLong();
 
-		List<String> rooms = VplanDBUtils.checkDefaultRooms(lesson);
+        List<String> rooms = VplanDBUtils.checkDefaultRooms(lesson);
 
-		if (rooms.isEmpty()) {
-			hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.decode("#bd7604"),
-					"I'm sorry but all rooms are already taken", Objects.requireNonNull(event.getGuild()).getIdLong()).build()).queue();
-			return;
-		}
-
-		StringBuilder strbuild = new StringBuilder();
-
-		for (String room : rooms) {
-			strbuild.append(room);
-			strbuild.append(", ");
-		}
-
-		strbuild.delete(strbuild.length() - 2, strbuild.length());
+        if (rooms.isEmpty()) {
+            hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.decode("#bd7604"),
+                    "I'm sorry but all rooms are already taken", Objects.requireNonNull(event.getGuild()).getIdLong()).build()).queue();
+            return;
+        }
 
 		hook.sendMessageEmbeds(
 				EmbedUtils.getSuccessEmbed("I'm happy to tell you that the rooms " + strbuild + " are free!",
 						Objects.requireNonNull(event.getGuild()).getIdLong()).build())
 				.queue();
 
-	}
+    }
 
-	@NotNull
+    @NotNull
     @Override
-	public SlashCommandData getCommandData() {
-		return Commands.slash("searchroom", "Searchs for a free room in the selected lesson")
-				.addOptions(new OptionData(OptionType.INTEGER, "lesson", "the lesson to check", true));
-	}
+    public SlashCommandData getCommandData() {
+        return Commands.slash("searchroom", "Searchs for a free room in the selected lesson")
+                .addOptions(new OptionData(OptionType.INTEGER, "lesson", "the lesson to check", true));
+    }
 
 }

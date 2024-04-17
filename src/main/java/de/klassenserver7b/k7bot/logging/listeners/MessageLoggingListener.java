@@ -78,7 +78,7 @@ public class MessageLoggingListener extends ListenerAdapter {
     @Override
     public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
             return;
         }
 
@@ -96,7 +96,7 @@ public class MessageLoggingListener extends ListenerAdapter {
 
     protected boolean isIgnoredEvent(LoggingOptions option, long messageId, Guild guild) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
+        if (LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
             return true;
         }
 

@@ -31,7 +31,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_JOIN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_JOIN, event.getGuild())) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_LEAVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_LEAVE, event.getGuild())) {
             return;
         }
 
@@ -81,7 +81,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
             return;
         }
 
@@ -104,7 +104,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleAdd(@Nonnull GuildMemberRoleAddEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
             return;
         }
 
@@ -126,7 +126,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
             return;
         }
 

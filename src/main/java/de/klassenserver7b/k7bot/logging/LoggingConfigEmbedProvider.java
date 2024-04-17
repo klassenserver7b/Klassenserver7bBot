@@ -229,7 +229,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
             strbuild.append(" - ");
             strbuild.append("`");
 
-            boolean enabled = LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
+            boolean enabled = !LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
             strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
 
             strbuild.append("\n");

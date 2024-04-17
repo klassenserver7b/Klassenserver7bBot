@@ -26,8 +26,7 @@ public abstract class LoggingConfigDBHandler {
 
         insertGuild(guildId);
 
-        if (!isOptionDisabled(option, guildId)) {
-
+        if (isOptionDisabled(option, guildId)) {
             return LiteSQL.onUpdate(
                     "UPDATE loggingConfig SET optionJson = json_insert(optionJson,'$[#]',?) WHERE guildId=?;",
                     option.getId(), guildId);
@@ -58,7 +57,7 @@ public abstract class LoggingConfigDBHandler {
                 "SELECT IIF((SELECT (SELECT 1 FROM json_each(optionJson) WHERE value = ?) FROM loggingConfig WHERE guildId = ?), True, False) result;",
                 option.getId(), guildId)) {
 
-            return set.getBoolean("result");
+            return !set.getBoolean("result");
 
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -81,13 +80,10 @@ public abstract class LoggingConfigDBHandler {
             return false;
         }
 
-        if (isOptionDisabled(option, guildId)) {
-
+        if (!isOptionDisabled(option, guildId)) {
             disableOption(option, guildId);
             return false;
-
         } else {
-
             enableOption(option, guildId);
             return true;
 

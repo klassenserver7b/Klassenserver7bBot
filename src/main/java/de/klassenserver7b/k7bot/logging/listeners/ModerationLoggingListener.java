@@ -34,7 +34,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildBan(GuildBanEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.BAN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.BAN, event.getGuild())) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildUnban(GuildUnbanEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.UNBAN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.UNBAN, event.getGuild())) {
             return;
         }
 
@@ -70,7 +70,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildMemberUpdateTimeOut(@Nonnull GuildMemberUpdateTimeOutEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.TIMEOUT, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.TIMEOUT, event.getGuild())) {
             return;
         }
 
@@ -98,7 +98,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildAuditLogEntryCreate(@Nonnull GuildAuditLogEntryCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUDITLOG_ENTRY_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUDITLOG_ENTRY_CREATE, event.getGuild())) {
             return;
         }
 
@@ -118,7 +118,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onAutoModExecution(@Nonnull AutoModExecutionEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_EXECUTED, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_EXECUTED, event.getGuild())) {
             return;
         }
 
@@ -139,7 +139,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onAutoModRuleCreate(@Nonnull AutoModRuleCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_CREATE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_CREATE, event.getRule().getGuild())) {
             return;
         }
 
@@ -156,7 +156,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onAutoModRuleDelete(@Nonnull AutoModRuleDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_DELETE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_DELETE, event.getRule().getGuild())) {
             return;
         }
 
@@ -175,7 +175,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     @Override
     public void onAutoModRuleUpdate(@Nonnull AutoModRuleUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_UPDATE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_UPDATE, event.getRule().getGuild())) {
             return;
         }
 

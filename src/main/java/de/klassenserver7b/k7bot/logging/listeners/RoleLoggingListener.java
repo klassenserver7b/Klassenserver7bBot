@@ -30,7 +30,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     @Override
     public void onRoleCreate(RoleCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_CREATE, event.getGuild())) {
             return;
         }
 
@@ -55,7 +55,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     @Override
     public void onRoleDelete(RoleDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_DELETE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_DELETE, event.getGuild())) {
             return;
         }
 
@@ -74,7 +74,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     @Override
     public void onRoleUpdateName(@Nonnull RoleUpdateNameEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_NAME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_NAME, event.getGuild())) {
             return;
         }
 
@@ -100,7 +100,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     @Override
     public void onRoleUpdatePermissions(@Nonnull RoleUpdatePermissionsEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_PERMISSIONS, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_PERMISSIONS, event.getGuild())) {
             return;
         }
 
@@ -147,7 +147,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     @Override
     public void onRoleUpdatePosition(@Nonnull RoleUpdatePositionEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_POSITION, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_POSITION, event.getGuild())) {
             return;
         }
 

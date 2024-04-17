@@ -1,8 +1,5 @@
 package de.klassenserver7b.k7bot;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -21,6 +18,7 @@ import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
+import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -36,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +68,7 @@ public class Klassenserver7bbot {
     private SpotifyInteractions spotifyinteractions;
 
     private Long ownerId;
-    private JsonObject teacherslist;
+    private TeacherDB teacherDB;
     private boolean exit = false;
     private boolean indev;
 
@@ -97,13 +94,15 @@ public class Klassenserver7bbot {
      * Initialize the Bot.
      *
      * @return if the Bot was successfully initialized
-     * @see @link{#buildBot(String, String, int)}
-     * @see @link{#initializeObjects()}
-     * @see @link{#loopedEventMgr.initializeDefaultEvents()}
+     * @see #buildBot(String, String, int)
+     * @see #initializeObjects()
+     * @see LoopedEventManager#initializeDefaultEvents()
      */
     protected boolean initializeBot() {
 
-        loadTeacherList();
+        teacherDB = new TeacherDB();
+        teacherDB.loadTeachersList();
+
         LiteSQL.connect();
 
         SQLManager.onCreate();
@@ -177,7 +176,7 @@ public class Klassenserver7bbot {
         builder.addEventListeners(new ReactRoleListener());
         builder.addEventListeners(new AutoRickroll());
         builder.addEventListeners(new MemesReact());
-        builder.addEventListeners(new BotgetDC());
+        builder.addEventListeners(new BotLeaveGuildListener());
         builder.addEventListeners(new MessageListener());
 
         ShardManager initShardMgr = null;
@@ -355,31 +354,6 @@ public class Klassenserver7bbot {
     }
 
     /**
-     * This method is used to load the Teachers List from the resources folder.
-     * The Teachers List is a JSON file containing the teachers of the school.
-     */
-    public void loadTeacherList() {
-        File file = new File("resources/teachers.json");
-
-        if (file.exists()) {
-
-            try {
-
-                String jsonstring = Files.readString(file.toPath());
-
-                JsonElement json = JsonParser.parseString(jsonstring);
-                teacherslist = json.getAsJsonObject();
-
-            } catch (IOException e1) {
-
-                logger.error(e1.getMessage(), e1);
-
-            }
-
-        }
-    }
-
-    /**
      * This method is used to get the Bot's Name.
      * If the Bot is in a Guild, the Bots custom Guildname is returned.
      * Otherwise, the Bot's global Name is returned.
@@ -536,8 +510,8 @@ public class Klassenserver7bbot {
     /**
      * @return the TeachersList
      */
-    public JsonObject getTeacherList() {
-        return this.teacherslist;
+    public TeacherDB getTeacherDB() {
+        return this.teacherDB;
     }
 
     /**
@@ -555,10 +529,10 @@ public class Klassenserver7bbot {
     }
 
     /**
-     * @param inexit set if the Bot is currently exiting
+     * @param exit set if the Bot is currently exiting
      */
-    public void setexit(boolean inexit) {
-        this.exit = inexit;
+    public void setExit(boolean exit) {
+        this.exit = exit;
     }
 
     /**

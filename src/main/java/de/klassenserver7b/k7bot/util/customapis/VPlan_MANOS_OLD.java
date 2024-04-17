@@ -177,47 +177,22 @@ public class VPlan_MANOS_OLD {
 
 		}
 
-		Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
+		Cell subjectCell = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
 				(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-		Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
+		Cell teacherCell = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
 				(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-		StringBuilder strbuild = new StringBuilder();
-		JsonElement elem = entry.get("teacher");
-
-		if (elem != null) {
-			JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList()
-					.get(elem.getAsString().replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
-
-			if (teachelem != null) {
-
-				JsonObject teach = teachelem.getAsJsonObject();
-
-				String gender = teach.get("gender").getAsString();
-				if (gender.equalsIgnoreCase("female")) {
-					strbuild.append("Frau ");
-				} else if (gender.equalsIgnoreCase("male")) {
-					strbuild.append("Herr ");
-				}
-
-				if (teach.get("is_doctor").getAsBoolean()) {
-
-					strbuild.append("Dr. ");
-
-				}
-
-				strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
-
-			}
+		String teacherId = entry.get("teacher").getAsString();
+		TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+		if (teacher != null) {
+			teacherCell.setLinkTitle(teacher.getDecoratedName());
+			teacherCell.setLinkURL("https://manos-dresden.de/lehrer");
 		}
 
-		teacher.setLinkTitle(strbuild.toString().trim());
-		teacher.setLinkURL("https://manos-dresden.de/lehrer");
-
-		Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
+		Cell roomCell = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
 				(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-		mess.addRow(subject, teacher, room);
+		mess.addRow(subjectCell, teacherCell, roomCell);
 
 		return mess;
 

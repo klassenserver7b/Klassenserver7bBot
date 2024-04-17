@@ -24,7 +24,7 @@ public class InviteLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildInviteCreate(GuildInviteCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_CREATE, event.getGuild())) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class InviteLoggingListener extends ListenerAdapter {
     @Override
     public void onGuildInviteDelete(GuildInviteDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_DELETE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.INVITE_DELETE, event.getGuild())) {
             return;
         }
 
