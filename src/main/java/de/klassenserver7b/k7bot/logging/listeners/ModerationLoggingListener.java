@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.logging.listeners;
 
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
@@ -79,15 +78,25 @@ public class ModerationLoggingListener extends ListenerAdapter {
 
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
         embbuild.setColor(Color.yellow);
-        embbuild.setTitle("Timeout updated for " + memb.getEffectiveName());
 
         StringBuilder sb = new StringBuilder();
 
-        if (event.getOldTimeOutEnd() != null) {
+        if (event.getOldTimeOutEnd() != null && event.getNewTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout updated for " + memb.getEffectiveName());
             sb.append("**Old Timeout End: **<t:").append(event.getOldTimeOutEnd().toEpochSecond()).append(">");
-        }
-        if (event.getNewTimeOutEnd() != null) {
             sb.append("\n**New Timeout End: **<t:").append(event.getNewTimeOutEnd().toEpochSecond()).append(">");
+
+        } else if (event.getNewTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout added for " + memb.getEffectiveName());
+            sb.append("**Timeout End: **<t:").append(event.getNewTimeOutEnd().toEpochSecond()).append(">");
+
+        } else if (event.getOldTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout removed for " + memb.getEffectiveName());
+            sb.append("**Old Timeout End: **<t:").append(event.getOldTimeOutEnd().toEpochSecond()).append(">");
+
         }
 
         embbuild.setDescription(sb);
