@@ -8,8 +8,6 @@ import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.OffsetDateTime;
-
 /**
  *
  */
@@ -27,13 +25,12 @@ public class DBAutodelete implements LoopedEvent {
     @Override
     public int checkforUpdates() {
 
-        Long mindate = OffsetDateTime.now().minusDays(2).toEpochSecond();
-        Long guildId = 0L;
+        Long mindate = System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2; // 7 days
 
-        int status = LiteSQL.onUpdate("DELETE FROM messagelogs WHERE guildId=? AND timestamp < ?", guildId, mindate);
+        int status = LiteSQL.onUpdate("DELETE FROM messagelogs WHERE timestamp < ?", mindate);
 
         if (status >= 0) {
-            log.debug("Removed " + status + "lines from messagelogs");
+            log.info("Removed " + status + " lines from messagelogs");
         }
 
         return status;

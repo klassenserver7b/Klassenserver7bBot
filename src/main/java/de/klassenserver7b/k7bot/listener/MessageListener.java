@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
-import java.util.Date;
 
 /**
  *
@@ -31,7 +30,7 @@ public class MessageListener extends ListenerAdapter {
         LiteSQL.onUpdate("INSERT INTO messagelogs(messageId, guildId, timestamp, authorId, messageText) VALUES(?,?,?,?,?)",
                 event.getMessageIdLong(),
                 event.getGuild().getIdLong(),
-                new Date().getTime(),
+                System.currentTimeMillis(),
                 event.getAuthor().getIdLong(),
                 event.getMessage().getContentRaw());
 
