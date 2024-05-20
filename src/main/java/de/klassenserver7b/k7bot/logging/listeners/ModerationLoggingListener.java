@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.logging.listeners;
 
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
@@ -18,11 +17,14 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 
-public class ModerationLoggingListener extends LoggingListener {
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+public class ModerationLoggingListener extends ListenerAdapter {
 
     public ModerationLoggingListener() {
         super();
@@ -31,7 +33,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onGuildBan(GuildBanEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.BAN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.BAN, event.getGuild())) {
             return;
         }
 
@@ -48,7 +50,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onGuildUnban(GuildUnbanEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.UNBAN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.UNBAN, event.getGuild())) {
             return;
         }
 
@@ -67,7 +69,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onGuildMemberUpdateTimeOut(@Nonnull GuildMemberUpdateTimeOutEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.TIMEOUT, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.TIMEOUT, event.getGuild())) {
             return;
         }
 
@@ -76,15 +78,25 @@ public class ModerationLoggingListener extends LoggingListener {
 
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
         embbuild.setColor(Color.yellow);
-        embbuild.setTitle("Timeout updated for " + memb.getEffectiveName());
 
         StringBuilder sb = new StringBuilder();
 
-        if (event.getOldTimeOutEnd() != null) {
+        if (event.getOldTimeOutEnd() != null && event.getNewTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout updated for " + memb.getEffectiveName());
             sb.append("**Old Timeout End: **<t:").append(event.getOldTimeOutEnd().toEpochSecond()).append(">");
-        }
-        if (event.getNewTimeOutEnd() != null) {
             sb.append("\n**New Timeout End: **<t:").append(event.getNewTimeOutEnd().toEpochSecond()).append(">");
+
+        } else if (event.getNewTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout added for " + memb.getEffectiveName());
+            sb.append("**Timeout End: **<t:").append(event.getNewTimeOutEnd().toEpochSecond()).append(">");
+
+        } else if (event.getOldTimeOutEnd() != null) {
+
+            embbuild.setTitle("Timeout removed for " + memb.getEffectiveName());
+            sb.append("**Old Timeout End: **<t:").append(event.getOldTimeOutEnd().toEpochSecond()).append(">");
+
         }
 
         embbuild.setDescription(sb);
@@ -95,7 +107,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onGuildAuditLogEntryCreate(@Nonnull GuildAuditLogEntryCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.AUDITLOG_ENTRY_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUDITLOG_ENTRY_CREATE, event.getGuild())) {
             return;
         }
 
@@ -115,7 +127,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onAutoModExecution(@Nonnull AutoModExecutionEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.AUTOMOD_EXECUTED, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_EXECUTED, event.getGuild())) {
             return;
         }
 
@@ -136,7 +148,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onAutoModRuleCreate(@Nonnull AutoModRuleCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.AUTOMOD_RULE_CREATE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_CREATE, event.getRule().getGuild())) {
             return;
         }
 
@@ -153,7 +165,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onAutoModRuleDelete(@Nonnull AutoModRuleDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.AUTOMOD_RULE_DELETE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_DELETE, event.getRule().getGuild())) {
             return;
         }
 
@@ -172,7 +184,7 @@ public class ModerationLoggingListener extends LoggingListener {
     @Override
     public void onAutoModRuleUpdate(@Nonnull AutoModRuleUpdateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.AUTOMOD_RULE_UPDATE, event.getRule().getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_UPDATE, event.getRule().getGuild())) {
             return;
         }
 

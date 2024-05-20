@@ -16,137 +16,125 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SystemNotificationChannelManager {
 
-	private final ConcurrentHashMap<Guild, GuildMessageChannel> systemchannellist;
-	private final Logger log;
+    private final ConcurrentHashMap<Guild, GuildMessageChannel> systemchannellist;
+    private final Logger log;
 
-	public SystemNotificationChannelManager() {
+    public SystemNotificationChannelManager() {
 
-		systemchannellist = new ConcurrentHashMap<>();
-		log = LoggerFactory.getLogger(this.getClass());
-		reload();
-	}
+        systemchannellist = new ConcurrentHashMap<>();
+        log = LoggerFactory.getLogger(this.getClass());
+        reload();
+    }
 
-	private void reload() {
+    private void reload() {
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
+        try (ResultSet set = LiteSQL.onQuery("SELECT * FROM botutil;")) {
 
-			while (set.next()) {
-				Long guildid = set.getLong("guildId");
-				Long systemchannel = set.getLong("syschannelId");
+            while (set.next()) {
+                long guildid = set.getLong("guildId");
+                long systemchannel = set.getLong("syschannelId");
 
-				if (guildid == 0) {
-					continue;
-				}
+                if (guildid == 0) {
+                    continue;
+                }
 
-				Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+                Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
 
-				if (g == null) {
-					continue;
-				}
+                if (g == null) {
+                    continue;
+                }
 
-				GuildChannel gchan = g.getGuildChannelById(systemchannel);
+                GuildChannel gchan = g.getGuildChannelById(systemchannel);
 
-				if (gchan == null || !(gchan instanceof GuildMessageChannel)) {
-					systemchannellist.put(g, g.getSystemChannel());
-					LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ?;", g.getSystemChannel().getIdLong());
-				}
+                if (!(gchan instanceof GuildMessageChannel)) {
+                    systemchannellist.put(g, g.getSystemChannel());
+                    LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ?;", g.getSystemChannel().getIdLong());
+                }
 
-				GuildMessageChannel chan = (GuildMessageChannel) gchan;
+                assert gchan instanceof GuildMessageChannel;
+                GuildMessageChannel chan = (GuildMessageChannel) gchan;
 
-				systemchannellist.put(g, chan);
+                systemchannellist.put(g, chan);
 
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
 
-	}
+    }
 
-	/**
-	 * Puts the given {@link GuildMessageChannel SystemChannel} into the Hashmap
-	 * keyed by his {@link Guild}.
-	 *
-	 * @param channel <br>
-	 *                The {@link GuildMessageChannel SystemChannel} wich u want to
-	 *                use in this {@link Guild}.
-	 *
-	 *
-	 *
-	 *
-	 */
-	public void insertChannel(GuildMessageChannel channel) {
+    /**
+     * Puts the given {@link GuildMessageChannel SystemChannel} into the Hashmap
+     * keyed by his {@link Guild}.
+     *
+     * @param channel <br>
+     *                The {@link GuildMessageChannel SystemChannel} wich u want to
+     *                use in this {@link Guild}.
+     */
+    public void insertChannel(GuildMessageChannel channel) {
 
-		reload();
+        reload();
 
-		Guild guild = channel.getGuild();
+        Guild guild = channel.getGuild();
 
-		if (systemchannellist.containsKey(guild)) {
+        if (systemchannellist.containsKey(guild)) {
 
-			LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;", channel.getIdLong(),
-					guild.getIdLong());
+            LiteSQL.onUpdate("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;", channel.getIdLong(),
+                    guild.getIdLong());
 
-		} else {
+        } else {
 
-			LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);", guild.getIdLong(),
-					channel.getIdLong());
+            LiteSQL.onUpdate("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);", guild.getIdLong(),
+                    channel.getIdLong());
 
-		}
+        }
 
-		systemchannellist.put(guild, channel);
+        systemchannellist.put(guild, channel);
 
-	}
+    }
 
-	/**
-	 * @param guild <br>
-	 *              The {@link Guild} for which you want the SystemChannel.
-	 * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
-	 *         {@code null} if no channel is listed.
-	 *
-	 *
-	 *
-	 *
-	 */
-	@Nullable
-	public GuildMessageChannel getSysChannel(@Nonnull Guild guild) {
+    /**
+     * @param guild <br>
+     *              The {@link Guild} for which you want the SystemChannel.
+     * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
+     * {@code null} if no channel is listed.
+     */
+    @Nullable
+    public GuildMessageChannel getSysChannel(@Nonnull Guild guild) {
 
-		if (systemchannellist.get(guild) == null) {
-			return guild.getSystemChannel();
-		}
+        if (systemchannellist.get(guild) == null) {
+            return guild.getSystemChannel();
+        }
 
-		return systemchannellist.get(guild);
-	}
+        return systemchannellist.get(guild);
+    }
 
-	/**
-	 * @param guildId <br>
-	 *                The Id of the {@link Guild} for which you want the
-	 *                SystemChannel.
-	 * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
-	 *         {@code null} if no channel is listed.
-	 *
-	 *
-	 *
-	 *
-	 */
-	@Nullable
-	public GuildMessageChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
+    /**
+     * @param guildId <br>
+     *                The Id of the {@link Guild} for which you want the
+     *                SystemChannel.
+     * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
+     * {@code null} if no channel is listed.
+     */
+    @Nullable
+    @SuppressWarnings("unused")
+    public GuildMessageChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
-		Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
+        Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
 
-		return systemchannellist.get(guild);
-	}
+        return systemchannellist.get(guild);
+    }
 
-	/**
-	 * Only used if you want the full ConcurrentHashMap! If you want only one
-	 * {@link GuildMessageChannel SystemChannel} please use
-	 * {@link SystemNotificationChannelManager#getSysChannel(Guild)}
-	 *
-	 * @return The current HashMap of SystemChannels which is used by the Bot.
-	 *
-	 *
-	 *
-	 */
-	public ConcurrentHashMap<Guild, GuildMessageChannel> getHashMap() {
-		reload();
-		return systemchannellist;
-	}
+    /**
+     * Only used if you want the full ConcurrentHashMap! If you want only one
+     * {@link GuildMessageChannel SystemChannel} please use
+     * {@link SystemNotificationChannelManager#getSysChannel(Guild)}
+     *
+     * @return The current HashMap of SystemChannels which is used by the Bot.
+     */
+    @SuppressWarnings("unused")
+    public ConcurrentHashMap<Guild, GuildMessageChannel> getHashMap() {
+        reload();
+        return systemchannellist;
+    }
 }

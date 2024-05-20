@@ -35,158 +35,157 @@ import java.util.Map.Entry;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevelSlashCommand {
 
-	private final Logger log;
+    private final Logger log;
 
-	public UnSubscribeSlashCommand() {
-		log = LoggerFactory.getLogger(this.getClass());
-		Klassenserver7bbot.getInstance().getShardManager().addEventListener(this);
-	}
+    public UnSubscribeSlashCommand() {
+        log = LoggerFactory.getLogger(this.getClass());
+        Klassenserver7bbot.getInstance().getShardManager().addEventListener(this);
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(true).complete();
+        InteractionHook hook = event.deferReply(true).complete();
 
-		String idstr = event.getOption("subscriptionid").getAsString().split(" ")[0];
+        String idstr = event.getOption("subscriptionid").getAsString().split(" ")[0];
 
-		try {
+        try {
 
-			Long id = Long.valueOf(idstr);
+            Long id = Long.valueOf(idstr);
 
-			if (event.getChannelType() == ChannelType.PRIVATE) {
+            if (event.getChannelType() == ChannelType.PRIVATE) {
 
-				LinkedHashMap<Long, Long> subs = getPrivateSubs(event.getChannel().getIdLong());
+                LinkedHashMap<Long, Long> subs = getPrivateSubs(event.getChannel().getIdLong());
 
-				if (!subs.containsKey(id)) {
-					sendInvalidIdEmbed(hook);
-					return;
-				}
+                if (!subs.containsKey(id)) {
+                    sendInvalidIdEmbed(hook);
+                    return;
+                }
 
-			} else if (event.isFromGuild()) {
+            } else if (event.isFromGuild()) {
 
-				LinkedHashMap<Long, String> subs = getGuildSubs(event.getGuild().getIdLong());
-				if (!subs.containsKey(id)) {
-					sendInvalidIdEmbed(hook);
-					return;
-				}
+                LinkedHashMap<Long, String> subs = getGuildSubs(event.getGuild().getIdLong());
+                if (!subs.containsKey(id)) {
+                    sendInvalidIdEmbed(hook);
+                    return;
+                }
 
-			} else {
-				sendInvalidIdEmbed(hook);
-				return;
-			}
+            } else {
+                sendInvalidIdEmbed(hook);
+                return;
+            }
 
-			Klassenserver7bbot.getInstance().getSubscriptionManager().removeSubscription(id);
+            Klassenserver7bbot.getInstance().getSubscriptionManager().removeSubscription(id);
 
-			hook.sendMessageEmbeds(
-					EmbedUtils.getSuccessEmbed("Successfully removed subscription with id `" + id + "`").build())
-					.queue();
+            hook.sendMessageEmbeds(
+                            EmbedUtils.getSuccessEmbed("Successfully removed subscription with id `" + id + "`").build())
+                    .queue();
 
-		} catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
 
-			hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Error while removing subscription!").build()).queue();
+            hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Error while removing subscription!").build()).queue();
 
-		}
-	}
+        }
+    }
 
-	private void sendInvalidIdEmbed(InteractionHook hook) {
-		hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
-	}
+    private void sendInvalidIdEmbed(InteractionHook hook) {
+        hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid Id for this Channel/Guild!\nPlease use Autocompletion").build()).queue();
+    }
 
-	@Override
-	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("unsubscribe", "unsubscribes the selected subscription")
-				.addOptions(new OptionData(OptionType.STRING, "subscriptionid",
-						"The id of the subscription you want to remove").setRequired(true).setAutoComplete(true))
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
-	}
+    @Override
+    public @NotNull SlashCommandData getCommandData() {
+        return Commands.slash("unsubscribe", "unsubscribes the selected subscription")
+                .addOptions(new OptionData(OptionType.STRING, "subscriptionid",
+                        "The id of the subscription you want to remove").setRequired(true).setAutoComplete(true))
+                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
+    }
 
-	@Override
-	public void onCommandAutoCompleteInteraction(@Nonnull CommandAutoCompleteInteractionEvent event) {
+    @Override
+    public void onCommandAutoCompleteInteraction(@Nonnull CommandAutoCompleteInteractionEvent event) {
 
-		if (event.getFullCommandName().equalsIgnoreCase("unsubscribe")) {
+        if (event.getFullCommandName().equalsIgnoreCase("unsubscribe")) {
 
-			ArrayList<Choice> choices = new ArrayList<>();
+            ArrayList<Choice> choices = new ArrayList<>();
 
-			if (event.getChannelType() == ChannelType.PRIVATE) {
+            if (event.getChannelType() == ChannelType.PRIVATE) {
 
-				LinkedHashMap<Long, Long> subs = getPrivateSubs(event.getChannel().getIdLong());
+                LinkedHashMap<Long, Long> subs = getPrivateSubs(event.getChannel().getIdLong());
 
-				for (Entry<Long, Long> e : subs.entrySet()) {
+                for (Entry<Long, Long> e : subs.entrySet()) {
 
-					String cstr = e.getKey().toString() + " -> " + SubscriptionTarget.fromId(e.getValue().intValue());
+                    String cstr = e.getKey().toString() + " -> " + SubscriptionTarget.fromId(e.getValue().intValue());
 
-					choices.add(new Choice(cstr, cstr));
+                    choices.add(new Choice(cstr, cstr));
 
-				}
+                }
 
-			} else {
-				LinkedHashMap<Long, String> subs = getGuildSubs(event.getGuild().getIdLong());
+            } else {
+                LinkedHashMap<Long, String> subs = getGuildSubs(event.getGuild().getIdLong());
 
-				for (Entry<Long, String> e : subs.entrySet()) {
+                for (Entry<Long, String> e : subs.entrySet()) {
 
-					String cstr = e.getKey().toString() + " -> " + e.getValue();
+                    String cstr = e.getKey().toString() + " -> " + e.getValue();
 
-					choices.add(new Choice(cstr, e.getKey()));
+                    choices.add(new Choice(cstr, e.getKey()));
 
-				}
+                }
 
-			}
+            }
 
-			event.replyChoices(choices).queue();
+            event.replyChoices(choices).queue();
 
-		}
+        }
 
-	}
+    }
 
-	private LinkedHashMap<Long, String> getGuildSubs(Long guildid) {
+    private LinkedHashMap<Long, String> getGuildSubs(Long guildid) {
 
-		LinkedHashMap<Long, String> subs = new LinkedHashMap<>();
+        LinkedHashMap<Long, String> subs = new LinkedHashMap<>();
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
+        try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-			while (set.next()) {
+            while (set.next()) {
 
-				Long targetdcid = set.getLong("targetDcId");
+                long targetdcid = set.getLong("targetDcId");
 
-				GuildChannel ch = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(targetdcid);
+                GuildChannel ch = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(targetdcid);
 
-				if ((ch == null) || (ch.getGuild().getIdLong() != guildid)) {
-					continue;
-				}
+                if ((ch == null) || (ch.getGuild().getIdLong() != guildid)) {
+                    continue;
+                }
 
-				subs.put(set.getLong("subscriptionId"),
-						ch.getName() + ", " + SubscriptionTarget.fromId((int) set.getLong("target")) + ", "
-								+ SubscriptionDeliveryType.fromId((int) set.getLong("type")));
+                subs.put(set.getLong("subscriptionId"),
+                        ch.getName() + ", " + SubscriptionTarget.fromId((int) set.getLong("target")) + ", "
+                                + SubscriptionDeliveryType.fromId((int) set.getLong("type")));
 
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		return subs;
-	}
+        return subs;
+    }
 
-	private LinkedHashMap<Long, Long> getPrivateSubs(Long pvtid) {
+    private LinkedHashMap<Long, Long> getPrivateSubs(Long pvtid) {
 
-		LinkedHashMap<Long, Long> subs = new LinkedHashMap<>();
+        LinkedHashMap<Long, Long> subs = new LinkedHashMap<>();
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid)) {
+        try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions WHERE targetDcId = ?;", pvtid)) {
 
-			while (set.next()) {
+            while (set.next()) {
 
-				subs.put(set.getLong("subscriptionId"), set.getLong("target"));
+                subs.put(set.getLong("subscriptionId"), set.getLong("target"));
 
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
 
-		return subs;
+        return subs;
 
-	}
+    }
 
 }

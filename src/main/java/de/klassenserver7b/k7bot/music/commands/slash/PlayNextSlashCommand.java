@@ -46,7 +46,7 @@ public class PlayNextSlashCommand extends GenericPlayCommand implements SubSlash
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 

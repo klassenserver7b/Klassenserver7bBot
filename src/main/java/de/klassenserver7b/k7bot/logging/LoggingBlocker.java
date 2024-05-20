@@ -5,8 +5,6 @@ import java.util.List;
 
 public class LoggingBlocker {
 
-    private static LoggingBlocker instance;
-
     private final List<Long> blockedIds;
 
     public LoggingBlocker() {
@@ -23,13 +21,6 @@ public class LoggingBlocker {
 
     public void unblock(long id) {
         blockedIds.remove(id);
-    }
-
-    public static LoggingBlocker getInstance() {
-        if (instance == null) {
-            instance = new LoggingBlocker();
-        }
-        return instance;
     }
 
 }

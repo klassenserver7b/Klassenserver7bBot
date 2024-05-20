@@ -15,247 +15,225 @@ import java.io.IOException;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class SongJson {
 
-	private final JsonObject json;
-	private boolean isDiscogsValidated;
+    private final JsonObject json;
+    private boolean isDiscogsValidated;
 
-	private SongJson(JsonObject json) {
-		this.json = json;
-		this.isDiscogsValidated = false;
-	}
+    private SongJson(JsonObject json) {
+        this.json = json;
+        this.isDiscogsValidated = false;
+    }
 
-	/**
-	 *
-	 * @param title
-	 * @param artists
-	 * @param year
-	 * @param url
-	 * @param apiurl
-	 */
-	private SongJson(String title, JsonArray artists, String year, String url, String apiurl) {
+    /**
+     * @param title   The title of the song
+     * @param artists The artists of the song
+     * @param year    The year the song was released
+     * @param url     The URL to the song
+     * @param apiurl  The URL to the Discogs API
+     */
+    private SongJson(String title, JsonArray artists, String year, String url, String apiurl) {
 
-		JsonObject song = new JsonObject();
+        JsonObject song = new JsonObject();
 
-		song.addProperty("title", title);
-		song.add("artists", artists);
-		song.addProperty("year", year);
-		song.addProperty("url", url);
-		song.addProperty("apiurl", apiurl);
+        song.addProperty("title", title);
+        song.add("artists", artists);
+        song.addProperty("year", year);
+        song.addProperty("url", url);
+        song.addProperty("apiurl", apiurl);
 
-		this.json = song;
-		this.isDiscogsValidated = false;
+        this.json = song;
+        this.isDiscogsValidated = false;
 
-	}
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public JsonObject getSongJson() {
-		return this.json;
-	}
+    /**
+     * @return The base {@link JsonObject}
+     */
+    public JsonObject getSongJson() {
+        return this.json;
+    }
 
-	/**
-	 * Checks if the base {@link JsonObject} contains all necessary information
-	 *
-	 * @return If the {@link SongJson} is valid
-	 */
-	public boolean isNotnull() {
+    /**
+     * Checks if the base {@link JsonObject} contains all necessary information
+     *
+     * @return If the {@link SongJson} is valid
+     */
+    public boolean isNull() {
 
-		if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null)
-				|| (json.get("url") == null)) {
-			return false;
-		}
-		if (json.get("apiurl") == null) {
-			return false;
-		}
+        if ((json.get("title") == null) || (json.get("artists") == null) || (json.get("year") == null)
+                || (json.get("url") == null)) {
+            return true;
+        }
 
-		return true;
+        return json.get("apiurl") == null;
 
-	}
+    }
 
-	/**
-	 * Fully validates the SongJson including {@link #isNotnull()}
-	 *
-	 * @return If the {@link SongJson} is valid
-	 */
-	public boolean validateViaHttpRequest() {
+    /**
+     * Fully validates the SongJson including {@link #isNull()}
+     *
+     * @return If the {@link SongJson} is invalid
+     */
+    public boolean invalidateViaHttpRequest() {
 
-		if (!isNotnull()) {
-			return false;
-		}
+        if (isNull()) {
+            return true;
+        }
 
-		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+        try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-			final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
+            final HttpGet httpget = new HttpGet(json.get("apiurl").getAsString());
 
-			httpclient.execute(httpget, new BasicHttpClientResponseHandler());
-			this.isDiscogsValidated = true;
-			httpclient.close();
-			return false;
+            httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+            this.isDiscogsValidated = true;
+            httpclient.close();
+            return false;
 
-		} catch (IOException e) {
+        } catch (IOException e) {
 
-			this.isDiscogsValidated = false;
+            this.isDiscogsValidated = false;
 
-			return false;
-		}
+            return true;
+        }
 
-	}
+    }
 
-	/**
-	 *
-	 * @param json
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	public static SongJson of(JsonObject json) throws IllegalArgumentException {
+    /**
+     * @param json The {@link JsonObject} to be validated
+     * @return SongJson
+     * @throws IllegalArgumentException If the {@link JsonObject} is not valid
+     */
+    public static SongJson of(JsonObject json) throws IllegalArgumentException {
 
-		SongJson songjson = new SongJson(json);
+        SongJson songjson = new SongJson(json);
 
-		if (!songjson.validateViaHttpRequest()) {
-			throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
-					new Throwable().fillInStackTrace());
-		}
+        if (songjson.invalidateViaHttpRequest()) {
+            throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
+                    new Throwable().fillInStackTrace());
+        }
 
-		return songjson;
-	}
+        return songjson;
+    }
 
-	/**
-	 *
-	 * @param title
-	 * @param artists
-	 * @param year
-	 * @param url
-	 * @param apiurl
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	public static SongJson of(String title, JsonArray artists, String year, String url, String apiurl)
-			throws IllegalArgumentException {
+    /**
+     * @param title   The title of the song
+     * @param artists The artists of the song
+     * @param year    The year the song was released
+     * @param url     The URL to the song
+     * @param apiurl  The URL to the Discogs API
+     * @return SongJson
+     * @throws IllegalArgumentException If the {@link JsonObject} is not valid
+     */
+    public static SongJson of(String title, JsonArray artists, String year, String url, String apiurl)
+            throws IllegalArgumentException {
 
-		SongJson songjson = new SongJson(title, artists, year, url, apiurl);
+        SongJson songjson = new SongJson(title, artists, year, url, apiurl);
 
-		if (!songjson.validateViaHttpRequest()) {
-			throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
-					new Throwable().fillInStackTrace());
-		}
+        if (songjson.invalidateViaHttpRequest()) {
+            throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
+                    new Throwable().fillInStackTrace());
+        }
 
-		return songjson;
-	}
+        return songjson;
+    }
 
-	/**
-	 *
-	 * @param title
-	 * @param artists
-	 * @param year
-	 * @param url
-	 * @param apiurl
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	public static SongJson ofUnvalidated(String title, JsonArray artists, String year, String url, String apiurl)
-			throws IllegalArgumentException {
+    /**
+     * @param title   The title of the song
+     * @param artists The artists of the song
+     * @param year    The year the song was released
+     * @param url     The URL to the song
+     * @param apiurl  The URL to the Discogs API
+     * @return SongJson
+     * @throws IllegalArgumentException If the {@link JsonObject} is not valid
+     */
+    public static SongJson ofUnvalidated(String title, JsonArray artists, String year, String url, String apiurl)
+            throws IllegalArgumentException {
 
-		SongJson songjson = new SongJson(title, artists, year, url, apiurl);
+        SongJson songjson = new SongJson(title, artists, year, url, apiurl);
 
-		if (!songjson.isNotnull()) {
-			throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
-					new Throwable().fillInStackTrace());
-		}
+        if (songjson.isNull()) {
+            throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
+                    new Throwable().fillInStackTrace());
+        }
 
-		return songjson;
-	}
+        return songjson;
+    }
 
-	/**
-	 *
-	 * @param title
-	 * @param artists
-	 * @param year
-	 * @param url
-	 * @param apiurl
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	public static SongJson ofUnvalidated(String title, String artists, String year, String url, String apiurl)
-			throws IllegalArgumentException {
+    /**
+     * @param title   The title of the song
+     * @param artists The artists of the song
+     * @param year    The year the song was released
+     * @param url     The URL to the song
+     * @param apiurl  The URL to the Discogs API
+     * @return SongJson
+     * @throws IllegalArgumentException If the {@link JsonObject} is not valid
+     */
+    public static SongJson ofUnvalidated(String title, String artists, String year, String url, String apiurl)
+            throws IllegalArgumentException {
 
-		JsonArray arr = new JsonArray();
+        JsonArray arr = new JsonArray();
 
-		for (String s : artists.split(", ")) {
+        for (String s : artists.split(", ")) {
 
-			JsonObject obj = new JsonObject();
-			obj.addProperty("name", s);
-			arr.add(obj);
-		}
+            JsonObject obj = new JsonObject();
+            obj.addProperty("name", s);
+            arr.add(obj);
+        }
 
-		SongJson songjson = new SongJson(title, arr, year, url, apiurl);
+        return ofUnvalidated(title, arr, year, url, apiurl);
+    }
 
-		if (!songjson.isNotnull()) {
-			throw new IllegalArgumentException("Submitted JsonObject was not a valid Object for SongJson",
-					new Throwable().fillInStackTrace());
-		}
+    /**
+     * @return The title of the song
+     */
+    public String getTitle() {
+        return json.get("title").getAsString();
+    }
 
-		return songjson;
-	}
+    /**
+     * @return The artists of the song
+     */
+    public String getAuthorString() {
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getTitle() {
-		return json.get("title").getAsString();
-	}
+        StringBuilder b = new StringBuilder();
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getAuthorString() {
+        for (JsonElement e : json.get("artists").getAsJsonArray()) {
+            b.append(e.getAsJsonObject().get("name").getAsString().replaceAll("\\(.*\\)", ""));
+            b.append(", ");
+        }
 
-		StringBuilder b = new StringBuilder();
+        String authors = b.toString();
+        authors = authors.trim();
+        authors = authors.substring(0, authors.length() - 1);
 
-		for (JsonElement e : json.get("artists").getAsJsonArray()) {
-			b.append(e.getAsJsonObject().get("name").getAsString().replaceAll("\\(.*\\)", ""));
-			b.append(", ");
-		}
+        return authors;
+    }
 
-		String authors = b.toString();
-		authors = authors.trim();
-		authors = authors.substring(0, authors.length() - 1);
+    /**
+     * @return The artists of the song
+     */
+    public JsonArray getAuthors() {
+        return json.get("artists").getAsJsonArray();
+    }
 
-		return authors;
-	}
+    /**
+     * @return The year the song was released
+     */
+    public String getYear() {
+        return json.get("year").getAsString();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public JsonArray getAuthors() {
-		return json.get("artists").getAsJsonArray();
-	}
+    /**
+     * @return The URL to the song
+     */
+    public String getURL() {
+        return json.get("url").getAsString();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getYear() {
-		return json.get("year").getAsString();
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public String getURL() {
-		return json.get("url").getAsString();
-	}
-
-	public boolean isDiscogsValidated() {
-		return this.isDiscogsValidated;
-	}
+    public boolean isDiscogsValidated() {
+        return this.isDiscogsValidated;
+    }
 
 }

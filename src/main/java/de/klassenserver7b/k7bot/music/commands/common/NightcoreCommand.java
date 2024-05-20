@@ -25,7 +25,7 @@ public class NightcoreCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return null;
 	}
 
@@ -35,7 +35,7 @@ public class NightcoreCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.UNKNOWN;
 	}
 

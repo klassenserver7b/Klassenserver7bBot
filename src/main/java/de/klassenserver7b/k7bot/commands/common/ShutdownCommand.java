@@ -13,9 +13,8 @@ public class ShutdownCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
-		String help = "Fährt den Bot herunter.\n - kann nur vom Bot Owner ausgeführt werden!";
-		return help;
+	public String getHelp() {
+        return "Fährt den Bot herunter.\n - kann nur vom Bot Owner ausgeführt werden!";
 	}
 
 	@Override
@@ -24,22 +23,22 @@ public class ShutdownCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+		if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
 
-			Klassenserver7bbot.getInstance().setexit(true);
+			Klassenserver7bbot.getInstance().setExit(true);
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
 			return;
 
 		}
 
-		PermissionError.onPermissionError(m, channel);
+		PermissionError.onPermissionError(caller, channel);
 
 	}
 

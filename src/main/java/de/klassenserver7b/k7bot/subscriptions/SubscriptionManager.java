@@ -14,163 +14,164 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
  * @author Klassenserver7b
- *
  */
 public class SubscriptionManager {
 
-	private final ArrayList<Subscription> sublist;
-	SubMessageSendHandler sendhandler;
-	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    private final ArrayList<Subscription> sublist;
+    final SubMessageSendHandler sendhandler;
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-	/**
-	 *
-	 */
-	public SubscriptionManager() {
-		sendhandler = new SubMessageSendHandler(log);
-		sublist = new ArrayList<>();
-		refreshList();
-	}
+    /**
+     *
+     */
+    public SubscriptionManager() {
+        sendhandler = new SubMessageSendHandler(log);
+        sublist = new ArrayList<>();
+        refreshList();
+    }
 
-	/**
-	 * Provides the {@link Message} to every (target)-matching subscription
-	 *
-	 * @param target The target of the notification e.g a new Lernplan
-	 * @param data   The message which should be sent to all subscribers
-	 */
-	public void provideSubscriptionNotification(SubscriptionTarget target, MessageCreateData data) {
+    /**
+     * Provides the {@link Message} to every (target)-matching subscription
+     *
+     * @param target The target of the notification e.g a new Lernplan
+     * @param data   The message which should be sent to all subscribers
+     */
+    public void provideSubscriptionNotification(SubscriptionTarget target, MessageCreateData data) {
 
-		if (data == null) {
-			return;
-		}
+        if (data == null) {
+            return;
+        }
 
-		sublist.forEach(s -> {
+        sublist.forEach(s -> {
 
-			if (s.getTarget() == target) {
-				sendhandler.provideSubscriptionMessage(s, data);
-			}
+            if (s.getTarget() == target) {
+                sendhandler.provideSubscriptionMessage(s, data);
+            }
 
-		});
-	}
+        });
+    }
 
-	/**
-	 * Creates a new Subscription for the submitted target and saves it to the
-	 * database.
-	 *
-	 * @param type             The {@link SubscriptionDeliveryType} of the Channel
-	 *                         the Bot should deliver the Subscription in
-	 *
-	 * @param target           The {@link SubscriptionTarget} of the new
-	 *                         Subscription
-	 *
-	 * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
-	 *                         <code>TYPE.getIdLong()</code>.
-	 */
+    /**
+     * Creates a new Subscription for the submitted target and saves it to the
+     * database.
+     *
+     * @param type             The {@link SubscriptionDeliveryType} of the Channel
+     *                         the Bot should deliver the Subscription in
+     * @param target           The {@link SubscriptionTarget} of the new
+     *                         Subscription
+     * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
+     *                         <code>TYPE.getIdLong()</code>.
+     */
 
-	public boolean createSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
+    public boolean createSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
 
-		if (type.getId() != -1 && target.getId() != -1) {
+        if (type.getId() != -1 && target.getId() != -1) {
 
-			Long subscriptionid = calculateSubId(type, target, deliverytargetid);
+            Long subscriptionid = calculateSubId(type, target, deliverytargetid);
 
-			return registerSubscription(new Subscription(type, target, deliverytargetid, subscriptionid));
+            return registerSubscription(new Subscription(type, target, deliverytargetid, subscriptionid));
 
-		}
+        }
 
-		log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
-		return false;
+        log.warn("Couldn't create Subscription - One of the Enums was UNKNOWN");
+        return false;
 
-	}
+    }
 
-	private boolean registerSubscription(Subscription sub) {
+    private boolean registerSubscription(Subscription sub) {
 
-		try {
-			Long subid = calculateSubId(sub);
+        try {
+            Long subid = calculateSubId(sub);
 
-			sublist.add(sub);
+            sublist.add(sub);
 
-			LiteSQL.onUpdate("INSERT INTO subscriptions(type, target, targetDcId, subscriptionId) VALUES(?, ?, ?, ?);",
-					sub.getDeliveryType().getId(), sub.getTarget().getId(), sub.getTargetDiscordId(), subid);
+            LiteSQL.onUpdate("INSERT INTO subscriptions(type, target, targetDcId, subscriptionId) VALUES(?, ?, ?, ?);",
+                    sub.getDeliveryType().getId(), sub.getTarget().getId(), sub.getTargetDiscordId(), subid);
 
-			return true;
+            return true;
 
-		}
-		catch (Exception e) {
+        } catch (Exception e) {
 
-			log.error(e.getMessage(), e);
-			return false;
+            log.error(e.getMessage(), e);
+            return false;
 
-		}
-	}
+        }
+    }
 
-	public boolean removeSubscription(Long subscriptionid) {
+    public boolean removeSubscription(Long subscriptionid) {
 
-		LiteSQL.onUpdate("DELETE FROM subscriptions WHERE subscriptionId = ?", subscriptionid);
-		refreshList();
+        int affectedLines = LiteSQL.onUpdate("DELETE FROM subscriptions WHERE subscriptionId = ?", subscriptionid);
+        refreshList();
+        return affectedLines > 0;
+    }
 
-		return false;
-	}
+    /**
+     * Removes a Subscription from the database
+     *
+     * @param type             The {@link SubscriptionDeliveryType} of the Channel
+     *                         the Bot should deliver the Subscription in
+     * @param target           The {@link SubscriptionTarget} of the new
+     *                         Subscription
+     * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
+     *                         <code>TYPE.getIdLong()</code>.
+     */
+    @SuppressWarnings("unused")
+    public boolean removeSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
+        Long subid = calculateSubId(type, target, deliverytargetid);
+        return removeSubscription(subid);
+    }
 
-	public void removeSubscription(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
-		Long subid = calculateSubId(type, target, deliverytargetid);
-		LiteSQL.onUpdate("DELETE FROM subscriptions WHERE subscriptionId = ?", subid);
-		refreshList();
-	}
+    /**
+     * Requests the database-saved subscriptions and loads them into the local
+     * SubscriptionList
+     */
+    private void refreshList() {
 
-	/**
-	 * Requests the database-saved subscriptions and loads them into the local
-	 * SubscriptionList
-	 */
-	private void refreshList() {
+        try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT * FROM subscriptions;")) {
+            if (set != null) {
+                while (set.next()) {
 
-			if (set != null) {
-				while (set.next()) {
+                    int typeid = set.getInt("type");
+                    int targetid = set.getInt("target");
+                    long deliveryid = set.getLong("targetDcId");
+                    long subid = set.getLong("subscriptionId");
 
-					Integer typeid = set.getInt("type");
-					Integer targetid = set.getInt("target");
-					Long deliveryid = set.getLong("targetDcId");
-					Long subid = set.getLong("subscriptionId");
+                    if (typeid != 0 && targetid != 0 && deliveryid != 0 && subid != 0) {
 
-					if (typeid != 0 && targetid != 0 && deliveryid != 0 && subid != 0) {
+                        Subscription s = new Subscription(SubscriptionDeliveryType.fromId(typeid),
+                                SubscriptionTarget.fromId(targetid), deliveryid, subid);
 
-						Subscription s = new Subscription(SubscriptionDeliveryType.fromId(typeid),
-								SubscriptionTarget.fromId(targetid), deliveryid, subid);
+                        sublist.add(s);
+                    } else {
+                        log.warn("Invalid Subscription in Database! - Id: {}", subid);
+                    }
 
-						sublist.add(s);
-					} else {
-						log.warn("Invalid Subscription in Database! - Id: " + subid);
-					}
+                }
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
 
-				}
-			}
-		}
-		catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+    }
 
-	}
+    /**
+     * @param sub The Subscription to calculate the ID for
+     * @return The calculated SubscriptionID
+     */
+    private Long calculateSubId(Subscription sub) {
+        return calculateSubId(sub.getDeliveryType(), sub.getTarget(), sub.getTargetDiscordId());
+    }
 
-	/**
-	 *
-	 * @param sub
-	 * @return
-	 */
-	private Long calculateSubId(Subscription sub) {
-		return calculateSubId(sub.getDeliveryType(), sub.getTarget(), sub.getTargetDiscordId());
-	}
-
-	/**
-	 *
-	 * @param type
-	 * @param target
-	 * @param deliverytargetid
-	 * @return
-	 */
-	private Long calculateSubId(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
-		return (type.getId() * 31 + target.getId()) * 41 + deliverytargetid;
-	}
+    /**
+     * @param type             The SubscriptionDeliveryType of the Subscription
+     * @param target           The SubscriptionTarget of the Subscription
+     * @param deliverytargetid The DiscordID of the DeliveryTarget, e.g.
+     * @return The calculated SubscriptionID
+     */
+    private Long calculateSubId(SubscriptionDeliveryType type, SubscriptionTarget target, Long deliverytargetid) {
+        return (type.getId() * 31L + target.getId()) * 41 + deliverytargetid;
+    }
 
 }

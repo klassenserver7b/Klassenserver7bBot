@@ -32,25 +32,25 @@ public class HelpSlashCommand implements TopLevelSlashCommand {
 				+ "\n (Only available if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!)")
 				.queue();
 
-		OptionMapping catopt = event.getOption("category");
+		OptionMapping category = event.getOption("category");
 
 		MessageEmbed embed;
 
-		if (catopt == null || catopt.getAsString().equalsIgnoreCase(HelpCategories.OVERVIEW.toString())) {
+		if (category == null || category.getAsString().equalsIgnoreCase(HelpCategories.OVERVIEW.toString())) {
 			embed = help.generateHelpOverview(event.getGuild());
 		} else {
-			embed = help.generateHelpforCategory(catopt.getAsString(), event.getGuild());
+			embed = help.generateHelpforCategory(category.getAsString(), event.getGuild());
 		}
 
 		PrivateChannel ch = event.getUser().openPrivateChannel().complete();
 
 		if (ch == null) {
 
-			MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
+			MessageEmbed errorEmbed = EmbedUtils.getErrorEmbed(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
 
-			hook.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+			hook.sendMessageEmbeds(errorEmbed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 			return;
 		}
 

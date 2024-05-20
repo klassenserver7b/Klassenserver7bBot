@@ -1,9 +1,7 @@
-Logging Config embed
 Message Logging
 
 Poll System
 
-ASM für lokale m3u
 Equalizer Command und Speedchange zu AudioEffects Command mit Subcommands umbauen
 Equalizer und Speedchange gleichzeitig erlauben
 

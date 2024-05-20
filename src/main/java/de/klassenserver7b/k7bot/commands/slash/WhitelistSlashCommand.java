@@ -59,7 +59,7 @@ public class WhitelistSlashCommand implements TopLevelSlashCommand {
 
 			requestChannel.sendMessageEmbeds(build.build()).addActionRow(Button.success("ApproveHA3Request", "Approve"),
 					Button.danger("DenyHA3Request", "Deny")).queue();
-			hook.sendMessage("Your Request has been received and will now be handeled by the mods.").queue();
+			hook.sendMessage("Your Request has been received and will now be handled by the mods.").queue();
 			return;
 
 		}
@@ -67,7 +67,7 @@ public class WhitelistSlashCommand implements TopLevelSlashCommand {
 		hook.sendMessage(
 				"Something went wrong while receiving your data. Please try again in a few minutes. \n Your Data: **In-Game-Name: **"
 						+ gamename + "\n**Real-Name: **" + realname + "\n**Discord-Name: **" + dcname
-						+ "\n**DIscord-ID: **" + dcid)
+						+ "\n**Discord-ID: **" + dcid)
 				.queue();
 
 	}

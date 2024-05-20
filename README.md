@@ -16,14 +16,13 @@
 
 ### Prerequires
 - Download/Use [Java 17](https://www.azul.com/downloads/?version=java-17-lts&package=jdk)
-- Download/Use [Maven 3.8+](https://maven.apache.org/download.cgi) (Tested on Maven 3.8.6)
+- Download/Use [Maven 3.6+](https://maven.apache.org/download.cgi) (Tested on Maven 3.9.4)
 
 ### Compile and package
-1. Clone the project `git clone --recursive https://github.com/klassenserver7b/klassenserver7bbot.git`
-2. `cd klassenserver7bbot`
-4. run 'maven clean package'
-5. you can now find your jar at ./target/k7bot-$VERSION-jar-with-dependencies.jar
-6. run it with `java -jar YOUR_JAR_FILE_NAME`
+1. Clone the project `git clone https://github.com/klassenserver7b/klassenserver7bbot.git && cd klassenserver7bbot`
+2. run 'mvn package'
+3. you can now find your jar at ./target/k7bot-$VERSION-full.jar
+4. run it with `java -jar YOUR_JAR_FILE_NAME`
 
 ## Support
 

@@ -20,64 +20,64 @@ import java.util.concurrent.TimeUnit;
 
 public class UebersteuerungAdmin implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String gethelp() {
-		return null;
-	}
+    @Override
+    public String getHelp() {
+        return null;
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "uvolume" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"uvolume"};
+    }
 
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.UNKNOWN;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.UNKNOWN;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
-		if (m.hasPermission(Permission.ADMINISTRATOR)) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+        if (m.hasPermission(Permission.ADMINISTRATOR)) {
 
-			String[] args = message.getContentDisplay().split(" ");
-			try {
-				int volume = Integer.parseInt(args[1]);
-				MusicUtil.updateChannel(channel);
-				if (args.length > 1) {
-					Guild guild = channel.getGuild();
-					MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-							.getController(guild.getIdLong());
-					AudioPlayer player = controller.getPlayer();
-					player.setVolume(volume);
-					EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
-					builder.setFooter("Requested by @" + m.getEffectiveName());
-					builder.setTitle("Volume was set to " + volume);
-					channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+            String[] args = message.getContentDisplay().split(" ");
+            try {
+                if (args.length > 1) {
+                    int volume = Integer.parseInt(args[1]);
+                    MusicUtil.updateChannel(channel);
+                    Guild guild = channel.getGuild();
+                    MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                            .getController(guild.getIdLong());
+                    AudioPlayer player = controller.getPlayer();
+                    player.setVolume(volume);
+                    EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
+                    builder.setFooter("Requested by @" + m.getEffectiveName());
+                    builder.setTitle("Volume was set to " + volume);
+                    channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
-				} else {
-					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
-				}
-			} catch (NumberFormatException e) {
-				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
-			}
-		}
-	}
+                } else {
+                    SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
+                }
+            } catch (NumberFormatException e) {
+                SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "volume [int]", m);
+            }
+        }
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

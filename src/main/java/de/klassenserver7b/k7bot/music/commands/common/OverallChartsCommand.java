@@ -16,7 +16,7 @@ public class OverallChartsCommand extends GenericChartsCommand implements Server
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Zeigt die Bot-Charts seit jeher über alle server an";
 	}
 
@@ -26,8 +26,8 @@ public class OverallChartsCommand extends GenericChartsCommand implements Server
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
+	public HelpCategories getCategory() {
+		return HelpCategories.MUSIC;
 	}
 
 	@Override

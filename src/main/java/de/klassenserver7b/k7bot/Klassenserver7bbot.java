@@ -1,26 +1,25 @@
 package de.klassenserver7b.k7bot;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import de.klassenserver7b.k7bot.listener.*;
-import de.klassenserver7b.k7bot.logging.listeners.LoggingListener;
+import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.manage.*;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
+import de.klassenserver7b.k7bot.music.spotify.SpotifyInteractions;
 import de.klassenserver7b.k7bot.music.utilities.AudioPlayerUtil;
 import de.klassenserver7b.k7bot.music.utilities.gla.GLAWrapper;
-import de.klassenserver7b.k7bot.music.utilities.spotify.SpotifyInteractions;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
+import de.klassenserver7b.k7bot.util.TeacherDB;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -36,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +69,7 @@ public class Klassenserver7bbot {
     private SpotifyInteractions spotifyinteractions;
 
     private Long ownerId;
-    private JsonObject teacherslist;
+    private TeacherDB teacherDB;
     private boolean exit = false;
     private boolean indev;
 
@@ -84,7 +82,11 @@ public class Klassenserver7bbot {
             return;
         }
 
-        initializeBot();
+        if (!initializeBot()) {
+            logger.error("Bot couldn't be initialized - EXITING");
+            System.exit(1);
+        }
+
         awaitJDAReady();
 
         runShutdown();
@@ -93,9 +95,19 @@ public class Klassenserver7bbot {
         runLoop();
     }
 
+    /**
+     * Initialize the Bot.
+     *
+     * @return if the Bot was successfully initialized
+     * @see #buildBot(String, String, int)
+     * @see #initializeObjects()
+     * @see LoopedEventManager#initializeDefaultEvents()
+     */
     protected boolean initializeBot() {
 
-        loadTeacherList();
+        teacherDB = new TeacherDB();
+        teacherDB.loadTeachersList();
+
         LiteSQL.connect();
 
         SQLManager.onCreate();
@@ -123,6 +135,7 @@ public class Klassenserver7bbot {
             shardMgr = buildBot(token, canaryToken, shardc);
         } catch (IllegalArgumentException e) {
             invalidConfigExit("Couldn't start Bot! - EXITING", 1, e);
+            return false;
         }
 
         propMgr.checkAPIProps();
@@ -132,6 +145,19 @@ public class Klassenserver7bbot {
         return true;
     }
 
+    /**
+     * Build the Bot.
+     * The Bot will be built with the specified token or canary token.
+     * The Bot will also be built with the specified shard count.
+     * <p>
+     * If the config is invalid, the Bot will exit with the specified exit code. @see {@link #invalidConfigExit(String, int, RuntimeException)}
+     *
+     * @param token       the Bot's token
+     * @param canaryToken the Bot's canary token
+     * @param shardc      the shard count
+     * @return the ShardManager
+     * @throws IllegalArgumentException if the Bot couldn't be built see {@link DefaultShardManagerBuilder#build()}
+     */
     protected ShardManager buildBot(String token, String canaryToken, int shardc) throws IllegalArgumentException {
 
         DefaultShardManagerBuilder builder;
@@ -151,12 +177,12 @@ public class Klassenserver7bbot {
 
         builder.addEventListeners(new CommandListener());
         builder.addEventListeners(new SlashCommandListener());
-        builder.addEventListeners(LoggingListener.getDefault());
+        builder.addEventListeners(LoggingFilter.getInstance());
         builder.addEventListeners(new VoiceListener());
         builder.addEventListeners(new ReactRoleListener());
         builder.addEventListeners(new AutoRickroll());
         builder.addEventListeners(new MemesReact());
-        builder.addEventListeners(new BotgetDC());
+        builder.addEventListeners(new BotLeaveGuildListener());
         builder.addEventListeners(new MessageListener());
 
         ShardManager initShardMgr = null;
@@ -176,6 +202,14 @@ public class Klassenserver7bbot {
         }
     }
 
+    /**
+     * Initialize the Objects that require an initialization.
+     * The Objects are initialized and the Bot will log the result.
+     * <p>
+     * While initializing the Objects, the Bot will also initialize the Music Configuration.
+     *
+     * @see #InitializeMusic(AudioPlayerManager)
+     */
     protected void initializeObjects() {
 
         this.prefixMgr = new PrefixManager();
@@ -189,7 +223,6 @@ public class Klassenserver7bbot {
         this.playerutil = new AudioPlayerUtil();
 
         this.lyricsapi = new LyricsClient("Genius");
-        // this.lyricsapiold = new GLA();
         this.lyricsapiold = new GLAWrapper();
 
         this.spotifyinteractions = new SpotifyInteractions();
@@ -200,26 +233,36 @@ public class Klassenserver7bbot {
         this.slashMgr = new SlashCommandManager();
     }
 
+    /**
+     * Initialize the Music Configuration.
+     * The Music Configuration is used to play Music in the Bot.
+     *
+     * @param manager the AudioPlayerManager
+     */
     public void InitializeMusic(AudioPlayerManager manager) {
 
         manager.getConfiguration().setFilterHotSwapEnabled(true);
         manager.registerSourceManager(new SpotifyAudioSourceManager());
+        manager.registerSourceManager(new YoutubeAudioSourceManager());
         manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(manager);
 
     }
 
+    /**
+     * Await the JDA to be ready.
+     * The Bot will await the JDA to be ready for all Shards.
+     */
     public void awaitJDAReady() {
 
         logger.info("Awaiting jda ready");
         shardMgr.getShards().forEach(jda -> {
 
             try {
-                logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
+                logger.debug("Awaiting jda ready for shard: {}", jda.getShardInfo());
                 jda.awaitReady();
             } catch (InterruptedException e) {
-                logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
-                        + jda.getSelfUser().getName());
+                logger.info("could not start shardInfo: {} and Self-Username :{}", jda.getShardInfo(), jda.getSelfUser().getName());
                 logger.error(e.getMessage(), e);
             }
 
@@ -231,6 +274,10 @@ public class Klassenserver7bbot {
         }
     }
 
+    /**
+     * Initialize the Listeners that require an initialization.
+     * The Listeners are initialized and the Bot will log the result.
+     */
     protected void initListeners() {
 
         HashMap<CompletableFuture<Integer>, InitRequiringListener> futures = new HashMap<>();
@@ -253,16 +300,24 @@ public class Klassenserver7bbot {
             }
 
             if (code != 0) {
-                logger.warn(
-                        futures.get(future).getClass().getSimpleName() + " failed to initialize, ExitCode: " + code);
+                logger.warn("{} failed to initialize, ExitCode: {}", futures.get(future).getClass().getSimpleName(), code);
                 continue;
             }
 
-            logger.info(futures.get(future).getClass().getSimpleName() + " successfully initialized");
+            logger.info("{} successfully initialized", futures.get(future).getClass().getSimpleName());
         }
 
     }
 
+    /**
+     * The Error-Handling method for invalid Configurations.
+     * The Bot will log the error and open the bot.properties file in the resources folder.
+     * The Bot will then exit with the specified exit code.
+     *
+     * @param message  the error message
+     * @param exitCode the exit code
+     * @param e        the exception to throw and log
+     */
     protected void invalidConfigExit(String message, int exitCode, RuntimeException e) {
         logger.error(message, e);
         try {
@@ -273,43 +328,43 @@ public class Klassenserver7bbot {
         System.exit(exitCode);
     }
 
+    /**
+     * Shut down the Bot.
+     * The Bot will stop all Threads and disconnect from Discord.
+     */
     protected void runShutdown() {
         this.shutdownT = new ConsoleReadThread();
     }
 
+    /**
+     * Start the LoopThread.
+     */
     public void runLoop() {
         this.loop = new LoopThread();
     }
 
+    /**
+     * Restart the LoopThread.
+     */
     public void restartLoop() {
         this.loop.restart();
     }
 
+    /**
+     * Stop the LoopThread.
+     */
     public void stopLoop() {
         this.loop.stopLoop();
     }
 
-    public void loadTeacherList() {
-        File file = new File("resources/teachers.json");
-
-        if (file.exists()) {
-
-            try {
-
-                String jsonstring = Files.readString(file.toPath());
-
-                JsonElement json = JsonParser.parseString(jsonstring);
-                teacherslist = json.getAsJsonObject();
-
-            } catch (IOException e1) {
-
-                logger.error(e1.getMessage(), e1);
-
-            }
-
-        }
-    }
-
+    /**
+     * This method is used to get the Bot's Name.
+     * If the Bot is in a Guild, the Bots custom Guildname is returned.
+     * Otherwise, the Bot's global Name is returned.
+     *
+     * @param guildid the Guild's ID
+     * @return the Bot's Name
+     */
     public String getSelfName(Long guildid) {
 
         Guild g;
@@ -318,22 +373,30 @@ public class Klassenserver7bbot {
             return g.getSelfMember().getEffectiveName();
         }
 
-        return Klassenserver7bbot.getInstance().getShardManager().getShards().get(0).getSelfUser().getEffectiveName();
+        return Klassenserver7bbot.getInstance().getShardManager().getShards().getFirst().getSelfUser().getEffectiveName();
     }
 
-    public static Klassenserver7bbot getInstance() {
 
-        if (INSTANCE == null) {
-            try {
-                return new Klassenserver7bbot(false);
-            } catch (IllegalArgumentException e) {
-                LoggerFactory.getLogger("InstanceManager").error(e.getMessage(), e);
-            }
-        }
-
-        return INSTANCE;
+    /**
+     * This method is used to get the Bot Instance.
+     * The Bot is managed by this class as a Singleton.
+     * see {@link #getInstance(boolean)}
+     *
+     * @return the Bot Instance
+     * @throws IllegalArgumentException if something failed while logging into discord
+     */
+    public static Klassenserver7bbot getInstance() throws IllegalArgumentException {
+        return getInstance(false);
     }
 
+    /**
+     * This method is used to get the Bot Instance with the specified canary mode.
+     * The Bot is managed by this class as a Singleton.
+     *
+     * @param indev if the Bot should start in canary mode
+     * @return the K7Bot Instance
+     * @throws IllegalArgumentException if something failed while logging into discord
+     */
     public static Klassenserver7bbot getInstance(boolean indev) throws IllegalArgumentException {
 
         if (INSTANCE == null) {
@@ -343,82 +406,142 @@ public class Klassenserver7bbot {
         return INSTANCE;
     }
 
+    /**
+     * @return the CommandManager
+     */
     public CommandManager getCmdMan() {
         return this.cmdMgr;
     }
 
+    /**
+     * @return the SlashCommandManager
+     */
     public SlashCommandManager getslashMan() {
         return this.slashMgr;
     }
 
+    /**
+     * @return the JLyricsAPI
+     */
     public LyricsClient getLyricsAPI() {
         return this.lyricsapi;
     }
 
+    /**
+     * @return the GeniusLyricsAPI
+     */
     public GLAWrapper getLyricsAPIold() {
         return this.lyricsapiold;
     }
 
+    /**
+     * @return the MainLogger
+     */
     public Logger getMainLogger() {
         return this.logger;
     }
 
+    /**
+     * @return the OwnerId
+     */
     public Long getOwnerId() {
         return this.ownerId;
     }
 
+    /**
+     * @return the SystemNotificationChannelManager
+     */
     public SystemNotificationChannelManager getSysChannelMgr() {
         return sysChannelMgr;
     }
 
+    /**
+     * @return if the Bot is currently exiting
+     */
     public boolean isInExit() {
         return this.exit;
     }
 
+    /**
+     * @return if the Bot is in canary mode
+     */
     public boolean isDevMode() {
         return this.indev;
     }
 
+    /**
+     * @return the ShardManager
+     */
     public ShardManager getShardManager() {
         return this.shardMgr;
     }
 
+    /**
+     * @return the AudioPlayerUtil
+     */
     public AudioPlayerUtil getPlayerUtil() {
         return this.playerutil;
     }
 
+    /**
+     * @return the AudioPlayerManager
+     */
     public AudioPlayerManager getAudioPlayerManager() {
         return this.audioPlayerManager;
     }
 
+    /**
+     * @return the SubscriptionManager
+     */
     public SubscriptionManager getSubscriptionManager() {
         return this.subMgr;
     }
 
+    /**
+     * @return the PropertiesManager
+     */
     public PropertiesManager getPropertiesManager() {
         return this.propMgr;
     }
 
+    /**
+     * @return the LoopedEventManager
+     */
     public LoopedEventManager getLoopedEventManager() {
         return this.loopedEventMgr;
     }
 
-    public JsonObject getTeacherList() {
-        return this.teacherslist;
+    /**
+     * @return the TeachersList
+     */
+    public TeacherDB getTeacherDB() {
+        return this.teacherDB;
     }
 
+    /**
+     * @return the PrefixManager
+     */
     public PrefixManager getPrefixMgr() {
         return this.prefixMgr;
     }
 
+    /**
+     * @return the shutdownThread
+     */
     public ConsoleReadThread getShutdownThread() {
         return this.shutdownT;
     }
 
-    public void setexit(boolean inexit) {
-        this.exit = inexit;
+    /**
+     * @param exit set if the Bot is currently exiting
+     */
+    public void setExit(boolean exit) {
+        this.exit = exit;
     }
 
+    /**
+     * @return the SpotifyInteractions
+     */
     public SpotifyInteractions getSpotifyinteractions() {
         return spotifyinteractions;
     }

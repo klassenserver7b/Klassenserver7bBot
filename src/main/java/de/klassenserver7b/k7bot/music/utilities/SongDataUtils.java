@@ -7,140 +7,133 @@ import org.slf4j.LoggerFactory;
 
 public class SongDataUtils {
 
-	private final DiscogsAPI api;
-	private final Logger log;
+    private final DiscogsAPI api;
+    private final Logger log;
 
-	public SongDataUtils() {
-		api = new DiscogsAPI();
-		log = LoggerFactory.getLogger(this.getClass());
-	}
+    public SongDataUtils() {
+        api = new DiscogsAPI();
+        log = LoggerFactory.getLogger(this.getClass());
+    }
 
-	public SongDataUtils(DiscogsAPI api) {
-		this.api = api;
-		log = LoggerFactory.getLogger(this.getClass());
-	}
+    public SongDataUtils(DiscogsAPI api) {
+        this.api = api;
+        log = LoggerFactory.getLogger(this.getClass());
+    }
 
-	public String stripSongTitle(String title) {
+    public String stripSongTitle(String title) {
 
-		String[] split = title.trim().split(" - ");
+        String[] split = title.trim().split(" - ");
 
-		String strippedtitle;
+        String strippedtitle;
 
-		if (split.length <= 1) {
-			strippedtitle = split[0];
-		} else {
-			strippedtitle = split[0] + " - " + split[1];
-		}
+        if (split.length <= 1) {
+            strippedtitle = split[0];
+        } else {
+            strippedtitle = split[0] + " - " + split[1];
+        }
 
-		strippedtitle = EmojiParser.removeAllEmojis(strippedtitle);
+        strippedtitle = EmojiParser.removeAllEmojis(strippedtitle);
 
-		strippedtitle = strippedtitle.replaceAll("|", "");
+        strippedtitle = strippedtitle.replaceAll("\\|", "");
 
-		strippedtitle = strippedtitle.replaceAll("(\s)?(\\(|\\[)((?!(sped|slow|speed|reverb|nightcore)).)*(\\)|\\])/i", "");
+        //noinspection EscapedSpace
+        strippedtitle = strippedtitle.replaceAll("(\s)?(\\(|\\[)((?!(sped|slow|speed|reverb|nightcore)).)*(\\)|\\])/i", "");
 
-		return strippedtitle.trim();
-	}
+        return strippedtitle.trim();
+    }
 
-	public String stripSongAuthor(String author) {
+    public String stripSongAuthor(String author) {
 
-		String strippedauthor = author.trim();
-		strippedauthor = strippedauthor.replaceAll(" - Thema", "");
-		strippedauthor = strippedauthor.replaceAll(" - ", "");
-		strippedauthor = strippedauthor.replaceAll("-", "");
+        String strippedauthor = author.trim();
+        strippedauthor = strippedauthor.replaceAll(" - Thema", "");
+        strippedauthor = strippedauthor.replaceAll(" - ", "");
+        strippedauthor = strippedauthor.replaceAll("-", "");
 
-		return strippedauthor;
-	}
+        return strippedauthor;
+    }
 
-	public SongJson parseYtTitle(String yttitle, String channel) {
+    public SongJson parseYtTitle(String yttitle, String channel) {
 
-		String stripedtitle = stripSongTitle(yttitle);
-		String author = stripSongAuthor(channel);
+        String stripedtitle = stripSongTitle(yttitle);
+        String author = stripSongAuthor(channel);
 
-		log.info("YT TitleParseRequest - title=" + stripedtitle + "&channel=" + author);
+        log.info("YT TitleParseRequest - title={}&channel={}", stripedtitle, author);
 
-		if (!api.isApiEnabled()) {
-			return parseOffline(stripedtitle, author);
-		}
-		return parseViaDiscogs(stripedtitle, author);
+        if (!api.isApiEnabled()) {
+            return parseOffline(stripedtitle, author);
+        }
+        return parseViaDiscogs(stripedtitle, author);
 
-	}
+    }
 
-	public SongJson parseViaDiscogs(String title, String channel) {
+    public SongJson parseViaDiscogs(String title, String channel) {
 
-		log.debug("Parsing Online");
-		String newtitle = title;
+        log.debug("Parsing Online");
+        String newtitle = title;
 
-		if (!titleContainsAuthor(title)) {
-			newtitle += " " + channel;
-		}
+        if (!titleContainsAuthor(title)) {
+            newtitle += " " + channel;
+        }
 
-		try {
+        try {
 
-			SongJson json = api.getFilteredSongJson(newtitle);
+            SongJson json = api.getFilteredSongJson(newtitle);
 
-			if (json == null) {
+            if (json == null) {
 
-				log.warn("Online Parse Error - Parsing Offline");
-				return parseOffline(title, channel);
+                log.warn("Online Parse Error - Parsing Offline");
+                return parseOffline(title, channel);
 
-			}
+            }
 
-			log.info("Successfully Parsed Online");
-			return json;
+            log.info("Successfully Parsed Online");
+            return json;
 
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
 
-	}
+    }
 
-	public boolean titleContainsAuthor(String title) {
+    public boolean titleContainsAuthor(String title) {
 
-		String[] parts = title.split(" - ");
+        String[] parts = title.split(" - ");
 
-		return (parts.length > 1);
+        return (parts.length > 1);
 
-	}
+    }
 
-	public SongJson parseOffline(String title, String channel) {
-		log.debug("Parsing Offline");
+    public SongJson parseOffline(String title, String channel) {
+        log.debug("Parsing Offline");
 
-		if (titleContainsAuthor(title)) {
-			log.debug("Parsing YT Title Offline - Author in title");
-			return parseTitleWithAuthor(title);
-		}
-		log.debug("Parsing YT Title Offline - Author not in title");
-		return parseTitleWithoutAuthor(title, channel);
+        if (titleContainsAuthor(title)) {
+            log.debug("Parsing YT Title Offline - Author in title");
+            return parseTitleWithAuthor(title);
+        }
+        log.debug("Parsing YT Title Offline - Author not in title");
+        return parseTitleAndAuthor(title, channel);
 
-	}
+    }
 
-	public SongJson parseTitleWithAuthor(String title) {
+    protected SongJson parseTitleWithAuthor(String title) {
 
-		String[] parts = title.split(" - ");
+        String[] parts = title.split(" - ");
+        return parseTitleAndAuthor(parts[1], parts[0]);
 
-		try {
-			SongJson json = SongJson.ofUnvalidated(parts[1], parts[0], "0",
-					"https://www.discogs.com/de/search/?q=" + parts[1] + "+" + parts[0], "");
-			log.debug("Successfully Parsed Offline");
-			return json;
-		} catch (IllegalArgumentException e) {
-			log.warn("Couldn't Parse");
-			return null;
-		}
+    }
 
-	}
+    protected SongJson parseTitleAndAuthor(String title, String channel) {
+        try {
+            SongJson json = SongJson.ofUnvalidated(title, channel, "0",
+                    "https://www.discogs.com/de/search/?q=" + title + "+" + channel, "");
+            log.debug("Successfully Parsed Offline");
+            return json;
+        } catch (IllegalArgumentException e) {
+            log.warn("Couldn't Parse");
+            return null;
+        }
 
-	public SongJson parseTitleWithoutAuthor(String title, String channel) {
-		try {
-			SongJson json = SongJson.ofUnvalidated(title, channel, "0",
-					"https://www.discogs.com/de/search/?q=" + title + "+" + channel, "");
-			log.debug("Successfully Parsed Offline");
-			return json;
-		} catch (IllegalArgumentException e) {
-			log.warn("Couldn't Parse");
-			return null;
-		}
+    }
 
-	}
 
 }

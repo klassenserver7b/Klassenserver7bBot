@@ -26,8 +26,7 @@ public abstract class LoggingConfigDBHandler {
 
         insertGuild(guildId);
 
-        if (!isOptionEnabled(option, guildId)) {
-
+        if (isOptionDisabled(option, guildId)) {
             return LiteSQL.onUpdate(
                     "UPDATE loggingConfig SET optionJson = json_insert(optionJson,'$[#]',?) WHERE guildId=?;",
                     option.getId(), guildId);
@@ -46,11 +45,11 @@ public abstract class LoggingConfigDBHandler {
                 option.getId(), guildId);
     }
 
-    public static boolean isOptionEnabled(LoggingOptions option, Guild guild) {
-        return isOptionEnabled(option, guild.getIdLong());
+    public static boolean isOptionDisabled(LoggingOptions option, Guild guild) {
+        return isOptionDisabled(option, guild.getIdLong());
     }
 
-    public static boolean isOptionEnabled(LoggingOptions option, long guildId) {
+    public static boolean isOptionDisabled(LoggingOptions option, long guildId) {
 
         insertGuild(guildId);
 
@@ -58,7 +57,7 @@ public abstract class LoggingConfigDBHandler {
                 "SELECT IIF((SELECT (SELECT 1 FROM json_each(optionJson) WHERE value = ?) FROM loggingConfig WHERE guildId = ?), True, False) result;",
                 option.getId(), guildId)) {
 
-            return set.getBoolean("result");
+            return !set.getBoolean("result");
 
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -71,9 +70,9 @@ public abstract class LoggingConfigDBHandler {
     /**
      * Toggles the key and returns the new state of the {@link LoggingOptions};
      *
-     * @param option
-     * @param guildId
-     * @return
+     * @param option  the option to toggle
+     * @param guildId the guild to toggle the option for
+     * @return the new state of the option
      */
     public static boolean toggleOption(LoggingOptions option, long guildId) {
 
@@ -81,13 +80,10 @@ public abstract class LoggingConfigDBHandler {
             return false;
         }
 
-        if (isOptionEnabled(option, guildId)) {
-
+        if (!isOptionDisabled(option, guildId)) {
             disableOption(option, guildId);
             return false;
-
         } else {
-
             enableOption(option, guildId);
             return true;
 

@@ -7,7 +7,7 @@ package:
 	mvn package
 
 copy:
-	cp target/k7bot-*-full.jar /home/felix/Desktop/Bot/Bot_pvt.jar
+	sudo cp target/k7bot-*-full.jar /opt/k7bot/Bot.jar
 	
 restart:
 	sudo systemctl restart k7bot

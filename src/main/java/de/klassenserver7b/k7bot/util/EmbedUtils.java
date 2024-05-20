@@ -13,14 +13,7 @@ import java.time.OffsetDateTime;
 /**
  * @author K7
  */
-public class EmbedUtils {
-
-	/**
-	 * 
-	 */
-	public EmbedUtils() {
-
-	}
+public abstract class EmbedUtils {
 
 	public static EmbedBuilder getErrorEmbed(CharSequence description) {
 		return getErrorEmbed(description, null);

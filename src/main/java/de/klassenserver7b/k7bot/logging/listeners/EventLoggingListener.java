@@ -13,14 +13,17 @@ import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventDeleteEvent
 import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserAddEvent;
 import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserRemoveEvent;
 import net.dv8tion.jda.api.events.guild.scheduledevent.update.*;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.Objects;
 
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
 /**
  *
  */
-public class EventLoggingListener extends LoggingListener {
+public class EventLoggingListener extends ListenerAdapter {
 
     public EventLoggingListener() {
         super();
@@ -29,7 +32,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventCreate(ScheduledEventCreateEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_CREATE, event.getGuild())) {
             return;
         }
 
@@ -45,7 +48,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventDelete(ScheduledEventDeleteEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_DELETE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_DELETE, event.getGuild())) {
             return;
         }
 
@@ -61,7 +64,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUpdateStatus(ScheduledEventUpdateStatusEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_UPDATE_STATUS, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STATUS, event.getGuild())) {
             return;
         }
 
@@ -81,7 +84,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUpdateName(ScheduledEventUpdateNameEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_UPDATE_NAME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_NAME, event.getGuild())) {
             return;
         }
 
@@ -100,7 +103,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUpdateStartTime(ScheduledEventUpdateStartTimeEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_UPDATE_STARTTIME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STARTTIME, event.getGuild())) {
             return;
         }
 
@@ -119,7 +122,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUpdateEndTime(ScheduledEventUpdateEndTimeEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_UPDATE_ENDTIME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_ENDTIME, event.getGuild())) {
             return;
         }
 
@@ -145,7 +148,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUpdateLocation(ScheduledEventUpdateLocationEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_UPDATE_LOCATION, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_LOCATION, event.getGuild())) {
             return;
         }
 
@@ -164,7 +167,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUserAdd(ScheduledEventUserAddEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_MEMBER_JOIN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_JOIN, event.getGuild())) {
             return;
         }
 
@@ -183,7 +186,7 @@ public class EventLoggingListener extends LoggingListener {
     @Override
     public void onScheduledEventUserRemove(ScheduledEventUserRemoveEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.EVENT_MEMBER_LEAVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_LEAVE, event.getGuild())) {
             return;
         }
 

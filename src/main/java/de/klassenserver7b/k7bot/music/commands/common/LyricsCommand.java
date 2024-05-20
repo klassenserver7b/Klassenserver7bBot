@@ -30,151 +30,148 @@ import java.util.concurrent.TimeUnit;
 
 public class LyricsCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	private final Logger log;
+    private final Logger log;
 
-	@Override
-	public String gethelp() {
-		String help = "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
-		return help;
-	}
+    @Override
+    public String getHelp() {
+        return "Sendet die Lyrics des aktuell gespielten Songs in den aktuellen channel.";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "lyrics" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"lyrics"};
+    }
 
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-	public LyricsCommand() {
-		log = LoggerFactory.getLogger(this.getClass());
-	}
+    public LyricsCommand() {
+        log = LoggerFactory.getLogger(this.getClass());
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)
-				|| !MusicUtil.isPlayingSong(channel, m)) {
-			return;
-		}
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)
+                || !MusicUtil.isPlayingSong(channel, m)) {
+            return;
+        }
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
-		Queue queue = controller.getQueue();
-		SongJson data = queue.getCurrentSongData();
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
+        Queue queue = controller.getQueue();
+        SongJson data = queue.getCurrentSongData();
 
-		String query;
-		if (data != null) {
-			query = data.getTitle() + " " + data.getAuthorString();
-		} else {
-			AudioTrackInfo info = queue.getController().getPlayer().getPlayingTrack().getInfo();
-			query = info.title + " " + info.author;
-		}
+        String query;
+        if (data != null) {
+            query = data.getTitle() + " " + data.getAuthorString();
+        } else {
+            AudioTrackInfo info = queue.getController().getPlayer().getPlayingTrack().getInfo();
+            query = info.title + " " + info.author;
+        }
 
-		log.info("Searching Lyrics Querry: " + query);
+        log.info("Searching Lyrics Querry: {}", query);
 
-		try {
+        try {
 
-			GLACustomSongSearch genius = getGeniusLyrics(query);
+            GLACustomSongSearch genius = getGeniusLyrics(query);
 
-			if (genius != null) {
-				sendGeniusEmbed(genius, channel, m);
-				return;
-			}
+            if (genius != null) {
+                sendGeniusEmbed(genius, channel, m);
+                return;
+            }
 
-			LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
+            LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
 
-			Lyrics lyrics = lapi.getLyrics(query).get();
+            Lyrics lyrics = lapi.getLyrics(query).get();
 
-			if (lyrics != null) {
-				sendJLyricsEmbed(lyrics, channel, m);
-				return;
-			}
+            if (lyrics != null) {
+                sendJLyricsEmbed(lyrics, channel, m);
+                return;
+            }
 
-			sendErrorEmbed(channel);
+            sendErrorEmbed(channel);
 
-		} catch (IOException | InterruptedException | ExecutionException e) {
-			sendErrorEmbed(channel);
-		}
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            sendErrorEmbed(channel);
+        }
 
-	}
+    }
 
-	private void sendErrorEmbed(GuildMessageChannel c) {
+    private void sendErrorEmbed(GuildMessageChannel c) {
 
-		EmbedBuilder build = EmbedUtils.getErrorEmbed("Couldn't find the song you searched for",
-				c.getGuild().getIdLong());
+        EmbedBuilder build = EmbedUtils.getErrorEmbed("Couldn't find the song you searched for",
+                c.getGuild().getIdLong());
 
-		c.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
+        c.sendMessageEmbeds(build.build()).complete().delete().queueAfter(15, TimeUnit.SECONDS);
 
-	}
+    }
 
-	private void sendGeniusEmbed(GLACustomSongSearch data, GuildMessageChannel c, Member m) {
+    private void sendGeniusEmbed(GLACustomSongSearch data, GuildMessageChannel c, Member m) {
 
-		c.sendTyping().queue();
+        c.sendTyping().queue();
 
-		if (data.getHits().isEmpty()) {
-			sendErrorEmbed(c);
-			return;
-		}
+        if (data.getHits().isEmpty()) {
+            sendErrorEmbed(c);
+            return;
+        }
 
-		Hit hit = data.getHits().getFirst();
+        Hit hit = data.getHits().getFirst();
 
-		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), hit.fetchLyrics(),
-				c.getGuild().getIdLong());
+        EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), hit.fetchLyrics(),
+                c.getGuild().getIdLong());
 
-		builder.setThumbnail(hit.getThumbnailUrl());
-		builder.setTitle("Lyrics of " + hit.getTitle() + " from " + hit.getArtist().getName());
-		builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by Genius");
+        builder.setThumbnail(hit.getThumbnailUrl());
+        builder.setTitle("Lyrics of " + hit.getTitle() + " from " + hit.getArtist().getName());
+        builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by Genius");
 
-		c.sendMessageEmbeds(builder.build()).queue();
+        c.sendMessageEmbeds(builder.build()).queue();
 
-	}
+    }
 
-	private void sendJLyricsEmbed(Lyrics data, GuildMessageChannel c, Member m) {
+    private void sendJLyricsEmbed(Lyrics data, GuildMessageChannel c, Member m) {
 
-		c.sendTyping().queue();
+        c.sendTyping().queue();
 
-		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), data.getContent(),
-				c.getGuild().getIdLong());
+        EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"), data.getContent(),
+                c.getGuild().getIdLong());
 
-		builder.setTitle("Lyrics of " + data.getTitle() + " from " + data.getAuthor());
-		builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by " + data.getSource());
+        builder.setTitle("Lyrics of " + data.getTitle() + " from " + data.getAuthor());
+        builder.setFooter("Requested by @" + m.getEffectiveName() + " | Lyrics by " + data.getSource());
 
-		builder.setDescription(data.getContent());
+        builder.setDescription(data.getContent());
 
-		c.sendMessageEmbeds(builder.build()).queue();
+        c.sendMessageEmbeds(builder.build()).queue();
 
-	}
+    }
 
-	private GLACustomSongSearch getGeniusLyrics(String query) throws IOException {
+    private GLACustomSongSearch getGeniusLyrics(String query) throws IOException {
 
-		GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
+        GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
 
-		GLACustomSongSearch songsearch = lapi.search(query);
+        return lapi.search(query);
 
-		return songsearch;
+    }
 
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

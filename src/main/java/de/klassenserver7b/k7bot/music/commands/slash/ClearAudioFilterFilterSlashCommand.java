@@ -39,7 +39,7 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
 
         AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(hook), m) || vc == null) {
+		if (MusicUtil.membFailsDefaultConditions(new GenericMessageSendHandler(hook), m) || vc == null) {
 			return;
 		}
 

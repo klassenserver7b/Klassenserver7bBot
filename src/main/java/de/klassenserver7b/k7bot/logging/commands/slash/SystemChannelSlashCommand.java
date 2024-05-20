@@ -13,29 +13,32 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 public class SystemChannelSlashCommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply().complete();
+        InteractionHook hook = event.deferReply().complete();
 
-		GuildMessageChannel chan = event.getOption("syschannel").getAsChannel().asGuildMessageChannel();
+        assert event.getOption("syschannel") != null;
+        GuildMessageChannel chan = event.getOption("syschannel").getAsChannel().asGuildMessageChannel();
 
-		SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
-		sys.insertChannel(chan);
+        SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
+        sys.insertChannel(chan);
 
-		hook.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
-	}
+        hook.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
+    }
 
-	@Override
-	public SlashCommandData getCommandData() {
-		return Commands.slash("syschannel", "change syschannel")
-				.addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
-						.setChannelTypes(ChannelType.TEXT).setRequired(true))
-				.setGuildOnly(true)
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER));
-	}
+    @NotNull
+    @Override
+    public SlashCommandData getCommandData() {
+        return Commands.slash("syschannel", "change syschannel")
+                .addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
+                        .setChannelTypes(ChannelType.TEXT).setRequired(true))
+                .setGuildOnly(true)
+                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER));
+    }
 
 }

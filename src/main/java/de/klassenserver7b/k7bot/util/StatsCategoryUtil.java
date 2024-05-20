@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.util;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.logging.LoggingBlocker;
+import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -25,8 +25,10 @@ public class StatsCategoryUtil {
 
     public static void fillCategory(Category cat, boolean devmode) {
         if (!devmode) {
-            VoiceChannel vc = cat.createVoiceChannel("🟢 Bot Online").complete();
-            LoggingBlocker.getInstance().block(vc.getIdLong());
+            try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+                VoiceChannel vc = cat.createVoiceChannel("🟢 Bot Online").complete();
+                LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
+            }
         }
 
         cat.getManager()
@@ -46,7 +48,7 @@ public class StatsCategoryUtil {
 
                     if (!devmode) {
                         cat.getChannels().forEach(chan -> {
-                            LoggingBlocker.getInstance().block(chan.getIdLong());
+                            LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
                             chan.delete().complete();
 
                         });
@@ -72,12 +74,18 @@ public class StatsCategoryUtil {
                     Category cat = guild.getCategoryById(catid);
 
                     if (!devmode) {
-                        cat.getChannels().forEach(chan -> {
-                            LoggingBlocker.getInstance().block(chan.getIdLong());
-                            chan.delete().complete();
-                        });
-                        VoiceChannel vc = cat.createVoiceChannel("🔴 Bot offline").complete();
-                        LoggingBlocker.getInstance().block(vc.getIdLong());
+                        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+
+                            cat.getChannels().forEach(chan -> {
+                                LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
+                                chan.delete().complete();
+
+                            });
+
+                            VoiceChannel vc = cat.createVoiceChannel("🔴 Bot offline").complete();
+                            LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
+                        }
+
                     }
                 }
             } catch (SQLException e) {

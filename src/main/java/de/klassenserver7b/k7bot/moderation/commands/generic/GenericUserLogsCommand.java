@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.moderation.commands.generic;
 
@@ -15,44 +15,40 @@ import java.util.List;
 
 /**
  * @author K7
- *
  */
 public abstract class GenericUserLogsCommand {
 
-	/**
-	 * 
-	 * @param m
-	 * @param channel
-	 * @return
-	 */
-	protected boolean checkPermissions(Member m, GuildMessageChannel channel) {
-		if (!m.hasPermission(Permission.KICK_MEMBERS)) {
-			PermissionError.onPermissionError(m, channel);
-			return false;
-		}
-		return true;
-	}
+    /**
+     * @param m       The {@link Member} who executed the command
+     * @param channel The {@link GuildMessageChannel} where the command was executed
+     * @return true if the {@link Member} doesn't have the required permissions
+     */
+    protected boolean MembFailsPermissions(Member m, GuildMessageChannel channel) {
+        if (!m.hasPermission(Permission.KICK_MEMBERS)) {
+            PermissionError.onPermissionError(m, channel);
+            return true;
+        }
+        return false;
+    }
 
-	/**
-	 * 
-	 * @param channel
-	 * @param message
-	 * @param m
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
-	protected List<Member> getMembersFromMessage(GuildMessageChannel channel, Message message, Member m)
-			throws IllegalArgumentException {
-		List<Member> memb = message.getMentions().getMembers();
+    /**
+     * @param channel The {@link GuildMessageChannel} where the command was executed
+     * @param message The {@link Message} that was sent
+     * @param m       The {@link Member} who executed the command
+     * @return A {@link List} of {@link Member Members} that were mentioned in the message
+     * @throws IllegalArgumentException if no {@link Member Members} were mentioned
+     */
+    protected List<Member> getMembersFromMessage(GuildMessageChannel channel, Message message, Member m)
+            throws IllegalArgumentException {
+        List<Member> memb = message.getMentions().getMembers();
 
-		if (memb.isEmpty()) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "modlogs [@moderator]", m);
-			throw new IllegalArgumentException();
-		}
+        if (memb.isEmpty()) {
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "modlogs [@moderator]", m);
+            throw new IllegalArgumentException();
+        }
 
-		return memb;
-	}
-	
-	
+        return memb;
+    }
+
 
 }

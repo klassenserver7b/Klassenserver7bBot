@@ -15,57 +15,57 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class EqualizerCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String gethelp() {
-		return "COMING SOON - read Bot-News or GitHub Commit-Message";
-	}
+    @Override
+    public String getHelp() {
+        return "COMING SOON - read Bot-News or GitHub Commit-Message";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "eq" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"eq"};
+    }
 
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
-			return;
-		}
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)) {
+            return;
+        }
 
-		String[] args = message.getContentDisplay().split(" ");
+        String[] args = message.getContentDisplay().split(" ");
 
-		if (args.length < 2) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "eq [id]", m);
-			return;
-		}
+        if (args.length < 2) {
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "eq [id]", m);
+            return;
+        }
 
-		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
-				Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
+        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
+                Klassenserver7bbot.getInstance().getPlayerUtil().getController(m.getGuild().getIdLong()).getPlayer());
 
-		BotEqualizer.setEQMode(EqualizerPreset.fromId(Integer.valueOf(args[1])), effman);
+        BotEqualizer.setEQMode(EqualizerPreset.fromId(Integer.parseInt(args[1])), effman);
 
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

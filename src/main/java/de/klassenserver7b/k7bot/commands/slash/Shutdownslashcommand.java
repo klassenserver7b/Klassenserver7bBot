@@ -32,7 +32,7 @@ public class Shutdownslashcommand implements TopLevelSlashCommand {
 
 			event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 
-			Klassenserver7bbot.getInstance().setexit(true);
+			Klassenserver7bbot.getInstance().setExit(true);
 			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
 			return;
 

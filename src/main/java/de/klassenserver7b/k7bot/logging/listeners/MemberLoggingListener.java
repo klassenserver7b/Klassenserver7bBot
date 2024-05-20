@@ -13,12 +13,16 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.stream.Collectors;
 
-public class MemberLoggingListener extends LoggingListener {
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getDefaultChannel;
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+public class MemberLoggingListener extends ListenerAdapter {
 
     public MemberLoggingListener() {
         super();
@@ -27,7 +31,7 @@ public class MemberLoggingListener extends LoggingListener {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_JOIN, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_JOIN, event.getGuild())) {
             return;
         }
 
@@ -45,15 +49,13 @@ public class MemberLoggingListener extends LoggingListener {
 
         system.sendMessageEmbeds(embbuild.build()).queue();
 
-        if (def != null) {
-            def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
-        }
+        def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
     }
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_LEAVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_LEAVE, event.getGuild())) {
             return;
         }
 
@@ -77,7 +79,7 @@ public class MemberLoggingListener extends LoggingListener {
     @Override
     public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
             return;
         }
 
@@ -100,7 +102,7 @@ public class MemberLoggingListener extends LoggingListener {
     @Override
     public void onGuildMemberRoleAdd(@Nonnull GuildMemberRoleAddEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
             return;
         }
 
@@ -122,7 +124,7 @@ public class MemberLoggingListener extends LoggingListener {
     @Override
     public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
             return;
         }
 

@@ -23,147 +23,144 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class DiscogsAPI {
 
-	private final Logger log;
+    private final Logger log;
 
-	public DiscogsAPI() {
+    public DiscogsAPI() {
 
-		log = LoggerFactory.getLogger(this.getClass());
+        log = LoggerFactory.getLogger(this.getClass());
 
-	}
+    }
 
-	public SongJson getFilteredSongJson(String searchquery) throws IllegalArgumentException {
+    public SongJson getFilteredSongJson(String searchquery) throws IllegalArgumentException {
 
-		if (!this.isApiEnabled()) {
-			return null;
-		}
+        if (!this.isApiEnabled()) {
+            return null;
+        }
 
-		JsonObject songjson = getSongJson(searchquery);
+        JsonObject songjson = getSongJson(searchquery);
 
-		if (songjson == null) {
-			return null;
-		}
+        if (songjson == null) {
+            return null;
+        }
 
-		String title = songjson.get("title").getAsString();
-		JsonArray artists = songjson.get("artists").getAsJsonArray();
-		String year = songjson.get("year").getAsString();
-		String url = songjson.get("uri").getAsString();
-		String apiurl = songjson.get("resource_url").getAsString();
+        String title = songjson.get("title").getAsString();
+        JsonArray artists = songjson.get("artists").getAsJsonArray();
+        String year = songjson.get("year").getAsString();
+        String url = songjson.get("uri").getAsString();
+        String apiurl = songjson.get("resource_url").getAsString();
 
-		int dist = LevenshteinDistance.getDefaultInstance().apply(artists + " " + title, searchquery);
-		int rotdist = LevenshteinDistance.getDefaultInstance().apply(title + " " + artists, searchquery);
-		int titledist = LevenshteinDistance.getDefaultInstance().apply(title, searchquery);
+        int dist = LevenshteinDistance.getDefaultInstance().apply(artists + " " + title, searchquery);
+        int rotdist = LevenshteinDistance.getDefaultInstance().apply(title + " " + artists, searchquery);
+        int titledist = LevenshteinDistance.getDefaultInstance().apply(title, searchquery);
 
-		if (dist > 10 && rotdist > 10 && titledist > 10) {
-			return null;
-		}
+        if (dist > 10 && rotdist > 10 && titledist > 10) {
+            return null;
+        }
 
-		return SongJson.of(title, artists, year, url, apiurl);
+        return SongJson.of(title, artists, year, url, apiurl);
 
-	}
+    }
 
-	private JsonObject getSongJson(String searchquery) {
+    private JsonObject getSongJson(String searchquery) {
 
-		assert this.isApiEnabled();
+        assert this.isApiEnabled();
 
-		String res_url = getMasterJson(searchquery);
+        String res_url = getMasterJson(searchquery);
 
-		if (res_url == null) {
-			return null;
-		}
+        if (res_url == null) {
+            return null;
+        }
 
-		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
-			final HttpGet httpget = new HttpGet(res_url);
+        try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+            final HttpGet httpget = new HttpGet(res_url);
 
-			return request(httpclient, httpget);
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
-		return null;
-	}
+            return request(httpclient, httpget);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
 
-	private String getMasterJson(String searchquery) {
+    private String getMasterJson(String searchquery) {
 
-		assert this.isApiEnabled();
+        assert this.isApiEnabled();
 
-		JsonObject queryresults = getQueryResults(searchquery);
+        JsonObject queryresults = getQueryResults(searchquery);
 
-		if (queryresults == null) {
-			return null;
-		}
+        if (queryresults == null) {
+            return null;
+        }
 
-		JsonArray results = queryresults.get("results").getAsJsonArray();
+        JsonArray results = queryresults.get("results").getAsJsonArray();
 
-		if (results.size() < 1) {
-			return null;
-		}
+        if (results.isEmpty()) {
+            return null;
+        }
 
-		for (int i = 0; i < results.size(); i++) {
+        for (int i = 0; i < results.size(); i++) {
 
-			if (results.get(i).getAsJsonObject().get("type").getAsString().equalsIgnoreCase("release")) {
-				return results.get(i).getAsJsonObject().get("resource_url").getAsString();
-			}
+            if (results.get(i).getAsJsonObject().get("type").getAsString().equalsIgnoreCase("release")) {
+                return results.get(i).getAsJsonObject().get("resource_url").getAsString();
+            }
 
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private JsonObject getQueryResults(String searchquery) {
+    private JsonObject getQueryResults(String searchquery) {
 
-		assert this.isApiEnabled();
+        assert this.isApiEnabled();
 
-		String token = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("discogs-token");
+        String token = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("discogs-token");
 
-		String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
-		final HttpGet httpget = new HttpGet(
-				"https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
-		httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
+        String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
+        final HttpGet httpget = new HttpGet(
+                "https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
+        httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
-		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+        try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-			return request(httpclient, httpget);
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
-		return null;
+            return request(httpclient, httpget);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
 
-	}
+    }
 
-	private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
+    private JsonObject request(CloseableHttpClient httpclient, HttpGet httpget) {
 
-		try {
-			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+        try {
+            final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
-			httpclient.close();
+            JsonElement elem = JsonParser.parseString(response);
+            httpclient.close();
 
-			return elem.getAsJsonObject();
+            return elem.getAsJsonObject();
 
-		} catch (HttpHostConnectException e1) {
-			log.warn("Invalid response from api.dicogs.com" + e1.getMessage());
-		}
+        } catch (HttpHostConnectException e1) {
+            log.warn("Invalid response from api.dicogs.com{}", e1.getMessage());
+        } catch (IOException | JsonSyntaxException e) {
+            log.error(e.getMessage(), e);
 
-		catch (IOException | JsonSyntaxException e) {
-			log.error(e.getMessage(), e);
+            httpclient.close(CloseMode.GRACEFUL);
 
-			httpclient.close(CloseMode.GRACEFUL);
+        }
+        return null;
+    }
 
-		}
-		return null;
-	}
+    public boolean isApiEnabled() {
 
-	public boolean isApiEnabled() {
+        if (!Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs")) {
+            log.error("Invalid Discogs Token - API Disabled", new Throwable().fillInStackTrace());
+        }
 
-		if (!Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs")) {
-			log.error("Invalid Discogs Token - API Disabled", new Throwable().fillInStackTrace());
-		}
+        return Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs");
 
-		return Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs");
-
-	}
+    }
 
 }
