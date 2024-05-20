@@ -14,68 +14,67 @@ import org.slf4j.Logger;
 
 public class RestartCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String getHelp() {
+    @Override
+    public String getHelp() {
         return "Startet den Bot neu.\n - kann nur vom Bot Owner ausgeführt werden!";
-	}
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "restart" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"restart"};
+    }
 
-	@Override
-	public HelpCategories getCategory() {
-		return HelpCategories.TOOLS;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.TOOLS;
+    }
 
-	@Override
-	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-		if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
-			Logger log = Klassenserver7bbot.getInstance().getMainLogger();
-			String[] args = message.getContentDisplay().split(" ");
+        if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+            Logger log = Klassenserver7bbot.getInstance().getMainLogger();
+            String[] args = message.getContentDisplay().split(" ");
 
-			if (args.length > 1) {
+            if (args.length > 1) {
 
-				try {
+                try {
 
-					RestartUtil.restart();
+                    RestartUtil.restart();
 
-					Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
-					log.info("Restarting Shard " + args[1]);
+                    Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
+                    log.info("Restarting Shard {}", args[1]);
 
-				}
-				catch (NumberFormatException e) {
-					SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", caller);
-				}
+                } catch (NumberFormatException e) {
+                    SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "restart <shardId>", caller);
+                }
 
-			} else {
-				Klassenserver7bbot.getInstance().getShardManager().restart();
-				log.info("Restarting all Shards");
-			}
+            } else {
+                Klassenserver7bbot.getInstance().getShardManager().restart();
+                log.info("Restarting all Shards");
+            }
 
-		} else {
-			PermissionError.onPermissionError(caller, channel);
-		}
+        } else {
+            PermissionError.onPermissionError(caller, channel);
+        }
 
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

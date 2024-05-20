@@ -20,29 +20,29 @@ import org.slf4j.LoggerFactory;
  */
 public class LoggingConfigSlashCommand implements TopLevelSlashCommand {
 
-	@SuppressWarnings("unused")
-	private final Logger log;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private final Logger log;
 
-	/**
-	 *
-	 */
-	public LoggingConfigSlashCommand() {
-		log = LoggerFactory.getLogger(getClass());
-	}
+    /**
+     *
+     */
+    public LoggingConfigSlashCommand() {
+        log = LoggerFactory.getLogger(getClass());
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
-		InteractionHook hook = event.deferReply().complete();
-
-		Klassenserver7bbot.getInstance().getShardManager().addEventListener(new LoggingConfigEmbedProvider(hook));
-
-	}
-
-	@NotNull
     @Override
-	public SlashCommandData getCommandData() {
-		return Commands.slash("loggingconfig", "get an embed to configure logging")
-				.setDefaultPermissions(DefaultMemberPermissions.DISABLED).setGuildOnly(true);
-	}
+    public void performSlashCommand(SlashCommandInteraction event) {
+        InteractionHook hook = event.deferReply().complete();
+
+        Klassenserver7bbot.getInstance().getShardManager().addEventListener(new LoggingConfigEmbedProvider(hook));
+
+    }
+
+    @NotNull
+    @Override
+    public SlashCommandData getCommandData() {
+        return Commands.slash("loggingconfig", "get an embed to configure logging")
+                .setDefaultPermissions(DefaultMemberPermissions.DISABLED).setGuildOnly(true);
+    }
 
 }

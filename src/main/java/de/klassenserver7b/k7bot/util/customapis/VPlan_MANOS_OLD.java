@@ -37,355 +37,353 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *
  * @author K7
  * @deprecated use {@link de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan
- *             VplanNEW_XML instead}
+ * VplanNEW_XML instead}
  */
 @Deprecated
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_MANOS_OLD {
 
-	private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
-	private String vplanpw;
+    private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
+    private final String vplanpw;
 
-	public VPlan_MANOS_OLD(String pw) {
-		vplanpw = pw;
-	}
+    public VPlan_MANOS_OLD(String pw) {
+        vplanpw = pw;
+    }
 
-	/**
-	 *
-	 * @param force
-	 * @param klasse
-	 * @param channel
-	 *
-	 * @since 1.15.0
-	 */
-	public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
+    /**
+     * @param force   if true, the message will be sent regardless of the current state
+     * @param klasse  the class to send the message to
+     * @param channel the channel to send the message to
+     * @since 1.15.0
+     */
+    public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
 
-		try (MessageCreateData d = getVplanMessage()) {
-			if (d != null) {
-				channel.sendMessage(d).queue();
-			}
-		}
+        try (MessageCreateData d = getVplanMessage()) {
+            if (d != null) {
+                channel.sendMessage(d).queue();
+            }
+        }
 
-	}
+    }
 
-	/**
-	 *
-	 * @param klasse
-	 *
-	 * @since 1.15.0
-	 */
-	public void VplanNotify(String klasse) {
+    /**
+     * @param klasse the class to send the message to
+     * @since 1.15.0
+     */
+    public void VplanNotify(String klasse) {
 
-		try (MessageCreateData d = getVplanMessage()) {
-			if (d != null) {
-				Klassenserver7bbot.getInstance().getSubscriptionManager()
-						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
-			}
-		}
-	}
+        try (MessageCreateData d = getVplanMessage()) {
+            if (d != null) {
+                Klassenserver7bbot.getInstance().getSubscriptionManager()
+                        .provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+            }
+        }
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private MessageCreateData getVplanMessage() {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private MessageCreateData getVplanMessage() {
 
-		JsonObject plan = getPlan();
+        JsonObject plan = getPlan();
 
-		List<JsonObject> fien = finalplancheck(plan);
+        List<JsonObject> fien = finalplancheck(plan);
 
-		if (fien == null) {
-			return null;
-		}
+        if (fien == null) {
+            return null;
+        }
 
-		if (log != null) {
-			log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
-					+ Klassenserver7bbot.getInstance().isDevMode());
-		}
+        if (log != null) {
+            log.debug("sending Vplanmessage with following hash: {} and devmode = {}", fien.hashCode(), Klassenserver7bbot.getInstance().isDevMode());
+        }
 
-		EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
+        EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
 
-		if (!fien.isEmpty()) {
+        if (!fien.isEmpty()) {
 
-			TableMessage tablemess = buildMessage(fien);
+            TableMessage tablemess = buildMessage(fien);
 
-			builder.setDescription("**Änderungen**\n" + tablemess.build());
+            builder.setDescription("**Änderungen**\n" + tablemess.build());
 
-		}
+        }
 
-		LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", fien.hashCode());
+        LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", fien.hashCode());
 
-		return new MessageCreateBuilder().setEmbeds(builder.build()).build();
+        return new MessageCreateBuilder().setEmbeds(builder.build()).build();
 
-	}
+    }
 
-	private TableMessage buildMessage(List<JsonObject> fien) {
+    /**
+     * @param fien the list of entries to build the message from
+     * @return the built message
+     */
+    private TableMessage buildMessage(List<JsonObject> fien) {
 
-		TableMessage tablemess = new TableMessage();
-		tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
+        TableMessage tablemess = new TableMessage();
+        tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
 
-		for (JsonObject entry : fien) {
+        for (JsonObject entry : fien) {
 
-			tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
+            tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
 
-			if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
+            if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
 
-				tablemess = appendSubject(tablemess, entry);
+                appendSubject(tablemess, entry);
 
-			} else {
+            } else {
 
-				tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+                tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
 
-			}
+            }
 
-			if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
+            if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
 
-				tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
+                tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
 
-			} else {
-				tablemess.addCell("   ");
-			}
+            } else {
+                tablemess.addCell("   ");
+            }
 
-		}
+        }
 
-		tablemess.automaticLineBreaks(4);
+        tablemess.automaticLineBreaks(4);
 
-		return tablemess;
+        return tablemess;
 
-	}
+    }
 
-	private TableMessage appendSubject(TableMessage mess, JsonObject entry) {
+    private TableMessage appendSubject(TableMessage mess, JsonObject entry) {
 
-		JsonArray changes = entry.get("changed").getAsJsonArray();
-		boolean subjectchange = false;
-		boolean teacherchange = false;
-		boolean roomchange = false;
+        JsonArray changes = entry.get("changed").getAsJsonArray();
+        boolean subjectchange = false;
+        boolean teacherchange = false;
+        boolean roomchange = false;
 
-		if (changes.size() != 0) {
+        if (!changes.isEmpty()) {
 
-			if (changes.toString().contains("subject")) {
-				subjectchange = true;
-			}
-			if (changes.toString().contains("teacher")) {
-				teacherchange = true;
-			}
-			if (changes.toString().contains("room")) {
-				roomchange = true;
-			}
+            if (changes.toString().contains("subject")) {
+                subjectchange = true;
+            }
+            if (changes.toString().contains("teacher")) {
+                teacherchange = true;
+            }
+            if (changes.toString().contains("room")) {
+                roomchange = true;
+            }
 
-		}
+        }
 
-		Cell subjectCell = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
-				(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-		Cell teacherCell = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
-				(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Cell subjectCell = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
+                (subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Cell teacherCell = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
+                (teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-		String teacherId = entry.get("teacher").getAsString();
-		TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
-		if (teacher != null) {
-			teacherCell.setLinkTitle(teacher.getDecoratedName());
-			teacherCell.setLinkURL("https://manos-dresden.de/lehrer");
-		}
+        String teacherId = entry.get("teacher").getAsString();
+        TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+        if (teacher != null) {
+            teacherCell.setLinkTitle(teacher.getDecoratedName());
+            teacherCell.setLinkURL("https://manos-dresden.de/lehrer");
+        }
 
-		Cell roomCell = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
-				(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Cell roomCell = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
+                (roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-		mess.addRow(subjectCell, teacherCell, roomCell);
+        mess.addRow(subjectCell, teacherCell, roomCell);
 
-		return mess;
+        return mess;
 
-	}
+    }
 
-	private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
+    private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
 
-		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
+        EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
-		String info = plan.get("info").toString();
+        String info = plan.get("info").toString();
 
-		info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
+        info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("]", "").trim();
 
-		builder.setTitle("Es gibt einen neuen Vertretungsplan für "
-				+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
+        builder.setTitle("Es gibt einen neuen Vertretungsplan für "
+                + plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
 
-		if (fienempty) {
-			builder.setTitle("**KEINE ÄNDERUNGEN :sob:**");
+        if (fienempty) {
+            builder.setTitle("**KEINE ÄNDERUNGEN :sob:**");
 
-			if (!(info.equalsIgnoreCase(""))) {
+            if (!(info.equalsIgnoreCase(""))) {
 
-				builder.addField("Sonstige Infos", info, false);
+                builder.addField("Sonstige Infos", info, false);
 
-			}
-		}
+            }
+        }
 
-		builder.setFooter("Stand vom ");
+        builder.setFooter("Stand vom ");
 
-		if (!(info.equalsIgnoreCase(""))) {
+        if (!(info.equalsIgnoreCase(""))) {
 
-			builder.addField("Sonstige Infos", info, false);
+            builder.addField("Sonstige Infos", info, false);
 
-		}
+        }
 
-		return builder;
-	}
+        return builder;
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private List<JsonObject> finalplancheck(JsonObject plan) {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private List<JsonObject> finalplancheck(JsonObject plan) {
 
-		Integer dbh = null;
-		List<JsonObject> finalentries = new ArrayList<>();
+        Integer dbh = null;
+        List<JsonObject> finalentries = new ArrayList<>();
 
-		if (plan == null) {
-			return null;
-		}
-		boolean synced;
+        if (plan == null) {
+            return null;
+        }
+        boolean synced;
 
-		synced = synchronizePlanDB(plan);
+        synced = synchronizePlanDB(plan);
 
-		List<JsonObject> getC = getyourC(plan);
-		if (getC == null) {
-			return null;
-		}
-		int h = getC.hashCode();
+        List<JsonObject> getC = getyourC(plan);
+        if (getC == null) {
+            return null;
+        }
+        int h = getC.hashCode();
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
+        try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
-			if (set.next()) {
+            if (set.next()) {
 
-				dbh = set.getInt("classEntrys");
+                dbh = set.getInt("classEntrys");
 
-			}
+            }
 
-			if (dbh != null) {
-				if (dbh != h || synced) {
+            if (dbh != null) {
+                if (dbh != h || synced) {
 
-					finalentries = getC;
+                    finalentries = getC;
 
-					String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-							.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-							.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-							.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", date);
+                    String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                            .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                            .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                            .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+                    LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", date);
 
-				} else {
-					return null;
+                } else {
+                    return null;
 
-				}
-			} else {
-				finalentries = getC;
-				String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-						.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-						.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-						.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-				LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", date,
-						finalentries.hashCode());
-			}
+                }
+            } else {
+                finalentries = getC;
+                String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                        .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                        .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                        .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+                LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", date,
+                        finalentries.hashCode());
+            }
 
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-		return finalentries;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+        return finalentries;
 
-	}
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private boolean synchronizePlanDB(JsonObject plan) {
-		if (plan != null) {
-			String dbdate = "";
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private boolean synchronizePlanDB(JsonObject plan) {
+        if (plan != null) {
+            String dbdate = "";
 
-			String onlinedate = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-					.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-					.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-					.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-			OffsetDateTime time = OffsetDateTime.now();
-			String realdate = "" + time.getDayOfMonth() + "."
-					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
+            String onlinedate = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                    .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                    .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                    .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+            OffsetDateTime time = OffsetDateTime.now();
+            String realdate = time.getDayOfMonth() + "."
+                    + time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
-			try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
-				if (next.next()) {
+            try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
+                if (next.next()) {
 
-					dbdate = next.getString("targetDate");
-				}
+                    dbdate = next.getString("targetDate");
+                }
 
-				if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
+                if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
 
-					LiteSQL.getdblog().info("Plan-DB-Sync");
+                    LiteSQL.getdblog().info("Plan-DB-Sync");
 
-					try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
+                    try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
 
-						if (old.next()) {
-							LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
-									old.getString("targetDate"), old.getInt("classEntrys"));
-							LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
-						}
-					}
-					return true;
-				}
-			} catch (SQLException e) {
-				log.error(e.getMessage(), e);
-			}
-		}
-		return false;
+                        if (old.next()) {
+                            LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
+                                    old.getString("targetDate"), old.getInt("classEntrys"));
+                            LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
+                        }
+                    }
+                    return true;
+                }
+            } catch (SQLException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return false;
 
-	}
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private List<JsonObject> getyourC(JsonObject obj) {
-		List<JsonObject> classentries = new ArrayList<>();
-		if (obj != null) {
-			JsonArray arr = obj.get("body").getAsJsonArray();
-			arr.forEach(element -> {
-				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
-				if (elem.contains("10b") || elem.equalsIgnoreCase("10a-10c/ Spw") || elem.equalsIgnoreCase("10a-10c")) {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private List<JsonObject> getyourC(JsonObject obj) {
+        List<JsonObject> classentries = new ArrayList<>();
+        if (obj != null) {
+            JsonArray arr = obj.get("body").getAsJsonArray();
+            arr.forEach(element -> {
+                String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
+                if (elem.contains("10b") || elem.equalsIgnoreCase("10a-10c/ Spw") || elem.equalsIgnoreCase("10a-10c")) {
 
-					classentries.add(element.getAsJsonObject());
+                    classentries.add(element.getAsJsonObject());
 
-				}
+                }
 
-			});
-			return classentries;
-		}
-		return null;
+            });
+            return classentries;
+        }
+        return null;
 
-	}
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private JsonObject getPlan() {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private JsonObject getPlan() {
 
-		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
-				new UsernamePasswordCredentials("manos", vplanpw));
+        final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
+                new UsernamePasswordCredentials("manos", vplanpw));
 
-		final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
+        final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
 
-		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
-				.build(); final CloseableHttpResponse response = httpclient.execute(httpget);) {
+        try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
+                .build(); final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
-			if (response.getStatusLine().getStatusCode() == 200) {
-				JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
-				return elem.getAsJsonObject();
-			}
-			return null;
+            if (response.getStatusLine().getStatusCode() == 200) {
+                JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
+                return elem.getAsJsonObject();
+            }
+            return null;
 
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-			return null;
-		}
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
 
-	}
+    }
 
 }

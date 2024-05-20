@@ -18,23 +18,13 @@ public class SpotifyInteractions {
     public SpotifyInteractions() {
 
         apienabled = false;
-
-        if (!initialize()) {
-            return;
-        }
-
         startfetchcycle();
 
     }
-
-    /**
-     * @return true if the api was successfully initialized
-     */
-    public boolean initialize() {
-
+    
+    public void initialize() {
         this.spotifyApi = new SpotifyApi.Builder().build();
         this.apienabled = true;
-        return true;
     }
 
     /**

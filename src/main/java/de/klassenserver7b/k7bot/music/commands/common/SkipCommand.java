@@ -40,7 +40,7 @@ public class SkipCommand implements ServerCommand {
     @Override
     public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-        if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)) {
             return;
         }
 

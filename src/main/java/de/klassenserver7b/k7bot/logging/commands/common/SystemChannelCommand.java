@@ -13,58 +13,58 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class SystemChannelCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String getHelp() {
-		return "Ändert den Channel für Systembenachrichtigungen (z.B. Logs für Einladungen oder gelöschte Nachrichten) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server Verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new_syschannel]";
-	}
+    @Override
+    public String getHelp() {
+        return "Ändert den Channel für Systembenachrichtigungen (z.B. Logs für Einladungen oder gelöschte Nachrichten) des Bots auf diesem Server.\n - kann nur von Personen mit der Berechtigung 'Server Verwalten' ausgeführt werden!\n - z.B. [prefix]syschannel [@new_syschannel]";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "syschannel" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"syschannel"};
+    }
 
-	@Override
-	public HelpCategories getCategory() {
-		return HelpCategories.GENERIC;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.GENERIC;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (m.hasPermission(Permission.MANAGE_SERVER)) {
+        if (m.hasPermission(Permission.MANAGE_SERVER)) {
 
-			if (!message.getMentions().getChannels(GuildMessageChannel.class).isEmpty()) {
+            if (!message.getMentions().getChannels(GuildMessageChannel.class).isEmpty()) {
 
-				GuildMessageChannel chan = message.getMentions().getChannels(GuildMessageChannel.class).get(0);
+                GuildMessageChannel chan = message.getMentions().getChannels(GuildMessageChannel.class).getFirst();
 
-				SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
-				sys.insertChannel(chan);
+                SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
+                sys.insertChannel(chan);
 
-				channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
+                channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();
 
-			} else {
-				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "syschannel [@new syschannel]", m);
-			}
+            } else {
+                SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "syschannel [@new syschannel]", m);
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

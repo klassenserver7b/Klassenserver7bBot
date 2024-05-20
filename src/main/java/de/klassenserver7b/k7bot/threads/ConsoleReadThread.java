@@ -31,12 +31,11 @@ public class ConsoleReadThread implements Runnable {
     private final Thread t;
     private final Logger log;
     private final BufferedReader reader;
-    private final InputStreamReader sysinr;
 
     public ConsoleReadThread() {
         log = LoggerFactory.getLogger(this.getClass());
 
-        sysinr = new InputStreamReader(System.in);
+        InputStreamReader sysinr = new InputStreamReader(System.in);
         reader = new BufferedReader(sysinr);
         t = new Thread(this, "ConsoleReadThread");
         t.start();
@@ -175,31 +174,31 @@ public class ConsoleReadThread implements Runnable {
     protected void addAIUser(String uid) {
         Long userid = Long.valueOf(uid);
         StableDiffusionCommand.addAIUser(userid);
-        log.info("successfully added " + uid + "to ai allowlist");
+        log.info("successfully added {}to ai allowlist", uid);
     }
 
     protected void removeAIUser(String uid) {
         Long userid = Long.valueOf(uid);
         StableDiffusionCommand.removeAIUser(userid);
-        log.info("successfully removed " + uid + "from ai allowlist");
+        log.info("successfully removed {}from ai allowlist", uid);
     }
 
     protected void disableCommandByStr(String name) {
         if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
-            log.info("successfully disabled " + name);
+            log.info("successfully disabled {}", name);
             return;
         }
 
-        log.warn("failed to disable " + name);
+        log.warn("failed to disable {}", name);
     }
 
     protected void enableCommandByStr(String name) {
         if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
-            log.info("successfully enabled " + name);
+            log.info("successfully enabled {}", name);
             return;
         }
 
-        log.warn("failed to enable " + name);
+        log.warn("failed to enable {}", name);
     }
 
 
@@ -211,6 +210,7 @@ public class ConsoleReadThread implements Runnable {
         }
     }
 
+    @SuppressWarnings("unused")
     protected static Set<Class<?>> getAllExtendedOrImplementedInterfacesRecursively(Class<?> clazz) {
 
         Set<Class<?>> res = new HashSet<>();

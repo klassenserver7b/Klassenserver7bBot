@@ -53,484 +53,411 @@ import java.util.List;
  */
 public class Stundenplan24Vplan implements LoopedEvent {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	private final List<String> classes;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final List<String> classes;
 
-	public Stundenplan24Vplan() {
-		classes = new ArrayList<>();
-	}
+    public Stundenplan24Vplan() {
+        classes = new ArrayList<>();
+    }
 
-	public Stundenplan24Vplan(String... klassen) {
-		this.classes = new ArrayList<>();
+    public Stundenplan24Vplan(String... klassen) {
+        this.classes = new ArrayList<>();
         Collections.addAll(this.classes, klassen);
-	}
+    }
 
-	public void registerKlassen(String... klassen) {
+    public void registerKlassen(String... klassen) {
         this.classes.addAll(Arrays.asList(klassen));
-	}
-
-	/**
-	 *
-	 * @param force
-	 * @param klasse
-	 * @param channel
-	 *
-	 * @since 1.15.0
-	 */
-	public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
-
-		try (MessageCreateData d = getVplanMessage(force, klasse)) {
-			if (d != null) {
-				channel.sendMessage(d).queue();
-			}
-		}
-
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public int checkforUpdates() {
-		for (String klasse : classes) {
-			vplanNotify(klasse);
-		}
-		return InternalStatusCodes.SUCCESS;
-	}
-
-	/**
-	 *
-	 * @param klasse
-	 *
-	 * @since 1.15.0
-	 */
-	public boolean vplanNotify(String klasse) {
-
-		try (MessageCreateData d = getVplanMessage(false, klasse)) {
-
-			if (d == null) {
-				return false;
-			}
-
-			Klassenserver7bbot.getInstance().getSubscriptionManager()
-					.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
-		}
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param force
-	 * @param klasse
-	 * @since 1.14.0
-	 * @return
-	 */
-	private MessageCreateData getVplanMessage(boolean force, String klasse) {
-
-		OffsetDateTime d = checkDate();
-		Document doc = read(d);
-
-		Element classPlan = getYourClass(doc, klasse);
-		boolean sendApproved = force || (doc != null && checkPlanChanges(doc, classPlan));
-
-		if (!sendApproved || doc == null) return null;
-
-		putInDB(doc);
-		String info = "";
-
-		if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
-			info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
-		}
-
-		log.info("sending Vplanmessage with following hash: " + classPlan.hashCode() + " and devmode = "
-				+ Klassenserver7bbot.getInstance().isDevMode());
-
-		EmbedBuilder embed = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
-
-		embed.setTitle("Es gibt einen neuen Stundenplan für "
-				+ doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
-		embed.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-
-		/*
-		 * TableMessage tablemess = new TableMessage(); tablemess.addHeadline("Stunde",
-		 * "Fach", "Lehrer", "Raum", "Info");
-		 *
-		 * NodeList lessons = classPlan.getElementsByTagName("Std");
-		 *
-		 * int limit = 6; int ges = lessons.getLength();
-		 *
-		 * if (lessons.getLength() < limit) { limit = lessons.getLength(); }
-		 *
-		 * for (int i = 0; i < limit; i++) { Element e = (Element) lessons.item(i);
-		 * appendLesson(e, tablemess);
-		 *
-		 * } TableMessage additionalmess = new TableMessage();
-		 * additionalmess.setColums(5);
-		 *
-		 * for (int i = limit; i < ges; i++) { Element e = (Element) lessons.item(i);
-		 * appendLesson(e, additionalmess);
-		 *
-		 * }
-		 *
-		 * tablemess.automaticLineBreaks(4); embed.setDescription("**Änderungen**\n"
-		 * + tablemess.build());
-		 *
-		 * boolean isextraembed = false;
-		 *
-		 * if (additionalmess.hasData()) { additionalmess.automaticLineBreaks(4);
-		 *
-		 * if (additionalmess.build().length() <= 1020) { embed.addField("",
-		 * additionalmess.build(), false); } else { isextraembed = true; } }
-		 */
-
-		if (!(info.equalsIgnoreCase(""))) {
-			embed.addField("Sonstige Infos", info, false);
-		}
-
-		LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
-
-		MessageCreateBuilder builder = new MessageCreateBuilder();
-		builder.setEmbeds(embed.build());
-
-		/*
-		 * if (isextraembed) {
-		 *
-		 * embed.clearFields(); embed.setFooter(null);
-		 *
-		 *
-		 * EmbedBuilder addbuild = EmbedUtils.getBuilderOf(Color.decode("#038aff"),
-		 * additionalmess.build());
-		 *
-		 * addbuild.setFooter("Stand vom " +
-		 * doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
-		 *
-		 * if (!(info.equalsIgnoreCase(""))) {
-		 *
-		 * addbuild.addField("Sonstige Infos", info, false);
-		 *
-		 * }
-		 *
-		 * builder.addEmbeds(addbuild.build());
-		 *
-		 * } else { builder.setEmbeds(embed.build()); }
-		 */
-
-		return builder.build();
-	}
-
-	private void putInDB(Document doc) {
+    }
 
-		NodeList stdList = doc.getElementsByTagName("Std");
+    /**
+     * @param force   true if the message should be sent regardless of changes
+     * @param klasse  the class to send the vplan for
+     * @param channel the channel to send the message to
+     * @since 1.15.0
+     */
+    public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
 
-		LiteSQL.onUpdate("DELETE FROM vplandata");
+        try (MessageCreateData d = getVplanMessage(force, klasse)) {
+            if (d != null) {
+                channel.sendMessage(d).queue();
+            }
+        }
 
-		for (int i = 0; i < stdList.getLength(); i++) {
+    }
 
-			Element n = (Element) stdList.item(i);
+    /**
+     *
+     */
+    @Override
+    public int checkforUpdates() {
+        for (String klasse : classes) {
+            vplanNotify(klasse);
+        }
+        return InternalStatusCodes.SUCCESS;
+    }
 
-			int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
-			String room = n.getElementsByTagName("Ra").item(0).getTextContent();
-			String teacher = n.getElementsByTagName("Le").item(0).getTextContent();
+    /**
+     * @param klasse the class to send the vplan for
+     * @since 1.15.0
+     */
+    public boolean vplanNotify(String klasse) {
 
-			if (room.contains("&amp;nbsp;") || room.contains("nbsp;") || room.isBlank()) {
-				continue;
-			}
-			LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room, teacher) VALUES(?, ?, ?)", lesson, room, teacher);
+        try (MessageCreateData d = getVplanMessage(false, klasse)) {
 
-		}
-	}
+            if (d == null) {
+                return false;
+            }
 
-	/**
-	 *
-	 * @param e
-	 * @param tablemess
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private TableMessage appendLesson(Element e, TableMessage tablemess) {
-		TableMessage ret;
+            Klassenserver7bbot.getInstance().getSubscriptionManager()
+                    .provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+        }
+        return true;
+    }
 
-		boolean subjectChanged = e.getElementsByTagName("Fa").item(0).hasAttributes();
-		boolean teacherChanged = e.getElementsByTagName("Le").item(0).hasAttributes();
-		boolean roomChanged = e.getElementsByTagName("Ra").item(0).hasAttributes();
-		String lesson = e.getElementsByTagName("St").item(0).getTextContent();
+    /**
+     * @param force  true if the message should be sent regardless of changes
+     * @param klasse the class to send the vplan for
+     * @return the message to send
+     * @since 1.14.0
+     */
+    private MessageCreateData getVplanMessage(boolean force, String klasse) {
 
-		if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
+        OffsetDateTime d = checkDate();
+        Document doc = read(d);
 
-			Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
-					(subjectChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-			Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
-					(teacherChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Element classPlan = getYourClass(doc, klasse);
+        boolean sendApproved = force || (doc != null && checkPlanChanges(doc, classPlan));
 
-			String teacherId = e.getElementsByTagName("Le").item(0).getTextContent();
-			TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+        if (!sendApproved || doc == null) return null;
 
-			if (teacher != null) {
-				teachercell.setLinkTitle(teacher.getDecoratedName());
-				teachercell.setLinkURL("https://manos-dresden.de/lehrer");
-			}
+        putInDB(doc);
+        String info = "";
 
-			Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
-					(roomChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        if (doc.getElementsByTagName("ZiZeile").getLength() != 0) {
+            info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
+        }
 
-			tablemess.addRow(lesson, subjectcell, teachercell, room);
+        log.info("sending Vplanmessage with following hash: {} and devmode = {}", classPlan.hashCode(), Klassenserver7bbot.getInstance().isDevMode());
 
-		} else {
+        EmbedBuilder embed = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
-			tablemess.addRow(lesson, Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+        embed.setTitle("Es gibt einen neuen Stundenplan für "
+                + doc.getElementsByTagName("DatumPlan").item(0).getTextContent() + " (" + klasse + ")");
+        embed.setFooter("Stand vom " + doc.getElementsByTagName("zeitstempel").item(0).getTextContent());
 
-		}
+        if (!(info.equalsIgnoreCase(""))) {
+            embed.addField("Sonstige Infos", info, false);
+        }
 
-		if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
+        LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", classPlan.getTextContent().hashCode());
 
-			tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
+        MessageCreateBuilder builder = new MessageCreateBuilder();
+        builder.setEmbeds(embed.build());
 
-		} else {
-			tablemess.addCell("   ");
-		}
+        return builder.build();
+    }
 
-		ret = tablemess;
+    private void putInDB(Document doc) {
 
-		return ret;
-	}
+        NodeList stdList = doc.getElementsByTagName("Std");
 
-	/**
-	 *
-	 * @param plan
-	 * @param classPlan
-	 * @return
-	 * @since 1.14.0
-	 */
-	private boolean checkPlanChanges(Document plan, Element classPlan) {
+        LiteSQL.onUpdate("DELETE FROM vplandata");
 
-		log.debug("PLAN DB CHECK");
+        for (int i = 0; i < stdList.getLength(); i++) {
 
-		Integer dbhash = null;
+            Element n = (Element) stdList.item(i);
 
-		if (plan == null || classPlan == null) {
-			return false;
-		}
+            int lesson = Integer.parseInt(n.getElementsByTagName("St").item(0).getTextContent());
+            String room = n.getElementsByTagName("Ra").item(0).getTextContent();
+            String teacher = n.getElementsByTagName("Le").item(0).getTextContent();
 
-		boolean synced = synchronizePlanDB(plan);
+            if (room.contains("&amp;nbsp;") || room.contains("nbsp;") || room.isBlank()) {
+                continue;
+            }
+            LiteSQL.onUpdate("INSERT INTO vplandata(lesson, room, teacher) VALUES(?, ?, ?)", lesson, room, teacher);
 
-		int planHash = classPlan.getTextContent().hashCode();
+        }
+    }
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
+    /**
+     * @param e         the element to append the lesson to
+     * @param tablemess the TableMessage to append the lesson to
+     * @return the appended TableMessage
+     */
+    @SuppressWarnings("unused")
+    private TableMessage appendLesson(Element e, TableMessage tablemess) {
+        TableMessage ret;
 
-			if (set.next()) {
+        boolean subjectChanged = e.getElementsByTagName("Fa").item(0).hasAttributes();
+        boolean teacherChanged = e.getElementsByTagName("Le").item(0).hasAttributes();
+        boolean roomChanged = e.getElementsByTagName("Ra").item(0).hasAttributes();
+        String lesson = e.getElementsByTagName("St").item(0).getTextContent();
 
-				dbhash = set.getInt("classEntrys");
+        if (!e.getElementsByTagName("Fa").item(0).getTextContent().equalsIgnoreCase("---")) {
 
-			}
+            Cell subjectcell = Cell.of(e.getElementsByTagName("Fa").item(0).getTextContent(),
+                    (subjectChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+            Cell teachercell = Cell.of(e.getElementsByTagName("Le").item(0).getTextContent(),
+                    (teacherChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-			String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
-			onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+            String teacherId = e.getElementsByTagName("Le").item(0).getTextContent();
+            TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
 
-			if (dbhash != null) {
+            if (teacher != null) {
+                teachercell.setLinkTitle(teacher.getDecoratedName());
+                teachercell.setLinkURL("https://manos-dresden.de/lehrer");
+            }
 
-				if (dbhash != planHash || synced) {
+            Cell room = Cell.of(e.getElementsByTagName("Ra").item(0).getTextContent(),
+                    (roomChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", onlinedate);
-					return true;
+            tablemess.addRow(lesson, subjectcell, teachercell, room);
 
-				}
-				return false;
-			}
-			LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", onlinedate, planHash);
+        } else {
 
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-		return true;
+            tablemess.addRow(lesson, Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
 
-	}
+        }
 
-	/**
-	 *
-	 * @param obj
-	 * @param clazz
-	 * @return
-	 * @since 1.14.0
-	 */
-	private Element getYourClass(Document obj, String clazz) {
+        if (!e.getElementsByTagName("If").item(0).getTextContent().equalsIgnoreCase("")) {
 
-		if (obj == null) {
-			return null;
-		}
-		NodeList nList = obj.getElementsByTagName("Kl");
+            tablemess.addCell(e.getElementsByTagName("If").item(0).getTextContent());
 
-		Element yourclass = null;
-		for (int i = 0; i < nList.getLength(); i++) {
+        } else {
+            tablemess.addCell("   ");
+        }
 
-			Node n = nList.item(i);
+        ret = tablemess;
 
-			if (n.getNodeType() == Node.ELEMENT_NODE) {
-				Element e = (Element) n;
+        return ret;
+    }
 
-				if (e.getElementsByTagName("Kurz").item(0).getTextContent().equalsIgnoreCase(clazz)) {
-					yourclass = e;
-					break;
-				}
+    /**
+     * @param plan      the plan to check
+     * @param classPlan the classplan to check
+     * @return true if the plan was changed
+     * @since 1.14.0
+     */
+    private boolean checkPlanChanges(Document plan, Element classPlan) {
 
-			}
+        log.debug("PLAN DB CHECK");
 
-		}
+        Integer dbhash = null;
 
-		return yourclass;
-	}
+        if (plan == null || classPlan == null) {
+            return false;
+        }
 
-	/**
-	 *
-	 * @param plan
-	 * @return
-	 * @since 1.14.0
-	 */
-	private boolean synchronizePlanDB(Document plan) {
-		if (plan == null) {
-			return false;
-		}
-		String dbdate = "";
+        boolean synced = synchronizePlanDB(plan);
 
-		String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
-		onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+        int planHash = classPlan.getTextContent().hashCode();
 
-		try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
+        try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
-			if (next.next()) {
-				dbdate = next.getString("targetDate");
-			}
+            if (set.next()) {
 
-			if (dbdate.equalsIgnoreCase(onlinedate)) {
-				return false;
-			}
+                dbhash = set.getInt("classEntrys");
 
-			LiteSQL.getdblog().info("Plan-DB-Sync");
+            }
 
-			try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
+            String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+            onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
 
-				if (old.next()) {
-					LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
-							old.getString("targetDate"), old.getInt("classEntrys"));
-					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
-				}
-			}
-			return true;
+            if (dbhash != null) {
 
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+                if (dbhash != planHash || synced) {
 
-		return false;
-
-	}
+                    LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", onlinedate);
+                    return true;
 
-	/**
-	 *
-	 * @return
-	 * @since 1.14.0
-	 */
-	private OffsetDateTime checkDate() {
-
-		OffsetDateTime now = OffsetDateTime.now();
-		int day = now.getDayOfWeek().getValue();
-
-		if (day >= 5) {
-			return now.plusDays(8 - day);
-		}
-
-		return now.plusDays(1);
-
-	}
-
-	/**
-	 *
-	 * @param date
-	 * @return
-	 * @since 1.14.0
-	 */
-	private Document read(@Nonnull OffsetDateTime date) {
-		if (date == null) {
-			log.error("DocumentReadError - date = null caused by\n", new NullPointerException());
-			return null;
-		}
-
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
-		try {
-
-			String xml = getVplanXML(date);
-
-			if (xml != null) {
-
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-
-				doc.getDocumentElement();
-				return doc;
-			}
-
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			log.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
-	/**
-	 *
-	 * @param date
-	 * @return
-	 * @since 1.14.0
-	 */
-	private String getVplanXML(OffsetDateTime date) {
-
-		final BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
-		credProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
-				new UsernamePasswordCredentials("schueler",
-						Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
-
-		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credProvider)
-				.build()) {
-
-			final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
-					+ Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("schoolID")
-					+ "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
-
-			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
-			httpclient.close(CloseMode.GRACEFUL);
-			return response;
-
-		} catch (HttpHostConnectException | HttpResponseException e1) {
-			log.debug("Vplan Connection failed!" + e1.getMessage());
-		} catch (IOException e) {
-			log.error("Vplan IO Exception - please check your connection and settings");
-			log.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public void shutdown() {
-		classes.clear();
-
-	}
-
-	@Override
-	public boolean restart() {
-		log.debug("restart requested");
-		return true;
-	}
-
-	@Override
-	public boolean isAvailable() {
-		return false;
-	}
-
-	@Override
-	public String getIdentifier() {
-		return "vplan";
-	}
+                }
+                return false;
+            }
+            LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", onlinedate, planHash);
+
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+        return true;
+
+    }
+
+    /**
+     * @param obj   the document to get the class from
+     * @param clazz the class to get
+     * @return the class element
+     * @since 1.14.0
+     */
+    private Element getYourClass(Document obj, String clazz) {
+
+        if (obj == null) {
+            return null;
+        }
+        NodeList nList = obj.getElementsByTagName("Kl");
+
+        Element yourclass = null;
+        for (int i = 0; i < nList.getLength(); i++) {
+
+            Node n = nList.item(i);
+
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) n;
+
+                if (e.getElementsByTagName("Kurz").item(0).getTextContent().equalsIgnoreCase(clazz)) {
+                    yourclass = e;
+                    break;
+                }
+
+            }
+
+        }
+
+        return yourclass;
+    }
+
+    /**
+     * @param plan the plan to synchronize
+     * @return true if the plan was synchronized
+     * @since 1.14.0
+     */
+    private boolean synchronizePlanDB(Document plan) {
+        if (plan == null) {
+            return false;
+        }
+        String dbdate = "";
+
+        String onlinedate = plan.getElementsByTagName("datei").item(0).getTextContent();
+        onlinedate = onlinedate.replaceAll("WPlanKl_", "").replaceAll(".xml", "");
+
+        try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
+
+            if (next.next()) {
+                dbdate = next.getString("targetDate");
+            }
+
+            if (dbdate.equalsIgnoreCase(onlinedate)) {
+                return false;
+            }
+
+            LiteSQL.getdblog().info("Plan-DB-Sync");
+
+            try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
+
+                if (old.next()) {
+                    LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
+                            old.getString("targetDate"), old.getInt("classEntrys"));
+                    LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
+                }
+            }
+            return true;
+
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return false;
+
+    }
+
+    /**
+     * @return the next date to check the vplan for
+     * @since 1.14.0
+     */
+    private OffsetDateTime checkDate() {
+
+        OffsetDateTime now = OffsetDateTime.now();
+        int day = now.getDayOfWeek().getValue();
+
+        if (day >= 5) {
+            return now.plusDays(8 - day);
+        }
+
+        return now.plusDays(1);
+
+    }
+
+    /**
+     * @param date the date to read the vplan for
+     * @return the document of the vplan
+     * @since 1.14.0
+     */
+    private Document read(@Nonnull OffsetDateTime date) {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+        try {
+
+            String xml = getVplanXML(date);
+
+            if (xml != null) {
+
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+
+                doc.getDocumentElement();
+                return doc;
+            }
+
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * @param date the date to get the vplan for
+     * @return the vplan as xml
+     * @since 1.14.0
+     */
+    private String getVplanXML(OffsetDateTime date) {
+
+        final BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
+        credProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
+                new UsernamePasswordCredentials("schueler",
+                        Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
+
+        try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credProvider)
+                .build()) {
+
+            final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
+                    + Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("schoolID")
+                    + "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
+
+            final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+            httpclient.close(CloseMode.GRACEFUL);
+            return response;
+
+        } catch (HttpHostConnectException | HttpResponseException e1) {
+            log.debug("Vplan Connection failed!{}", e1.getMessage());
+        } catch (IOException e) {
+            log.error("Vplan IO Exception - please check your connection and settings");
+            log.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void shutdown() {
+        classes.clear();
+
+    }
+
+    @Override
+    public boolean restart() {
+        log.debug("restart requested");
+        return true;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return false;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "vplan";
+    }
 
 }

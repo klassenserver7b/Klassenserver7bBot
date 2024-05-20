@@ -66,7 +66,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
 
         System.out.println(tracks.size());
 
-        return new BasicAudioPlaylist(playlistname, resolvedtracks, resolvedtracks.get(0), false);
+        return new BasicAudioPlaylist(playlistname, resolvedtracks, resolvedtracks.getFirst(), false);
     }
 
     private String getPlaylistname(String playlistId, SpotifyApi sapi) {
@@ -93,7 +93,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
 
         ArrayList<Track> ptracks = new ArrayList<>();
 
-        // Zweigeteiltges Abrufen der SongData für entweder Anzahl <=100 (verwendet nur
+        // Zweigeteiltges Abrufen der SongData für entweder Anzahl ≤100 (verwendet nur
         // erste Query); Anzahl % 100 == 0
 
         try {
@@ -101,7 +101,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
             // Abrufen wie viele Songs in Playlist und abrufen der ersten (max.100) Songs
             Paging<PlaylistTrack> playlisttracks = getplaylistitemsrequest.execute();
 
-            // berechnen wie oft angefragt werden muss um gesamte playlist abzurufen
+            // berechnen wie oft angefragt werden muss, um gesamte playlist abzurufen
             int times = (playlisttracks.getTotal() / 100);
 
             // Laden der Items und in YTquery list packen

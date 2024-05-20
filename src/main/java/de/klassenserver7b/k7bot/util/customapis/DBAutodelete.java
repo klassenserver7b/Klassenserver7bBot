@@ -30,7 +30,7 @@ public class DBAutodelete implements LoopedEvent {
         int status = LiteSQL.onUpdate("DELETE FROM messagelogs WHERE timestamp < ?", mindate);
 
         if (status >= 0) {
-            log.info("Removed " + status + " lines from messagelogs");
+            log.info("Removed {} lines from messagelogs", status);
         }
 
         return status;

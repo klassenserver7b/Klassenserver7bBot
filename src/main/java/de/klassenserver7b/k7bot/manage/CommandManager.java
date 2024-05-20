@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
@@ -118,9 +117,7 @@ public class CommandManager {
 
             message.delete().queue();
 
-            commandlog.info(
-                    "see next lines:\n\nMember: " + m.getEffectiveName() + " | \nGuild: " + channel.getGuild().getName()
-                            + " | \nChannel: " + channel.getName() + " | \nMessage: " + message.getContentRaw() + "\n");
+            commandlog.info("see next lines:\n\nMember: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n", m.getEffectiveName(), channel.getGuild().getName(), channel.getName(), message.getContentRaw());
 
             cmd.performCommand(m, channel, message);
 

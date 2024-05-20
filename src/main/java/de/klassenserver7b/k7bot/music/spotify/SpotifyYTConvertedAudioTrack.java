@@ -33,7 +33,7 @@ public class SpotifyYTConvertedAudioTrack extends DelegatedAudioTrack {
         BasicAudioPlaylist pl = (BasicAudioPlaylist) new YoutubeSearchMusicProvider().loadSearchMusicResult(
                 super.getInfo().author + " - " + super.getInfo().title,
                 SpotifyYTConvertedAudioTrack.this::buildTrackFromInfo);
-        YoutubeAudioTrack track = (YoutubeAudioTrack) pl.getTracks().get(0);
+        YoutubeAudioTrack track = (YoutubeAudioTrack) pl.getTracks().getFirst();
 
         track.process(executor);
 

@@ -7,25 +7,24 @@ import java.io.IOException;
 
 /**
  * @author K7
- *
  */
 public class GLAWrapper {
 
-	private GLACustomHttpManager httpManager = new GLACustomHttpManager();
+    private final GLACustomHttpManager httpManager = new GLACustomHttpManager();
 
-	/**
-	 *
-	 */
-	public GLAWrapper() {
-		super();
-	}
+    /**
+     *
+     */
+    public GLAWrapper() {
+        super();
+    }
 
-	public GLACustomSongSearch search(String query) throws IOException {
-		return new GLACustomSongSearch(this, query);
-	}
+    public GLACustomSongSearch search(String query) throws IOException {
+        return new GLACustomSongSearch(this, query);
+    }
 
-	public GLACustomHttpManager getHttpManager() {
-		return this.httpManager;
-	}
+    public GLACustomHttpManager getHttpManager() {
+        return this.httpManager;
+    }
 
 }

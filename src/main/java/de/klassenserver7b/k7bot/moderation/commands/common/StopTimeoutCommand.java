@@ -22,98 +22,96 @@ import java.util.concurrent.TimeUnit;
 
 public class StopTimeoutCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String getHelp() {
-		return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
-	}
+    @Override
+    public String getHelp() {
+        return "Enttimeoutet den angegebenen Nutzer.\n - kann nur von Mitgliedern mit der Berechtigung 'Mitglieder kicken' ausgeführt werden!\n - z.B. [prefix]stoptimeout @member";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "stoptimeout" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"stoptimeout"};
+    }
 
-	@Override
-	public HelpCategories getCategory() {
-		return HelpCategories.MODERATION;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MODERATION;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
-		List<Member> ment = message.getMentions().getMembers();
-		try {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+        List<Member> ment = message.getMentions().getMembers();
+        try {
 
-			channel.sendTyping().queue();
+            channel.sendTyping().queue();
 
-			if (m.hasPermission(Permission.MESSAGE_MANAGE)) {
-				if (ment.size() > 0) {
-					for (Member u : ment) {
-						stopTimeout(m, u, channel);
-					}
-				}
-			} else {
-				PermissionError.onPermissionError(m, channel);
-			}
-		}
-		catch (StringIndexOutOfBoundsException e) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "stoptimeout [@user]", m);
-		}
-	}
+            if (m.hasPermission(Permission.MESSAGE_MANAGE)) {
+                if (!ment.isEmpty()) {
+                    for (Member u : ment) {
+                        stopTimeout(m, u, channel);
+                    }
+                }
+            } else {
+                PermissionError.onPermissionError(m, channel);
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "stoptimeout [@user]", m);
+        }
+    }
 
-	public void stopTimeout(Member requester, Member u, GuildMessageChannel channel) {
+    public void stopTimeout(Member requester, Member u, GuildMessageChannel channel) {
 
-		StringBuilder strBuilder = new StringBuilder();
-		strBuilder.append("**User: **" + u.getAsMention() + "\n");
-		strBuilder.append("**Requester: **" + requester.getEffectiveName() + "\n");
-		
-		EmbedBuilder builder = EmbedUtils.getSuccessEmbed(strBuilder, channel.getGuild().getIdLong());
-		
-		builder.setTitle("@" + u.getEffectiveName() + " has been untimeouted");
-		builder.setFooter("Requested by @" + requester.getEffectiveName());
-		builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("**User: **").append(u.getAsMention()).append("\n");
+        strBuilder.append("**Requester: **").append(requester.getEffectiveName()).append("\n");
 
-		Guild guild = channel.getGuild();
-		GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
+        EmbedBuilder builder = EmbedUtils.getSuccessEmbed(strBuilder, channel.getGuild().getIdLong());
 
-		try {
-			u.removeTimeout().queue();
+        builder.setTitle("@" + u.getEffectiveName() + " has been untimeouted");
+        builder.setFooter("Requested by @" + requester.getEffectiveName());
+        builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
 
-			if (system != null) {
+        Guild guild = channel.getGuild();
+        GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
-				system.sendMessageEmbeds(builder.build()).queue();
+        try {
+            u.removeTimeout().queue();
 
-			}
+            if (system != null) {
 
-			if (system != null && system.getIdLong() != channel.getIdLong()) {
+                system.sendMessageEmbeds(builder.build()).queue();
 
-				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
+            }
 
-			}
+            if (system != null && system.getIdLong() != channel.getIdLong()) {
 
-			String action = "stoptimeout";
-			LiteSQL.onUpdate(
-					"INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
-					channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
-					requester.getEffectiveName(), action, "null", OffsetDateTime.now());
-		}
-		catch (HierarchyException e) {
-			PermissionError.onPermissionError(requester, channel);
-		}
-	}
+                channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(20L, TimeUnit.SECONDS);
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+            }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+            String action = "stoptimeout";
+            LiteSQL.onUpdate(
+                    "INSERT INTO modlogs(guildId, memberId, requesterId, memberName, requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                    channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
+                    requester.getEffectiveName(), action, "null", OffsetDateTime.now());
+        } catch (HierarchyException e) {
+            PermissionError.onPermissionError(requester, channel);
+        }
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
+
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 }

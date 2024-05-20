@@ -49,9 +49,7 @@ public class MemberLoggingListener extends ListenerAdapter {
 
         system.sendMessageEmbeds(embbuild.build()).queue();
 
-        if (def != null) {
-            def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
-        }
+        def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
     }
 
     @Override

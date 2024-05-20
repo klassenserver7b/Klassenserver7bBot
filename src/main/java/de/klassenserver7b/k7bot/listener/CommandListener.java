@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @author K7
  */
 public class CommandListener extends ListenerAdapter {
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -32,8 +31,9 @@ public class CommandListener extends ListenerAdapter {
 
                 case PRIVATE -> privateMessageRecieved(event, event.getMessage());
 
-                case CATEGORY, GROUP, UNKNOWN -> throw new IllegalStateException("Message from illegal ChannelType" + event.getChannel(),
-                        new Throwable().fillInStackTrace());
+                case CATEGORY, GROUP, UNKNOWN ->
+                        throw new IllegalStateException("Message from illegal ChannelType" + event.getChannel(),
+                                new Throwable().fillInStackTrace());
 
                 default -> {
                     try {

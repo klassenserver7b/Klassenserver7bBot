@@ -26,116 +26,111 @@ import java.util.List;
 
 public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
-	Logger log = LoggerFactory.getLogger(this.getClass());
+    final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(true).complete();
+        InteractionHook hook = event.deferReply(true).complete();
 
-		String path = event.getFullCommandName();
+        String path = event.getFullCommandName();
 
-		SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
+        SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
-		if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
-			hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
-					"You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
-					.build()).queue();
-			return;
-		}
+        if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
+            hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+                            "You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
+                    .build()).queue();
+            return;
+        }
 
-		if (path.equalsIgnoreCase("subscribe privatechannel")) {
+        if (path.equalsIgnoreCase("subscribe privatechannel")) {
 
-			try {
+            try {
 
-				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(
-						SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
-						event.getUser().openPrivateChannel().complete().getIdLong());
+                Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(
+                        SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
+                        event.getUser().openPrivateChannel().complete().getIdLong());
 
-				hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
-						.queue();
+                hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
+                        .queue();
 
-			} catch (Exception e) {
+            } catch (Exception e) {
 
-				log.error(e.getMessage(), e);
-				hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
-						"Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
-						.build()).queue();
+                log.error(e.getMessage(), e);
+                hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+                                "Could not open a private channel! please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
+                        .build()).queue();
 
-			}
+            }
 
-		} else {
-			GuildChannelUnion union = event.getOption("channel").getAsChannel();
-			SubscriptionDeliveryType delivery;
+        } else {
+            GuildChannelUnion union = event.getOption("channel").getAsChannel();
+            SubscriptionDeliveryType delivery;
 
-			if (!Klassenserver7bbot.getInstance().isDevMode()) {
-				switch (union.getType()) {
+            if (!Klassenserver7bbot.getInstance().isDevMode()) {
+                switch (union.getType()) {
 
-				case TEXT -> {
-					delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
-					break;
-				}
-				case NEWS -> {
-					delivery = SubscriptionDeliveryType.NEWS;
-				}
-				default -> {
-					delivery = SubscriptionDeliveryType.UNKNOWN;
-					hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
-							"Can't create subscription in " + union.getType() + "!\nPlease use a Text or News Channel")
-							.build()).queue();
-				}
-				}
-			} else {
+                    case TEXT -> delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
+                    case NEWS -> delivery = SubscriptionDeliveryType.NEWS;
+                    default -> {
+                        delivery = SubscriptionDeliveryType.UNKNOWN;
+                        hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+                                        "Can't create subscription in " + union.getType() + "!\nPlease use a Text or News Channel")
+                                .build()).queue();
+                    }
+                }
+            } else {
 
-				delivery = SubscriptionDeliveryType.CANARY;
+                delivery = SubscriptionDeliveryType.CANARY;
 
-			}
+            }
 
-			if (delivery != SubscriptionDeliveryType.UNKNOWN) {
+            if (delivery != SubscriptionDeliveryType.UNKNOWN) {
 
-				Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
-						union.getIdLong());
-				hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
-						.queue();
-			}
+                Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
+                        union.getIdLong());
+                hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
+                        .queue();
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@NotNull
-	@Override
-	public SlashCommandData getCommandData() {
+    @NotNull
+    @Override
+    public SlashCommandData getCommandData() {
 
-		List<Choice> choices = new ArrayList<>();
+        List<Choice> choices = new ArrayList<>();
 
-		for (SubscriptionTarget t : SubscriptionTarget.values()) {
+        for (SubscriptionTarget t : SubscriptionTarget.values()) {
 
-			if (t == SubscriptionTarget.UNKNOWN) {
-				continue;
-			}
+            if (t == SubscriptionTarget.UNKNOWN) {
+                continue;
+            }
 
-			choices.add(new Choice(t.toString(), t.toString()));
+            choices.add(new Choice(t.toString(), t.toString()));
 
-		}
+        }
 
-		SubcommandData GuildMessageChannelsub = new SubcommandData("messagechannel",
-				"Use this if you want to recieve your messages in a Text-Channel")
-				.addOptions(
-						new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
-								.setRequired(true)
-								.setChannelTypes(ChannelType.TEXT, ChannelType.NEWS, ChannelType.FORUM))
-				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
+        SubcommandData GuildMessageChannelsub = new SubcommandData("messagechannel",
+                "Use this if you want to recieve your messages in a Text-Channel")
+                .addOptions(
+                        new OptionData(OptionType.CHANNEL, "channel", "The channel where the message should be send to")
+                                .setRequired(true)
+                                .setChannelTypes(ChannelType.TEXT, ChannelType.NEWS, ChannelType.FORUM))
+                .addOptions(new OptionData(OptionType.STRING, "target",
+                        "The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
-		SubcommandData privatechannelsub = new SubcommandData("privatechannel",
-				"Use this if you want to recieve your messages in a private-Channel")
-				.addOptions(new OptionData(OptionType.STRING, "target",
-						"The target the subscription should check for updates").addChoices(choices).setRequired(true));
+        SubcommandData privatechannelsub = new SubcommandData("privatechannel",
+                "Use this if you want to recieve your messages in a private-Channel")
+                .addOptions(new OptionData(OptionType.STRING, "target",
+                        "The target the subscription should check for updates").addChoices(choices).setRequired(true));
 
-		return Commands.slash("subscribe", "Addes a subscription for the given type in the given channel.")
-				.addSubcommands(GuildMessageChannelsub, privatechannelsub)
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
-	}
+        return Commands.slash("subscribe", "Addes a subscription for the given type in the given channel.")
+                .addSubcommands(GuildMessageChannelsub, privatechannelsub)
+                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE));
+    }
 
 }

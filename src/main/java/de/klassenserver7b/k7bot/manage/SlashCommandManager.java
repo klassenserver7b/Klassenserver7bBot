@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SlashCommandManager {
 
-    public ConcurrentHashMap<String, TopLevelSlashCommand> commands;
+    public final ConcurrentHashMap<String, TopLevelSlashCommand> commands;
     public final Logger commandlog = LoggerFactory.getLogger("Commandlog");
 
     public SlashCommandManager() {
@@ -65,6 +65,7 @@ public class SlashCommandManager {
             for (TopLevelSlashCommand command : registerschedule) {
                 SlashCommandData cdata = command.getCommandData();
                 this.commands.put(cdata.getName(), command);
+                //noinspection ResultOfMethodCallIgnored
                 commup.addCommands(cdata);
             }
 
@@ -82,9 +83,7 @@ public class SlashCommandManager {
                 guild = event.getGuild().getName();
             }
 
-            commandlog.info("SlashCommand - see next lines:\n\nUser: " + event.getUser().getName() + " | \nGuild: "
-                    + guild + " | \nChannel: " + event.getChannel().getName() + " | \nMessage: "
-                    + event.getCommandString() + "\n");
+            commandlog.info("SlashCommand - see next lines:\n\nUser: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n", event.getUser().getName(), guild, event.getChannel().getName(), event.getCommandString());
 
             LiteSQL.onUpdate(
                     "INSERT INTO slashcommandlog (command, guildId, userId, timestamp, commandstring) VALUES (?, ?, ?, ?, ?)",

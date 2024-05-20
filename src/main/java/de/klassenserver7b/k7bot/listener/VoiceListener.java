@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VoiceListener extends ListenerAdapter {
-    public List<Long> tempchannels = new ArrayList<>();
+    public final List<Long> tempchannels = new ArrayList<>();
 
     private final Logger log;
 
@@ -36,21 +35,20 @@ public class VoiceListener extends ListenerAdapter {
         AudioChannelUnion oldchan = event.getChannelLeft();
         AudioChannelUnion newchan = event.getChannelJoined();
 
-        if (oldchan == null) {
-            onJoin(newchan, event.getMember());
-            return;
+        switch ((oldchan == null ? 0 : 1) | (newchan == null ? 0 : 2)) {
+            case 1 -> onLeave(oldchan);
+            case 2 -> onJoin(newchan, event.getMember());
+            case 3 -> onMove(oldchan, newchan, event.getMember());
         }
-        if (newchan == null) {
-            onLeave(oldchan);
-            return;
-        }
-
-        onLeave(oldchan);
-        onJoin(newchan, event.getMember());
 
     }
 
-    public void onJoin(AudioChannel audioChannel, Member member) {
+    protected void onMove(AudioChannel oldChan, AudioChannel newChan, Member member) {
+        onLeave(oldChan);
+        onJoin(newChan, member);
+    }
+
+    protected void onJoin(AudioChannel audioChannel, Member member) {
         if (audioChannel.getIdLong() == 841212695259775027L) {
             VoiceChannel voice = (VoiceChannel) audioChannel;
             Category cat = voice.getParentCategory();
@@ -74,14 +72,13 @@ public class VoiceListener extends ListenerAdapter {
             LiteSQL.onUpdate("INSERT INTO createdprivatevcs(guildId, channelId) VALUES(?, ?);",
                     vc.getGuild().getIdLong(), vc.getIdLong());
 
-            Klassenserver7bbot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: "
-                    + member.getEffectiveName() + " with the following Channel-ID: " + vc.getIdLong());
+            Klassenserver7bbot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: {} with the following Channel-ID: {}", member.getEffectiveName(), vc.getIdLong());
         }
     }
 
-    public void onLeave(AudioChannel audioChannel) {
+    protected void onLeave(AudioChannel audioChannel) {
 
-        if (audioChannel.getMembers().size() == 0) {
+        if (audioChannel.getMembers().isEmpty()) {
             try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM createdprivatevcs;")) {
 
                 while (set.next()) {
@@ -97,8 +94,7 @@ public class VoiceListener extends ListenerAdapter {
                     LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ? AND guildId=?;",
                             audioChannel.getIdLong(), audioChannel.getGuild().getIdLong());
                     this.tempchannels.clear();
-                    Klassenserver7bbot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: "
-                            + audioChannel.getName() + " and the following ID: " + audioChannel.getIdLong());
+                    Klassenserver7bbot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: {} and the following ID: {}", audioChannel.getName(), audioChannel.getIdLong());
                 }
 
             } catch (SQLException e) {

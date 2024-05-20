@@ -124,7 +124,7 @@ public enum LoggingOptions {
      *
      * @param id The identifier for the logging option.
      */
-    private LoggingOptions(int id) {
+    LoggingOptions(int id) {
         this.id = id;
     }
 

@@ -10,7 +10,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
@@ -27,9 +26,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author K7
  */
-public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlashCommand {
+public abstract class GenericPlayCommand implements ServerCommand {
 
     private final Logger log;
     private final AudioPlayerManager apm;
@@ -58,7 +55,6 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
         AudioSourceManagers.registerRemoteSources(apm);
     }
 
-    @Override
     public void performSlashCommand(SlashCommandInteraction event) {
 
         InteractionHook hook = event.deferReply(true).complete();
@@ -157,8 +153,7 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
     protected int loadURL(String url, MusicController controller, String vcname) {
         url = formatQuerry(url);
 
-        log.info("Bot startet searching a track: no current track -> new Track(channelName = " + vcname + ", url = "
-                + url + ")");
+        log.info("Bot startet searching a track: no current track -> new Track(channelName = {}, url = {})", vcname, url);
 
         try {
             apm.loadItem(url, generateAudioLoadResult(controller, url));
@@ -175,7 +170,8 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
         for (int i = 0; i < attachments.size(); i++) {
 
             try (Attachment song = attachments.get(i)) {
-                if (!song.getFileExtension().matches(SUPPORTED_AUDIO_FORMATS)) {
+                String fileExtension = song.getFileExtension();
+                if (fileExtension == null || !fileExtension.matches(SUPPORTED_AUDIO_FORMATS)) {
                     err = true;
                     continue;
                 }
@@ -250,12 +246,6 @@ public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlash
     @Override
     public void enableCommand() {
         // Nothing to do here
-    }
-
-    @NotNull
-    @Override
-    public SlashCommandData getCommandData() {
-        return null;
     }
 
     @Override

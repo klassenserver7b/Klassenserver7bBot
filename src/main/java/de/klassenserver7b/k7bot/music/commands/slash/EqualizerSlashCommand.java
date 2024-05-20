@@ -28,62 +28,62 @@ import java.util.List;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class EqualizerSlashCommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		String preset = event.getOption("preset").getAsString();
-		InteractionHook hook = event.deferReply(true).complete();
+        String preset = event.getOption("preset").getAsString();
+        InteractionHook hook = event.deferReply(true).complete();
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(hook), event.getMember())) {
-			return;
-		}
+        assert event.getMember() != null;
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(hook), event.getMember())) {
+            return;
+        }
 
-		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
-				.getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
+        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
+                .getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
 
-		EqualizerPreset[] vals = EqualizerPreset.values();
+        EqualizerPreset[] vals = EqualizerPreset.values();
 
-		for (EqualizerPreset val : vals) {
-			if (val.toString().equalsIgnoreCase(preset)) {
+        for (EqualizerPreset val : vals) {
+            if (val.toString().equalsIgnoreCase(preset)) {
 
-				BotEqualizer.setEQMode(val, effman);
+                BotEqualizer.setEQMode(val, effman);
 
-				hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.green,
-						"Equalizer was sucessful set to preset '" + preset + "'", event.getGuild().getIdLong()).build())
-						.queue();
-				return;
-			}
-		}
+                hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.green,
+                                "Equalizer was sucessful set to preset '" + preset + "'", event.getGuild().getIdLong()).build())
+                        .queue();
+                return;
+            }
+        }
 
-		hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.red,
-				"Something went wrong! Please try again and contact the bot support if this keeps happening.",
-				event.getGuild().getIdLong()).build()).queue();
+        hook.sendMessageEmbeds(EmbedUtils.getBuilderOf(Color.red,
+                "Something went wrong! Please try again and contact the bot support if this keeps happening.",
+                event.getGuild().getIdLong()).build()).queue();
 
-	}
+    }
 
-	@Override
-	public @NotNull SlashCommandData getCommandData() {
+    @Override
+    public @NotNull SlashCommandData getCommandData() {
 
-		List<Choice> choices = new ArrayList<>();
+        List<Choice> choices = new ArrayList<>();
 
-		EqualizerPreset[] vals = EqualizerPreset.values();
+        EqualizerPreset[] vals = EqualizerPreset.values();
 
-		for (EqualizerPreset val : vals) {
+        for (EqualizerPreset val : vals) {
 
-			if (val != EqualizerPreset.UNKNOWN) {
-				choices.add(new Choice(val.toString(), val.toString()));
-			}
-		}
+            if (val != EqualizerPreset.UNKNOWN) {
+                choices.add(new Choice(val.toString(), val.toString()));
+            }
+        }
 
-		return Commands.slash("equalizer", "used to set up the equalizer of the bot.")
-				.addOptions(new OptionData(OptionType.STRING, "preset", "please select an equalizer preset.")
-						.addChoices(choices).setRequired(true))
-				.setGuildOnly(true)
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.VOICE_CONNECT));
-	}
+        return Commands.slash("equalizer", "used to set up the equalizer of the bot.")
+                .addOptions(new OptionData(OptionType.STRING, "preset", "please select an equalizer preset.")
+                        .addChoices(choices).setRequired(true))
+                .setGuildOnly(true)
+                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.VOICE_CONNECT));
+    }
 
 }

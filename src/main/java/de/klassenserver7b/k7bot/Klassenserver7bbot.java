@@ -19,6 +19,7 @@ import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
 import de.klassenserver7b.k7bot.util.TeacherDB;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -81,7 +82,11 @@ public class Klassenserver7bbot {
             return;
         }
 
-        initializeBot();
+        if (!initializeBot()) {
+            logger.error("Bot couldn't be initialized - EXITING");
+            System.exit(1);
+        }
+
         awaitJDAReady();
 
         runShutdown();
@@ -130,6 +135,7 @@ public class Klassenserver7bbot {
             shardMgr = buildBot(token, canaryToken, shardc);
         } catch (IllegalArgumentException e) {
             invalidConfigExit("Couldn't start Bot! - EXITING", 1, e);
+            return false;
         }
 
         propMgr.checkAPIProps();
@@ -217,7 +223,6 @@ public class Klassenserver7bbot {
         this.playerutil = new AudioPlayerUtil();
 
         this.lyricsapi = new LyricsClient("Genius");
-        // this.lyricsapiold = new GLA();
         this.lyricsapiold = new GLAWrapper();
 
         this.spotifyinteractions = new SpotifyInteractions();
@@ -238,6 +243,7 @@ public class Klassenserver7bbot {
 
         manager.getConfiguration().setFilterHotSwapEnabled(true);
         manager.registerSourceManager(new SpotifyAudioSourceManager());
+        manager.registerSourceManager(new YoutubeAudioSourceManager());
         manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(manager);
 
@@ -253,11 +259,10 @@ public class Klassenserver7bbot {
         shardMgr.getShards().forEach(jda -> {
 
             try {
-                logger.debug("Awaiting jda ready for shard: " + jda.getShardInfo());
+                logger.debug("Awaiting jda ready for shard: {}", jda.getShardInfo());
                 jda.awaitReady();
             } catch (InterruptedException e) {
-                logger.info("could not start shardInfo: " + jda.getShardInfo() + " and Self-Username :"
-                        + jda.getSelfUser().getName());
+                logger.info("could not start shardInfo: {} and Self-Username :{}", jda.getShardInfo(), jda.getSelfUser().getName());
                 logger.error(e.getMessage(), e);
             }
 
@@ -295,12 +300,11 @@ public class Klassenserver7bbot {
             }
 
             if (code != 0) {
-                logger.warn(
-                        futures.get(future).getClass().getSimpleName() + " failed to initialize, ExitCode: " + code);
+                logger.warn("{} failed to initialize, ExitCode: {}", futures.get(future).getClass().getSimpleName(), code);
                 continue;
             }
 
-            logger.info(futures.get(future).getClass().getSimpleName() + " successfully initialized");
+            logger.info("{} successfully initialized", futures.get(future).getClass().getSimpleName());
         }
 
     }
@@ -369,7 +373,7 @@ public class Klassenserver7bbot {
             return g.getSelfMember().getEffectiveName();
         }
 
-        return Klassenserver7bbot.getInstance().getShardManager().getShards().get(0).getSelfUser().getEffectiveName();
+        return Klassenserver7bbot.getInstance().getShardManager().getShards().getFirst().getSelfUser().getEffectiveName();
     }
 
 

@@ -40,18 +40,19 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
         File decr = downloadTrack(super.getIdentifier());
         decr.deleteOnExit();
 
-        log.info("Downloaded spotifytrack " + super.getIdentifier() + " to " + decr.getAbsolutePath());
+        log.info("Downloaded spotifytrack {} to {}", super.getIdentifier(), decr.getAbsolutePath());
         try (SeekableInputStream stream = new LocalSeekableInputStream(decr)) {
             new Mp3AudioTrack(trackInfo, stream).process(executor);
         }
 
+        //noinspection ResultOfMethodCallIgnored
         decr.delete();
 
     }
 
     protected File downloadTrack(String identifier) throws IOException, InterruptedException {
 
-        log.info("Tempdir: " + sasm.getTempdir().getAbsolutePath());
+        log.info("Tempdir: {}", sasm.getTempdir().getAbsolutePath());
 
         String pathstr = new File("").getAbsolutePath() + "/resources/spotify-dl";
 
@@ -61,7 +62,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
                 .inheritIO().start().waitFor();
 
         if (exitCode != 0) {
-            log.error("Spotify-DL exited with code " + exitCode);
+            log.error("Spotify-DL exited with code {}", exitCode);
             return null;
         }
 

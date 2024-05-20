@@ -70,9 +70,9 @@ public abstract class LoggingConfigDBHandler {
     /**
      * Toggles the key and returns the new state of the {@link LoggingOptions};
      *
-     * @param option
-     * @param guildId
-     * @return
+     * @param option  the option to toggle
+     * @param guildId the guild to toggle the option for
+     * @return the new state of the option
      */
     public static boolean toggleOption(LoggingOptions option, long guildId) {
 

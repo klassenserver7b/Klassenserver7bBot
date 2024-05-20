@@ -21,128 +21,126 @@ import java.util.Date;
 
 /**
  * @author K7
- *
  */
+@SuppressWarnings("BusyWait")
 public class TokenFetchThread implements Runnable {
 
-	private Thread t;
-	private final Logger log;
-	private long expires;
-	private static TokenFetchThread INSTANCE;
-	private int errorcount;
-	private int errorstage;
+    private Thread t;
+    private final Logger log;
+    private long expires;
+    private static TokenFetchThread INSTANCE;
+    private int errorcount;
+    private int errorstage;
 
-	/**
-	 *
-	 */
-	private TokenFetchThread() {
+    /**
+     *
+     */
+    private TokenFetchThread() {
 
-		errorcount = 0;
-		errorstage = 1;
-		INSTANCE = this;
-		log = LoggerFactory.getLogger(this.getClass());
-		t = new Thread(this, "Spotify_Token_Fetch");
-		t.start();
+        errorcount = 0;
+        errorstage = 1;
+        INSTANCE = this;
+        log = LoggerFactory.getLogger(this.getClass());
+        t = new Thread(this, "Spotify_Token_Fetch");
+        t.start();
 
-	}
+    }
 
-	public void restart() {
+    public void restart() {
 
-		t.interrupt();
+        t.interrupt();
 
-		t = new Thread(this, "Spotify_Token_Fetch");
-		log.info("Fetchthread restarted");
-		t.start();
+        t = new Thread(this, "Spotify_Token_Fetch");
+        log.info("Fetchthread restarted");
+        t.start();
 
-	}
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		if (Klassenserver7bbot.getInstance().isInExit()) {
-			return;
-		}
+        if (Klassenserver7bbot.getInstance().isInExit()) {
+            return;
+        }
 
-		while (!Klassenserver7bbot.getInstance().isInExit() && !t.isInterrupted()) {
+        while (!Klassenserver7bbot.getInstance().isInExit() && !t.isInterrupted()) {
 
-			if (!(this.expires >= new Date().getTime() - 30000)) {
-				refreshToken();
-				log.debug("spotify_authcode_refresh");
-			}
-			try {
-				Thread.sleep(29000);
-			}
-			catch (InterruptedException e) {
-				log.info("Sleep Thread interrupted");
-			}
-		}
+            if (!(this.expires >= new Date().getTime() - 30000)) {
+                refreshToken();
+                log.debug("spotify_authcode_refresh");
+            }
+            try {
+                //noinspection BusyWait
+                Thread.sleep(29000);
+            } catch (InterruptedException e) {
+                log.info("Sleep Thread interrupted");
+            }
+        }
 
-	}
+    }
 
-	public void shutdown() {
+    public void shutdown() {
 
-		if (t != null && !t.isInterrupted()) {
-			t.interrupt();
-			INSTANCE = null;
-		}
+        if (t != null && !t.isInterrupted()) {
+            t.interrupt();
+            INSTANCE = null;
+        }
 
-	}
+    }
 
-	/**
-	 *
-	 */
-	public void refreshToken() {
+    /**
+     *
+     */
+    public void refreshToken() {
 
-		String url = "https://open.spotify.com/get_access_token";
+        String url = "https://open.spotify.com/get_access_token";
 
-		try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
+        try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
 
-			final HttpGet httpget = new HttpGet(url);
+            final HttpGet httpget = new HttpGet(url);
 
-			httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-			final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
+            final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
 
-			JsonElement elem = JsonParser.parseString(response);
+            JsonElement elem = JsonParser.parseString(response);
 
-			httpclient.close();
+            httpclient.close();
 
-			Klassenserver7bbot.getInstance().getSpotifyinteractions().getSpotifyApi()
-					.setAccessToken(elem.getAsJsonObject().get("accessToken").getAsString());
-			expires = elem.getAsJsonObject().get("accessTokenExpirationTimestampMs").getAsLong();
-			errorcount = 0;
-			errorstage = 1;
+            Klassenserver7bbot.getInstance().getSpotifyinteractions().getSpotifyApi()
+                    .setAccessToken(elem.getAsJsonObject().get("accessToken").getAsString());
+            expires = elem.getAsJsonObject().get("accessTokenExpirationTimestampMs").getAsLong();
+            errorcount = 0;
+            errorstage = 1;
 
-		}
-		catch (HttpHostConnectException e1) {
-			log.warn("Invalid response from " + url);
-			timeoutFetch();
+        } catch (HttpHostConnectException e1) {
+            log.warn("Invalid response from {}", url);
+            timeoutFetch();
 
-		}
-		catch (IOException | JsonSyntaxException e) {
-			log.error(e.getMessage(), e);
-			timeoutFetch();
+        } catch (IOException | JsonSyntaxException e) {
+            log.error(e.getMessage(), e);
+            timeoutFetch();
 
-		}
-	}
+        }
+    }
 
-	protected void timeoutFetch() {
-		errorcount++;
+    protected void timeoutFetch() {
+        errorcount++;
 
-		if (errorcount >= 10) {
-			long add = 120000L * errorstage;
-			expires = new Date().getTime() + add;
-			log.warn("TokenFetch failed - retrying in " + (add / 1000) + "s");
-			errorstage++;
-		}
-	}
+        if (errorcount >= 10) {
+            long add = 120000L * errorstage;
+            expires = new Date().getTime() + add;
+            log.warn("TokenFetch failed - retrying in {}s", add / 1000);
+            errorstage++;
+        }
+    }
 
-	public static TokenFetchThread getINSTANCE() {
-		if (INSTANCE != null) {
-			return INSTANCE;
-		}
+    public static TokenFetchThread getINSTANCE() {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        }
 
-		return INSTANCE = new TokenFetchThread();
-	}
+        return INSTANCE = new TokenFetchThread();
+    }
 
 }

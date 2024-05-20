@@ -3,13 +3,13 @@ package de.klassenserver7b.k7bot.listener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -36,7 +36,7 @@ public class AutoRickroll extends ListenerAdapter {
 
         AudioChannel vc = event.getChannelJoined();
         assert vc != null;
-        
+
         MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
         AudioManager manager = vc.getGuild().getAudioManager();

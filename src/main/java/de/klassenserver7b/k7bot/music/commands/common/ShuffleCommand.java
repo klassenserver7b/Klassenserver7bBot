@@ -18,54 +18,53 @@ import java.awt.*;
 
 public class ShuffleCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String getHelp() {
-		String help = "Spielt die aktuelle Playlist in zufälliger Reihenfolge.";
-		return help;
-	}
+    @Override
+    public String getHelp() {
+        return "Spielt die aktuelle Playlist in zufälliger Reihenfolge.";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "shuffle", "random" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"shuffle", "random"};
+    }
 
-	@Override
-	public HelpCategories getCategory() {
-		return HelpCategories.MUSIC;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
-			return;
-		}
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)) {
+            return;
+        }
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
 
-		controller.getQueue().shuffle();
-		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#A537FD"), "playlist shuffled",
-				channel.getGuild().getIdLong());
+        controller.getQueue().shuffle();
+        EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#A537FD"), "playlist shuffled",
+                channel.getGuild().getIdLong());
 
-		channel.sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("U+1F500")).queue();
-	}
+        channel.sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("U+1F500")).queue();
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

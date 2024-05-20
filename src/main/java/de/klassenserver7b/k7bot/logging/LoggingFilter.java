@@ -85,20 +85,31 @@ public class LoggingFilter extends ListenerAdapter {
      */
     private void propagateEvent(@NotNull GenericEvent event) {
 
-        if (event instanceof GenericGuildEvent channelEvent && checkAndUnblock(channelEvent.getGuild().getIdLong()))
-            return;
-        if (event instanceof GenericEmojiEvent channelEvent && checkAndUnblock(channelEvent.getEmoji().getIdLong()))
-            return;
-        if (event instanceof GenericRoleEvent channelEvent && checkAndUnblock(channelEvent.getRole().getIdLong()))
-            return;
-        if (event instanceof GenericMessageEvent channelEvent && checkAndUnblock(channelEvent.getMessageIdLong()))
-            return;
-        if (event instanceof GenericChannelEvent channelEvent && checkAndUnblock(channelEvent.getChannel().getIdLong()))
-            return;
-        if (event instanceof GenericThreadEvent channelEvent && checkAndUnblock(channelEvent.getThread().getIdLong()))
-            return;
-        if (event instanceof GenericUserEvent channelEvent && checkAndUnblock(channelEvent.getUser().getIdLong()))
-            return;
+        switch (event) {
+            case GenericGuildEvent channelEvent when checkAndUnblock(channelEvent.getGuild().getIdLong()) -> {
+                return;
+            }
+            case GenericEmojiEvent channelEvent when checkAndUnblock(channelEvent.getEmoji().getIdLong()) -> {
+                return;
+            }
+            case GenericRoleEvent channelEvent when checkAndUnblock(channelEvent.getRole().getIdLong()) -> {
+                return;
+            }
+            case GenericMessageEvent channelEvent when checkAndUnblock(channelEvent.getMessageIdLong()) -> {
+                return;
+            }
+            case GenericChannelEvent channelEvent when checkAndUnblock(channelEvent.getChannel().getIdLong()) -> {
+                return;
+            }
+            case GenericThreadEvent channelEvent when checkAndUnblock(channelEvent.getThread().getIdLong()) -> {
+                return;
+            }
+            case GenericUserEvent channelEvent when checkAndUnblock(channelEvent.getUser().getIdLong()) -> {
+                return;
+            }
+            default -> {
+            }
+        }
 
         for (EventListener listener : listeners) {
             listener.onEvent(event);

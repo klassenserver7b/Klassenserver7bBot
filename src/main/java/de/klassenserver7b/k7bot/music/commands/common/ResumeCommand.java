@@ -16,59 +16,58 @@ import java.util.concurrent.TimeUnit;
 
 public class ResumeCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String getHelp() {
-		String help = "Setzt den aktuellen Track fort.";
-		return help;
-	}
+    @Override
+    public String getHelp() {
+        return "Setzt den aktuellen Track fort.";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "resume" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"resume"};
+    }
 
-	@Override
-	public HelpCategories getCategory() {
-		return HelpCategories.MUSIC;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
-			return;
-		}
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)) {
+            return;
+        }
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
 
-		AudioPlayer player = controller.getPlayer();
-		MusicUtil.updateChannel(channel);
-		if (player.isPaused()) {
-			MusicUtil.updateChannel(channel);
-			player.setPaused(false);
-			channel.sendMessage(":arrow_forward: resumed").queue();
-		} else {
-			channel.sendMessage("player is already playing!" + m.getAsMention()).complete().delete().queueAfter(10L,
-					TimeUnit.SECONDS);
-		}
+        AudioPlayer player = controller.getPlayer();
+        MusicUtil.updateChannel(channel);
+        if (player.isPaused()) {
+            MusicUtil.updateChannel(channel);
+            player.setPaused(false);
+            channel.sendMessage(":arrow_forward: resumed").queue();
+        } else {
+            channel.sendMessage("player is already playing!" + m.getAsMention()).complete().delete().queueAfter(10L,
+                    TimeUnit.SECONDS);
+        }
 
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 }
