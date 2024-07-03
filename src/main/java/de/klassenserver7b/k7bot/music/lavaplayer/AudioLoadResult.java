@@ -109,7 +109,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult failed to load the requested item. - error: {}", exception.getLocalizedMessage());
+        Klassenserver7bbot.getInstance().getMainLogger().info(" - error: {}", exception.getLocalizedMessage());
         EmbedBuilder builder = EmbedUtils.getErrorEmbed(exception.getMessage(), controller.getGuild().getIdLong());
         MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
     }
