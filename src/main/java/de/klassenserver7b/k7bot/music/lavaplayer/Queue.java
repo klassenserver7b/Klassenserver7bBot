@@ -129,7 +129,7 @@ public class Queue {
     public void replace(AudioTrack track) {
 
         TrackScheduler.next = true;
-        queuelist.add(0, track);
+        queuelist.addFirst(track);
         next(track);
         TrackScheduler.next = false;
 

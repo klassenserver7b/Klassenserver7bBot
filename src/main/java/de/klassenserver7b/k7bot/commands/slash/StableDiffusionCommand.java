@@ -65,12 +65,8 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
         limits = new HashMap<>();
 
         allowedUsers.add(Klassenserver7bbot.getInstance().getOwnerId());
-        Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L).loadMembers().onSuccess(members -> members.forEach(memb -> {
-            allowedUsers.add(memb.getUser().getIdLong());
-        }));
-        Klassenserver7bbot.getInstance().getShardManager().getGuildById(850697874147770368L).loadMembers().onSuccess(members -> members.forEach(memb -> {
-            allowedUsers.add(memb.getUser().getIdLong());
-        }));
+        Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
+        Klassenserver7bbot.getInstance().getShardManager().getGuildById(850697874147770368L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
     }
 
     @Override
