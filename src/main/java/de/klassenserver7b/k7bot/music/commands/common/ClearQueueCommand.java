@@ -6,6 +6,7 @@ import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -42,6 +43,8 @@ public class ClearQueueCommand implements ServerCommand {
         MusicUtil.updateChannel(channel);
         Queue queue = controller.getQueue();
         queue.clearQueue();
+
+        MusicUtil.sendEmbed(guildid, EmbedUtils.getSuccessEmbed("Queue cleared"));
     }
 
     @Override

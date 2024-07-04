@@ -128,9 +128,8 @@ public class Queue {
 
     public void replace(AudioTrack track) {
 
-        clearQueue();
         TrackScheduler.next = true;
-        queuelist.add(track);
+        queuelist.add(0, track);
         next(track);
         TrackScheduler.next = false;
 
@@ -138,10 +137,11 @@ public class Queue {
 
     public void replace(AudioPlaylist playlist) {
 
-        clearQueue();
         TrackScheduler.next = true;
+        List<AudioTrack> pl = playlist.getTracks();
+        pl.addAll(queuelist);
 
-        queuelist = playlist.getTracks();
+        queuelist = pl;
 
         next(playlist.getTracks().getFirst());
         TrackScheduler.next = false;
