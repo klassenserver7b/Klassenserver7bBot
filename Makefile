@@ -1,4 +1,4 @@
-default: package
+default: clean package
 	
 clean:
 	mvn clean
@@ -18,8 +18,8 @@ start:
 stop:
 	sudo systemctl stop k7bot
 	
-startb: default start
+startb: clean package copy start
 	
-restartb: package copy restart
+restartb: clean package copy restart
 
 release: clean package
