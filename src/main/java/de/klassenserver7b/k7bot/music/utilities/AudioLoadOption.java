@@ -19,9 +19,14 @@ public enum AudioLoadOption {
     NEXT(1),
 
     /**
-     * replace the current track with this track
+     * replaceTrack the current track with this track
      */
-    REPLACE(2);
+    REPLACE(2),
+
+    /**
+     * replaceTrack the current track with this track and clear the queue
+     */
+    REPLACE_QUEUE(3);
 
     private final int id;
 

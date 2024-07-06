@@ -126,7 +126,7 @@ public class Queue {
 
     }
 
-    public void replace(AudioTrack track) {
+    public void replaceTrack(AudioTrack track) {
 
         TrackScheduler.next = true;
         queuelist.addFirst(track);
@@ -135,7 +135,7 @@ public class Queue {
 
     }
 
-    public void replace(AudioPlaylist playlist) {
+    public void replacePlaylist(AudioPlaylist playlist) {
 
         TrackScheduler.next = true;
         List<AudioTrack> pl = playlist.getTracks();

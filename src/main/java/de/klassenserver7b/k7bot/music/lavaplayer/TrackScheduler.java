@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.music.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -24,47 +23,49 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
 
-        if (!SkipCommand.onskip) {
-
-            long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
-
-            MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
-            Queue queue = controller.getQueue();
-
-            AudioTrackInfo info = track.getInfo();
-
-            SongJson jsinfo = null;
-            if (track instanceof YoutubeAudioTrack) {
-                jsinfo = queue.getCurrentSongData();
-            }
-
-            String author = (jsinfo == null ? info.author : jsinfo.getAuthorString());
-            String title = (jsinfo == null ? info.title : jsinfo.getTitle());
-
-            EmbedBuilder builder = EmbedUtils.getSuccessEmbed(" Jetzt läuft: " + title);
-
-            long sekunden = info.length / 1000L;
-            long minuten = sekunden / 60L;
-            long stunden = minuten / 60L;
-            minuten %= 60L;
-            sekunden %= 60L;
-
-            String url = info.uri;
-
-            if (!(track instanceof LocalAudioTrack)) {
-                builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
-            } else {
-                builder.addField("Name", author + " - " + title, false);
-            }
-            builder.addField("Länge: ",
-                    info.isStream ? "LiveStream"
-                            : (((stunden > 0L) ? (stunden + "h ") : "") + ((minuten > 0L) ? (minuten + "min ") : "")
-                            + sekunden + "s"),
-                    true);
-
-            MusicUtil.sendIconEmbed(guildid, builder, track);
-
+        if (SkipCommand.onskip) {
+            return;
         }
+
+        long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
+
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
+        Queue queue = controller.getQueue();
+
+        AudioTrackInfo info = track.getInfo();
+
+        SongJson jsinfo = null;
+        if (track instanceof YoutubeAudioTrack) {
+            jsinfo = queue.getCurrentSongData();
+        }
+
+        String author = (jsinfo == null ? info.author : jsinfo.getAuthorString());
+        String title = (jsinfo == null ? info.title : jsinfo.getTitle());
+
+        EmbedBuilder builder = EmbedUtils.getSuccessEmbed(" Jetzt läuft: " + title);
+
+        long sekunden = info.length / 1000L;
+        long minuten = sekunden / 60L;
+        long stunden = minuten / 60L;
+        minuten %= 60L;
+        sekunden %= 60L;
+
+        String url = info.uri;
+
+        if (!(track instanceof LocalAudioTrack)) {
+            builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
+        } else {
+            builder.addField("Name", author + " - " + title, false);
+        }
+        builder.addField("Länge: ",
+                info.isStream ? "LiveStream"
+                        : (((stunden > 0L) ? (stunden + "h ") : "") + ((minuten > 0L) ? (minuten + "min ") : "")
+                        + sekunden + "s"),
+                true);
+
+        MusicUtil.sendIconEmbed(guildid, builder, track);
+
+
     }
 
     @Override
