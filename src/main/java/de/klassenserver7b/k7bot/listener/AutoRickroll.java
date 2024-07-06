@@ -48,7 +48,7 @@ public class AutoRickroll extends ListenerAdapter {
 
         if (player.getPlayingTrack() == null) {
 
-            if (!queue.isemptyQueueList()) {
+            if (!queue.isQueueListEmpty()) {
                 queue.clearQueue();
             }
             manager.openAudioConnection(vc);
@@ -58,7 +58,7 @@ public class AutoRickroll extends ListenerAdapter {
 
         } else {
 
-            if (!queue.isemptyQueueList()) {
+            if (!queue.isQueueListEmpty()) {
                 queue.clearQueue();
             }
 

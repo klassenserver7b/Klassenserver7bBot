@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
-import de.klassenserver7b.k7bot.music.commands.common.SkipCommand;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -22,10 +21,8 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-
-        if (SkipCommand.onskip) {
-            return;
-        }
+        
+        TrackScheduler.next = false;
 
         long guildid = Klassenserver7bbot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());
 
@@ -94,7 +91,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
         } else {
 
-            if (queue.isemptyQueueList() && !next && !queue.isLooped()) {
+            if (queue.isQueueListEmpty() && !next && !queue.isLooped()) {
 
                 player.stopTrack();
                 manager.closeAudioConnection();

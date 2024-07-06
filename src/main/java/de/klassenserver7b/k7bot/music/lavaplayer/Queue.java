@@ -34,62 +34,59 @@ public class Queue {
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
-    public boolean isemptyQueueList() {
+    public boolean isQueueListEmpty() {
         return this.queuelist.isEmpty();
     }
 
+    public boolean skip(int amount) {
+        if (amount < 1) {
+            return false;
+        }
+
+        if (amount > this.queuelist.size()) {
+            clearQueue();
+            return next(this.controller.getPlayer().getPlayingTrack());
+        }
+
+        for (int i = 0; i < amount; i++) {
+            this.queuelist.removeFirst();
+        }
+
+        return true;
+    }
+
     public boolean next(AudioTrack currentTrack) {
+
+        TrackScheduler.next = true;
 
         AudioPlayer player = this.controller.getPlayer();
 
         AudioTrack track;
 
-        if (this.queuelist.size() > 1) {
+        if (this.queuelist.isEmpty()) {
 
-            track = this.queuelist.removeFirst();
-
-            if (track != null) {
-
-                logNewTrack(track);
-                player.playTrack(track);
-
-                return true;
-
+            if (!this.islooped) {
+                return false;
             }
 
-        } else if (!this.queuelist.isEmpty()) {
+            if (this.looplist.isEmpty()) {
 
-            if (this.islooped) {
-
-                TrackScheduler.next = true;
-                track = this.queuelist.removeFirst();
-
+                track = currentTrack.makeClone();
                 logNewTrack(track);
                 player.playTrack(track);
+                return true;
 
+            } else {
                 this.queuelist = this.looplist;
-                TrackScheduler.next = false;
-                return true;
-
             }
-            TrackScheduler.next = true;
-            track = this.queuelist.removeFirst();
 
-            logNewTrack(track);
-            player.playTrack(track);
-
-            TrackScheduler.next = false;
-
-            return true;
-
-        } else if (this.islooped) {
-
-            track = currentTrack.makeClone();
-            player.playTrack(track);
-
-            logNewTrack(track);
         }
-        return false;
+
+        track = this.queuelist.removeFirst();
+        logNewTrack(track);
+        player.playTrack(track);
+
+        return true;
     }
 
     public void logNewTrack(AudioTrack track) {
