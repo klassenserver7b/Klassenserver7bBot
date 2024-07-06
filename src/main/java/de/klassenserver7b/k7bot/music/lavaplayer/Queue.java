@@ -48,9 +48,7 @@ public class Queue {
             return next(this.controller.getPlayer().getPlayingTrack());
         }
 
-        for (int i = 0; i < amount; i++) {
-            this.queuelist.removeFirst();
-        }
+        queuelist.subList(0, amount).clear();
 
         return true;
     }
