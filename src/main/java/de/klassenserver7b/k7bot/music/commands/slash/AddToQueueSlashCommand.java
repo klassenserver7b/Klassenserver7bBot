@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
@@ -23,40 +23,41 @@ import java.util.ArrayList;
  */
 public class AddToQueueSlashCommand extends GenericPlayCommand implements SubSlashCommand {
 
-	@NotNull
+    @NotNull
     @Override
-	public SubcommandData getSubCommandData() {
-		ArrayList<Choice> targets = new ArrayList<>();
-		for (SupportedPlayQueries q : SupportedPlayQueries.values()) {
-			targets.add(new Choice(q.toString(), q.getId()));
-		}
-		OptionData target = new OptionData(OptionType.INTEGER, "target", "from where the song should be loaded")
-				.addChoices(targets).setRequired(true);
+    public SubcommandData getSubCommandData() {
 
-		OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
-				.setRequired(true);
+        ArrayList<Choice> targets = new ArrayList<>();
+        for (SupportedPlayQueries q : SupportedPlayQueries.values()) {
+            targets.add(new Choice(q.toString(), q.getId()));
+        }
+        OptionData target = new OptionData(OptionType.INTEGER, "target", "from where the song should be loaded")
+                .addChoices(targets).setRequired(true);
 
-		return new SubcommandData("addtoqueue", "appends the selected AudioItem to the queue").addOptions(target, url);
-	}
+        OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
+                .setRequired(true);
 
-	@Override
-	public String getSubPath() {
-		return "addtoqueue";
-	}
+        return new SubcommandData("addtoqueue", "appends the selected AudioItem to the queue").addOptions(target, url);
+    }
 
-	@Override
-	public String gethelp() {
-		return null;
-	}
+    @Override
+    public String getSubPath() {
+        return "addtoqueue";
+    }
 
-	@Override
-	protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
-		return new AudioLoadResult(controller, url, AudioLoadOption.APPEND);
-	}
+    @Override
+    public String getHelp() {
+        return null;
+    }
 
-	@Override
-	protected GenericPlayCommand getChildClass() {
-		return this;
-	}
+    @Override
+    protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
+        return new AudioLoadResult(controller, url, AudioLoadOption.APPEND);
+    }
+
+    @Override
+    protected GenericPlayCommand getChildClass() {
+        return this;
+    }
 
 }

@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.Cell;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.TableMessage;
+import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -36,380 +37,353 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *
  * @author K7
  * @deprecated use {@link de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan
- *             VplanNEW_XML instead}
+ * VplanNEW_XML instead}
  */
 @Deprecated
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_MANOS_OLD {
 
-	private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
-	private String vplanpw;
+    private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
+    private final String vplanpw;
 
-	public VPlan_MANOS_OLD(String pw) {
-		vplanpw = pw;
-	}
+    public VPlan_MANOS_OLD(String pw) {
+        vplanpw = pw;
+    }
 
-	/**
-	 *
-	 * @param force
-	 * @param klasse
-	 * @param channel
-	 *
-	 * @since 1.15.0
-	 */
-	public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
+    /**
+     * @param force   if true, the message will be sent regardless of the current state
+     * @param klasse  the class to send the message to
+     * @param channel the channel to send the message to
+     * @since 1.15.0
+     */
+    public void sendVplanToChannel(boolean force, String klasse, GuildMessageChannel channel) {
 
-		try (MessageCreateData d = getVplanMessage()) {
-			if (d != null) {
-				channel.sendMessage(d).queue();
-			}
-		}
+        try (MessageCreateData d = getVplanMessage()) {
+            if (d != null) {
+                channel.sendMessage(d).queue();
+            }
+        }
 
-	}
+    }
 
-	/**
-	 *
-	 * @param klasse
-	 *
-	 * @since 1.15.0
-	 */
-	public void VplanNotify(String klasse) {
+    /**
+     * @param klasse the class to send the message to
+     * @since 1.15.0
+     */
+    public void VplanNotify(String klasse) {
 
-		try (MessageCreateData d = getVplanMessage()) {
-			if (d != null) {
-				Klassenserver7bbot.getInstance().getSubscriptionManager()
-						.provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
-			}
-		}
-	}
+        try (MessageCreateData d = getVplanMessage()) {
+            if (d != null) {
+                Klassenserver7bbot.getInstance().getSubscriptionManager()
+                        .provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
+            }
+        }
+    }
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private MessageCreateData getVplanMessage() {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private MessageCreateData getVplanMessage() {
 
-		JsonObject plan = getPlan();
+        JsonObject plan = getPlan();
 
-		List<JsonObject> fien = finalplancheck(plan);
+        List<JsonObject> fien = finalplancheck(plan);
 
-		if (fien == null) {
-			return null;
-		}
+        if (fien == null) {
+            return null;
+        }
 
-		if (log != null) {
-			log.debug("sending Vplanmessage with following hash: " + fien.hashCode() + " and devmode = "
-					+ Klassenserver7bbot.getInstance().isDevMode());
-		}
+        if (log != null) {
+            log.debug("sending Vplanmessage with following hash: {} and devmode = {}", fien.hashCode(), Klassenserver7bbot.getInstance().isDevMode());
+        }
 
-		EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
+        EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
 
-		if (!fien.isEmpty()) {
+        if (!fien.isEmpty()) {
 
-			TableMessage tablemess = buildMessage(fien);
+            TableMessage tablemess = buildMessage(fien);
 
-			builder.setDescription("**Änderungen**\n" + tablemess.build());
+            builder.setDescription("**Änderungen**\n" + tablemess.build());
 
-		}
+        }
 
-		LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", fien.hashCode());
+        LiteSQL.onUpdate("UPDATE vplannext SET classEntrys = ?;", fien.hashCode());
 
-		return new MessageCreateBuilder().setEmbeds(builder.build()).build();
+        return new MessageCreateBuilder().setEmbeds(builder.build()).build();
 
-	}
+    }
 
-	private TableMessage buildMessage(List<JsonObject> fien) {
+    /**
+     * @param fien the list of entries to build the message from
+     * @return the built message
+     */
+    private TableMessage buildMessage(List<JsonObject> fien) {
 
-		TableMessage tablemess = new TableMessage();
-		tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
+        TableMessage tablemess = new TableMessage();
+        tablemess.addHeadline("Stunde", "Fach", "Lehrer", "Raum", "Info");
 
-		for (JsonObject entry : fien) {
+        for (JsonObject entry : fien) {
 
-			tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
+            tablemess.addCell(entry.get("lesson").getAsString().replaceAll("\"", ""));
 
-			if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
+            if (!entry.get("subject").toString().equalsIgnoreCase("\"---\"")) {
 
-				tablemess = appendSubject(tablemess, entry);
+                appendSubject(tablemess, entry);
 
-			} else {
+            } else {
 
-				tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
+                tablemess.addRow(Cell.of("AUSFALL", Cell.STYLE_BOLD), "---", "---");
 
-			}
+            }
 
-			if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
+            if (!entry.get("info").toString().equalsIgnoreCase("\"\"")) {
 
-				tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
+                tablemess.addCell(entry.get("info").getAsString().replaceAll("\"", ""));
 
-			} else {
-				tablemess.addCell("   ");
-			}
+            } else {
+                tablemess.addCell("   ");
+            }
 
-		}
+        }
 
-		tablemess.automaticLineBreaks(4);
+        tablemess.automaticLineBreaks(4);
 
-		return tablemess;
+        return tablemess;
 
-	}
+    }
 
-	private TableMessage appendSubject(TableMessage mess, JsonObject entry) {
+    private TableMessage appendSubject(TableMessage mess, JsonObject entry) {
 
-		JsonArray changes = entry.get("changed").getAsJsonArray();
-		boolean subjectchange = false;
-		boolean teacherchange = false;
-		boolean roomchange = false;
+        JsonArray changes = entry.get("changed").getAsJsonArray();
+        boolean subjectchange = false;
+        boolean teacherchange = false;
+        boolean roomchange = false;
 
-		if (changes.size() != 0) {
+        if (!changes.isEmpty()) {
 
-			if (changes.toString().contains("subject")) {
-				subjectchange = true;
-			}
-			if (changes.toString().contains("teacher")) {
-				teacherchange = true;
-			}
-			if (changes.toString().contains("room")) {
-				roomchange = true;
-			}
+            if (changes.toString().contains("subject")) {
+                subjectchange = true;
+            }
+            if (changes.toString().contains("teacher")) {
+                teacherchange = true;
+            }
+            if (changes.toString().contains("room")) {
+                roomchange = true;
+            }
 
-		}
+        }
 
-		Cell subject = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
-				(subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
-		Cell teacher = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
-				(teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Cell subjectCell = Cell.of(entry.get("subject").getAsString().replaceAll("\"", ""),
+                (subjectchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+        Cell teacherCell = Cell.of(entry.get("teacher").getAsString().replaceAll("\"", ""),
+                (teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-		StringBuilder strbuild = new StringBuilder();
-		JsonElement elem = entry.get("teacher");
+        String teacherId = entry.get("teacher").getAsString();
+        TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+        if (teacher != null) {
+            teacherCell.setLinkTitle(teacher.getDecoratedName());
+            teacherCell.setLinkURL("https://manos-dresden.de/lehrer");
+        }
 
-		if (elem != null) {
-			JsonElement teachelem = Klassenserver7bbot.getInstance().getTeacherList()
-					.get(elem.getAsString().replaceAll("\"", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+        Cell roomCell = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
+                (roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
-			if (teachelem != null) {
+        mess.addRow(subjectCell, teacherCell, roomCell);
 
-				JsonObject teach = teachelem.getAsJsonObject();
+        return mess;
 
-				String gender = teach.get("gender").getAsString();
-				if (gender.equalsIgnoreCase("female")) {
-					strbuild.append("Frau ");
-				} else if (gender.equalsIgnoreCase("male")) {
-					strbuild.append("Herr ");
-				}
+    }
 
-				if (teach.get("is_doctor").getAsBoolean()) {
+    private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
 
-					strbuild.append("Dr. ");
+        EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
-				}
+        String info = plan.get("info").toString();
 
-				strbuild.append(teach.get("full_name").getAsString().replaceAll("\"", ""));
+        info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("]", "").trim();
 
-			}
-		}
+        builder.setTitle("Es gibt einen neuen Vertretungsplan für "
+                + plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
 
-		teacher.setLinkTitle(strbuild.toString().trim());
-		teacher.setLinkURL("https://manos-dresden.de/lehrer");
+        if (fienempty) {
+            builder.setTitle("**KEINE ÄNDERUNGEN :sob:**");
 
-		Cell room = Cell.of(entry.get("room").getAsString().replaceAll("\"", ""),
-				(roomchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
+            if (!(info.equalsIgnoreCase(""))) {
 
-		mess.addRow(subject, teacher, room);
+                builder.addField("Sonstige Infos", info, false);
 
-		return mess;
+            }
+        }
 
-	}
+        builder.setFooter("Stand vom ");
 
-	private EmbedBuilder buildEmbed(boolean fienempty, JsonObject plan) {
+        if (!(info.equalsIgnoreCase(""))) {
 
-		EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
+            builder.addField("Sonstige Infos", info, false);
 
-		String info = plan.get("info").toString();
+        }
 
-		info = info.replaceAll("\"", "").replaceAll("\\[", "").replaceAll("\\]", "").trim();
+        return builder;
+    }
 
-		builder.setTitle("Es gibt einen neuen Vertretungsplan für "
-				+ plan.get("head").getAsJsonObject().get("title").getAsString() + "\n");
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private List<JsonObject> finalplancheck(JsonObject plan) {
 
-		if (fienempty) {
-			builder.setTitle("**KEINE ÄNDERUNGEN :sob:**");
+        Integer dbh = null;
+        List<JsonObject> finalentries = new ArrayList<>();
 
-			if (!(info.equalsIgnoreCase(""))) {
+        if (plan == null) {
+            return null;
+        }
+        boolean synced;
 
-				builder.addField("Sonstige Infos", info, false);
+        synced = synchronizePlanDB(plan);
 
-			}
-		}
+        List<JsonObject> getC = getyourC(plan);
+        if (getC == null) {
+            return null;
+        }
+        int h = getC.hashCode();
 
-		builder.setFooter("Stand vom ");
+        try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
 
-		if (!(info.equalsIgnoreCase(""))) {
+            if (set.next()) {
 
-			builder.addField("Sonstige Infos", info, false);
+                dbh = set.getInt("classEntrys");
 
-		}
+            }
 
-		return builder;
-	}
+            if (dbh != null) {
+                if (dbh != h || synced) {
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private List<JsonObject> finalplancheck(JsonObject plan) {
+                    finalentries = getC;
 
-		Integer dbh = null;
-		List<JsonObject> finalentries = new ArrayList<>();
+                    String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                            .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                            .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                            .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+                    LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", date);
 
-		if (plan == null) {
-			return null;
-		}
-		boolean synced;
+                } else {
+                    return null;
 
-		synced = synchronizePlanDB(plan);
+                }
+            } else {
+                finalentries = getC;
+                String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                        .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                        .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                        .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+                LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", date,
+                        finalentries.hashCode());
+            }
 
-		List<JsonObject> getC = getyourC(plan);
-		if (getC == null) {
-			return null;
-		}
-		int h = getC.hashCode();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+        return finalentries;
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT classEntrys FROM vplannext;")) {
+    }
 
-			if (set.next()) {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private boolean synchronizePlanDB(JsonObject plan) {
+        if (plan != null) {
+            String dbdate = "";
 
-				dbh = set.getInt("classEntrys");
+            String onlinedate = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
+                    .replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
+                    .replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
+                    .replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
+            OffsetDateTime time = OffsetDateTime.now();
+            String realdate = time.getDayOfMonth() + "."
+                    + time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
 
-			}
+            try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
+                if (next.next()) {
 
-			if (dbh != null) {
-				if (dbh != h || synced) {
+                    dbdate = next.getString("targetDate");
+                }
 
-					finalentries = getC;
+                if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
 
-					String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-							.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-							.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-							.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-					LiteSQL.onUpdate("UPDATE vplannext SET targetDate = ?;", date);
+                    LiteSQL.getdblog().info("Plan-DB-Sync");
 
-				} else {
-					return null;
+                    try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
 
-				}
-			} else {
-				finalentries = getC;
-				String date = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-						.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-						.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-						.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-				LiteSQL.onUpdate("INSERT INTO vplannext(targetDate, classEntrys) VALUES(?, ?);", date,
-						finalentries.hashCode());
-			}
+                        if (old.next()) {
+                            LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
+                                    old.getString("targetDate"), old.getInt("classEntrys"));
+                            LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
+                        }
+                    }
+                    return true;
+                }
+            } catch (SQLException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return false;
 
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-		return finalentries;
+    }
 
-	}
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private List<JsonObject> getyourC(JsonObject obj) {
+        List<JsonObject> classentries = new ArrayList<>();
+        if (obj != null) {
+            JsonArray arr = obj.get("body").getAsJsonArray();
+            arr.forEach(element -> {
+                String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
+                if (elem.contains("10b") || elem.equalsIgnoreCase("10a-10c/ Spw") || elem.equalsIgnoreCase("10a-10c")) {
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private boolean synchronizePlanDB(JsonObject plan) {
-		if (plan != null) {
-			String dbdate = "";
+                    classentries.add(element.getAsJsonObject());
 
-			String onlinedate = plan.get("head").getAsJsonObject().get("title").getAsString().replaceAll(" ", "")
-					.replaceAll("\\(B-Woche\\)", "").replaceAll("\\(A-Woche\\)", "").replaceAll(",", "")
-					.replaceAll("Montag", "").replaceAll("Dienstag", "").replaceAll("Mittwoch", "")
-					.replaceAll("Donnerstag", "").replaceAll("Freitag", "").toLowerCase();
-			OffsetDateTime time = OffsetDateTime.now();
-			String realdate = "" + time.getDayOfMonth() + "."
-					+ time.getMonth().getDisplayName(TextStyle.FULL, Locale.GERMAN).toLowerCase() + time.getYear();
+                }
 
-			try (ResultSet next = LiteSQL.onQuery("SELECT targetDate FROM vplannext;")) {
-				if (next.next()) {
+            });
+            return classentries;
+        }
+        return null;
 
-					dbdate = next.getString("targetDate");
-				}
+    }
 
-				if (!(dbdate.equalsIgnoreCase(onlinedate)) && dbdate.equalsIgnoreCase(realdate)) {
+    /**
+     * See {@link VPlan_MANOS_OLD}
+     */
+    @DeprecatedSince(value = "1.14.0")
+    private JsonObject getPlan() {
 
-					LiteSQL.getdblog().info("Plan-DB-Sync");
+        final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
+                new UsernamePasswordCredentials("manos", vplanpw));
 
-					try (ResultSet old = LiteSQL.onQuery("SELECT * FROM vplannext;")) {
+        final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
 
-						if (old.next()) {
-							LiteSQL.onUpdate("UPDATE vplancurrent SET targetDate = ?, classEntrys = ?;",
-									old.getString("targetDate"), old.getInt("classEntrys"));
-							LiteSQL.onUpdate("UPDATE vplannext SET targetDate = '', classEntrys = '';");
-						}
-					}
-					return true;
-				}
-			} catch (SQLException e) {
-				log.error(e.getMessage(), e);
-			}
-		}
-		return false;
+        try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
+                .build(); final CloseableHttpResponse response = httpclient.execute(httpget)) {
 
-	}
+            if (response.getStatusLine().getStatusCode() == 200) {
+                JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
+                return elem.getAsJsonObject();
+            }
+            return null;
 
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private List<JsonObject> getyourC(JsonObject obj) {
-		List<JsonObject> classentries = new ArrayList<>();
-		if (obj != null) {
-			JsonArray arr = obj.get("body").getAsJsonArray();
-			arr.forEach(element -> {
-				String elem = element.getAsJsonObject().get("class").toString().replaceAll("\"", "");
-				if (elem.contains("10b") || elem.equalsIgnoreCase("10a-10c/ Spw") || elem.equalsIgnoreCase("10a-10c")) {
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
 
-					classentries.add(element.getAsJsonObject());
-
-				}
-
-			});
-			return classentries;
-		}
-		return null;
-
-	}
-
-	/**
-	 * See {@link VPlan_MANOS_OLD}
-	 */
-	@DeprecatedSince(value = "1.14.0")
-	private JsonObject getPlan() {
-
-		final BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("manos-dresden.de", 443),
-				new UsernamePasswordCredentials("manos", vplanpw));
-
-		final HttpGet httpget = new HttpGet("https://manos-dresden.de/vplan/upload/next/students.json");
-
-		try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider)
-				.build(); final CloseableHttpResponse response = httpclient.execute(httpget);) {
-
-			if (response.getStatusLine().getStatusCode() == 200) {
-				JsonElement elem = new JsonParser().parse(EntityUtils.toString(response.getEntity()));
-				return elem.getAsJsonObject();
-			}
-			return null;
-
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-			return null;
-		}
-
-	}
+    }
 
 }

@@ -7,36 +7,32 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 /**
  * Interface used to specify and registrate a general Command.
- *
  */
 
 public interface ServerCommand {
 
-	/**
-	 *
-	 * @return The Help for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
-	 *         ServerCommand}
-	 */
-	String gethelp();
+    /**
+     * @return The Help for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
+     * ServerCommand}
+     */
+    String getHelp();
 
-	/**
-	 *
-	 * @return The Category for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
-	 *         ServerCommand}
-	 */
-	HelpCategories getcategory();
+    /**
+     * @return The Category for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
+     * ServerCommand}
+     */
+    HelpCategories getCategory();
 
-	/**
-	 * 
-	 * @return
-	 */
-	String[] getCommandStrings();
+    /**
+     * @return The Command Strings for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
+     */
+    String[] getCommandStrings();
 
-	void performCommand(Member m, GuildMessageChannel channel, Message message);
+    void performCommand(Member caller, GuildMessageChannel channel, Message message);
 
-	boolean isEnabled();
+    boolean isEnabled();
 
-	void disableCommand();
+    void disableCommand();
 
-	void enableCommand();
+    void enableCommand();
 }

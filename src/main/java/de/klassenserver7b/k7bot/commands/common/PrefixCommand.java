@@ -20,7 +20,7 @@ public class PrefixCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix]";
 	}
 
@@ -30,30 +30,30 @@ public class PrefixCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
+	public HelpCategories getCategory() {
+		return HelpCategories.GENERIC;
 	}
 
 	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-		if (m.hasPermission(Permission.ADMINISTRATOR)) {
+		if (caller.hasPermission(Permission.ADMINISTRATOR)) {
 			String[] args = message.getContentDisplay().split(" ");
 
 			if (args.length > 1) {
 
 				Klassenserver7bbot.getInstance().getPrefixMgr().setPrefix(channel.getGuild().getIdLong(), args[1]);
 				EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
-				builder.setFooter("Requested by @" + m.getEffectiveName());
+				builder.setFooter("Requested by @" + caller.getEffectiveName());
 				builder.setTitle("Prefix was set to \"" + args[1] + "\"");
 				channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
 
 			} else {
 
-				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "prefix [String]", m);
+				SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "prefix [String]", caller);
 			}
 		} else {
-			PermissionError.onPermissionError(m, channel);
+			PermissionError.onPermissionError(caller, channel);
 		}
 	}
 

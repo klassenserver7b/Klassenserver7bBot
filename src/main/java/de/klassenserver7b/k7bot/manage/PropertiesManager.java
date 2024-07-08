@@ -97,7 +97,8 @@ public class PropertiesManager {
             prop.setProperty("gourmettapassword", "");
             prop.setProperty("discogs-token", "");
             prop.setProperty("vppwold", "");
-            prop.setProperty("spotify-cookie", "");
+            prop.setProperty("spotify-username", "");
+            prop.setProperty("spotify-password", "");
             prop.setProperty("votinglimit", "");
 
             prop.store(stream, "Bot-Configfile\n 'token' is required!");

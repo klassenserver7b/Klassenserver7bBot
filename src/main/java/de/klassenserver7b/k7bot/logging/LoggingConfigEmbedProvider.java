@@ -5,6 +5,7 @@ package de.klassenserver7b.k7bot.logging;
 
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -43,8 +44,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         this.hook = hook;
         this.guildId = hook.getInteraction().getGuild().getIdLong();
 
-        Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
-        LoggingBlocker.getInstance().block(m.getIdLong());
+        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+            Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
+            LoggingFilter.getInstance().getLoggingBlocker().block(m.getIdLong());
+        }
 
         timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
         Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
@@ -60,17 +63,13 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         hook = event.deferEdit().complete();
         String compId = event.getComponentId();
         String matcher = compId.replaceAll("(.*)-(\\d+)?$", "$1");
-        int optId = Integer.parseInt(event.getSelectedOptions().get(0).getValue().replace("logging-catid-", ""));
+        int optId = Integer.parseInt(event.getSelectedOptions().getFirst().getValue().replace("logging-catid-", ""));
 
         switch (matcher) {
 
-            case "logging-single-select" -> {
-                LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
-            }
+            case "logging-single-select" -> LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
 
-            case "logging-choose-category" -> {
-                category = LoggingOptions.byId(optId);
-            }
+            case "logging-choose-category" -> category = LoggingOptions.byId(optId);
 
             default -> {
                 return;
@@ -105,13 +104,9 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
         switch (compId.split("-")[0]) {
 
-            case "disableall" -> {
-                changeCat(option, false);
-            }
+            case "disableall" -> changeCat(option, false);
 
-            case "enableall" -> {
-                changeCat(option, true);
-            }
+            case "enableall" -> changeCat(option, true);
 
             case "back" -> {
                 sendCatSelectEmbed();
@@ -128,8 +123,9 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
     }
 
     protected void exit() {
-        LoggingBlocker.getInstance().block(hook.retrieveOriginal().complete().getIdLong());
-        hook.deleteOriginal().queue();
+        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
+            hook.deleteOriginal().queue();
+        }
         Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
         Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
     }
@@ -151,7 +147,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
         for (LoggingOptions option : LoggingOptions.values()) {
             if (option.getId() % 10 == 0) {
-                strbuild.append(option.toString());
+                strbuild.append(option);
                 strbuild.append(",");
                 strbuild.append("\n");
             }
@@ -187,8 +183,8 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
         int idRange = category.getId();
 
-        List<Integer> catids = Arrays.asList(LoggingOptions.values()).stream()
-                .filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(opt -> opt.getId()).toList();
+        List<Integer> catids = Arrays.stream(LoggingOptions.values())
+                .filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(LoggingOptions::getId).toList();
 
         hook.editOriginalEmbeds(buildCatOptionsEmbed(catids)).setComponents(buildCatOptionsActionRows(catids)).queue();
     }
@@ -204,9 +200,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         StringBuilder strbuild = new StringBuilder();
         strbuild.append("Option");
 
-        for (int i = 0; i < 30; i++) {
-            strbuild.append(" ");
-        }
+        strbuild.append(" ".repeat(30));
 
         strbuild.append(" - State");
         strbuild.append("\n\n");
@@ -218,14 +212,12 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
             strbuild.append("`");
             strbuild.append(opt.toString());
 
-            for (int i = 0; i < 30 - opt.toString().toCharArray().length; i++) {
-                strbuild.append(" ");
-            }
+            strbuild.append(" ".repeat(Math.max(0, 30 - opt.toString().toCharArray().length)));
 
             strbuild.append(" - ");
             strbuild.append("`");
 
-            boolean enabled = LoggingConfigDBHandler.isOptionEnabled(opt, guildId);
+            boolean enabled = !LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
             strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
 
             strbuild.append("\n");
@@ -278,7 +270,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
     }
 
-    class HookTimeoutLoop implements LoopedEvent {
+    static class HookTimeoutLoop implements LoopedEvent {
 
         private final String identifier;
         private final LoggingConfigEmbedProvider listener;

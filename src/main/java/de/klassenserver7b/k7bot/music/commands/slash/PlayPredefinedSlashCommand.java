@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
@@ -28,68 +28,69 @@ import java.util.ArrayList;
 
 /**
  * @author K7
- *
  */
 public class PlayPredefinedSlashCommand extends GenericPlayCommand implements SubSlashCommand {
 
-	@NotNull
-	@Override
-	public SubcommandData getSubCommandData() {
+    @NotNull
+    @Override
+    public SubcommandData getSubCommandData() {
 
-		ArrayList<Choice> playlists = new ArrayList<>();
-		for (PredefinedMusicPlaylists q : PredefinedMusicPlaylists.values()) {
-			playlists.add(new Choice(q.toString(), q.getId()));
-		}
-		OptionData playlist = new OptionData(OptionType.INTEGER, "playlist", "a predefined playlist")
-				.addChoices(playlists).setRequired(true);
+        ArrayList<Choice> playlists = new ArrayList<>();
+        for (PredefinedMusicPlaylists q : PredefinedMusicPlaylists.values()) {
+            playlists.add(new Choice(q.toString(), q.getId()));
+        }
+        OptionData playlist = new OptionData(OptionType.INTEGER, "playlist", "a predefined playlist")
+                .addChoices(playlists).setRequired(true);
 
-		return new SubcommandData("predefined", "for our predefined playlists").addOptions(playlist);
-	}
+        return new SubcommandData("predefined", "for our predefined playlists").addOptions(playlist);
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
-		InteractionHook hook = event.deferReply(true).complete();
-		Member m = event.getMember();
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
+        InteractionHook hook = event.deferReply(true).complete();
 
-		if (event.getOptions().isEmpty()) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), gethelp(), m);
-			return;
-		}
+        Member m = event.getMember();
+        assert m != null;
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        if (event.getOptions().isEmpty()) {
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), this.getHelp(), m);
+            return;
+        }
 
-		if (!super.performInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
-			return;
-		}
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		OptionMapping predef = event.getOption("playlist");
-		String url = PredefinedMusicPlaylists.fromId(predef.getAsInt()).getUrl();
+        if (super.membFailsInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
+            return;
+        }
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
 
-		super.loadURL(url, controller, vc.getName());
+        OptionMapping predef = event.getOption("playlist");
+        String url = PredefinedMusicPlaylists.fromId(predef.getAsInt()).getUrl();
 
-		hook.sendMessage("Successfully Loaded").queue();
-	}
+        super.loadURL(url, controller, vc.getName());
 
-	@Override
-	public String getSubPath() {
-		return "predefined";
-	}
+        hook.sendMessage("Successfully Loaded").queue();
+    }
 
-	@Override
-	public String gethelp() {
-		return null;
-	}
+    @Override
+    public String getSubPath() {
+        return "predefined";
+    }
 
-	@Override
-	protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
-		return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE);
-	}
+    @Override
+    public String getHelp() {
+        return null;
+    }
 
-	@Override
-	protected GenericPlayCommand getChildClass() {
-		return this;
-	}
+    @Override
+    protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
+        return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE_QUEUE);
+    }
+
+    @Override
+    protected GenericPlayCommand getChildClass() {
+        return this;
+    }
 
 }

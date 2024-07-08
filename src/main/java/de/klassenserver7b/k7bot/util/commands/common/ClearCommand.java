@@ -21,7 +21,7 @@ public class ClearCommand implements ServerCommand {
 	private boolean isEnabled;
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Löscht die angegebene Anzahl an Nachrichten.\n - z.B. [prefix]clear 50";
 	}
 
@@ -31,7 +31,7 @@ public class ClearCommand implements ServerCommand {
 	}
 
 	@Override
-	public HelpCategories getcategory() {
+	public HelpCategories getCategory() {
 		return HelpCategories.TOOLS;
 	}
 

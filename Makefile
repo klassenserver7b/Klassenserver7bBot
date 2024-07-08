@@ -1,4 +1,4 @@
-default: clean package copy
+default: clean package
 	
 clean:
 	mvn clean
@@ -7,7 +7,7 @@ package:
 	mvn package
 
 copy:
-	cp target/k7bot-*-full.jar /home/felix/Desktop/Bot/Bot_pvt.jar
+	sudo cp target/k7bot-*-full.jar /opt/k7bot/Bot.jar
 	
 restart:
 	sudo systemctl restart k7bot
@@ -18,8 +18,8 @@ start:
 stop:
 	sudo systemctl stop k7bot
 	
-startb: default
-	sudo systemctl start k7bot
+startb: clean package copy start
 	
-restartb: default
-	sudo systemctl restart k7bot
+restartb: clean package copy restart
+
+release: clean package

@@ -12,13 +12,16 @@ import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdateNameEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleLoggingListener extends LoggingListener {
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+public class RoleLoggingListener extends ListenerAdapter {
 
     public RoleLoggingListener() {
         super();
@@ -27,7 +30,7 @@ public class RoleLoggingListener extends LoggingListener {
     @Override
     public void onRoleCreate(RoleCreateEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.ROLE_CREATE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_CREATE, event.getGuild())) {
             return;
         }
 
@@ -52,7 +55,7 @@ public class RoleLoggingListener extends LoggingListener {
     @Override
     public void onRoleDelete(RoleDeleteEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.ROLE_DELETE, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_DELETE, event.getGuild())) {
             return;
         }
 
@@ -71,7 +74,7 @@ public class RoleLoggingListener extends LoggingListener {
     @Override
     public void onRoleUpdateName(@Nonnull RoleUpdateNameEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.ROLE_NAME, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_NAME, event.getGuild())) {
             return;
         }
 
@@ -97,7 +100,7 @@ public class RoleLoggingListener extends LoggingListener {
     @Override
     public void onRoleUpdatePermissions(@Nonnull RoleUpdatePermissionsEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.ROLE_PERMISSIONS, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_PERMISSIONS, event.getGuild())) {
             return;
         }
 
@@ -144,7 +147,7 @@ public class RoleLoggingListener extends LoggingListener {
     @Override
     public void onRoleUpdatePosition(@Nonnull RoleUpdatePositionEvent event) {
 
-        if (!LoggingConfigDBHandler.isOptionEnabled(LoggingOptions.ROLE_POSITION, event.getGuild())) {
+        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_POSITION, event.getGuild())) {
             return;
         }
 

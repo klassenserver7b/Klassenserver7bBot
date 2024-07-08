@@ -24,7 +24,7 @@ public class PlayNextCommand extends GenericPlayCommand {
 	}
 
 	@Override
-	public String gethelp() {
+	public String getHelp() {
 		return "Lädt den/die ausgewählte/-n Track / Livestream / Playlist und fügt ihn/sie als nächste/-n in die Queue ein.\n - z.B. [prefix]playnext [url / YouTube Suchbegriff]";
 	}
 

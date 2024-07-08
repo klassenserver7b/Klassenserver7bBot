@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
@@ -22,73 +22,80 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * @author K7
- *
  */
 public class SpeedChangeCommand implements TopLevelSlashCommand {
 
-	/**
-	 * 
-	 */
-	public SpeedChangeCommand() {
-	}
+    /**
+     *
+     */
+    public SpeedChangeCommand() {
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(true).complete();
+        InteractionHook hook = event.deferReply(true).complete();
 
-		Member m = event.getMember();
+        Member m = event.getMember();
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
-		if (!MusicUtil.checkDefaultConditions(new GenericMessageSendHandler(hook), m)) {
-			return;
-		}
+        assert m != null;
+        assert event.getGuild() != null;
 
-		double speedrate = event.getOption("speedfactor").getAsDouble();
-		OptionMapping pitchmap = event.getOption("changepitch");
-		boolean changepitch = (pitchmap == null ? true : pitchmap.getAsBoolean());
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        if (MusicUtil.membFailsDefaultConditions(new GenericMessageSendHandler(hook), m)) {
+            return;
+        }
 
-		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
-				Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
+        OptionMapping speedmap = event.getOption("speedfactor");
+        assert speedmap != null;
+        double speedrate = speedmap.getAsDouble();
+        
+        OptionMapping pitchmap = event.getOption("changepitch");
+        boolean changepitch = (pitchmap == null || pitchmap.getAsBoolean());
 
-		if (speedrate == 1.0) {
-			effman.removeAudioFilterFunction(FilterTypes.SPEED);
-			hook.sendMessageEmbeds(EmbedUtils
-					.getSuccessEmbed("Successfully removed speed change", event.getGuild().getIdLong()).build())
-					.queue();
-			return;
-		}
+        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
+                Klassenserver7bbot.getInstance().getPlayerUtil().getController(Objects.requireNonNull(vc).getGuild().getIdLong()).getPlayer());
 
-		effman.addAudioFilterFunction(FilterTypes.SPEED, ((track, format, output) -> {
+        if (speedrate == 1.0) {
+            effman.removeAudioFilterFunction(FilterTypes.SPEED);
+            hook.sendMessageEmbeds(EmbedUtils
+                            .getSuccessEmbed("Successfully removed speed change", event.getGuild().getIdLong()).build())
+                    .queue();
+            return;
+        }
 
-			TimescalePcmAudioFilter timefilter = new TimescalePcmAudioFilter(output, format.channelCount,
-					format.sampleRate);
+        effman.addAudioFilterFunction(FilterTypes.SPEED, ((track, format, output) -> {
 
-			if (changepitch) {
-				timefilter.setRate(speedrate);
-			} else {
-				timefilter.setSpeed(speedrate);
-			}
+            TimescalePcmAudioFilter timefilter = new TimescalePcmAudioFilter(output, format.channelCount,
+                    format.sampleRate);
 
-			return timefilter;
-		}));
+            if (changepitch) {
+                timefilter.setRate(speedrate);
+            } else {
+                timefilter.setSpeed(speedrate);
+            }
 
-		hook.sendMessageEmbeds(
-				EmbedUtils.getSuccessEmbed("Successfully applied speed change", event.getGuild().getIdLong()).build())
-				.queue();
-	}
+            return timefilter;
+        }));
 
-	@NotNull
-	@Override
-	public SlashCommandData getCommandData() {
-		return Commands.slash("speedchange", "changes the speed of the currently played audio track").addOptions(
-				new OptionData(OptionType.NUMBER, "speedfactor", "factor to multyply the speed with e.g. 1.5", true)
-						.setRequiredRange(0, 2),
-				new OptionData(OptionType.BOOLEAN, "changepitch", "whether the pitch should be changed default: true",
-						false))
-				.setGuildOnly(true);
-	}
+        hook.sendMessageEmbeds(
+                        EmbedUtils.getSuccessEmbed("Successfully applied speed change", event.getGuild().getIdLong()).build())
+                .queue();
+    }
+
+    @NotNull
+    @Override
+    public SlashCommandData getCommandData() {
+        return Commands.slash("speedchange", "changes the speed of the currently played audio track").addOptions(
+                        new OptionData(OptionType.NUMBER, "speedfactor", "factor to multyply the speed with e.g. 1.5", true)
+                                .setRequiredRange(0, 2),
+                        new OptionData(OptionType.BOOLEAN, "changepitch", "whether the pitch should be changed default: true",
+                                false))
+                .setGuildOnly(true);
+    }
 
 }

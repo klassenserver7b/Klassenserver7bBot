@@ -20,170 +20,177 @@ import java.util.*;
 
 /**
  * @author K7
- *
  */
 public class GenericMessageSendHandler {
 
-	private final InteractionHook hook;
-	private final GuildMessageChannel channel;
+    private final InteractionHook hook;
+    private final GuildMessageChannel channel;
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private static final int HookId = 1;
-	private static final int ChannelId = 2;
-	private final int selectedid;
+    private static final int HookId = 1;
+    private static final int ChannelId = 2;
+    private final int selectedid;
 
-	/**
-	 *
-	 * @param hook
-	 */
-	public GenericMessageSendHandler(@Nonnull InteractionHook hook) {
-		Objects.requireNonNull(hook, "@Nonnull required parameter is null: GuildMessageChannel");
-		this.hook = hook;
-		this.channel = null;
-		selectedid = HookId;
-	}
+    /**
+     * @param hook InteractionHook
+     */
+    public GenericMessageSendHandler(@Nonnull InteractionHook hook) {
+        Objects.requireNonNull(hook, "@Nonnull required parameter is null: GuildMessageChannel");
+        this.hook = hook;
+        this.channel = null;
+        selectedid = HookId;
+    }
 
-	/**
-	 *
-	 * @param channel
-	 */
-	public GenericMessageSendHandler(@Nonnull GuildMessageChannel channel) {
-		Objects.requireNonNull(channel, "@Nonnull required parameter is null: GuildMessageChannel");
-		this.channel = channel;
-		this.hook = null;
-		selectedid = ChannelId;
-	}
+    /**
+     * @param channel GuildMessageChannel
+     */
+    public GenericMessageSendHandler(@Nonnull GuildMessageChannel channel) {
+        Objects.requireNonNull(channel, "@Nonnull required parameter is null: GuildMessageChannel");
+        this.channel = channel;
+        this.hook = null;
+        selectedid = ChannelId;
+    }
 
-	public FluentRestAction<Message, ?> sendMessage(@Nonnull CharSequence data) {
-		try (MessageCreateData messdata = new MessageCreateBuilder().addContent(data.toString()).build()) {
-			return sendMessage(messdata);
-		}
-	}
+    public FluentRestAction<Message, ?> sendMessage(@Nonnull CharSequence data) {
+        try (MessageCreateData messdata = new MessageCreateBuilder().addContent(data.toString()).build()) {
+            return sendMessage(messdata);
+        }
+    }
 
-	public FluentRestAction<Message, ?> sendMessage(@Nonnull MessageCreateData data) {
-		try {
-			switch (selectedid) {
-			case HookId -> {
-				return hook.sendMessage(data);
-			}
-			case ChannelId -> {
-				return channel.sendMessage(data);
-			}
-			}
-		} catch (NullPointerException e) {
-			onNPE(e);
-		}
-		return null;
-	}
+    public FluentRestAction<Message, ?> sendMessage(@Nonnull MessageCreateData data) {
+        try {
+            switch (selectedid) {
+                case HookId -> {
+                    assert hook != null;
+                    return hook.sendMessage(data);
+                }
+                case ChannelId -> {
+                    assert channel != null;
+                    return channel.sendMessage(data);
+                }
+            }
+        } catch (NullPointerException e) {
+            onNPE(e);
+        }
+        return null;
+    }
 
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed embed) {
-		List<MessageEmbed> embedlist = new ArrayList<>();
-		embedlist.add(embed);
-		return sendMessageEmbeds(embedlist);
-	}
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed embed) {
+        List<MessageEmbed> embedlist = new ArrayList<>();
+        embedlist.add(embed);
+        return sendMessageEmbeds(embedlist);
+    }
 
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed... embeds) {
-		List<MessageEmbed> embedlist = Arrays.asList(embeds);
-		return sendMessageEmbeds(embedlist);
-	}
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed... embeds) {
+        List<MessageEmbed> embedlist = Arrays.asList(embeds);
+        return sendMessageEmbeds(embedlist);
+    }
 
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull Collection<? extends MessageEmbed> embeds) {
-		try {
-			switch (selectedid) {
-			case HookId -> {
-				return hook.sendMessageEmbeds(embeds);
-			}
-			case ChannelId -> {
-				return channel.sendMessageEmbeds(embeds);
-			}
-			}
-		} catch (NullPointerException e) {
-			onNPE(e);
-		}
-		return null;
-	}
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull Collection<? extends MessageEmbed> embeds) {
+        try {
+            switch (selectedid) {
+                case HookId -> {
+                    assert hook != null;
+                    return hook.sendMessageEmbeds(embeds);
+                }
+                case ChannelId -> {
+                    assert channel != null;
+                    return channel.sendMessageEmbeds(embeds);
+                }
+            }
+        } catch (NullPointerException e) {
+            onNPE(e);
+        }
+        return null;
+    }
 
-	public FluentRestAction<Message, ?> sendFiles(@Nonnull FileUpload file, @Nonnull FileUpload... files) {
-		List<FileUpload> list = Arrays.asList(files);
-		list.add(0, file);
-		return sendFiles(list);
-	}
+    public FluentRestAction<Message, ?> sendFiles(@Nonnull FileUpload file, @Nonnull FileUpload... files) {
+        List<FileUpload> list = Arrays.asList(files);
+        list.addFirst(file);
+        return sendFiles(list);
+    }
 
-	public FluentRestAction<Message, ?> sendFiles(@Nonnull Collection<? extends FileUpload> files) {
-		try {
-			switch (selectedid) {
-			case HookId -> {
-				return hook.sendFiles(files);
-			}
-			case ChannelId -> {
-				return channel.sendFiles(files);
-			}
-			}
-		} catch (NullPointerException e) {
-			onNPE(e);
-		}
-		return null;
-	}
+    public FluentRestAction<Message, ?> sendFiles(@Nonnull Collection<? extends FileUpload> files) {
+        try {
+            switch (selectedid) {
+                case HookId -> {
+                    assert hook != null;
+                    return hook.sendFiles(files);
+                }
+                case ChannelId -> {
+                    assert channel != null;
+                    return channel.sendFiles(files);
+                }
+            }
+        } catch (NullPointerException e) {
+            onNPE(e);
+        }
+        return null;
+    }
 
-	public FluentRestAction<Message, ?> sendMessageFormat(@Nonnull String format, @Nonnull Object... objects) {
-		try {
-			switch (selectedid) {
-			case HookId -> {
-				return hook.sendMessageFormat(format, objects);
-			}
-			case ChannelId -> {
-				return channel.sendMessageFormat(format, objects);
-			}
-			}
-		} catch (NullPointerException e) {
-			onNPE(e);
-		}
-		return null;
-	}
+    public FluentRestAction<Message, ?> sendMessageFormat(@Nonnull String format, @Nonnull Object... objects) {
+        try {
+            switch (selectedid) {
+                case HookId -> {
+                    assert hook != null;
+                    return hook.sendMessageFormat(format, objects);
+                }
+                case ChannelId -> {
+                    assert channel != null;
+                    return channel.sendMessageFormat(format, objects);
+                }
+            }
+        } catch (NullPointerException e) {
+            onNPE(e);
+        }
+        return null;
+    }
 
-	public void sendTyping() {
+    public void sendTyping() {
 
-		switch (selectedid) {
-		case ChannelId -> {
-			channel.sendTyping().queue();
-		}
-		}
-		return;
-	}
+        if (selectedid == ChannelId) {
+            assert channel != null;
+            channel.sendTyping().queue();
+        }
+    }
 
-	public Guild getGuild() {
+    public Guild getGuild() {
 
-		switch (selectedid) {
-		case HookId -> {
-			return hook.getInteraction().getGuild();
-		}
-		case ChannelId -> {
-			return channel.getGuild();
-		}
-		
-		default ->{
-			return null;
-		}
-		}
-	}
+        switch (selectedid) {
+            case HookId -> {
+                assert hook != null;
+                return hook.getInteraction().getGuild();
+            }
+            case ChannelId -> {
+                assert channel != null;
+                return channel.getGuild();
+            }
 
-	public void onNPE(NullPointerException e) {
-		log.error(e.getMessage(), e);
-	}
+            default -> {
+                return null;
+            }
+        }
+    }
 
-	public Class<?> getSelectedClass() {
-		switch (selectedid) {
-		case HookId -> {
-			return hook.getClass();
-		}
-		case ChannelId -> {
-			return channel.getClass();
-		}
-		default -> {
-			return null;
-		}
-		}
-	}
+    public void onNPE(NullPointerException e) {
+        log.error(e.getMessage(), e);
+    }
+
+    public Class<?> getSelectedClass() {
+        switch (selectedid) {
+            case HookId -> {
+                assert hook != null;
+                return hook.getClass();
+            }
+            case ChannelId -> {
+                assert channel != null;
+                return channel.getClass();
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
 
 }

@@ -17,69 +17,68 @@ import java.awt.*;
 
 public class LoopCommand implements ServerCommand {
 
-	private boolean isEnabled;
+    private boolean isEnabled;
 
-	@Override
-	public String gethelp() {
-		String help = "loopt die aktuelle Queuelist";
-		return help;
-	}
+    @Override
+    public String getHelp() {
+        return "loopt die aktuelle Queuelist";
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "loop" };
-	}
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"loop"};
+    }
 
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (!MusicUtil.checkConditions(new GenericMessageSendHandler(channel), m)) {
-			return;
-		}
+        if (MusicUtil.failsConditions(new GenericMessageSendHandler(channel), m)) {
+            return;
+        }
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
-		if (controller.getPlayer().getPlayingTrack() != null || !(controller.getQueue().getQueuelist().isEmpty())) {
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
+        if (controller.getPlayer().getPlayingTrack() != null || !(controller.getQueue().getQueuelist().isEmpty())) {
 
-			onLoop(controller);
-			channel.sendMessageEmbeds(EmbedUtils
-					.getBuilderOf(Color.decode("#4d05e8"), "Queue looped!", channel.getGuild().getIdLong()).build())
-					.queue();
+            onLoop(controller);
+            channel.sendMessageEmbeds(EmbedUtils
+                            .getBuilderOf(Color.decode("#4d05e8"), "Queue looped!", channel.getGuild().getIdLong()).build())
+                    .queue();
 
-		} else {
+        } else {
 
-			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("There isn't a song/playlist to loop!").build()).queue();
+            channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("There isn't a song/playlist to loop!").build()).queue();
 
-		}
+        }
 
-	}
+    }
 
-	public static void onLoop(@Nonnull MusicController controller) {
+    public static void onLoop(@Nonnull MusicController controller) {
 
-		controller.getQueue().loop();
+        controller.getQueue().loop();
 
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

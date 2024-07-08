@@ -12,61 +12,62 @@ import java.util.LinkedHashMap;
 
 public class VoteReactionListener extends ListenerAdapter {
 
-	private Long messageId;
-	private User gameMaster;
-	private LinkedHashMap<String, User> users;
-	private HashMap<User, String> votings;
-	private GenericMessageSendHandler channel;
+    private final Long messageId;
+    private final User gameMaster;
+    private final LinkedHashMap<String, User> users;
+    private final HashMap<User, String> votings;
+    private final GenericMessageSendHandler channel;
 
-	public VoteReactionListener(Long messageId, User gameMaster, LinkedHashMap<String, User> users,
-			GenericMessageSendHandler channel) {
-		this.messageId = messageId;
-		this.users = users;
-		this.gameMaster = gameMaster;
-		this.channel = channel;
-		votings = new HashMap<>();
-	}
+    public VoteReactionListener(Long messageId, User gameMaster, LinkedHashMap<String, User> users,
+                                GenericMessageSendHandler channel) {
+        this.messageId = messageId;
+        this.users = users;
+        this.gameMaster = gameMaster;
+        this.channel = channel;
+        votings = new HashMap<>();
+    }
 
-	@Override
-	public void onMessageReactionAdd(MessageReactionAddEvent event) {
+    @Override
+    public void onMessageReactionAdd(MessageReactionAddEvent event) {
 
-		if (event.getMessageIdLong() != messageId) {
-			return;
-		}
+        if (event.getMessageIdLong() != messageId) {
+            return;
+        }
 
-		User u = event.getUser();
+        User u = event.getUser();
+        assert u != null;
 
-		if (event.getGuild().getSelfMember().getUser().getIdLong() == u.getIdLong()) {
-			return;
-		}
+        if (event.getGuild().getSelfMember().getUser().getIdLong() == u.getIdLong()) {
+            return;
+        }
 
-		if (!votings.containsKey(u) && users.values().contains(u)) {
-			votings.put(u, event.getEmoji().getName());
-		}
+        if (!votings.containsKey(u) && users.containsValue(u)) {
+            votings.put(u, event.getEmoji().getName());
+        }
 
-		event.getReaction().removeReaction(u).queue();
+        event.getReaction().removeReaction(u).queue();
 
-		if (votings.size() >= users.size()) {
+        if (votings.size() >= users.size()) {
 
-			StringBuilder build = new StringBuilder();
+            StringBuilder build = new StringBuilder();
 
-			votings.forEach((user, emojiname) -> {
+            votings.forEach((user, emojiname) -> {
 
-				build.append(user.getName());
-				build.append(" - ");
-				build.append(emojiname);
-				build.append("\n");
+                build.append(user.getName());
+                build.append(" - ");
+                build.append(emojiname);
+                build.append("\n");
 
-			});
+            });
 
-			channel.sendMessage("Voting beendet!");
-			gameMaster.openPrivateChannel().complete()
-					.sendMessageEmbeds(EmbedUtils.getBuilderOf(build.toString()).build()).queue();
+            channel.sendMessage("Voting beendet!");
+            gameMaster.openPrivateChannel().complete()
+                    .sendMessageEmbeds(EmbedUtils.getBuilderOf(build.toString()).build()).queue();
 
-			Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
+            Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
 
-		}
+        }
 
-	}
+    }
 
 }

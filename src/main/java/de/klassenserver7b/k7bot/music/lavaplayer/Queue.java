@@ -18,238 +18,226 @@ import java.util.Collections;
 import java.util.List;
 
 public class Queue {
-	private boolean islooped = false;
-	private List<AudioTrack> looplist;
-	private List<AudioTrack> queuelist;
-	private MusicController controller;
-	private SongJson currentSong;
-	private final SongDataUtils songutils;
-	private final Logger log;
+    private boolean islooped = false;
+    private List<AudioTrack> looplist;
+    private List<AudioTrack> queuelist;
+    private MusicController controller;
+    private SongJson currentSong;
+    private final SongDataUtils songutils;
+    private final Logger log;
 
-	public Queue(MusicController controller) {
-		setController(controller);
-		setQueuelist(new ArrayList<>());
-		this.songutils = new SongDataUtils();
-		this.currentSong = null;
-		this.log = LoggerFactory.getLogger(this.getClass());
-	}
+    public Queue(MusicController controller) {
+        setController(controller);
+        setQueuelist(new ArrayList<>());
+        this.songutils = new SongDataUtils();
+        this.currentSong = null;
+        this.log = LoggerFactory.getLogger(this.getClass());
+    }
 
-	public boolean isemptyQueueList() {
-		return this.queuelist.isEmpty();
-	}
+    public boolean isQueueListEmpty() {
+        return this.queuelist.isEmpty();
+    }
 
-	public boolean next(AudioTrack currentTrack) {
+    public boolean skip(int amount) {
+        if (amount < 1) {
+            return false;
+        }
 
-		AudioPlayer player = this.controller.getPlayer();
+        if (amount > this.queuelist.size()) {
+            clearQueue();
+            return next(this.controller.getPlayer().getPlayingTrack());
+        }
 
-		AudioTrack track;
+        queuelist.subList(0, amount).clear();
 
-		if (this.queuelist.size() > 1) {
+        return true;
+    }
 
-			track = this.queuelist.remove(0);
+    public boolean next(AudioTrack currentTrack) {
 
-			if (track != null) {
+        TrackScheduler.next = true;
 
-				logNewTrack(track);
-				player.playTrack(track);
+        AudioPlayer player = this.controller.getPlayer();
 
-				return true;
+        AudioTrack track;
 
-			}
+        if (this.queuelist.isEmpty()) {
 
-		} else if (!this.queuelist.isEmpty()) {
+            if (!this.islooped) {
+                return false;
+            }
 
-			if (this.islooped) {
+            if (this.looplist.isEmpty()) {
 
-				TrackScheduler.next = true;
-				track = this.queuelist.remove(0);
+                track = currentTrack.makeClone();
+                logNewTrack(track);
+                player.playTrack(track);
+                return true;
 
-				logNewTrack(track);
-				player.playTrack(track);
+            } else {
+                this.queuelist = this.looplist;
+            }
 
-				this.queuelist = this.looplist;
-				TrackScheduler.next = false;
-				return true;
+        }
 
-			}
-			TrackScheduler.next = true;
-			track = this.queuelist.remove(0);
+        track = this.queuelist.removeFirst();
+        logNewTrack(track);
+        player.playTrack(track);
 
-			logNewTrack(track);
-			player.playTrack(track);
+        return true;
+    }
 
-			TrackScheduler.next = false;
+    public void logNewTrack(AudioTrack track) {
 
-			return true;
+        try {
 
-		} else if (this.islooped) {
+            String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+            long datetime = Long.parseLong(datetimestring);
 
-			track = currentTrack.makeClone();
-			player.playTrack(track);
+            if (track instanceof YoutubeAudioTrack) {
+                SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
+                this.currentSong = data;
+                if (this.currentSong != null) {
+                    LiteSQL.onUpdate(
+                            "INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+                            data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
+                } else {
+                    LiteSQL.onUpdate(
+                            "INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+                            track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
+                }
+            } else {
 
-			logNewTrack(track);
-		}
-		return false;
-	}
+                this.currentSong = null;
 
-	public void logNewTrack(AudioTrack track) {
+                LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
+                        track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
 
-		try {
+            }
 
-			String datetimestring = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-			long datetime = Long.parseLong(datetimestring);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
 
-			if (track instanceof YoutubeAudioTrack) {
-				SongJson data = songutils.parseYtTitle(track.getInfo().title, track.getInfo().author);
-				this.currentSong = data;
-				if (this.currentSong != null) {
-					LiteSQL.onUpdate(
-							"INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-							data.getTitle(), data.getAuthorString(), controller.getGuild().getIdLong(), datetime);
-				} else {
-					LiteSQL.onUpdate(
-							"INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-							track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
-				}
-			} else {
+    }
 
-				this.currentSong = null;
+    public void replaceTrack(AudioTrack track) {
 
-				LiteSQL.onUpdate("INSERT INTO musiclogs(songname, songauthor, guildId, timestamp) VALUES(?, ?, ?, ?);",
-						track.getInfo().title, track.getInfo().author, controller.getGuild().getIdLong(), datetime);
+        TrackScheduler.next = true;
+        queuelist.addFirst(track);
+        next(track);
+        TrackScheduler.next = false;
 
-			}
+    }
 
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
+    public void replacePlaylist(AudioPlaylist playlist) {
 
-	}
+        TrackScheduler.next = true;
+        List<AudioTrack> pl = playlist.getTracks();
+        pl.addAll(queuelist);
 
-	public void replace(AudioTrack track) {
+        queuelist = pl;
 
-		clearQueue();
-		TrackScheduler.next = true;
-		queuelist.add(track);
-		next(track);
-		TrackScheduler.next = false;
+        next(playlist.getTracks().getFirst());
+        TrackScheduler.next = false;
 
-	}
+    }
 
-	public void replace(AudioPlaylist playlist) {
+    public void addPlaylistToQueue(AudioPlaylist playlist) {
 
-		clearQueue();
-		TrackScheduler.next = true;
+        queuelist.addAll(playlist.getTracks());
+        sheduleNextTrack(queuelist.getFirst());
 
-		queuelist = playlist.getTracks();
+    }
 
-		next(playlist.getTracks().get(0));
-		TrackScheduler.next = false;
+    public void addTrackToQueue(AudioTrack track) {
 
-	}
+        this.queuelist.add(track);
+        sheduleNextTrack(track);
+    }
 
-	public void addPlaylistToQueue(AudioPlaylist playlist) {
+    public void setNextPlaylist(AudioPlaylist playlist) {
 
-		queuelist.addAll(playlist.getTracks());
+        queuelist.addAll(0, playlist.getTracks());
+        sheduleNextTrack(queuelist.getFirst());
 
-		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.getInstance().getMainLogger()
-					.debug("Queue - setNextTrack: playing track = null -> next(track)");
-			next(queuelist.get(0));
-		}
+    }
 
-	}
+    public void setNextTrack(AudioTrack track) {
+        this.queuelist.addFirst(track);
+        sheduleNextTrack(track);
+    }
 
-	public void addTrackToQueue(AudioTrack track) {
-		this.queuelist.add(track);
+    public void sheduleNextTrack(AudioTrack track) {
+        if (this.controller.getPlayer().getPlayingTrack() == null) {
+            Klassenserver7bbot.getInstance().getMainLogger()
+                    .debug("Queue - setNextTrack: playing track = null -> next({}})", queuelist.getFirst().getInfo().title);
+            next(track);
+        }
+    }
 
-		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.getInstance().getMainLogger()
-					.debug("Queue - add Track to Queue: playing track = null -> next(track)");
-			next(track);
-		}
-	}
+    public void loop() {
+        this.islooped = true;
+        this.looplist = this.queuelist;
 
-	public void setNextPlaylist(AudioPlaylist playlist) {
+        if (this.queuelist.size() > 1) {
+            this.looplist.add(this.controller.getPlayer().getPlayingTrack());
+        }
 
-		queuelist.addAll(0, playlist.getTracks());
-		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.getInstance().getMainLogger()
-					.debug("Queue - setNextTrack: playing track = null -> next(track)");
-			next(queuelist.get(0));
-		}
+    }
 
-	}
+    public void unLoop() {
+        this.islooped = false;
 
-	public void setNextTrack(AudioTrack track) {
-		this.queuelist.add(0, track);
-		if (this.controller.getPlayer().getPlayingTrack() == null) {
-			Klassenserver7bbot.getInstance().getMainLogger()
-					.debug("Queue - setNextTrack: playing track = null -> next(track)");
-			next(track);
-		}
-	}
+        if (this.looplist != null && !this.looplist.isEmpty()) {
+            this.looplist.clear();
+        }
+    }
 
-	public void loop() {
-		this.islooped = true;
-		this.looplist = this.queuelist;
+    public void clearQueue() {
 
-		if (this.queuelist.size() > 1) {
-			this.looplist.add(this.controller.getPlayer().getPlayingTrack());
-		}
+        if (this.queuelist != null) {
 
-	}
+            this.queuelist.clear();
 
-	public void unLoop() {
-		this.islooped = false;
+        }
+    }
 
-		if (this.looplist != null && !this.looplist.isEmpty()) {
-			this.looplist.clear();
-		}
-	}
+    public MusicController getController() {
+        return this.controller;
+    }
 
-	public void clearQueue() {
+    public void setController(MusicController controller) {
+        this.controller = controller;
+    }
 
-		if (this.queuelist != null) {
+    public List<AudioTrack> getQueuelist() {
+        return this.queuelist;
+    }
 
-			this.queuelist.clear();
+    public void setQueuelist(List<AudioTrack> queuelist) {
+        this.queuelist = queuelist;
+    }
 
-		}
-	}
+    @SuppressWarnings("unused")
+    public void setLooplist(List<AudioTrack> looplist) {
+        this.looplist = looplist;
+    }
 
-	public MusicController getController() {
-		return this.controller;
-	}
+    public void shuffle() {
+        Collections.shuffle(this.queuelist);
+    }
 
-	public void setController(MusicController controller) {
-		this.controller = controller;
-	}
+    public boolean isLooped() {
+        return islooped;
+    }
 
-	public List<AudioTrack> getQueuelist() {
-		return this.queuelist;
-	}
+    @SuppressWarnings("unused")
+    public SongDataUtils getSongDataUtils() {
+        return songutils;
+    }
 
-	public void setQueuelist(List<AudioTrack> queuelist) {
-		this.queuelist = queuelist;
-	}
-
-	public void setLooplist(List<AudioTrack> looplist) {
-		this.looplist = looplist;
-	}
-
-	public void shuffle() {
-		Collections.shuffle(this.queuelist);
-	}
-
-	public boolean isLooped() {
-		return islooped;
-	}
-
-	public SongDataUtils getSongDataUtils() {
-		return songutils;
-	}
-
-	public SongJson getCurrentSongData() {
-		return this.currentSong;
-	}
+    public SongJson getCurrentSongData() {
+        return this.currentSong;
+    }
 }

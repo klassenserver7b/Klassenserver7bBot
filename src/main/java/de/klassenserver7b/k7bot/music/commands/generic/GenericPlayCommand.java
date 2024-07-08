@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.music.commands.generic;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -11,18 +10,16 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import de.klassenserver7b.k7bot.HelpCategories;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
-import de.klassenserver7b.k7bot.music.utilities.AudioPlayerUtil;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -30,272 +27,234 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author K7
- *
  */
-public abstract class GenericPlayCommand implements ServerCommand, TopLevelSlashCommand {
+public abstract class GenericPlayCommand implements ServerCommand {
 
-	private final Logger log;
-	private final AudioPlayerManager apm;
-	private final String SUPPORTED_AUDIO_FORMATS = "(mp4|mp3|wav|ogg|m4a)";
+    private final Logger log;
+    private final AudioPlayerManager apm;
+    private final String SUPPORTED_AUDIO_FORMATS = "(mp4|mp3|wav|ogg|m4a)";
 
-	/**
-	 *
-	 */
-	public GenericPlayCommand() {
-		this.log = LoggerFactory.getLogger(this.getClass());
+    /**
+     *
+     */
+    public GenericPlayCommand() {
+        this.log = LoggerFactory.getLogger(this.getClass());
 
-		apm = new DefaultAudioPlayerManager();
-		apm.registerSourceManager(new SpotifyAudioSourceManager());
-		apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
-		AudioSourceManagers.registerRemoteSources(apm);
-	}
+        apm = new DefaultAudioPlayerManager();
+        apm.registerSourceManager(new SpotifyAudioSourceManager());
+        apm.registerSourceManager(new YoutubeAudioSourceManager());
+        apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
+        AudioSourceManagers.registerRemoteSources(apm);
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(true).complete();
-		Member m = event.getMember();
+        InteractionHook hook = event.deferReply(true).complete();
+        Member m = event.getMember();
 
-		if (event.getOptions().isEmpty()) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), gethelp(), m);
-			return;
-		}
+        if (event.getOptions().isEmpty()) {
+            assert m != null;
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(hook), getHelp(), m);
+            return;
+        }
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        assert m != null;
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		if (!performInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
-			return;
-		}
+        if (membFailsInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
+            return;
+        }
 
-		MusicUtil.updateChannel(hook);
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
+        assert vc != null;
 
-		playQueriedItem(SupportedPlayQueries.fromId(event.getOption("target").getAsInt()), vc,
-				event.getOption("url").getAsString(), controller);
+        MusicUtil.updateChannel(hook);
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
 
-		hook.sendMessage("Successfully Loaded").queue();
+        playQueriedItem(SupportedPlayQueries.fromId(Objects.requireNonNull(event.getOption("target")).getAsInt()), vc,
+                Objects.requireNonNull(event.getOption("url")).getAsString(), controller);
 
-	}
+        hook.sendMessage("Successfully Loaded").queue();
 
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
+    }
 
-		String[] args = message.getContentDisplay().split(" ");
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		if (args.length <= 1 && message.getAttachments().size() <= 0) {
-			SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), gethelp(), m);
-			return;
-		}
+        String[] args = message.getContentDisplay().split(" ");
 
-		AudioChannel vc = MusicUtil.getMembVcConnection(m);
+        if (args.length <= 1 && message.getAttachments().isEmpty()) {
+            SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), getHelp(), m);
+            return;
+        }
 
-		if (!performInternalChecks(m, vc, new GenericMessageSendHandler(channel))) {
-			return;
-		}
-		MusicUtil.updateChannel(channel);
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
-				.getController(vc.getGuild().getIdLong());
+        AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		StringBuilder strBuilder = new StringBuilder();
+        if (membFailsInternalChecks(m, vc, new GenericMessageSendHandler(channel))) {
+            return;
+        }
+        assert vc != null;
 
-		if (message.getAttachments().size() > 0) {
-			int status = loadAttachments(message.getAttachments(), controller, gethelp());
+        MusicUtil.updateChannel(channel);
+        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                .getController(vc.getGuild().getIdLong());
 
-			if (status == 0) {
-				return;
-			}
+        StringBuilder strBuilder = new StringBuilder();
 
-			channel.sendMessage(
-					"Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
-					.complete().delete().queueAfter(10L, TimeUnit.SECONDS);
-			return;
-		}
+        if (!message.getAttachments().isEmpty()) {
+            int status = loadAttachments(message.getAttachments(), controller);
 
-		for (int i = 1; i < args.length; i++) {
-			strBuilder.append(args[i]);
-			strBuilder.append(" ");
-		}
+            if (status == 0) {
+                return;
+            }
 
-		String url = strBuilder.toString().trim();
+            channel.sendMessage(
+                            "Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
+                    .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+            return;
+        }
 
-		loadURL(url, controller, vc.getName());
+        for (int i = 1; i < args.length; i++) {
+            strBuilder.append(args[i]);
+            strBuilder.append(" ");
+        }
 
-	}
+        String url = strBuilder.toString().trim();
 
-	/**
-	 * 
-	 * @param querytype
-	 * @param channel
-	 * @param query
-	 * @param controller
-	 */
-	private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
-			MusicController controller) {
+        loadURL(url, controller, vc.getName());
 
-		String suffix = querytype.getSearchSuffix();
-		String url = suffix + " " + query;
-		url = url.trim();
+    }
 
-		loadURL(url, controller, channel.getName());
+    /**
+     * @param querytype  the type of the query
+     * @param channel    the audio channel
+     * @param query      the query
+     * @param controller the music controller
+     */
+    private void playQueriedItem(SupportedPlayQueries querytype, AudioChannel channel, String query,
+                                 MusicController controller) {
 
-	}
+        String suffix = querytype.getSearchSuffix();
+        String url = suffix + " " + query;
+        url = url.trim();
 
-	protected int loadURL(String url, MusicController controller, String vcname) {
-		url = formatQuerry(url);
+        loadURL(url, controller, channel.getName());
 
-		log.info("Bot startet searching a track: no current track -> new Track(channelName = " + vcname + ", url = "
-				+ url + ")");
+    }
 
-		try {
-			apm.loadItem(url, generateAudioLoadResult(controller, url));
-			return 0;
-		} catch (FriendlyException e) {
-			log.error(e.getMessage(), e);
-			return 1;
-		}
-	}
+    protected int loadURL(String url, MusicController controller, String vcname) {
+        url = formatQuerry(url);
 
-	protected int loadAttachments(List<Attachment> attachments, MusicController controller, String vcname) {
+        log.info("Bot startet searching a track: no current track -> new Track(channelName = {}, url = {})", vcname, url);
 
-		boolean err = false;
-		for (int i = 0; i < attachments.size(); i++) {
+        try {
+            apm.loadItem(url, generateAudioLoadResult(controller, url));
+            return 0;
+        } catch (FriendlyException e) {
+            log.error(e.getMessage(), e);
+            return 1;
+        }
+    }
 
-			try (Attachment song = attachments.get(i)) {
-				if (!song.getFileExtension().matches(SUPPORTED_AUDIO_FORMATS)) {
-					err = true;
-					continue;
-				}
+    protected int loadAttachments(List<Attachment> attachments, MusicController controller) {
 
-				AudioLoadResult alr = generateAudioLoadResult(controller, song.getProxyUrl());
+        boolean err = false;
+        for (int i = 0; i < attachments.size(); i++) {
 
-				if (i != 0) {
-					alr.setLoadoption(AudioLoadOption.APPEND);
-				}
+            try (Attachment song = attachments.get(i)) {
+                String fileExtension = song.getFileExtension();
+                if (fileExtension == null || !fileExtension.matches(SUPPORTED_AUDIO_FORMATS)) {
+                    err = true;
+                    continue;
+                }
 
-				apm.loadItem(song.getProxyUrl(), alr);
-			}
-		}
+                AudioLoadResult alr = generateAudioLoadResult(controller, song.getProxyUrl());
 
-		if (err) {
-			return 1;
+                if (i != 0) {
+                    alr.setLoadoption(AudioLoadOption.APPEND);
+                }
 
-		}
-		return 0;
+                apm.loadItem(song.getProxyUrl(), alr);
+            }
+        }
 
-	}
+        if (err) {
+            return 1;
+        }
+        return 0;
 
-	protected boolean tryLoad(String identifyer, AudioLoadResult ares, AudioPlayerManager apm) {
-		try {
-			apm.loadItem(identifyer, ares);
-			return true;
-		} catch (FriendlyException e) {
-			return false;
-		}
-	}
+    }
 
-	protected boolean performInternalChecks(Member m, AudioChannel vc, GenericMessageSendHandler sendHandler) {
+    protected boolean membFailsInternalChecks(Member m, AudioChannel vc, GenericMessageSendHandler sendHandler) {
 
-		if (!MusicUtil.checkDefaultConditions(sendHandler, m)) {
-			return false;
-		}
+        if (MusicUtil.membFailsDefaultConditions(sendHandler, m)) {
+            return true;
+        }
 
-		AudioManager manager = vc.getGuild().getAudioManager();
+        AudioManager manager = vc.getGuild().getAudioManager();
 
-		if (!manager.isConnected()) {
-			manager.openAudioConnection(vc);
-		}
+        if (!manager.isConnected()) {
+            manager.openAudioConnection(vc);
+        }
 
-		return true;
-	}
+        return false;
+    }
 
-	protected void setVolume(AudioPlayer player, Long guildId) {
+    private String formatQuerry(String q) {
 
-		try (ResultSet set = LiteSQL.onQuery("SELECT volume FROM musicutil WHERE guildId = ?;", guildId)) {
+        String url = q.strip();
 
-			if (set.next()) {
-				int volume = set.getInt("volume");
-				if (volume != 0) {
-					player.setVolume(volume);
-				} else {
-					LiteSQL.onUpdate("UPDATE musicutil SET volume = ? WHERE guildId = ?;",
-							AudioPlayerUtil.STANDARDVOLUME, guildId);
-					player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
-				}
-			} else {
-				LiteSQL.onUpdate("INSERT OR REPLACE INTO musicutil(guildId) VALUES(?);", guildId);
-				player.setVolume(AudioPlayerUtil.STANDARDVOLUME);
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
+        if (url.startsWith("lf: ")) {
 
-	}
+            url = url.substring(4);
 
-	private String formatQuerry(String q) {
+        } else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
+            url = "ytsearch: " + url;
+        }
 
-		String url = q;
+        return url;
+    }
 
-		if (url.startsWith("lf: ")) {
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.MUSIC;
+    }
 
-			url = url.substring(4);
+    @Override
+    public String[] getCommandStrings() {
+        return null;
+    }
 
-		} else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
-			url = "ytsearch: " + url;
-		}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-		return url;
-	}
+    @Override
+    public void disableCommand() {
+        // Nothing to do here
+    }
 
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.MUSIK;
-	}
+    @Override
+    public void enableCommand() {
+        // Nothing to do here
+    }
 
-	@Override
-	public String[] getCommandStrings() {
-		return null;
-	}
+    @Override
+    abstract public String getHelp();
 
-	@NotNull
-	@Override
-	public SlashCommandData getCommandData() {
-		return null;
-	}
+    abstract protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url);
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	@Override
-	public void disableCommand() {
-		// Nothing to do here
-	}
-
-	@Override
-	public void enableCommand() {
-		// Nothing to do here
-	}
-
-	@Override
-	abstract public String gethelp();
-
-	abstract protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url);
-
-	abstract protected GenericPlayCommand getChildClass();
+    abstract protected GenericPlayCommand getChildClass();
 
 }

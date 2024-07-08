@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot.sql;
 
+import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,101 +9,94 @@ import java.io.IOException;
 import java.sql.*;
 
 public class LiteSQL {
-	private static Connection conn;
-	public final static Logger dblog = LoggerFactory.getLogger("DB-Log");
+    private static Connection conn;
+    private final static Logger dblog = LoggerFactory.getLogger("Database-Log");
 
-	public static void connect() {
-		conn = null;
+    public static void connect() {
+        conn = null;
 
-		try {
-			File file = new File("resources/datenbank.db");
-			file.createNewFile();
+        try {
+            File file = new File("resources/datenbank.db");
+            if (file.createNewFile()) {
+                dblog.info("Databasefile created - assuming first start.");
+            }
 
-			String url = "jdbc:sqlite:" + file.getPath();
-			conn = DriverManager.getConnection(url);
-			dblog.info("Datenbankverbindung hergestellt");
-		} catch (SQLException | IOException e) {
-			dblog.error(e.getMessage(), e);
-		}
-	}
+            String url = "jdbc:sqlite:" + file.getPath();
+            conn = DriverManager.getConnection(url);
+            dblog.info("Connection to SQLite has been established.");
+        } catch (SQLException | IOException e) {
+            dblog.error(e.getMessage(), e);
+        }
+    }
 
-	public static void disconnect() {
-		try {
-			if (conn != null) {
-				conn.close();
-				dblog.info("Datenbankverbindung getrennt");
-			}
-		} catch (SQLException e) {
-			dblog.error(e.getMessage(), e);
-		}
-	}
+    public static void disconnect() {
+        try {
+            if (conn != null) {
+                conn.close();
+                dblog.info("Connection to SQLite has been closed.");
+            }
+        } catch (SQLException e) {
+            dblog.error(e.getMessage(), e);
+        }
+    }
 
-	public static int onUpdate(String sqlpattern, Object... parameters) {
+    /**
+     * Executes an update on the database
+     *
+     * @param sqlpattern The SQL-String with placeholders
+     * @param parameters The parameters to replace the placeholders with
+     * @return The amount of rows affected by the update
+     */
+    public static int onUpdate(String sqlpattern, Object... parameters) {
 
-		if (parameters.length != countMatches(sqlpattern, "?")) {
-			IllegalArgumentException e = new IllegalArgumentException(
-					"Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
-			dblog.error(e.getMessage(), e);
-			return -5;
-		}
+        //noinspection SqlSourceToSinkFlow
+        try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
 
-		try (PreparedStatement p = conn.prepareStatement(sqlpattern)) {
+            if (parameters.length != p.getParameterMetaData().getParameterCount()) {
+                IllegalArgumentException e = new IllegalArgumentException(
+                        "Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
+                dblog.error(e.getMessage(), e);
+                return InternalStatusCodes.ERROR;
+            }
 
-			for (int i = 0; i < parameters.length; i++) {
-				p.setObject(i + 1, parameters[i]);
-			}
+            for (int i = 0; i < parameters.length; i++) {
+                p.setObject(i + 1, parameters[i]);
+            }
 
-			return p.executeUpdate();
+            return p.executeUpdate();
 
-		} catch (SQLException e) {
-			dblog.error(e.getMessage(), e);
-			return -1;
-		}
-	}
+        } catch (SQLException e) {
+            dblog.error(e.getMessage(), e);
+            return InternalStatusCodes.FAILURE;
+        }
+    }
 
-	@SuppressWarnings("resource")
-	public static ResultSet onQuery(String sqlpattern, Object... parameters) {
+    public static ResultSet onQuery(String sqlpattern, Object... parameters) throws SQLException {
 
-		if (parameters.length != countMatches(sqlpattern, "?")) {
-			IllegalArgumentException e = new IllegalArgumentException(
-					"Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
-			dblog.error(e.getMessage(), e);
-		}
+        try {
 
-		try {
+            @SuppressWarnings("SqlSourceToSinkFlow") PreparedStatement p = conn.prepareStatement(sqlpattern);
 
-			PreparedStatement p = conn.prepareStatement(sqlpattern);
+            if (parameters.length != p.getParameterMetaData().getParameterCount()) {
+                IllegalArgumentException e = new IllegalArgumentException(
+                        "Invalid SQLString! - parameter count does not match.", new Throwable().fillInStackTrace());
+                dblog.error(e.getMessage(), e);
+            }
 
-			for (int i = 0; i < parameters.length; i++) {
-				p.setObject(i + 1, parameters[i]);
-			}
+            for (int i = 0; i < parameters.length; i++) {
+                p.setObject(i + 1, parameters[i]);
+            }
 
-			return p.executeQuery();
+            return p.executeQuery();
 
-		} catch (SQLException e) {
-			dblog.error(e.getMessage(), e);
-			return null;
-		}
+        } catch (SQLException e) {
+            dblog.error(e.getMessage(), e);
+            throw e;
+        }
 
-	}
+    }
 
-	private static int countMatches(String base, String pattern) {
-
-		int occurences = 0;
-
-		if (0 == pattern.length()) {
-			return occurences;
-		}
-
-		for (int index = base.indexOf(pattern, 0); index != -1; index = base.indexOf(pattern, index + 1)) {
-			occurences++;
-		}
-
-		return occurences;
-
-	}
-
-	public static Logger getdblog() {
-		return dblog;
-	}
+    public static Logger getdblog() {
+        return dblog;
+    }
 }

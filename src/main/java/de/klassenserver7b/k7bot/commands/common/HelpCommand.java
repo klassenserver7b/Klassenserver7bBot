@@ -19,279 +19,275 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author K7
- *
  */
 
 public class HelpCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
-	@Override
-	public String gethelp() {
-		return "Shows the Help for the Bot!";
-	}
-
-	@Override
-	public String[] getCommandStrings() {
-		return new String[] { "help" };
-	}
-
-	@Override
-	public HelpCategories getcategory() {
-		return HelpCategories.ALLGEMEIN;
-	}
-
-	@Override
-	public void performCommand(Member m, GuildMessageChannel channel, Message mess) {
-		String[] args = mess.getContentDisplay().split(" ");
-
-		if (args.length > 1) {
-			sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
-		} else {
-			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
-		}
-	}
-
-	public void performCommand(Member m, GuildMessageChannel channel, String mess) {
-		String[] args = mess.split(" ");
-
-		if (args.length > 1) {
-			sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
-		} else {
-			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
-		}
-	}
-
-	public void performCommand(PrivateChannel channel, Message mess) {
-		String[] args = mess.getContentDisplay().split(" ");
-
-		if (args.length > 1) {
-			sendEmbedPrivate(generateHelpforCategory(args[1], null), channel);
-		} else {
-			sendEmbedPrivate(generateHelpOverview(null), channel);
-		}
-	}
-
-	/**
-	 *
-	 * @param guild
-	 * @return
-	 *
-	 *
-	 */
-	public MessageEmbed generateHelpOverview(Guild guild) {
-
-		EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#33CC66"), (guild != null ? guild.getIdLong() : null));
-		ret.setTitle("Help for the K7Bot");
-
-		StringBuilder strbuild = new StringBuilder();
-
-		if (guild != null) {
-			ret.addField("**General**",
-					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
-							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
-					false);
-		} else {
-			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmaßig mit `-`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
-							+ "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
-					false);
-		}
-
-		strbuild.append("**The help for the K7Bot is structured in categories**");
-		strbuild.append("\r\n\r\n");
-		strbuild.append("Use this command like `[prefix]help <category>`");
-		strbuild.append("\r\n\r\n");
-		strbuild.append("**Valid categorys are:**");
-		strbuild.append("\r\n");
-
-		for (HelpCategories cat : HelpCategories.values()) {
-
-			if (cat == HelpCategories.UNKNOWN || cat == HelpCategories.OVERVIEW) {
-				continue;
-			}
-
-			strbuild.append("`" + cat.toString() + "`");
-			strbuild.append("\r\n");
+    private boolean isEnabled;
+
+    @Override
+    public String getHelp() {
+        return "Shows the Help for the Bot!";
+    }
+
+    @Override
+    public String[] getCommandStrings() {
+        return new String[]{"help"};
+    }
+
+    @Override
+    public HelpCategories getCategory() {
+        return HelpCategories.GENERIC;
+    }
+
+    @Override
+    public void performCommand(Member m, GuildMessageChannel channel, Message mess) {
+        String[] args = mess.getContentDisplay().split(" ");
+
+        if (args.length > 1) {
+            sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
+        } else {
+            sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
+        }
+    }
+
+    public void performCommand(Member m, GuildMessageChannel channel, String mess) {
+        String[] args = mess.split(" ");
 
-		}
+        if (args.length > 1) {
+            sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
+        } else {
+            sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
+        }
+    }
 
-		ret.setDescription(strbuild);
+    public void performCommand(PrivateChannel channel, Message mess) {
+        String[] args = mess.getContentDisplay().split(" ");
 
-		ret.addField("", strbuild.toString(), false);
+        if (args.length > 1) {
+            sendEmbedPrivate(generateHelpforCategory(args[1], null), channel);
+        } else {
+            sendEmbedPrivate(generateHelpOverview(null), channel);
+        }
+    }
 
-		return ret.build();
-	}
+    /**
+     * @param guild The {@link Guild} to get the prefix from
+     * @return {@link MessageEmbed} with the HelpOverview
+     */
+    public MessageEmbed generateHelpOverview(Guild guild) {
+
+        EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#33CC66"), (guild != null ? guild.getIdLong() : null));
+        ret.setTitle("Help for the K7Bot");
 
-	/**
-	 * 
-	 * @param catstr
-	 * @param guild
-	 * @return
-	 */
-	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
+        StringBuilder strbuild = new StringBuilder();
+
+        if (guild != null) {
+            ret.addField("**General**",
+                    "Befehle auf diesem Server beginnen mit `"
+                            + Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\r\n"
+                            + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
+                            + "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
+                    false);
+        } else {
+            ret.addField("**General**",
+                    """
+                            Bot-Befehle beginnen standardmaßig mit `-`
+                            [TEXT] stellt benötigte Commandargumente dar.
+                            <TEXT> stellt optionale Commandargumente dar.
 
-		ArrayList<ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).getCommands();
-		List<ServerCommand> searchresults = new ArrayList<>();
+
+                            """,
+                    false);
+        }
+
+        strbuild.append("**The help for the K7Bot is structured in categories**");
+        strbuild.append("\r\n\r\n");
+        strbuild.append("Use this command like `[prefix]help <category>`");
+        strbuild.append("\r\n\r\n");
+        strbuild.append("**Valid categorys are:**");
+        strbuild.append("\r\n");
+
+        for (HelpCategories cat : HelpCategories.values()) {
+
+            if (cat == HelpCategories.UNKNOWN || cat == HelpCategories.OVERVIEW) {
+                continue;
+            }
 
-		int limitmultiplicator = 1;
-		int buildlength = 0;
-		String prefix;
+            strbuild.append("`").append(cat.toString()).append("`");
+            strbuild.append("\r\n");
 
-		EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"));
+        }
 
-		HelpCategories cat;
+        ret.setDescription(strbuild);
 
-		try {
+        return ret.build();
+    }
 
-			cat = HelpCategories.valueOf(catstr.trim().toUpperCase());
+    /**
+     * @param catstr The category to generate the help for
+     * @param guild  The {@link Guild} to get the prefix from
+     * @return {@link MessageEmbed} with the Help for the submitted category
+     */
+    public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
-		} catch (IllegalArgumentException e) {
+        ArrayList<ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).getCommands();
+        List<ServerCommand> searchresults = new ArrayList<>();
 
-			ret.setColor(Color.red);
-			ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
+        int limitmultiplicator = 1;
+        int buildlength = 0;
+        String prefix;
 
-			return ret.build();
+        EmbedBuilder ret = EmbedUtils.getBuilderOf(Color.decode("#14cdc8"));
 
-		}
+        HelpCategories cat;
 
-		if (guild != null) {
+        try {
 
-			prefix = Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong());
-			ret.addField("**General**",
-					"Befehle auf diesem Server beginnen mit `"
-							+ Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
-							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
-					false);
+            cat = HelpCategories.valueOf(catstr.trim().toUpperCase());
 
-		} else {
+        } catch (IllegalArgumentException e) {
 
-			prefix = "-";
-			ret.addField("**General**",
-					"Bot-Befehle beginnen standardmäßig mit `-`\r\n"
-							+ "[TEXT] stellt benötigte Commandargumente dar.\r\n"
-							+ "<TEXT> stellt optionale Commandargumente dar.\r\n",
-					false);
-		}
+            ret.setColor(Color.red);
+            ret.setDescription("There are no commands listed for the submitted category - please check the spelling!");
 
-		commands.forEach(servercommand -> {
+            return ret.build();
 
-			if (servercommand.getcategory() != null && servercommand.getcategory() == cat) {
-				searchresults.add(servercommand);
-			}
-		});
+        }
 
-		StringBuilder categoryHelpStr = new StringBuilder();
+        if (guild != null) {
 
-		for (ServerCommand servercommand : searchresults) {
+            prefix = Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong());
+            ret.addField("**General**",
+                    "Befehle auf diesem Server beginnen mit `"
+                            + Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\n"
+                            + "[TEXT] stellt benötigte Commandargumente dar.\n"
+                            + "<TEXT> stellt optionale Commandargumente dar.\n",
+                    false);
 
-			StringBuilder inbuild = new StringBuilder();
+        } else {
 
-			inbuild.append("\r\n");
-			for (String s : servercommand.getCommandStrings()) {
-				inbuild.append("`");
-				inbuild.append(prefix);
-				inbuild.append(s);
-				inbuild.append("` ");
-			}
-			inbuild.append("- ");
-			inbuild.append(servercommand.gethelp() + " \r\n");
+            prefix = "-";
+            ret.addField("**General**",
+                    """
+                            Bot-Befehle beginnen standardmäßig mit `-`
+                            [TEXT] stellt benötigte Commandargumente dar.
+                            <TEXT> stellt optionale Commandargumente dar.
+                            """,
+                    false);
+        }
 
-			if (buildlength + inbuild.toString().length()
-					+ 5 >= (1024 * limitmultiplicator + ((limitmultiplicator - 1) * 3))) {
+        commands.forEach(servercommand -> {
 
-				buildlength = limitmultiplicator * 1024 + inbuild.toString().length();
-				limitmultiplicator++;
-				categoryHelpStr.append("<@>");
-				categoryHelpStr.append(inbuild.toString());
+            if (servercommand.getCategory() != null && servercommand.getCategory() == cat) {
+                searchresults.add(servercommand);
+            }
+        });
 
-			} else {
+        StringBuilder categoryHelpStr = new StringBuilder();
 
-				buildlength += inbuild.toString().length();
-				categoryHelpStr.append(inbuild.toString());
+        for (ServerCommand servercommand : searchresults) {
 
-			}
+            StringBuilder inbuild = new StringBuilder();
 
-		}
+            inbuild.append("\r\n");
+            for (String s : servercommand.getCommandStrings()) {
+                inbuild.append("`");
+                inbuild.append(prefix);
+                inbuild.append(s);
+                inbuild.append("` ");
+            }
+            inbuild.append("- ");
+            inbuild.append(servercommand.getHelp()).append(" \r\n");
 
-		String[] helpparts = categoryHelpStr.toString().split("<@>");
+            if (buildlength + inbuild.toString().length()
+                    + 5 >= (1024 * limitmultiplicator + ((limitmultiplicator - 1) * 3))) {
 
-		for (String helppart : helpparts) {
+                buildlength = limitmultiplicator * 1024 + inbuild.toString().length();
+                limitmultiplicator++;
+                categoryHelpStr.append("<@>");
+                categoryHelpStr.append(inbuild);
 
-			ret.addField("", helppart, false);
+            } else {
 
-		}
+                buildlength += inbuild.toString().length();
+                categoryHelpStr.append(inbuild);
 
-		ret.setTitle("Help for the K7Bot");
+            }
 
-		return ret.build();
+        }
 
-	}
+        String[] helpparts = categoryHelpStr.toString().split("<@>");
 
-	/**
-	 * Sends the {@link MessageEmbed Embed} with the HelpMessage to the
-	 * {@link net.dv8tion.jda.api.entities.User User} using {@link PrivateChannel
-	 * PrivateChannels}
-	 *
-	 * @param embed The HelpEmbed to be sent to the user
-	 * @param m     The {@link Member} wich is used to get the
-	 *              {@link net.dv8tion.jda.api.entities.User User}
-	 * @param tc    The {@link GuildMessageChannel} in which the reference to the DM and the
-	 *              error messages are to be sent.
-	 *
-	 *
-	 */
-	private void sendEmbedPrivate(MessageEmbed embed, Member m, GuildMessageChannel tc) {
+        for (String helppart : helpparts) {
 
-		PrivateChannel ch = m.getUser().openPrivateChannel().complete();
+            ret.addField("", helppart, false);
 
-		if (ch != null) {
+        }
 
-			ch.sendMessageEmbeds(embed).queue();
+        ret.setTitle("Help for the K7Bot");
 
-			if (tc != null) {
-				tc.sendMessage("** look into your DM's **" + m.getAsMention()).complete().delete().queueAfter(10L,
-						TimeUnit.SECONDS);
-			}
+        return ret.build();
 
-		} else {
+    }
 
-			MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
-					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
-					.build();
+    /**
+     * Sends the {@link MessageEmbed Embed} with the HelpMessage to the
+     * {@link net.dv8tion.jda.api.entities.User User} using {@link PrivateChannel
+     * PrivateChannels}
+     *
+     * @param embed The HelpEmbed to be sent to the user
+     * @param m     The {@link Member} wich is used to get the
+     *              {@link net.dv8tion.jda.api.entities.User User}
+     * @param tc    The {@link GuildMessageChannel} in which the reference to the DM and the
+     *              error messages are to be sent.
+     */
+    private void sendEmbedPrivate(MessageEmbed embed, Member m, GuildMessageChannel tc) {
 
-			if (tc != null) {
-				tc.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
-			}
+        PrivateChannel ch = m.getUser().openPrivateChannel().complete();
 
-		}
+        if (ch != null) {
 
-	}
+            ch.sendMessageEmbeds(embed).queue();
 
-	private void sendEmbedPrivate(MessageEmbed embed, @NotNull PrivateChannel ch) {
-		ch.sendMessageEmbeds(embed).queue();
+            if (tc != null) {
+                tc.sendMessage("** look into your DM's **" + m.getAsMention()).complete().delete().queueAfter(10L,
+                        TimeUnit.SECONDS);
+            }
 
-	}
+        } else {
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
+            MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
+                            "Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
+                    .build();
 
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
+            if (tc != null) {
+                tc.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+            }
 
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
+        }
+
+    }
+
+    private void sendEmbedPrivate(MessageEmbed embed, @NotNull PrivateChannel ch) {
+        ch.sendMessageEmbeds(embed).queue();
+
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void disableCommand() {
+        isEnabled = false;
+    }
+
+    @Override
+    public void enableCommand() {
+        isEnabled = true;
+    }
 
 }

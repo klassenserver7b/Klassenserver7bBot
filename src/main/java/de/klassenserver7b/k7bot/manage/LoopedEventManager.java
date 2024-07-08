@@ -48,7 +48,7 @@ public class LoopedEventManager {
         for (LoopedEvent erroredEvent : erroredEvents) {
 
             if (erroredEvent.isAvailable()) {
-                log.info(erroredEvent.getIdentifier() + " is available again");
+                log.info("{} is available again", erroredEvent.getIdentifier());
                 change.add(erroredEvent);
             }
 
@@ -62,7 +62,7 @@ public class LoopedEventManager {
             int status = activeEvent.checkforUpdates();
 
             if (status != InternalStatusCodes.SUCCESS) {
-                log.warn(activeEvent.getIdentifier() + " had an error - will be checked next time only");
+                log.warn("{} had an error - will be checked next time only", activeEvent.getIdentifier());
                 change.add(activeEvent);
             }
         }

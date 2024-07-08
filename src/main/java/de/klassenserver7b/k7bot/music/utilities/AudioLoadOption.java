@@ -5,52 +5,54 @@ package de.klassenserver7b.k7bot.music.utilities;
 
 /**
  * @author K7
- *
  */
 public enum AudioLoadOption {
 
-	/**
-	 * Append this track to the queuelist
-	 */
-	APPEND(0),
+    /**
+     * Append this track to the queuelist
+     */
+    APPEND(0),
 
-	/**
-	 * Play this track as the next track
-	 */
-	NEXT(1),
+    /**
+     * Play this track as the next track
+     */
+    NEXT(1),
 
-	/**
-	 * replace the current track with this track
-	 */
-	REPLACE(2);
+    /**
+     * replaceTrack the current track with this track
+     */
+    REPLACE(2),
 
-	private final int id;
+    /**
+     * replaceTrack the current track with this track and clear the queue
+     */
+    REPLACE_QUEUE(3);
 
-	private AudioLoadOption(int id) {
-		this.id = id;
-	}
+    private final int id;
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
+    AudioLoadOption(int id) {
+        this.id = id;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public static AudioLoadOption byId(int id) {
+    /**
+     * @return the id of the AudioLoadOption
+     */
+    public int getId() {
+        return id;
+    }
 
-		for (AudioLoadOption l : values()) {
-			if (l.getId() == id) {
-				return l;
-			}
-		}
+    /**
+     * @return the AudioLoadOption by the id
+     */
+    public static AudioLoadOption byId(int id) {
 
-		return APPEND;
+        for (AudioLoadOption l : values()) {
+            if (l.getId() == id) {
+                return l;
+            }
+        }
 
-	}
+        return APPEND;
+
+    }
 }
