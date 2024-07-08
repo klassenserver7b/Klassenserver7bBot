@@ -3,13 +3,13 @@ package de.klassenserver7b.k7bot.music.utilities;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import dev.lavalink.youtube.track.YoutubeAudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -344,7 +344,7 @@ public class MusicUtil {
 
             try (InputStream uin = new URI(img.getUrl()).toURL().openStream();
                  FileOutputStream fout = new FileOutputStream(tempfile)) {
-
+                
                 uin.transferTo(fout);
                 uin.close();
                 fout.close();

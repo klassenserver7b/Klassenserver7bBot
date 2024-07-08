@@ -85,7 +85,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
 
     @Override
     protected AudioLoadResult generateAudioLoadResult(MusicController controller, String url) {
-        return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE);
+        return new AudioLoadResult(controller, url, AudioLoadOption.REPLACE_QUEUE);
     }
 
     @Override

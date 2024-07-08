@@ -19,7 +19,6 @@ import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
 import de.klassenserver7b.k7bot.util.TeacherDB;
-import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -241,9 +240,10 @@ public class Klassenserver7bbot {
      */
     public void InitializeMusic(AudioPlayerManager manager) {
 
+        spotifyinteractions.initialize();
+
         manager.getConfiguration().setFilterHotSwapEnabled(true);
         manager.registerSourceManager(new SpotifyAudioSourceManager());
-        manager.registerSourceManager(new YoutubeAudioSourceManager());
         manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(manager);
 

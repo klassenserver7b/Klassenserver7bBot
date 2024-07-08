@@ -19,6 +19,7 @@ import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -51,6 +52,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
         apm = new DefaultAudioPlayerManager();
         apm.registerSourceManager(new SpotifyAudioSourceManager());
+        apm.registerSourceManager(new YoutubeAudioSourceManager());
         apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(apm);
     }
@@ -210,7 +212,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
     private String formatQuerry(String q) {
 
-        String url = q;
+        String url = q.strip();
 
         if (url.startsWith("lf: ")) {
 

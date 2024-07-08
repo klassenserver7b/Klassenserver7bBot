@@ -122,8 +122,6 @@ public class HelpCommand implements ServerCommand {
 
         ret.setDescription(strbuild);
 
-        ret.addField("", strbuild.toString(), false);
-
         return ret.build();
     }
 

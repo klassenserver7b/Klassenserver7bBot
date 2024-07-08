@@ -9,7 +9,6 @@ import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -39,7 +38,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author K7
@@ -52,7 +54,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
     private final Logger log;
 
     private final HashMap<User, Long> limits;
-    private static final List<Long> allowedUsers = new ArrayList<>();
+    static final List<Long> allowedUsers = new ArrayList<>();
 
     /**
      *
@@ -63,13 +65,8 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
         limits = new HashMap<>();
 
         allowedUsers.add(Klassenserver7bbot.getInstance().getOwnerId());
-        try {
-            for (Member m : Objects.requireNonNull(Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L))
-                    .getMembers()) {
-                allowedUsers.add(m.getUser().getIdLong());
-            }
-        } catch (NullPointerException ignored) {
-        }
+        Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
+        Klassenserver7bbot.getInstance().getShardManager().getGuildById(850697874147770368L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
     }
 
     @Override

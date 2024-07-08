@@ -111,7 +111,14 @@ public class PrefixManager {
     }
 
     public String getPrefix(Long guildid) {
-        return this.prefixl.get(guildid);
+        return this.prefixl.computeIfAbsent(guildid, k -> {
+            try {
+                setInternalPrefix(k, "-");
+            } catch (IllegalArgumentException e) {
+                log.warn(e.getMessage(), e);
+            }
+            return "-";
+        });
     }
 
 }

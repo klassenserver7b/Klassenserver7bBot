@@ -31,8 +31,10 @@ public class AutoRickroll extends ListenerAdapter {
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
 
         if (event.getChannelLeft() != null || event.getGuild().getIdLong() != 701341683325075477L
-                || event.getMember().getIdLong() != event.getJDA().getSelfUser().getIdLong()
-                || Math.random() < 0.995D) return;
+                || event.getMember().getIdLong() == event.getJDA().getSelfUser().getIdLong()
+                || Math.random() < 0.995D) {
+            return;
+        }
 
         AudioChannel vc = event.getChannelJoined();
         assert vc != null;
@@ -46,7 +48,7 @@ public class AutoRickroll extends ListenerAdapter {
 
         if (player.getPlayingTrack() == null) {
 
-            if (!queue.isemptyQueueList()) {
+            if (!queue.isQueueListEmpty()) {
                 queue.clearQueue();
             }
             manager.openAudioConnection(vc);
@@ -56,7 +58,7 @@ public class AutoRickroll extends ListenerAdapter {
 
         } else {
 
-            if (!queue.isemptyQueueList()) {
+            if (!queue.isQueueListEmpty()) {
                 queue.clearQueue();
             }
 

@@ -52,6 +52,7 @@ public class SlashCommandManager {
         registerschedule.add(new SpeedChangeCommand());
         registerschedule.add(new ClearAudioFilterFilterSlashCommand());
         registerschedule.add(new StableDiffusionCommand());
+        registerschedule.add(new TanzmusikAISlashCommand());
         registerschedule.add(new CheckRoomSlashCommand());
         registerschedule.add(new SearchForRoomSlashCommand());
         registerschedule.add(new SearchForTeacherSlashCommand());

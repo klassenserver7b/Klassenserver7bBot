@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 public class SkipCommand implements ServerCommand {
 
     private boolean isEnabled;
-    public static boolean onskip = false;
 
     @Override
     public String getHelp() {
@@ -50,39 +49,32 @@ public class SkipCommand implements ServerCommand {
         Queue queue = controller.getQueue();
         AudioTrack lastTrack = controller.getPlayer().getPlayingTrack();
 
-        onskip = true;
-
         if (args.length == 1) {
-            onskip = false;
-            if (queue.next(lastTrack)) {
-                return;
-            }
+            queue.next(lastTrack);
         } else {
 
+            int amount;
+
             try {
-                for (int i = 0; i <= Integer.parseInt(args[1]) - 1; i++) {
 
-                    if (queue.getQueuelist().size() > 1) {
-
-                        queue.next(lastTrack);
-
-                    }
-                }
-
-                onskip = false;
-                queue.next(lastTrack);
-
-                EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
-                builder.setFooter("Requested by @" + m.getEffectiveName());
-                builder.setTitle(Integer.parseInt(args[1]) + " tracks skipped");
-
-                channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+                amount = Integer.parseInt(args[1]);
 
             } catch (NumberFormatException e) {
                 SyntaxError.oncmdSyntaxError(new GenericMessageSendHandler(channel), "skip [int]", m);
+                return;
             }
+
+            queue.skip(amount);
+            queue.next(lastTrack);
+
+            EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
+            builder.setFooter("Requested by @" + m.getEffectiveName());
+            builder.setTitle(Integer.parseInt(args[1]) + " tracks skipped");
+
+            channel.sendMessageEmbeds(builder.build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+
+
         }
-        onskip = false;
     }
 
     @Override

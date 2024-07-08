@@ -16,12 +16,11 @@ public class SpotifyInteractions {
     public TokenFetchThread fetchthread;
 
     public SpotifyInteractions() {
-
         apienabled = false;
         startfetchcycle();
 
     }
-    
+
     public void initialize() {
         this.spotifyApi = new SpotifyApi.Builder().build();
         this.apienabled = true;
@@ -31,9 +30,7 @@ public class SpotifyInteractions {
      *
      */
     public void startfetchcycle() {
-
         this.fetchthread = TokenFetchThread.getINSTANCE();
-
     }
 
     public void shutdown() {
