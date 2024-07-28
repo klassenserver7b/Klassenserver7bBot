@@ -18,9 +18,11 @@ updates:
           - "*"
         exclude-patterns:
           - "org.apache.maven.plugins:*"
+          - "org.codehaus.mojo:versions-maven-plugin"
       mvn-deps:
         patterns:
           - "org.apache.maven.plugins:*"
+          - "org.codehaus.mojo:versions-maven-plugin"
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "Development"
