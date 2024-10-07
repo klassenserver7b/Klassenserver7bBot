@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.24.0.0</version>
+    <version>1.24.1.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -21,7 +21,7 @@
         <developer>
             <name>Felix Mölle</name>
             <email>klassenserver7bwin10@gmail.com</email>
-            <organization>Felix Mölle</organization>
+            <organization>K7</organization>
             <organizationUrl>https://github.com/klassenserver7b</organizationUrl>
             <roles>
                 <role>developer</role>

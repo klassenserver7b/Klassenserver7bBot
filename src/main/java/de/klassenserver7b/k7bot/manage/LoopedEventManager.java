@@ -249,7 +249,7 @@ public class LoopedEventManager {
         }
 
         if (propMgr.isApiEnabled("vplan")) {
-            registerEvent(new Stundenplan24Vplan("JG11"), true);
+            registerEvent(new Stundenplan24Vplan("JG12"), true);
             log.info("VplanAPI registered");
         }
 

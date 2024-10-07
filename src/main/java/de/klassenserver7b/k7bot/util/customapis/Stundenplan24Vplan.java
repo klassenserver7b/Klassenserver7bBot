@@ -65,8 +65,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
         Collections.addAll(this.classes, klassen);
     }
 
-    public void registerKlassen(String... klassen) {
-        this.classes.addAll(Arrays.asList(klassen));
+    public void registerClasses(String... classes) {
+        this.classes.addAll(Arrays.asList(classes));
     }
 
     /**
@@ -97,12 +97,12 @@ public class Stundenplan24Vplan implements LoopedEvent {
     }
 
     /**
-     * @param klasse the class to send the vplan for
+     * @param clazz the class to send the vplan for
      * @since 1.15.0
      */
-    public boolean vplanNotify(String klasse) {
+    public boolean vplanNotify(String clazz) {
 
-        try (MessageCreateData d = getVplanMessage(false, klasse)) {
+        try (MessageCreateData d = getVplanMessage(false, clazz)) {
 
             if (d == null) {
                 return false;
@@ -120,7 +120,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the message to send
      * @since 1.14.0
      */
-    private MessageCreateData getVplanMessage(boolean force, String klasse) {
+    protected MessageCreateData getVplanMessage(boolean force, String klasse) {
 
         OffsetDateTime d = checkDate();
         Document doc = read(d);
@@ -157,7 +157,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
         return builder.build();
     }
 
-    private void putInDB(Document doc) {
+    protected void putInDB(Document doc) {
 
         NodeList stdList = doc.getElementsByTagName("Std");
 
@@ -185,7 +185,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the appended TableMessage
      */
     @SuppressWarnings("unused")
-    private TableMessage appendLesson(Element e, TableMessage tablemess) {
+    protected TableMessage appendLesson(Element e, TableMessage tablemess) {
         TableMessage ret;
 
         boolean subjectChanged = e.getElementsByTagName("Fa").item(0).hasAttributes();
@@ -238,7 +238,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return true if the plan was changed
      * @since 1.14.0
      */
-    private boolean checkPlanChanges(Document plan, Element classPlan) {
+    protected boolean checkPlanChanges(Document plan, Element classPlan) {
 
         log.debug("PLAN DB CHECK");
 
@@ -288,7 +288,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the class element
      * @since 1.14.0
      */
-    private Element getYourClass(Document obj, String clazz) {
+    protected Element getYourClass(Document obj, String clazz) {
 
         if (obj == null) {
             return null;
@@ -320,7 +320,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return true if the plan was synchronized
      * @since 1.14.0
      */
-    private boolean synchronizePlanDB(Document plan) {
+    protected boolean synchronizePlanDB(Document plan) {
         if (plan == null) {
             return false;
         }
@@ -363,7 +363,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the next date to check the vplan for
      * @since 1.14.0
      */
-    private OffsetDateTime checkDate() {
+    protected OffsetDateTime checkDate() {
 
         OffsetDateTime now = OffsetDateTime.now();
         int day = now.getDayOfWeek().getValue();
@@ -381,7 +381,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the document of the vplan
      * @since 1.14.0
      */
-    private Document read(@Nonnull OffsetDateTime date) {
+    protected Document read(@Nonnull OffsetDateTime date) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
         try {
 
@@ -407,7 +407,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the vplan as xml
      * @since 1.14.0
      */
-    private String getVplanXML(OffsetDateTime date) {
+    protected String getVplanXML(OffsetDateTime date) {
 
         final BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
         credProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),

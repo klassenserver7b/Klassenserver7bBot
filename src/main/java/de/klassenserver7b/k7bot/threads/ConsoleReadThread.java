@@ -15,9 +15,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,13 +28,13 @@ public class ConsoleReadThread implements Runnable {
 
     private final Thread t;
     private final Logger log;
-    private final BufferedReader reader;
+    private final Console console;
 
     public ConsoleReadThread() {
         log = LoggerFactory.getLogger(this.getClass());
 
-        InputStreamReader sysinr = new InputStreamReader(System.in);
-        reader = new BufferedReader(sysinr);
+        console = System.console();
+
         t = new Thread(this, "ConsoleReadThread");
         t.start();
     }
@@ -48,8 +46,7 @@ public class ConsoleReadThread implements Runnable {
             try {
 
                 String line;
-
-                if ((line = reader.readLine()) != null) {
+                if ((line = console.readLine()) != null) {
                     interpretConsoleContent(line);
                 }
 
@@ -74,7 +71,6 @@ public class ConsoleReadThread implements Runnable {
 
                 Klassenserver7bbot.getInstance().setExit(true);
                 t.interrupt();
-                reader.close();
                 this.onShutdown();
             }
 
@@ -158,11 +154,6 @@ public class ConsoleReadThread implements Runnable {
 
             LiteSQL.disconnect();
             t.interrupt();
-            try {
-                reader.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
             return;
 
         }

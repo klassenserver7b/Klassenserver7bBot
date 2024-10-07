@@ -164,7 +164,7 @@ public class SpotifyConverter {
      * @param mess       Message
      * @param vc         AudioChannel
      */
-    private void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
+    protected void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
         long delay = System.currentTimeMillis();
         final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId(clientId).setAccessToken(acctkn).build();
 
@@ -262,7 +262,7 @@ public class SpotifyConverter {
      * @param vc          AudioChannel
      * @return List of AudioTracks
      */
-    private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
+    protected List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
 
         List<AudioTrack> yttracks = new ArrayList<>();
 
