@@ -3,7 +3,6 @@
  */
 package de.klassenserver7b.k7bot.music.utilities;
 
-import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.FloatPcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
@@ -13,7 +12,6 @@ import de.klassenserver7b.k7bot.util.TriFunction;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Klassenserver7b
@@ -66,6 +64,7 @@ public class BotAudioEffectsManager {
      *               AudioFilterFunction}
      * @param filter The {@link TriFunction AudioFilterFunction} to use
      */
+    @SuppressWarnings("unused")
     public void setAudioFilterFunction(FilterTypes type,
                                        TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter> filter) {
         filterfuncs.clear();
@@ -78,20 +77,15 @@ public class BotAudioEffectsManager {
      * {@link FilterTypes}
      *
      * @param type the {@link FilterTypes} to remove
-     * @return statuscode <br>
-     * 304 means nothing changed -> {@link FilterTypes} wasn't present in
-     * the current filters<br>
-     * 200 means sucessfully removed the matching filter
      */
-    public int removeAudioFilterFunction(FilterTypes type) {
+    public void removeAudioFilterFunction(FilterTypes type) {
         TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter> oldfilter = filterfuncs.remove(type);
 
         if (oldfilter == null) {
-            return 304;
+            return;
         }
 
         applyFilters();
-        return 200;
     }
 
     /**
@@ -102,6 +96,7 @@ public class BotAudioEffectsManager {
      *                     FilterTypes} and coresponding {@link TriFunction
      *                     AudioFilterFunctions}
      */
+    @SuppressWarnings("unused")
     public void addAudioFilterFunctions(
             HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> audiofilters) {
 
@@ -117,6 +112,7 @@ public class BotAudioEffectsManager {
      *                     FilterTypes} and coresponding {@link TriFunction
      *                     AudioFilterFunctions}
      */
+    @SuppressWarnings("unused")
     public void setAudioFilterFunctions(
             HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> audiofilters) {
         filterfuncs.clear();
@@ -136,11 +132,9 @@ public class BotAudioEffectsManager {
      *
      */
     protected void applyFilters() {
-        List<TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filters = filterfuncs.values().stream().collect(Collectors.toList());
+        List<TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filters = filterfuncs.values().stream().toList();
 
-        player.setFilterFactory((track, format, output) -> {
-            return Arrays.asList(recurseFilters(track, format, output, filters, 0));
-        });
+        player.setFilterFactory((track, format, output) -> Collections.singletonList(recurseFilters(track, format, output, filters, 0)));
     }
 
     protected FloatPcmAudioFilter recurseFilters(AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter ufilter, List<TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filters, int index) {
