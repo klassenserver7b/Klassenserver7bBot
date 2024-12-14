@@ -20,7 +20,9 @@ public enum SupportedPlayQueries {
 
     LocalFile(3, ""),
 
-    SoundCloudSearch(4, "scsearch");
+    SoundCloudSearch(4, "scsearch:"),
+
+    SpotifySearch(5, "spsearch:");
 
     private final int id;
     private final String searchSuffix;

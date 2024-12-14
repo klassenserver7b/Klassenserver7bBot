@@ -53,20 +53,10 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
         List<AudioTrack> playlistTracks = playlist.getTracks();
 
-        if (this.uri.startsWith("ytsearch: ")) {
+        if (this.uri.startsWith("ytsearch: ") || this.uri.startsWith("scsearch: ")) {
             Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with ytsearch:");
 
-            // ytsearch liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
-            // Queue hinzugefügt
-            AudioTrack track = playlistTracks.getFirst();
-            addTrackToQueue(queue, track);
-            return;
-        }
-
-        if (this.uri.startsWith("scsearch: ")) {
-            Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with scsearch:");
-
-            // scsearch liefert Liste an vorgeschlagenen Songs - nur das erste wird zur
+            // search liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
             // Queue hinzugefügt
             AudioTrack track = playlistTracks.getFirst();
             addTrackToQueue(queue, track);

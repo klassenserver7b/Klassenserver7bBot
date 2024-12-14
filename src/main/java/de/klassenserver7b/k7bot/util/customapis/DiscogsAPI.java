@@ -99,16 +99,7 @@ public class DiscogsAPI {
         if (results.isEmpty()) {
             return null;
         }
-
-        for (int i = 0; i < results.size(); i++) {
-
-            if (results.get(i).getAsJsonObject().get("type").getAsString().equalsIgnoreCase("release")) {
-                return results.get(i).getAsJsonObject().get("resource_url").getAsString();
-            }
-
-        }
-
-        return null;
+        return results.get(0).getAsJsonObject().get("resource_url").getAsString();
     }
 
     private JsonObject getQueryResults(String searchquery) {
@@ -119,11 +110,10 @@ public class DiscogsAPI {
 
         String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
         final HttpGet httpget = new HttpGet(
-                "https://api.discogs.com/database/search?query=" + preparedquery + "&per_page=3&page=1");
+                "https://api.discogs.com/database/search?track=" + preparedquery + "&type=release&per_page=1&page=1");
         httpget.setHeader(HttpHeaders.AUTHORIZATION, "Discogs token=" + token);
 
         try (final CloseableHttpClient httpclient = HttpClients.createSystem()) {
-
             return request(httpclient, httpget);
         } catch (IOException e) {
             log.error(e.getMessage(), e);

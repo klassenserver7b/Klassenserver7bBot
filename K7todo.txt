@@ -1,3 +1,8 @@
+Spotify Search
+=> https://developer.spotify.com/documentation/web-api/reference/search
+=> https://api.spotify.com/v1/search?q=photosynthese%2520Dilla&type=track&market=DE&limit=1&offset=0
+
+
 Message Logging
 
 Poll System

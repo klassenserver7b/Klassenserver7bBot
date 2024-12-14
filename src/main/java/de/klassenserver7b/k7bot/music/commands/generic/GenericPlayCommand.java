@@ -218,7 +218,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
             url = url.substring(4);
 
-        } else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
+        } else if (!url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*")) {
             url = "ytsearch: " + url;
         }
 

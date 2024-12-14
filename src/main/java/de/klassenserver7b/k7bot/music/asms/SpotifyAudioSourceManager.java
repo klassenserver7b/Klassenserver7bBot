@@ -15,6 +15,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyInteractions;
+import de.klassenserver7b.k7bot.music.spotify.SpotifySearchProvider;
 import de.klassenserver7b.k7bot.music.spotify.loader.DefaultSpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.spotify.loader.DefaultSpotifyTrackLoader;
 import de.klassenserver7b.k7bot.music.spotify.loader.SpotifyPlaylistLoader;
@@ -54,6 +55,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private final SpotifyPlaylistLoader playlistLoader;
     private final SpotifyTrackLoader trackLoader;
     private final Logger log;
+    private final SpotifySearchProvider searchProvider;
 
     private File tempdir;
 
@@ -73,6 +75,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         this.playlistLoader = playlistLoader;
         this.trackLoader = trackLoader;
         this.spotifyInteract = spotifyInteract;
+        this.searchProvider = new SpotifySearchProvider(spotifyInteract);
 
         try {
 
@@ -151,6 +154,14 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         }
 
         String url = reference.identifier;
+
+        if(url.startsWith("spsearch: ")) {
+            String trackId = searchProvider.searchByQuery(url.substring(10));
+            if(trackId != null) {
+                return loadTrack(trackId);
+            }
+        }
+
         Matcher matcher = URL_PATTERN.matcher(url);
 
         if (matcher.matches()) {

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.24.2.1</version>
+    <version>1.24.3.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -183,6 +183,11 @@
             <id>arbjergDev</id>
             <name>Lavalink Repository</name>
             <url>https://maven.lavalink.dev/releases</url>
+        </repository>
+        <repository>
+            <id>arbjergSnapshotDev</id>
+            <name>Lavalink Snapshot Repository</name>
+            <url>https://maven.lavalink.dev/snapshots</url>
         </repository>
     </repositories>
     <!--suppress VulnerableLibrariesLocal, VulnerableLibrariesLocal, VulnerableLibrariesLocal, VulnerableLibrariesLocal -->

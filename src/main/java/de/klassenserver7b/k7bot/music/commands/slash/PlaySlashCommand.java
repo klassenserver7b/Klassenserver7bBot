@@ -36,13 +36,13 @@ public class PlaySlashCommand extends GenericPlayCommand implements SubSlashComm
 		OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
 				.setRequired(true);
 
-		return new SubcommandData("imediately", "plays the selected AudioItem replacing the whole queue")
+		return new SubcommandData("immediately", "plays the selected AudioItem replacing the whole queue")
 				.addOptions(target, url);
 	}
 
 	@Override
 	public String getSubPath() {
-		return "imediately";
+		return "immediately";
 	}
 
 	@Override
