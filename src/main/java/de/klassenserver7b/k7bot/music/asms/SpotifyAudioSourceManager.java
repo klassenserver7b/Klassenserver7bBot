@@ -155,11 +155,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
         String url = reference.identifier;
 
-        if(url.startsWith("spsearch: ")) {
-            String trackId = searchProvider.searchByQuery(url.substring(10));
-            if(trackId != null) {
+        if (url.startsWith("spsearch: ")) {
+            String trackId = searchProvider.searchTrackByQuery(url.substring(10));
+
+            if (trackId == null) {
+                return null;
+            } else {
                 return loadTrack(trackId);
             }
+
         }
 
         Matcher matcher = URL_PATTERN.matcher(url);

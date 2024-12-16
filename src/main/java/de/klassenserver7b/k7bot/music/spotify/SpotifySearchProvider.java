@@ -20,7 +20,7 @@ public class SpotifySearchProvider {
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
-    public String searchByQuery(String query) {
+    public String searchTrackByQuery(String query) {
         try {
             Paging<Track> searchResults = spotifyInteract.getSpotifyApi().searchTracks(query).limit(1).build().execute();
 
