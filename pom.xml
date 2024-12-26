@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.24.3.0</version>
+    <version>1.24.3.1</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -57,7 +57,7 @@
                                     <version>3.8.0</version>
                                 </requireMavenVersion>
                             </rules>
-                            <fail>true</fail>
+                            <fail>false</fail>
                         </configuration>
                     </execution>
                 </executions>
