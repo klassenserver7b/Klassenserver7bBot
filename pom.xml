@@ -195,7 +195,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.2.1</version>
+            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
@@ -205,7 +205,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.11.2</version>
+            <version>1.11.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.JustRed23</groupId>
