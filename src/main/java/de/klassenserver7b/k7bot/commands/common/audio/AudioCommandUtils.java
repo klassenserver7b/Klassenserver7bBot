@@ -13,21 +13,26 @@ import de.klassenserver7b.k7bot.audio.GuildAudioManager;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import dev.arbjerg.lavalink.client.Link;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import reactor.core.publisher.Mono;
 
 public class AudioCommandUtils {
 
 	public static void loadItem(Link link, String query, GuildAudioManager gam, long memberId, AudioLoadOption option,
 			boolean justConnected, Consumer<Throwable> errorHandler) {
 		if (justConnected) {
-			reactor.core.publisher.Mono.delay(Duration.ofMillis(600)).then(link.loadItem(query))
-					.subscribe(new AudioLoadResultHandler(gam, option, memberId), errorHandler);
+			Mono.delay(Duration.ofMillis(600)).then(link.loadItem(query))
+					.subscribe(new AudioLoadResultHandler(gam, query, option, memberId), errorHandler);
 		} else {
-			link.loadItem(query).subscribe(new AudioLoadResultHandler(gam, option, memberId), errorHandler);
+			link.loadItem(query).subscribe(new AudioLoadResultHandler(gam, query, option, memberId), errorHandler);
 		}
 	}
 
 	public static String resolveQuery(String query) {
-		return query.startsWith("http") ? query : "ytsearch:" + query;
+		if (query.startsWith("http") || query.matches("\\S{2}search:\\s.*")) {
+			return query;
+		} else {
+			return "ytsearch:" + query;
+		}
 	}
 
 	public static MessageEmbed formatQueue(GuildAudioManager gam, long guildId) {
@@ -35,8 +40,10 @@ public class AudioCommandUtils {
 		int i = 1;
 		for (var track : gam.getTrackScheduler().queue) {
 			sb.append(i++).append(". ").append(track.getInfo().getTitle()).append("\n");
-			if (i > 10)
+			if (i > 10) {
+				sb.append("...");
 				break;
+			}
 		}
 		if (i == 1)
 			sb.append("Empty");

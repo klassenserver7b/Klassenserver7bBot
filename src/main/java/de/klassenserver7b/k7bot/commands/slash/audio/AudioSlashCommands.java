@@ -82,8 +82,7 @@ public class AudioSlashCommands {
 		return true;
 	}
 
-	public static void handleLoadCommand(SlashCommandInteraction event, Guild guild, Member m, AudioLoadOption option,
-			String responsePrefix) {
+	public static void handleLoadCommand(SlashCommandInteraction event, Guild guild, Member m, AudioLoadOption option) {
 		event.deferReply().queue();
 
 		GuildVoiceState botVoiceState = guild.getSelfMember().getVoiceState();
@@ -98,12 +97,12 @@ public class AudioSlashCommands {
 		long guildId = guild.getIdLong();
 		Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
 		GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-		gam.setChannelId(event.getChannel().getIdLong());
+		gam.setChannel(event.getChannel());
 
 		AudioCommandUtils.loadItem(link, query, gam, m.getIdLong(), option, justConnected,
 				EmbedUtils.getLavalinkErrorHandler(event.getHook(), guildId));
 
-		event.getHook().sendMessageEmbeds(EmbedUtils.getInfoEmbed(responsePrefix + query, guildId).build()).queue();
+		event.getChannel().sendTyping().queue();
 	}
 
 	public static class PlayCommand implements GuildSlashCommand {
@@ -117,7 +116,7 @@ public class AudioSlashCommands {
 		@Override
 		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
 				@NonNull Member m) {
-			handleLoadCommand(event, guild, m, AudioLoadOption.REPLACE, "Loading track: ");
+			handleLoadCommand(event, guild, m, AudioLoadOption.REPLACE);
 		}
 	}
 
@@ -132,7 +131,7 @@ public class AudioSlashCommands {
 		@Override
 		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
 				@NonNull Member m) {
-			handleLoadCommand(event, guild, m, AudioLoadOption.NEXT, "Loading next: ");
+			handleLoadCommand(event, guild, m, AudioLoadOption.NEXT);
 		}
 	}
 
@@ -147,7 +146,7 @@ public class AudioSlashCommands {
 		@Override
 		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
 				@NonNull Member m) {
-			handleLoadCommand(event, guild, m, AudioLoadOption.APPEND, "Searching and adding to queue: ");
+			handleLoadCommand(event, guild, m, AudioLoadOption.APPEND);
 		}
 	}
 
