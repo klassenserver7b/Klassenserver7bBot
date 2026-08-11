@@ -18,7 +18,7 @@ import dev.arbjerg.lavalink.protocol.v4.Message;
 import dev.arbjerg.lavalink.protocol.v4.Timescale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class TrackScheduler {
 	public final Deque<Track> queue = new LinkedList<>();
@@ -107,41 +107,30 @@ public class TrackScheduler {
 
 	public void onTrackStart(Track track) {
 		log.debug("Track started: {} - {}", track.getInfo().getAuthor(), track.getInfo().getTitle());
-		long channelId = guildMusicManager.getChannelId();
-		if (channelId != -1) {
-			try {
-				Guild guild = K7Bot.getInstance().getShardManager().getGuildById(guildMusicManager.getGuildId());
-				if (guild != null) {
-					GuildMessageChannel channel = guild.getChannelById(GuildMessageChannel.class, channelId);
-					if (channel != null) {
-						EmbedBuilder builder = EmbedUtils.getBuilderOf(java.awt.Color.decode("#4d05e8"),
-								guildMusicManager.getGuildId());
-						builder.setTitle("Jetzt läuft: " + track.getInfo().getTitle());
-						builder.addField("Name", "[" + track.getInfo().getAuthor() + " - " + track.getInfo().getTitle()
-								+ "](" + track.getInfo().getUri() + ")", false);
+		MessageChannel channel = guildMusicManager.getChannel();
+		if (channel != null) {
+			EmbedBuilder builder = EmbedUtils.getBuilderOf(java.awt.Color.decode("#4d05e8"),
+					guildMusicManager.getGuildId());
+			builder.setTitle("Jetzt läuft: " + track.getInfo().getTitle());
+			builder.addField("Name", "[" + track.getInfo().getAuthor() + " - " + track.getInfo().getTitle() + "]("
+					+ track.getInfo().getUri() + ")", false);
 
-						long lengthMs = track.getInfo().getLength();
-						long minutes = (lengthMs / 1000) / 60;
-						long seconds = (lengthMs / 1000) % 60;
-						builder.addField("Länge:", minutes + "min " + seconds + "s", false);
+			long lengthMs = track.getInfo().getLength();
+			long minutes = (lengthMs / 1000) / 60;
+			long seconds = (lengthMs / 1000) % 60;
+			builder.addField("Länge:", minutes + "min " + seconds + "s", false);
 
-						if (track.getInfo().getArtworkUrl() != null) {
-							builder.setImage(track.getInfo().getArtworkUrl());
-						} else if (track.getInfo().getUri() != null
-								&& track.getInfo().getUri().contains("youtube.com")) {
-							// Extract video ID for YouTube thumbnail
-							String uri = track.getInfo().getUri();
-							String videoId = uri.substring(uri.indexOf("v=") + 2);
-							if (videoId.contains("&"))
-								videoId = videoId.substring(0, videoId.indexOf('&'));
-							builder.setImage("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg");
-						}
-						channel.sendMessageEmbeds(builder.build()).queue();
-					}
-				}
-			} catch (Exception e) {
-				System.err.println("Failed to send now playing embed: " + e.getMessage());
+			if (track.getInfo().getArtworkUrl() != null) {
+				builder.setImage(track.getInfo().getArtworkUrl());
+			} else if (track.getInfo().getUri() != null && track.getInfo().getUri().contains("youtube.com")) {
+				// Extract video ID for YouTube thumbnail
+				String uri = track.getInfo().getUri();
+				String videoId = uri.substring(uri.indexOf("v=") + 2);
+				if (videoId.contains("&"))
+					videoId = videoId.substring(0, videoId.indexOf('&'));
+				builder.setImage("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg");
 			}
+			channel.sendMessageEmbeds(builder.build()).queue();
 		}
 
 		try {
@@ -159,7 +148,7 @@ public class TrackScheduler {
 				String uri = lastTrack.getInfo().getUri();
 				if (uri != null) {
 					this.guildMusicManager.getLink().getNode().loadItem(uri)
-							.subscribe(new AudioLoadResultHandler(guildMusicManager, AudioLoadOption.APPEND, 0));
+							.subscribe(new AudioLoadResultHandler(guildMusicManager, uri, AudioLoadOption.APPEND, 0));
 				} else {
 					log.warn("Track uri from last track was null although lastTrack wasn't null - lastTrack: {}",
 							lastTrack.getInfo());

@@ -76,7 +76,7 @@ public class AudioServerCommand implements ServerCommand {
 
 		Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
 		GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-		gam.setChannelId(channel.getIdLong());
+		gam.setChannel(channel);
 
 		switch (commandType) {
 			case PLAY -> handlePlay(args, message, channel, link, gam, caller, justConnected);
@@ -227,7 +227,7 @@ public class AudioServerCommand implements ServerCommand {
 			return;
 		try {
 			long pos = Long.parseLong(args[1]);
-			gam.getTrackScheduler().forward(pos);
+			gam.getTrackScheduler().forward(pos * 1000);
 			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "ms", guildId).build())
 					.queue();
 		} catch (NumberFormatException e) {
@@ -241,7 +241,7 @@ public class AudioServerCommand implements ServerCommand {
 			return;
 		try {
 			long pos = Long.parseLong(args[1]);
-			gam.getTrackScheduler().back(pos);
+			gam.getTrackScheduler().back(pos * 1000);
 			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "ms", guildId).build()).queue();
 		} catch (NumberFormatException e) {
 			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid amount.", guildId).build()).queue();

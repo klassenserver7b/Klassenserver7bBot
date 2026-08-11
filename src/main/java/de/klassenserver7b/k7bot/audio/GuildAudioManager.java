@@ -3,30 +3,26 @@ package de.klassenserver7b.k7bot.audio;
 
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class GuildAudioManager {
 
 	private final TrackScheduler trackScheduler = new TrackScheduler(this);
 	private final long guildId;
-	private long channelId = -1;
+	private MessageChannel channel;
 
 	public GuildAudioManager(long guildId) {
 		this.guildId = guildId;
+		this.channel = null;
 	}
 
 	public long getGuildId() {
 		return guildId;
-	}
-
-	public long getChannelId() {
-		return channelId;
-	}
-
-	public void setChannelId(long channelId) {
-		this.channelId = channelId;
 	}
 
 	public void stop() {
@@ -34,6 +30,14 @@ public class GuildAudioManager {
 
 		this.getPlayer().ifPresent((player) -> player.setPaused(false).setTrack(null).subscribe(_ -> {
 		}, e -> System.err.println("Lavalink operation failed: " + e.getMessage())));
+	}
+
+	public void setChannel(MessageChannel channel) {
+		this.channel = channel;
+	}
+
+	public @Nullable MessageChannel getChannel() {
+		return channel;
 	}
 
 	public Link getLink() {
