@@ -14,7 +14,7 @@ public class SlashCommandListener extends ListenerAdapter {
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
-		if (!K7Bot.getInstance().getslashMan().perform(event)) {
+		if (!K7Bot.getInstance().getSlashMan().perform(event)) {
 			event.getChannel().sendMessage("`unbekannter Slash-Command`").complete().delete().queueAfter(10L,
 					TimeUnit.SECONDS);
 		}

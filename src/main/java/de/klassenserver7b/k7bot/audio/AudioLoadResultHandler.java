@@ -39,10 +39,9 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
-			channel.sendMessageEmbeds(EmbedUtils
-					.getInfoEmbed(
-							"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage())
-					.build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
+					"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
+					userId).build()).queue();
 		}
 
 	}
@@ -58,8 +57,8 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded playlist: " + playlistLoaded.getInfo().getName() + " " + this.getQueueModificationMessage())
-					.build()).queue();
+					"Loaded playlist: " + playlistLoaded.getInfo().getName() + " " + this.getQueueModificationMessage(),
+					null, userId).build()).queue();
 		}
 	}
 
@@ -76,10 +75,9 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
-			channel.sendMessageEmbeds(EmbedUtils
-					.getInfoEmbed(
-							"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage())
-					.build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
+					"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
+					userId).build()).queue();
 		}
 	}
 
@@ -87,8 +85,8 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 	public void noMatches() {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
-			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed("No matches found for query: " + this.query).build())
-					.queue();
+			channel.sendMessageEmbeds(
+					EmbedUtils.getInfoEmbed("No matches found for query: " + this.query, null, userId).build()).queue();
 		}
 		log.warn("No matches found for audio load request by user {}", userId);
 	}
@@ -97,8 +95,8 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 	public void loadFailed(@NonNull LoadFailed loadFailed) {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
-			channel.sendMessageEmbeds(
-					EmbedUtils.getErrorEmbed("Failed while retrieving matches for query: " + this.query).build())
+			channel.sendMessageEmbeds(EmbedUtils
+					.getErrorEmbed("Failed while retrieving matches for query: " + this.query, null, userId).build())
 					.queue();
 		}
 

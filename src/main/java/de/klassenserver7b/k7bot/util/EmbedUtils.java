@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import de.klassenserver7b.k7bot.K7Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 /**
  * @author K7
@@ -41,6 +42,10 @@ public abstract class EmbedUtils {
 		return getBuilderOf(Color.decode("#e74c3c"), description, guildId);
 	}
 
+	public static EmbedBuilder getErrorEmbed(CharSequence description, @Nullable Long guildId, long userId) {
+		return setUserFooter(getBuilderOf(Color.decode("#e74c3c"), description, guildId), userId);
+	}
+
 	@SuppressWarnings("unused")
 	public static EmbedBuilder getSuccessEmbed(CharSequence description) {
 		return getSuccessEmbed(description, null);
@@ -53,6 +58,11 @@ public abstract class EmbedUtils {
 	@SuppressWarnings("unused")
 	public static EmbedBuilder getInfoEmbed(CharSequence description) {
 		return getInfoEmbed(description, null);
+	}
+
+	@SuppressWarnings("unused")
+	public static EmbedBuilder getInfoEmbed(CharSequence description, @Nullable Long guildId, long userId) {
+		return setUserFooter(getInfoEmbed(description, guildId), userId);
 	}
 
 	public static EmbedBuilder getInfoEmbed(CharSequence description, @Nullable Long guildId) {
@@ -105,6 +115,16 @@ public abstract class EmbedUtils {
 	public static EmbedBuilder getDefault(@Nullable Guild guild) {
 		Long guildId = guild == null ? null : guild.getIdLong();
 		return getDefault(guildId);
+	}
+
+	public static EmbedBuilder setUserFooter(EmbedBuilder builder, long userId) {
+		User u = K7Bot.getInstance().getShardManager().getUserById(userId);
+
+		if (u != null) {
+			return builder.setFooter("requested by @" + u.getEffectiveName());
+		} else {
+			return builder;
+		}
 	}
 
 }

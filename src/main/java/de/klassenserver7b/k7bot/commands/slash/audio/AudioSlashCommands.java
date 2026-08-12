@@ -1,7 +1,9 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.audio;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,10 +23,12 @@ import dev.arbjerg.lavalink.client.Link;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class AudioSlashCommands {
@@ -91,13 +95,14 @@ public class AudioSlashCommands {
 		if (!isMemberConnectedToSameVc(event, guild, m))
 			return;
 
-		String query = CommandUtils.getRequiredOption(event, "query").getAsString();
-		query = AudioCommandUtils.resolveQuery(query);
-
 		long guildId = guild.getIdLong();
 		Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
 		GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 		gam.setChannel(event.getChannel());
+
+		String query = CommandUtils.getRequiredOption(event, "query").getAsString();
+		query = AudioCommandUtils.resolveQuery(link.getNode(), link.getGuildId(),
+				embed -> event.getChannel().sendMessageEmbeds(embed).queue(), query);
 
 		AudioCommandUtils.loadItem(link, query, gam, m.getIdLong(), option, justConnected,
 				EmbedUtils.getLavalinkErrorHandler(event.getHook(), guildId));
@@ -305,7 +310,7 @@ public class AudioSlashCommands {
 		@Override
 		public SlashCommandData getCommandData() {
 			return Commands.slash("forward", "Forward the current track").addOption(OptionType.INTEGER, "amount",
-					"Amount in milliseconds to forward", true);
+					"Amount in seconds to forward", true);
 		}
 
 		@Override
@@ -317,8 +322,8 @@ public class AudioSlashCommands {
 			long pos = CommandUtils.getRequiredOption(event, "amount").getAsInt();
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.getTrackScheduler().forward(pos);
-			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "ms", guildId).build()).queue();
+			gam.getTrackScheduler().forward(pos * 1000);
+			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "s", guildId).build()).queue();
 		}
 	}
 
@@ -327,7 +332,7 @@ public class AudioSlashCommands {
 		@Override
 		public SlashCommandData getCommandData() {
 			return Commands.slash("back", "Rewind the current track").addOption(OptionType.INTEGER, "amount",
-					"Amount in milliseconds to rewind", true);
+					"Amount in seconds to rewind", true);
 		}
 
 		@Override
@@ -339,8 +344,8 @@ public class AudioSlashCommands {
 			long pos = CommandUtils.getRequiredOption(event, "amount").getAsInt();
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.getTrackScheduler().back(pos);
-			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "ms", guildId).build()).queue();
+			gam.getTrackScheduler().back(pos * 1000);
+			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "s", guildId).build()).queue();
 		}
 	}
 
@@ -371,7 +376,7 @@ public class AudioSlashCommands {
 		@Override
 		public SlashCommandData getCommandData() {
 			return Commands.slash("seek", "Seek to a specific position").addOption(OptionType.INTEGER, "position",
-					"Position in milliseconds", true);
+					"Position in seconds", true);
 		}
 
 		@Override
@@ -383,8 +388,8 @@ public class AudioSlashCommands {
 			long pos = CommandUtils.getRequiredOption(event, "position").getAsInt();
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.getTrackScheduler().setPosition(pos);
-			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Seeked to " + pos + "ms", guildId).build()).queue();
+			gam.getTrackScheduler().setPosition(pos * 1000);
+			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Seeked to " + pos + "s", guildId).build()).queue();
 		}
 	}
 
@@ -427,8 +432,7 @@ public class AudioSlashCommands {
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().shuffle();
-			event.replyEmbeds(
-					EmbedUtils.getBuilderOf(java.awt.Color.decode("#A537FD"), "Playlist shuffled", guildId).build())
+			event.replyEmbeds(EmbedUtils.getBuilderOf(Color.decode("#A537FD"), "Playlist shuffled", guildId).build())
 					.queue();
 		}
 	}
@@ -438,10 +442,9 @@ public class AudioSlashCommands {
 		@Override
 		public SlashCommandData getCommandData() {
 			return Commands.slash("eq", "Set equalizer preset")
-					.addOptions(new net.dv8tion.jda.api.interactions.commands.build.OptionData(OptionType.INTEGER,
-							"preset", "The EQ preset to apply", true).addChoice("Off", 0).addChoice("Ultra Low Bass", 1)
-							.addChoice("Low Bass", 2).addChoice("Less Low Bass", 3).addChoice("Less Bass Boost", 4)
-							.addChoice("Bass Boost", 5).addChoice("Ultra Bass Boost", 6));
+					.addOptions(new OptionData(OptionType.INTEGER, "preset", "The EQ preset to apply", true)
+							.addChoices(Arrays.stream(EQPreset.values())
+									.map(preset -> new Command.Choice(preset.getName(), preset.getId())).toList()));
 		}
 
 		@Override
@@ -469,8 +472,11 @@ public class AudioSlashCommands {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
-			return Commands.slash("speed", "Set playback speed").addOption(OptionType.NUMBER, "factor",
-					"Speed factor (0.1 - 2.0)", true);
+			return Commands.slash("speed", "Set playback speed")
+					.addOptions(new OptionData(OptionType.NUMBER, "factor", "Speed factor (0.1 - 2.0)", true)
+							.setRequiredRange(0.1, 2.0))
+					.addOption(OptionType.BOOLEAN, "adjust_pitch",
+							"If the pitch should be changed by the same amount as the speed", true);
 		}
 
 		@Override
@@ -480,9 +486,14 @@ public class AudioSlashCommands {
 				return;
 
 			double speed = CommandUtils.getRequiredOption(event, "factor").getAsDouble();
+			boolean pitch = CommandUtils.getRequiredOption(event, "adjust_pitch").getAsBoolean();
+
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setSpeed(speed);
+			if (pitch) {
+				gam.getTrackScheduler().setPitch(speed);
+			}
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Speed set to " + speed + "x", guildId).build()).queue();
 		}
 	}
@@ -491,8 +502,9 @@ public class AudioSlashCommands {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
-			return Commands.slash("pitch", "Set playback pitch").addOption(OptionType.NUMBER, "factor",
-					"Pitch factor (0.1 - 2.0)", true);
+			return Commands.slash("pitch", "Set playback pitch")
+					.addOptions(new OptionData(OptionType.NUMBER, "factor", "Pitch factor (0.1 - 2.0)", true)
+							.setRequiredRange(0.1, 2.0));
 		}
 
 		@Override

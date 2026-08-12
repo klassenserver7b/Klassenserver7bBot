@@ -10,7 +10,9 @@ import org.jspecify.annotations.Nullable;
 import de.klassenserver7b.k7bot.audio.AudioLoadOption;
 import de.klassenserver7b.k7bot.audio.AudioLoadResultHandler;
 import de.klassenserver7b.k7bot.audio.GuildAudioManager;
+import de.klassenserver7b.k7bot.audio.SearchFetcher;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import dev.arbjerg.lavalink.client.LavalinkNode;
 import dev.arbjerg.lavalink.client.Link;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import reactor.core.publisher.Mono;
@@ -27,11 +29,16 @@ public class AudioCommandUtils {
 		}
 	}
 
-	public static String resolveQuery(String query) {
+	public static String resolveQuery(LavalinkNode node, long guildId, Consumer<MessageEmbed> sender, String query) {
 		if (query.startsWith("http") || query.matches("\\S{2}search:\\s.*")) {
 			return query;
 		} else {
-			return "ytsearch:" + query;
+			String searchResult = SearchFetcher.searchTrack(node, guildId, sender, query, "track");
+			if (searchResult == null) {
+				return "ytsearch:" + query;
+			} else {
+				return searchResult;
+			}
 		}
 	}
 
