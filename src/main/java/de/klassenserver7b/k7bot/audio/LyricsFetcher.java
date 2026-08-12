@@ -3,20 +3,14 @@ package de.klassenserver7b.k7bot.audio;
 
 import java.util.function.Consumer;
 
-import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
-import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
-import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.http.HttpStatus;
-import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import de.klassenserver7b.k7bot.manage.LavaLinkManager;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import dev.arbjerg.lavalink.client.LavalinkNode;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -25,57 +19,21 @@ public class LyricsFetcher {
 	private static final Logger log = LoggerFactory.getLogger(LyricsFetcher.class);
 
 	public static void fetchAndSendLyrics(LavalinkNode node, long guildId, Consumer<MessageEmbed> sender) {
-		if (node == null) {
-			sender.accept(EmbedUtils.getErrorEmbed("No active Lavalink node found", guildId).build());
+
+		if (!LavalinkFetchUtils.validateNode(node, guildId, sender)) {
 			return;
 		}
 
-		String sessionId = LavaLinkManager.SESSION_IDS.get(node.getName());
+		String sessionId = LavalinkFetchUtils.validateSession(node, guildId, sender);
 		if (sessionId == null) {
-			sender.accept(EmbedUtils.getErrorEmbed("Lavalink session not ready.", guildId).build());
 			return;
 		}
 
-		String baseUri = node.getBaseUri();
-		if (baseUri.startsWith("wss://"))
-			baseUri = baseUri.replaceFirst("wss://", "https://");
-		else if (baseUri.startsWith("ws://"))
-			// noinspection HttpUrlsUsage
-			baseUri = baseUri.replaceFirst("ws://", "http://");
-		String uri = baseUri + "/v4/sessions/" + sessionId + "/players/" + guildId
+		String uri = LavalinkFetchUtils.getBaseHttpUri(node) + "/v4/sessions/" + sessionId + "/players/" + guildId
 				+ "/track/lyrics?skipTrackSource=false";
 
-		try {
-			CloseableHttpAsyncClient httpClient = HttpAsyncClients.createSystem();
-			httpClient.start();
-
-			SimpleHttpRequest request = SimpleHttpRequest.create("GET", uri);
-			request.setHeader("Authorization", node.getPassword());
-
-			httpClient.execute(request, new FutureCallback<>() {
-				@Override
-				public void completed(SimpleHttpResponse response) {
-					handleResponse(response, guildId, sender);
-					httpClient.close(CloseMode.GRACEFUL);
-				}
-
-				@Override
-				public void failed(Exception ex) {
-					log.error("Exception fetching lyrics", ex);
-					sender.accept(
-							EmbedUtils.getErrorEmbed("Error fetching lyrics: " + ex.getMessage(), guildId).build());
-					httpClient.close(CloseMode.GRACEFUL);
-				}
-
-				@Override
-				public void cancelled() {
-					log.warn("Lyrics request cancelled");
-					httpClient.close(CloseMode.GRACEFUL);
-				}
-			});
-		} catch (Exception e) {
-			log.error("Lyrics request failed {}", e.getMessage(), e);
-		}
+		LavalinkFetchUtils.executeRequestAsync(node, uri, guildId, sender,
+				(response -> handleResponse(response, guildId, sender)), "lyrics");
 	}
 
 	private static void handleResponse(SimpleHttpResponse response, long guildId, Consumer<MessageEmbed> sender) {

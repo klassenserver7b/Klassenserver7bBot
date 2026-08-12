@@ -112,7 +112,8 @@ public class AudioServerCommand implements ServerCommand {
 			return;
 		}
 		String identifier = message.getContentRaw().substring(args[0].length()).trim();
-		identifier = AudioCommandUtils.resolveQuery(identifier);
+		identifier = AudioCommandUtils.resolveQuery(link.getNode(), link.getGuildId(),
+				embed -> channel.sendMessageEmbeds(embed).queue(), identifier);
 
 		AudioCommandUtils.loadItem(link, identifier, gam, caller.getIdLong(), option, justConnected,
 				EmbedUtils.getLavalinkErrorHandler(channel, guildId));
@@ -214,8 +215,8 @@ public class AudioServerCommand implements ServerCommand {
 			return;
 		try {
 			long pos = Long.parseLong(args[1]);
-			gam.getTrackScheduler().setPosition(pos);
-			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Seeked to " + pos + "ms", guildId).build()).queue();
+			gam.getTrackScheduler().setPosition(pos * 1000);
+			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Seeked to " + pos + "s", guildId).build()).queue();
 		} catch (NumberFormatException e) {
 			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid position.", guildId).build()).queue();
 		}
@@ -228,8 +229,7 @@ public class AudioServerCommand implements ServerCommand {
 		try {
 			long pos = Long.parseLong(args[1]);
 			gam.getTrackScheduler().forward(pos * 1000);
-			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "ms", guildId).build())
-					.queue();
+			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "s", guildId).build()).queue();
 		} catch (NumberFormatException e) {
 			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid amount.", guildId).build()).queue();
 		}
@@ -242,7 +242,7 @@ public class AudioServerCommand implements ServerCommand {
 		try {
 			long pos = Long.parseLong(args[1]);
 			gam.getTrackScheduler().back(pos * 1000);
-			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "ms", guildId).build()).queue();
+			channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "s", guildId).build()).queue();
 		} catch (NumberFormatException e) {
 			channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid amount.", guildId).build()).queue();
 		}

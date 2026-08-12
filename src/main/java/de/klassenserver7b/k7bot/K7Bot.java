@@ -316,7 +316,7 @@ public class K7Bot {
 	/**
 	 * @return the SlashCommandManager
 	 */
-	public SlashCommandManager getslashMan() {
+	public SlashCommandManager getSlashMan() {
 		return this.slashMgr;
 	}
 
