@@ -40,7 +40,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
+					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
 					userId).build()).queue();
 		}
 
@@ -57,7 +57,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded playlist: " + playlistLoaded.getInfo().getName() + " " + this.getQueueModificationMessage(),
+					"Loaded playlist " + playlistLoaded.getInfo().getName() + " " + this.getQueueModificationMessage(),
 					null, userId).build()).queue();
 		}
 	}
@@ -76,7 +76,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded track: " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
+					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
 					userId).build()).queue();
 		}
 	}

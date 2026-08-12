@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.database.dao.MusicLogDAO;
+import de.klassenserver7b.k7bot.manage.LavaLinkManager;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import dev.arbjerg.lavalink.client.player.FilterBuilder;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
@@ -111,6 +112,7 @@ public class TrackScheduler {
 		if (channel != null) {
 			EmbedBuilder builder = EmbedUtils.getBuilderOf(java.awt.Color.decode("#4d05e8"),
 					guildMusicManager.getGuildId());
+			builder = EmbedUtils.setUserFooter(builder, track.getUserData(LavaLinkManager.UserData.class).requester());
 			builder.setTitle("Jetzt läuft: " + track.getInfo().getTitle());
 			builder.addField("Name", "[" + track.getInfo().getAuthor() + " - " + track.getInfo().getTitle() + "]("
 					+ track.getInfo().getUri() + ")", false);
